@@ -15,6 +15,13 @@ export default tseslint.config(
       globals: globals.browser,
       parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname },
     },
+    rules: {
+      // TanStack Router signals not-found and redirects by throwing these objects from loaders.
+      "@typescript-eslint/only-throw-error": [
+        "error",
+        { allow: [{ from: "package", package: "@tanstack/router-core", name: ["NotFoundError", "Redirect"] }] },
+      ],
+    },
   },
   { files: ["eslint.config.js"], extends: [tseslint.configs.disableTypeChecked] },
 );

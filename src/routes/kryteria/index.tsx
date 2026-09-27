@@ -1,0 +1,175 @@
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { type } from "arktype";
+import type { ReactNode } from "react";
+import { LevelBadge, NewBadge } from "~/components/level-badge";
+import { getCriterionSummaries } from "~/content/content.functions";
+import {
+  criteria,
+  inVersion,
+  isNewIn22,
+  isObsolete,
+  type Level,
+  levels,
+  principles,
+  versions,
+} from "~/content/wcag";
+
+const VersionParam = type.enumerated(...versions);
+const PrincipleParam = type.enumerated(...principles.map((p) => p.num));
+
+/**
+ * Filters live in the URL so a filtered list can be shared as a link. Defaults are left out
+ * of the URL, and anything invalid is dropped rather than turned into an error page.
+ */
+function validateSearch(search: Record<string, unknown>) {
+  const { wersja, poziom, zasada } = search;
+  const picked = Array.isArray(poziom) ? levels.filter((level) => poziom.includes(level)) : [];
+  return {
+    ...(VersionParam.allows(wersja) && wersja !== "2.2" ? { wersja } : {}),
+    ...(picked.length > 0 && picked.length < levels.length ? { poziom: picked } : {}),
+    ...(PrincipleParam.allows(zasada) ? { zasada } : {}),
+  };
+}
+
+export const Route = createFileRoute("/kryteria/")({
+  validateSearch,
+  loader: () => getCriterionSummaries(),
+  head: () => ({ meta: [{ title: "Kryteria · a11y playground" }] }),
+  component: CriteriaPage,
+});
+
+function CriteriaPage() {
+  const summaries = Route.useLoaderData();
+  const search = Route.useSearch();
+  const navigate = useNavigate({ from: Route.fullPath });
+
+  const version = search.wersja ?? "2.2";
+  const pickedLevels: readonly Level[] = search.poziom ?? levels;
+  const inScope = criteria.filter((c) => inVersion(c, version));
+  const shown = inScope.filter((c) => pickedLevels.includes(c.level) && (!search.zasada || c.principle === search.zasada));
+  const filtered = Object.keys(search).length > 0;
+
+  const setSearch = (next: Parameters<typeof validateSearch>[0]) => {
+    void navigate({ search: validateSearch({ ...search, ...next }), replace: true, resetScroll: false });
+  };
+
+  const toggleLevel = (level: Level) => {
+    setSearch({ poziom: pickedLevels.includes(level) ? pickedLevels.filter((l) => l !== level) : [...pickedLevels, level] });
+  };
+
+  return (
+    <>
+      <div className="flex flex-wrap items-baseline gap-x-5 gap-y-2 pt-8 pb-4">
+        <h1 className="text-[1.875rem] font-bold tracking-tight">Kryteria</h1>
+        <p role="status" className="font-mono text-sm text-ink-2">
+          Pokazuję {shown.length} z {inScope.length} kryteriów WCAG {version}
+        </p>
+      </div>
+
+      <div className="flex flex-wrap gap-x-6 gap-y-3 border-b border-rule pb-5">
+        <FilterGroup legend="Wersja">
+          {versions.map((v) => (
+            <Chip key={v} type="radio" name="wersja" checked={version === v} onChange={() => { setSearch({ wersja: v }); }}>
+              {v}
+            </Chip>
+          ))}
+        </FilterGroup>
+        <FilterGroup legend="Poziom">
+          {levels.map((level) => (
+            <Chip key={level} type="checkbox" checked={pickedLevels.includes(level)} onChange={() => { toggleLevel(level); }}>
+              {level}
+            </Chip>
+          ))}
+        </FilterGroup>
+        <FilterGroup legend="Zasada">
+          <Chip type="radio" name="zasada" checked={!search.zasada} onChange={() => { setSearch({ zasada: undefined }); }}>
+            wszystkie
+          </Chip>
+          {principles.map((p) => (
+            <Chip key={p.num} type="radio" name="zasada" checked={search.zasada === p.num} onChange={() => { setSearch({ zasada: p.num }); }}>
+              {p.num}. {p.name}
+            </Chip>
+          ))}
+        </FilterGroup>
+      </div>
+
+      {filtered ? (
+        <p className="py-3">
+          <Link to="/kryteria" className="font-semibold text-accent underline underline-offset-3">
+            Wyczyść filtry
+          </Link>
+        </p>
+      ) : null}
+
+      {shown.length > 0 ? (
+        <ol className="mt-4">
+          {shown.map((c) => (
+            <li key={c.id} className="border-t border-rule last:border-b">
+              <Link
+                to="/kryteria/$criterionId"
+                params={{ criterionId: c.id }}
+                className="grid grid-cols-[4.75rem_1fr] items-baseline gap-x-4 gap-y-1.5 px-2 py-4 hover:bg-surface sm:grid-cols-[4.75rem_1fr_auto]"
+              >
+                <span className="font-mono text-lg font-bold tracking-tight">{c.id}</span>
+                <span className="text-[1.0625rem] font-semibold tracking-tight">
+                  {c.name}
+                  {summaries[c.id] ? (
+                    <span className="mt-1 block text-[0.9375rem] font-normal text-ink-2">{summaries[c.id]}</span>
+                  ) : null}
+                </span>
+                <span className="col-start-2 flex flex-wrap items-center gap-1.5 sm:col-start-auto">
+                  {isNewIn22(c) ? <NewBadge /> : null}
+                  {isObsolete(c) ? <span className="font-mono text-xs text-ink-2">wycofane w 2.2</span> : null}
+                  <LevelBadge level={c.level} />
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <p className="mt-6 text-ink-2">Żadne kryterium nie spełnia tych filtrów.</p>
+      )}
+    </>
+  );
+}
+
+function FilterGroup({ legend, children }: { legend: string; children: ReactNode }) {
+  return (
+    <fieldset className="flex flex-wrap items-center gap-2">
+      <legend className="float-left mr-1 font-mono text-xs font-semibold tracking-widest text-ink-2 uppercase">
+        {legend}
+      </legend>
+      {children}
+    </fieldset>
+  );
+}
+
+/**
+ * A native radio or checkbox dressed as a chip. The input stays in the accessibility tree and
+ * handles keyboard and state; the checked state shows as a tick and the marker, never colour alone.
+ */
+function Chip({
+  type,
+  name,
+  checked,
+  onChange,
+  children,
+}: {
+  type: "radio" | "checkbox";
+  name?: string;
+  checked: boolean;
+  onChange: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <label className="inline-flex min-h-11 cursor-pointer items-center rounded border border-control bg-surface px-3 text-sm font-medium has-checked:border-on-marker has-checked:bg-marker has-checked:font-bold has-checked:text-on-marker has-focus-visible:outline-3 has-focus-visible:outline-offset-2 has-focus-visible:outline-accent">
+      <input type={type} name={name} checked={checked} onChange={onChange} className="sr-only" />
+      {checked ? (
+        <span aria-hidden="true" className="mr-1 font-mono">
+          ✓
+        </span>
+      ) : null}
+      {children}
+    </label>
+  );
+}

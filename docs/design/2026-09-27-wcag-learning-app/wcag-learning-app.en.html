@@ -43,7 +43,7 @@
 <p class="meta"><a href="wcag-learning-app.pl.html" hreflang="pl">Wersja polska</a></p>
 
 <h1>Plan: accessibility learning app</h1>
-<p class="meta">WCAG 2.1 (A/AA/AAA), WCAG 2.2, WCAG 3.0 draft, Polish law and the EAA. TanStack Start, shadcn/ui, Tailwind, Convex. Plan version: 2026-09-27.</p>
+<p class="meta">WCAG 2.1 (A/AA/AAA), WCAG 2.2, WCAG 3.0 draft, Polish law and the EAA. TanStack Start, shadcn/ui, Tailwind, Convex. Plan version: 2026-09-27, updated 2026-09-27.</p>
 
 <ol class="toc">
   <li><a href="#goal">Product goal</a></li>
@@ -63,6 +63,16 @@
   <li><a href="#risks">Risks</a></li>
   <li><a href="#questions">Decisions needed before we start</a></li>
 </ol>
+
+<h2 id="changes">Changes after work started</h2>
+<p>Decisions made while building phases 0 and 1. Where they conflict with the sections below, these win.</p>
+<ul>
+  <li><strong>Content in Markdown, not TypeScript modules (section 5).</strong> The editorial content of a criterion lives in <code>content/kryteria/&lt;id&gt;.md</code>: frontmatter (<code>summary</code>, <code>roles</code>, <code>related</code>, <code>lastVerified</code>) plus fixed <code>##</code> sections. ArkType validates every file at build time and Vitest covers the rules. Numbers, names, levels and versions stay in generated TypeScript (<code>src/content/wcag.gen.ts</code>), so <code>CriterionId</code> is still a union type. The trade-off: a dead reference in Markdown fails a test, not <code>tsc</code>.</li>
+  <li><strong>Notion later.</strong> Content will eventually be edited in Notion. A sync script will write the same Markdown files and the result will go through a PR, so the format above is the contract. It gets built once a Notion database exists.</li>
+  <li><strong>Polish only, including the standard (sections 4.1 and 13).</strong> No toggle to the English original. Criterion names come from the authorized W3C translation of WCAG 2.1. The nine criteria new in 2.2 use the unofficial IRDPL translation, marked as such on the page, because W3C has no authorized Polish translation of 2.2. Links to the English specification stay as sources and are labelled as English.</li>
+  <li><strong>Hosting: Vercel (section 16).</strong> Every page is prerendered at build time.</li>
+  <li><strong>No accessibility statement for now (section 11).</strong></li>
+</ul>
 
 <h2 id="goal">1. Product goal</h2>
 <p>One place where somebody building a digital product in Poland learns three things: what a WCAG criterion actually says, what it looks like in code, and which Polish statute requires it of them. Today those three layers sit in three different places: the standard on w3.org, the explanations in the Understanding documents, the obligations in the Journal of Laws. The app stitches them together.</p>
