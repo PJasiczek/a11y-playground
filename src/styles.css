@@ -65,3 +65,65 @@
     }
   }
 }
+
+/*
+ * Rendered Markdown from content/kryteria. Bullet glyphs use the `content: x / ""` form
+ * so screen readers skip them.
+ */
+@layer components {
+  .prose {
+    & p,
+    & li {
+      max-width: 68ch;
+    }
+    & p + p,
+    & ul + p,
+    & ol + p {
+      margin-top: 1rem;
+    }
+    & h3 {
+      margin: 1.1rem 0 0.3rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-2);
+    }
+    & ul {
+      list-style: none;
+    }
+    & ul > li {
+      position: relative;
+      padding: 0.35rem 0 0.35rem 1.6rem;
+    }
+    & ul > li::before {
+      content: "→" / "";
+      position: absolute;
+      left: 0;
+      font-family: var(--font-mono);
+      color: var(--accent);
+    }
+    & ol {
+      list-style: decimal;
+      padding-left: 1.4rem;
+    }
+    & ol > li {
+      padding: 0.2rem 0;
+    }
+    & code {
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+    }
+    & a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  }
+
+  .prose[data-section="typowe-bledy"] ul > li::before {
+    content: "✕" / "";
+    color: var(--bad);
+  }
+}

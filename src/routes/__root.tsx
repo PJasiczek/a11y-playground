@@ -1,4 +1,4 @@
-import { createRootRoute, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
+import { createRootRoute, HeadContent, Link, Outlet, Scripts } from "@tanstack/react-router";
 import { RouteAnnouncer } from "~/components/route-announcer";
 import { SiteHeader } from "~/components/site-header";
 import { themeInitScript } from "~/components/theme-toggle";
@@ -15,7 +15,23 @@ export const Route = createRootRoute({
     links: [{ rel: "stylesheet", href: stylesUrl }],
   }),
   component: RootDocument,
+  notFoundComponent: NotFound,
 });
+
+function NotFound() {
+  return (
+    <div className="py-10">
+      <h1 className="text-[1.875rem] font-bold tracking-tight">Nie ma takiej strony</h1>
+      <p className="mt-3 text-ink-2">
+        Sprawdź adres albo wróć do{" "}
+        <Link to="/kryteria" className="text-accent underline underline-offset-3">
+          listy kryteriów
+        </Link>
+        .
+      </p>
+    </div>
+  );
+}
 
 function RootDocument() {
   return (

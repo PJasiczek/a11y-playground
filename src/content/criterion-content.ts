@@ -1,6 +1,7 @@
 import { type } from "arktype";
 import { marked } from "marked";
 import { parse as parseYaml } from "yaml";
+import { contentSections, type SectionKey } from "./sections";
 import { type CriterionId, isCriterionId } from "./wcag";
 
 /**
@@ -8,17 +9,6 @@ import { type CriterionId, isCriterionId } from "./wcag";
  * Server-only: this module pulls in the Markdown parser and every content file,
  * so the app reaches it through server functions, never from a component.
  */
-
-/** Sections an author may write, as `## <title>`, in this order. */
-export const contentSections = [
-  { key: "kogo-dotyczy", title: "Kogo to dotyczy" },
-  { key: "jak-spelnic", title: "Jak to spełnić" },
-  { key: "typowe-bledy", title: "Typowe błędy" },
-  { key: "jak-sprawdzic", title: "Jak sprawdzić" },
-  { key: "czeste-pomylki", title: "Częste pomyłki" },
-] as const;
-
-export type SectionKey = (typeof contentSections)[number]["key"];
 
 export const roles = ["programista", "projektant", "autor treści", "tester"] as const;
 
