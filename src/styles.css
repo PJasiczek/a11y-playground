@@ -122,6 +122,37 @@
     }
   }
 
+  /* Normative text imported from the W3C translation: definition lists and "Uwaga" notes. */
+  .normative {
+    & p,
+    & li,
+    & dd {
+      max-width: 68ch;
+    }
+    & p + p,
+    & dl,
+    & ul,
+    & blockquote {
+      margin-top: 0.75rem;
+    }
+    & ul {
+      list-style: disc;
+      padding-left: 1.3rem;
+    }
+    & dt {
+      margin-top: 0.6rem;
+      font-weight: 700;
+    }
+    & dd {
+      margin-left: 1rem;
+    }
+    & blockquote {
+      border-left: 3px solid var(--rule);
+      padding-left: 0.85rem;
+      font-size: 0.9375rem;
+    }
+  }
+
   .prose[data-section="typowe-bledy"] ul > li::before {
     content: "✕" / "";
     color: var(--bad);

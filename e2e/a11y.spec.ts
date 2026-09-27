@@ -39,3 +39,13 @@ for (const route of routes) {
     expect(tooSmall).toEqual([]);
   });
 }
+
+test("normative text opens from the keyboard and has no axe violations", async ({ page }) => {
+  await page.goto("/kryteria/1.4.3");
+  const summary = page.getByText("Rozwiń dosłowne brzmienie kryterium 1.4.3");
+  await summary.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.getByText("Logotyp", { exact: true })).toBeVisible();
+  const { violations } = await new AxeBuilder({ page }).withTags(tags).analyze();
+  expect(violations).toEqual([]);
+});
