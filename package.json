@@ -17,6 +17,7 @@
     "@tanstack/react-start": "^1.168.58",
     "arktype": "^2.2.5",
     "marked": "^18.0.14",
+    "minisearch": "^7.2.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "yaml": "^2.9.1"
