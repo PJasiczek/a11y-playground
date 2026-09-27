@@ -1,0 +1,37 @@
+import { expect, test } from "@playwright/test";
+
+test("skip link is the first stop and moves focus into main", async ({ page }) => {
+  await page.goto("/");
+  await page.keyboard.press("Tab");
+  const skip = page.getByRole("link", { name: "Przejdź do treści" });
+  await expect(skip).toBeFocused();
+  await expect(skip).toBeVisible();
+  const box = await skip.boundingBox();
+  expect(box?.height).toBeGreaterThanOrEqual(44);
+  await page.keyboard.press("Enter");
+  await expect(page.locator("main")).toBeFocused();
+});
+
+test("navigating from the keyboard moves focus to the new h1 and announces the title", async ({ page }) => {
+  await page.goto("/");
+  const link = page.getByRole("navigation", { name: "Główna" }).getByRole("link", { name: "Prawo" });
+  await link.focus();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL("/prawo");
+  await expect(page.getByRole("heading", { level: 1, name: "Prawo" })).toBeFocused();
+  await expect(page.locator("[aria-live=polite]")).toHaveText("Prawo · a11y playground");
+  await expect(link).toHaveAttribute("aria-current", "page");
+});
+
+test("theme toggle works from the keyboard and survives a reload", async ({ page }) => {
+  await page.emulateMedia({ colorScheme: "light" });
+  await page.goto("/");
+  const toggle = page.getByRole("button", { name: "Tryb ciemny" });
+  await expect(toggle).toHaveAttribute("aria-pressed", "false");
+  await toggle.focus();
+  await page.keyboard.press("Space");
+  await expect(toggle).toHaveAttribute("aria-pressed", "true");
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await expect(toggle).toHaveAttribute("aria-pressed", "true");
+});

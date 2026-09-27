@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>a11y playground — variant A, remaining screens</title>
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&display=swap");
+  :root {
+    --paper:   #FBFAF7;
+    --paper-2: #F1EFE8;
+    --white:   #FFFFFF;
+    --ink:     #14171A;
+    --ink-2:   #545A60;
+    --rule:    #DFDBD1;
+    --rule-2:  #C9C4B8;
+    --indigo:  #2C36A8;
+    --marker:  #F4E75B;
+    --good:    #17603F;
+    --bad:     #9A1B1B;
+    --sans: "Inter var", Inter, "Segoe UI", -apple-system, system-ui, sans-serif;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, "SF Mono", monospace;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; padding: 2.5rem 1rem 6rem; background: #0A0B0C; color: #fff; font: 16px/1.6 var(--sans); }
+  .page { max-width: 1180px; margin: 0 auto; }
+  .page > h1 { font-size: 1.4rem; margin: 0 0 .35rem; letter-spacing: -.02em; }
+  .page > p { color: #9AA0A6; font-size: .875rem; margin: 0 0 2rem; max-width: 74ch; }
+  .page > h2 { font: 600 .8rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; margin: 3.5rem 0 .4rem; }
+  .note { color: #9AA0A6; font-size: .875rem; margin: 0 0 .9rem; max-width: 74ch; }
+  .frame { border: 1px solid #23262A; border-radius: 6px; overflow: hidden; }
+  code { font-family: var(--mono); font-size: .9em; }
+
+  /* ---------- shared app chrome ---------- */
+  .s { background: var(--paper); color: var(--ink); font-family: var(--sans); }
+  .s a { text-decoration: none; color: inherit; }
+  .s a:focus-visible, .s button:focus-visible, .s input:focus-visible, .s summary:focus-visible {
+    outline: 3px solid var(--indigo); outline-offset: 2px;
+  }
+  .s .wrap { max-width: 980px; margin: 0 auto; padding: 0 1.75rem; }
+  .s .bar { display: flex; align-items: center; gap: 1.25rem; min-height: 60px; border-bottom: 1px solid var(--rule); }
+  .s .mark { font: 700 1.0625rem/1 var(--sans); letter-spacing: -.02em; }
+  .s .mark span { font-family: var(--mono); font-weight: 700; letter-spacing: -.03em; }
+  .s nav.main { margin-left: auto; display: flex; gap: .25rem; }
+  .s nav.main a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 .7rem; font-size: .9375rem; color: var(--ink-2); border-radius: 4px; }
+  .s nav.main a:hover { color: var(--ink); background: var(--paper-2); }
+  .s nav.main a[aria-current] { color: var(--ink); font-weight: 600; box-shadow: inset 0 -2px 0 var(--ink); border-radius: 0; }
+  .s .crumbs { display: flex; flex-wrap: wrap; gap: .4rem; padding: 1rem 0 0; font: 400 .8125rem var(--mono); color: var(--ink-2); }
+  .s .crumbs a { text-decoration: underline; text-underline-offset: 3px; }
+  .s .lvl { font: 600 .75rem/1 var(--mono); letter-spacing: .04em; border: 1px solid currentColor; border-radius: 2px; padding: .22rem .32rem; white-space: nowrap; }
+  .s .new { font: 600 .75rem/1 var(--mono); background: var(--marker); border: 1px solid var(--ink); border-radius: 2px; padding: .22rem .32rem; white-space: nowrap; }
+  .s .foot { border-top: 1px solid var(--rule); margin-top: 2.5rem; padding: 1rem 0 1.5rem; display: flex; flex-wrap: wrap; gap: .4rem 1.5rem; font-size: .8125rem; color: var(--ink-2); }
+  .s .foot .mono { font-family: var(--mono); }
+  .s .foot a { color: var(--indigo); text-decoration: underline; text-underline-offset: 3px; }
+  .mk { background: linear-gradient(transparent 62%, var(--marker) 62%, var(--marker) 96%, transparent 96%); }
+  .s .btn { display: inline-flex; align-items: center; min-height: 44px; padding: 0 1.1rem; border: 2px solid var(--ink); background: var(--marker); color: var(--ink); font: 700 .9375rem var(--sans); border-radius: 4px; cursor: pointer; }
+  .s .btn:hover { background: var(--white); }
+  .s .btn-quiet { display: inline-flex; align-items: center; min-height: 44px; padding: 0 1rem; border: 1px solid var(--rule-2); background: var(--white); color: var(--ink); font: 600 .9375rem var(--sans); border-radius: 4px; cursor: pointer; }
+  .s .btn-quiet:hover { border-color: var(--ink); }
+  .s .link { color: var(--indigo); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+
+  /* ---------- filter chips ---------- */
+  .s .chips { display: flex; flex-wrap: wrap; gap: .4rem; }
+  .s .chip { display: inline-flex; align-items: center; min-height: 40px; padding: 0 .7rem; font: 500 .875rem var(--sans); color: var(--ink); background: var(--white); border: 1px solid var(--rule-2); border-radius: 4px; cursor: pointer; }
+  .s .chip[aria-pressed="true"] { background: var(--marker); border-color: var(--ink); font-weight: 700; }
+  .s .chip[aria-pressed="true"]::before { content: "✓\00a0"; font-family: var(--mono); }
+
+  /* ---------- criteria list ---------- */
+  .lst .head { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem 1.25rem; padding: 2rem 0 1rem; }
+  .lst h3 { font-size: 1.875rem; letter-spacing: -.03em; margin: 0; }
+  .lst .count { font: 400 .875rem var(--mono); color: var(--ink-2); }
+  .lst .searchrow { display: flex; max-width: 34rem; border: 2px solid var(--ink); border-radius: 4px; background: var(--white); margin: 0 0 1.25rem; }
+  .lst .searchrow input { flex: 1; min-width: 0; min-height: 44px; border: 0; background: none; padding: 0 .8rem; font: 400 1rem var(--sans); color: var(--ink); }
+  .lst .searchrow button { min-height: 44px; padding: 0 1rem; border: 0; border-left: 2px solid var(--ink); background: var(--marker); font: 700 .9375rem var(--sans); cursor: pointer; }
+  .lst .filters { display: flex; flex-wrap: wrap; gap: .75rem 1.5rem; padding: 0 0 1.25rem; border-bottom: 1px solid var(--rule); }
+  .lst .fgroup { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+  .lst .flabel { font: 600 .75rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+  .lst .applied { padding: .9rem 0; font-size: .9375rem; color: var(--ink-2); }
+  .lst ol { list-style: none; margin: 0; padding: 0; }
+  .lst li { border-top: 1px solid var(--rule); }
+  .lst li:last-child { border-bottom: 1px solid var(--rule); }
+  .lst .row { display: grid; grid-template-columns: 4.75rem 1fr auto; gap: .35rem 1rem; align-items: baseline; padding: 1rem .5rem; }
+  .lst .row:hover { background: var(--white); }
+  .lst .id { font: 700 1.125rem/1.25 var(--mono); letter-spacing: -.03em; }
+  .lst .name { font-size: 1.0625rem; font-weight: 600; letter-spacing: -.01em; }
+  .lst .name em { display: block; font-style: normal; font-size: .9375rem; font-weight: 400; color: var(--ink-2); margin-top: .2rem; }
+  .lst .tags { display: flex; gap: .4rem; align-items: center; }
+
+  /* ---------- criterion page ---------- */
+  .cr .hd { padding: 1.5rem 0 2rem; border-bottom: 1px solid var(--rule); }
+  .cr .num { font: 700 clamp(2.5rem, 8vw, 4rem)/.9 var(--mono); letter-spacing: -.06em; display: block; margin: 0 0 .5rem; }
+  .cr h3 { font-size: clamp(1.5rem, 4vw, 2.125rem); letter-spacing: -.03em; line-height: 1.12; margin: 0 0 .9rem; }
+  .cr .badges { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; font: 400 .8125rem var(--mono); color: var(--ink-2); }
+  .cr .one { font-size: 1.25rem; line-height: 1.5; margin: 1.75rem 0 0; max-width: 56ch; }
+  .cr .grid { display: grid; gap: 2.5rem; padding: 2rem 0 0; }
+  @media (min-width: 60rem) { .cr .grid { grid-template-columns: 1fr 13rem; gap: 3rem; } .cr .rail { order: 2; } }
+  .cr .rail { align-self: start; }
+  .cr .rail h4 { font: 600 .75rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 .6rem; }
+  .cr .rail ol { list-style: none; margin: 0; padding: 0; counter-reset: r; }
+  .cr .rail li { border-top: 1px solid var(--rule); }
+  .cr .rail a { display: block; padding: .55rem 0; font-size: .875rem; color: var(--ink-2); }
+  .cr .rail a:hover { color: var(--ink); }
+  .cr section { padding: 0 0 2.25rem; }
+  .cr section > h4 { font-size: 1.25rem; letter-spacing: -.02em; margin: 0 0 .75rem; padding-top: 1.25rem; border-top: 2px solid var(--ink); }
+  .cr p { max-width: 68ch; }
+  .cr ul.do { list-style: none; margin: 0; padding: 0; }
+  .cr ul.do li { position: relative; padding: .35rem 0 .35rem 1.6rem; max-width: 68ch; }
+  .cr ul.do li::before { content: "→"; position: absolute; left: 0; font-family: var(--mono); color: var(--indigo); }
+  .cr .role { font: 600 .75rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin: 1.1rem 0 .3rem; }
+  .cr ul.dont { list-style: none; margin: 0; padding: 0; }
+  .cr ul.dont li { position: relative; padding: .35rem 0 .35rem 1.6rem; max-width: 68ch; }
+  .cr ul.dont li::before { content: "✕"; position: absolute; left: 0; font-family: var(--mono); color: var(--bad); }
+  .cr details { border: 1px solid var(--rule-2); border-radius: 4px; background: var(--white); }
+  .cr summary { cursor: pointer; padding: .8rem 1rem; font-weight: 600; font-size: .9375rem; min-height: 44px; display: flex; align-items: center; }
+  .cr details .body { padding: 0 1rem 1rem; }
+  .cr details .body p { margin: .4rem 0; }
+  .cr blockquote { margin: 0; padding: 0 0 0 1rem; border-left: 3px solid var(--marker); font-size: .9375rem; }
+  .cr .split { display: grid; gap: 1rem; }
+  @media (min-width: 46rem) { .cr .split { grid-template-columns: 1fr 1fr; } }
+  .cr .test { border: 1px solid var(--rule-2); background: var(--white); border-radius: 4px; padding: 1rem 1.1rem; }
+  .cr .test h5 { font: 600 .8125rem var(--mono); letter-spacing: .06em; text-transform: uppercase; margin: 0 0 .5rem; color: var(--ink-2); }
+  .cr .test ol, .cr .test ul { margin: 0; padding-left: 1.2rem; font-size: .9375rem; }
+  .cr table { width: 100%; border-collapse: collapse; font-size: .9375rem; }
+  .cr th, .cr td { text-align: left; vertical-align: top; padding: .6rem .5rem; border-bottom: 1px solid var(--rule); }
+  .cr th { font: 600 .75rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+  .cr td .mono { font-family: var(--mono); font-weight: 600; }
+  .cr .rel { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .cr .rel a { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; padding: 0 .7rem; border: 1px solid var(--rule-2); border-radius: 4px; background: var(--white); font-size: .9375rem; }
+  .cr .rel a:hover { border-color: var(--ink); }
+  .cr .rel a b { font-family: var(--mono); }
+  .cr .verified { font: 400 .8125rem var(--mono); color: var(--ink-2); }
+
+  /* ---------- example, bad vs good ---------- */
+  .ex .panes { display: grid; gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; }
+  @media (min-width: 52rem) { .ex .panes { grid-template-columns: 1fr 1fr; } }
+  .ex .pane { background: var(--white); padding: 1.1rem 1.25rem 1.5rem; }
+  .ex .tag { display: inline-flex; align-items: center; gap: .45rem; font: 700 .8125rem var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+  .ex .tag.b { color: var(--bad); }
+  .ex .tag.g { color: var(--good); }
+  .ex .why { font-size: .9375rem; color: var(--ink-2); margin: .5rem 0 1rem; }
+  .ex .stage { border: 1px dashed var(--rule-2); background: var(--paper-2); border-radius: 3px; padding: 1.25rem; display: flex; align-items: center; justify-content: center; min-height: 6.5rem; }
+  .ex .stagenote { font: 400 .75rem var(--mono); color: var(--ink-2); margin: .5rem 0 0; }
+  .ex .fake-bad { background: #EDEDEA; color: #B9B9B4; border: 1px solid #DCDCD8; border-radius: 3px; padding: .5rem .8rem; font-size: .875rem; }
+  .ex .fake-good { background: var(--ink); color: var(--white); border-radius: 3px; padding: .7rem 1rem; font-size: .9375rem; font-weight: 600; }
+  .ex pre { margin: 1rem 0 0; background: #101314; color: #E8E6E1; border-radius: 3px; padding: .85rem 1rem; overflow-x: auto; }
+  .ex pre code { font-size: .8125rem; line-height: 1.55; }
+  .ex .sr { margin: 1rem 0 0; border-top: 1px solid var(--rule); padding-top: .8rem; }
+  .ex .sr h5 { font: 600 .75rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 .4rem; }
+  .ex .sr p { font-size: .9375rem; margin: 0; }
+  .ex .sr q { font-family: var(--mono); font-size: .875rem; }
+
+  /* ---------- law ---------- */
+  .lw .grid { display: grid; gap: 2.5rem; padding: 1.5rem 0 0; }
+  @media (min-width: 60rem) { .lw .grid { grid-template-columns: 15rem 1fr; gap: 3rem; } }
+  .lw .toc h4 { font: 600 .75rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 .6rem; }
+  .lw .toc ul { list-style: none; margin: 0; padding: 0; }
+  .lw .toc li { border-top: 1px solid var(--rule); }
+  .lw .toc a { display: flex; gap: .6rem; padding: .55rem 0; font-size: .9375rem; color: var(--ink-2); }
+  .lw .toc a:hover { color: var(--ink); }
+  .lw .toc a[aria-current] { color: var(--ink); font-weight: 700; }
+  .lw .toc .n { font-family: var(--mono); min-width: 3.5rem; }
+  .lw .act { font: 400 .8125rem var(--mono); color: var(--ink-2); margin: 0 0 .6rem; }
+  .lw h3 { font-size: clamp(1.5rem, 4vw, 2rem); letter-spacing: -.03em; line-height: 1.15; margin: 0 0 1rem; max-width: 34ch; }
+  .lw .plain { font-size: 1.125rem; line-height: 1.55; max-width: 62ch; }
+  .lw .who { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; margin: 1.5rem 0; padding: .9rem 1rem; background: var(--white); border: 1px solid var(--rule-2); border-radius: 4px; font-size: .9375rem; }
+  .lw .who b { font: 600 .75rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); display: block; }
+  .lw details { border: 1px solid var(--rule-2); border-radius: 4px; background: var(--white); margin: 0 0 2rem; }
+  .lw summary { cursor: pointer; padding: .8rem 1rem; font-weight: 600; font-size: .9375rem; min-height: 44px; display: flex; align-items: center; }
+  .lw details .body { padding: 0 1rem 1rem; font-size: .9375rem; }
+  .lw details .body p { margin: .5rem 0; }
+  .lw h4.sec { font-size: 1.125rem; letter-spacing: -.02em; margin: 0 0 .75rem; padding-top: 1.1rem; border-top: 2px solid var(--ink); }
+  .lw ul.crit { list-style: none; margin: 0; padding: 0; }
+  .lw ul.crit li { border-bottom: 1px solid var(--rule); }
+  .lw ul.crit a { display: grid; grid-template-columns: 4.5rem 1fr auto; gap: .75rem; align-items: baseline; padding: .7rem .25rem; }
+  .lw ul.crit a:hover { background: var(--white); }
+  .lw ul.crit .id { font: 700 1rem var(--mono); letter-spacing: -.02em; }
+  .lw .strength { font: 400 .75rem var(--mono); color: var(--ink-2); }
+
+  /* ---------- mapping ---------- */
+  .mp .pick { padding: 1.75rem 0 1.25rem; }
+  .mp h3 { font-size: 1.875rem; letter-spacing: -.03em; margin: 0 0 .5rem; }
+  .mp .q { font-size: 1rem; color: var(--ink-2); margin: 0 0 1rem; max-width: 60ch; }
+  .mp .tl { list-style: none; margin: 1.5rem 0 0; padding: 0; }
+  .mp .tl > li { display: grid; grid-template-columns: 7.5rem 1fr; gap: 1rem; padding: 1.1rem 0; border-top: 1px solid var(--rule); }
+  .mp .tl > li:last-child { border-bottom: 1px solid var(--rule); }
+  .mp .when { font: 700 .9375rem var(--mono); letter-spacing: -.01em; }
+  .mp .when em { display: block; font-style: normal; font-weight: 400; font-size: .8125rem; color: var(--ink-2); margin-top: .2rem; }
+  .mp .what { font-weight: 600; font-size: 1.0625rem; margin: 0 0 .3rem; }
+  .mp .src { font-size: .9375rem; color: var(--ink-2); margin: 0; }
+  .mp details { margin-top: .6rem; }
+  .mp summary { cursor: pointer; min-height: 44px; display: inline-flex; align-items: center; font-size: .9375rem; color: var(--indigo); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+  .mp .pills { display: flex; flex-wrap: wrap; gap: .4rem; padding: .6rem 0 0; }
+  .mp .pills a { display: inline-flex; align-items: center; min-height: 40px; padding: 0 .6rem; border: 1px solid var(--rule-2); border-radius: 4px; background: var(--white); font: 600 .875rem var(--mono); }
+  .mp .pills a:hover { border-color: var(--ink); }
+  @media (max-width: 40rem) { .mp .tl > li { grid-template-columns: 1fr; gap: .35rem; } }
+
+  /* ---------- path + quiz ---------- */
+  .pt .hd { padding: 1.75rem 0 1.25rem; }
+  .pt h3 { font-size: 1.875rem; letter-spacing: -.03em; margin: 0 0 .5rem; }
+  .pt .meta { font: 400 .875rem var(--mono); color: var(--ink-2); margin: 0 0 1.25rem; }
+  .pt ol.les { list-style: none; margin: 0; padding: 0; counter-reset: l; }
+  .pt ol.les li { border-top: 1px solid var(--rule); counter-increment: l; }
+  .pt ol.les li:last-child { border-bottom: 1px solid var(--rule); }
+  .pt ol.les a { display: grid; grid-template-columns: 2.5rem 1fr auto; gap: 1rem; align-items: baseline; padding: .85rem .25rem; }
+  .pt ol.les a:hover { background: var(--white); }
+  .pt ol.les .n { font: 700 .9375rem var(--mono); color: var(--ink-2); }
+  .pt ol.les .t { font-size: 1.0625rem; font-weight: 600; }
+  .pt ol.les .t em { display: block; font-style: normal; font-weight: 400; font-size: .9375rem; color: var(--ink-2); margin-top: .15rem; }
+  .pt ol.les .st { font: 600 .75rem var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); white-space: nowrap; }
+  .pt ol.les li[data-state="done"] .st { color: var(--good); }
+  .pt ol.les li[data-state="here"] { background: var(--white); box-shadow: inset 3px 0 0 var(--marker); }
+  .pt ol.les li[data-state="here"] .st { color: var(--ink); }
+  .pt .quiz { margin: 2.5rem 0 0; border: 2px solid var(--ink); border-radius: 4px; background: var(--white); padding: 1.5rem 1.5rem 1.75rem; }
+  .pt .quiz .qn { font: 600 .75rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 .6rem; }
+  .pt .quiz h4 { font-size: 1.25rem; letter-spacing: -.02em; margin: 0 0 1rem; max-width: 52ch; }
+  .pt .quiz .opts { display: grid; gap: .5rem; }
+  .pt .quiz .opt { display: flex; gap: .75rem; align-items: baseline; text-align: left; width: 100%; min-height: 48px; padding: .7rem .9rem; border: 1px solid var(--rule-2); border-radius: 4px; background: var(--paper); font: 400 1rem/1.45 var(--sans); color: var(--ink); cursor: pointer; }
+  .pt .quiz .opt:hover { border-color: var(--ink); }
+  .pt .quiz .opt .k { font: 700 .9375rem var(--mono); }
+  .pt .quiz .opt[aria-pressed="true"] { border-color: var(--ink); border-width: 2px; background: var(--marker); font-weight: 600; }
+  .pt .quiz .fb { margin: 1.25rem 0 0; border-left: 3px solid var(--bad); padding: .1rem 0 .1rem .9rem; }
+  .pt .quiz .fb p { margin: 0 0 .4rem; }
+  .pt .quiz .fb .v { font: 700 .8125rem var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--bad); }
+  .pt .quiz .acts { display: flex; flex-wrap: wrap; gap: .6rem; margin: 1.25rem 0 0; }
+
+  /* ---------- search ---------- */
+  .sr .hd { padding: 1.75rem 0 1rem; }
+  .sr .searchrow { display: flex; max-width: 38rem; border: 2px solid var(--ink); border-radius: 4px; background: var(--white); }
+  .sr .searchrow input { flex: 1; min-width: 0; min-height: 48px; border: 0; background: none; padding: 0 .85rem; font: 400 1rem var(--sans); color: var(--ink); }
+  .sr .searchrow button { min-height: 48px; padding: 0 1.1rem; border: 0; border-left: 2px solid var(--ink); background: var(--marker); font: 700 .9375rem var(--sans); cursor: pointer; }
+  .sr .count { font: 400 .875rem var(--mono); color: var(--ink-2); margin: .9rem 0 0; }
+  .sr h4 { font: 600 .75rem var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); margin: 2rem 0 .5rem; }
+  .sr ul { list-style: none; margin: 0; padding: 0; }
+  .sr li { border-top: 1px solid var(--rule); }
+  .sr li:last-child { border-bottom: 1px solid var(--rule); }
+  .sr a.res { display: grid; grid-template-columns: 5.5rem 1fr; gap: .35rem 1rem; padding: .9rem .25rem; }
+  .sr a.res:hover { background: var(--white); }
+  .sr .k { font: 600 .8125rem var(--mono); color: var(--ink-2); }
+  .sr .t { font-size: 1.0625rem; font-weight: 600; }
+  .sr .t em { display: block; font-style: normal; font-weight: 400; font-size: .9375rem; color: var(--ink-2); margin-top: .15rem; }
+  .sr mark { background: var(--marker); color: var(--ink); }
+
+  /* ---------- home ---------- */
+  .hm .hero { padding: 3.5rem 0 2.25rem; }
+  .hm .eyebrow { font: 400 .8125rem/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 1.1rem; }
+  .hm h3 { font-size: clamp(2rem, 5.2vw, 3.125rem); line-height: 1.05; letter-spacing: -.035em; margin: 0 0 1.1rem; max-width: 22ch; }
+  .hm .lead { font-size: 1.0625rem; color: var(--ink-2); margin: 0 0 1.75rem; max-width: 56ch; }
+  .hm .searchrow { display: flex; max-width: 34rem; border: 2px solid var(--ink); border-radius: 4px; background: var(--white); }
+  .hm .searchrow input { flex: 1; min-width: 0; min-height: 48px; border: 0; background: none; padding: 0 .9rem; font: 400 1rem var(--sans); color: var(--ink); }
+  .hm .searchrow button { min-height: 48px; padding: 0 1.1rem; border: 0; border-left: 2px solid var(--ink); background: var(--marker); font: 700 .9375rem var(--sans); cursor: pointer; }
+  .hm .fixhead { display: flex; flex-wrap: wrap; align-items: baseline; gap: .4rem 1.25rem; padding: 1.1rem 0 1rem; border-top: 2px solid var(--ink); }
+  .hm .fixhead h4 { font-size: 1.5rem; letter-spacing: -.03em; margin: 0; }
+  .hm .fixhead p { font: 400 .875rem var(--mono); color: var(--ink-2); margin: 0; }
+  .hm .legend { font-size: .9375rem; color: var(--ink-2); margin: 0 0 1.25rem; max-width: 62ch; }
+  .hm .cards { display: grid; gap: 1px; background: var(--rule); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+  @media (min-width: 44rem) { .hm .cards { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 68rem) { .hm .cards { grid-template-columns: repeat(3, 1fr); } }
+  .hm .card { background: var(--paper); padding: 1.25rem 1.25rem 1.5rem; display: flex; flex-direction: column; }
+  .hm .card:hover { background: var(--white); }
+  .hm .card .stage { border: 1px dashed var(--rule-2); background: var(--paper-2); border-radius: 3px; min-height: 5rem; display: flex; align-items: center; justify-content: center; padding: .9rem; margin: 0 0 1rem; }
+  .hm .card h5 { font-size: 1.0625rem; letter-spacing: -.01em; margin: 0 0 .4rem; }
+  .hm .card .fix { font-size: .9375rem; color: var(--ink-2); margin: 0 0 .9rem; }
+  .hm .card .gain { font-size: .9375rem; margin: 0 0 1.1rem; padding: .1rem 0 .1rem .8rem; border-left: 4px solid var(--marker); }
+  .hm .card .gain b { font-weight: 600; }
+  .hm .card .row { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; margin-top: auto; }
+  .hm .card .row .sc { font: 700 .8125rem var(--mono); color: var(--indigo); text-decoration: underline; text-underline-offset: 3px; }
+  .hm .card .eff { font: 400 .75rem var(--mono); color: var(--ink-2); border: 1px solid var(--rule-2); border-radius: 2px; padding: .2rem .35rem; margin-left: auto; }
+  .hm .fake { font-size: .9375rem; }
+  .hm .fake-x { background: #EDEDEA; color: #BDBDB8; border: 1px solid #DCDCD8; border-radius: 3px; padding: .45rem .7rem; }
+  .hm .fake-in { background: var(--white); border: 1px solid var(--rule-2); border-radius: 3px; padding: .5rem .7rem; width: 100%; color: #B9B9B4; font-size: .875rem; }
+  .hm .fake-in.err { border: 2px solid #D33; }
+  .hm .fake-btn { background: var(--ink); color: var(--white); border-radius: 3px; padding: .5rem .85rem; font-size: .875rem; font-weight: 600; }
+  .hm .fake-code { font: 400 .75rem/1.5 var(--mono); color: var(--ink-2); word-break: break-all; }
+  .hm .fake-code b { color: var(--bad); font-weight: 700; }
+  .hm .rest { padding: 2rem 0 0; }
+  .hm .rest h4 { font-size: 1.25rem; letter-spacing: -.02em; margin: 0 0 .25rem; }
+  .hm .rest p.sub { font: 400 .875rem var(--mono); color: var(--ink-2); margin: 0 0 1rem; }
+  .hm ul.rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; background: var(--rule); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+  @media (min-width: 52rem) { .hm ul.rows { grid-template-columns: 1fr 1fr; } }
+  .hm ul.rows a { display: grid; grid-template-columns: 1fr auto; gap: .2rem .75rem; background: var(--paper); padding: .85rem 1rem; }
+  .hm ul.rows a:hover { background: var(--white); }
+  .hm ul.rows .t { font-weight: 600; font-size: 1rem; }
+  .hm ul.rows .g { grid-column: 1; font-size: .9375rem; color: var(--ink-2); }
+  .hm ul.rows .m { grid-column: 2; grid-row: 1 / span 2; align-self: center; text-align: right; font: 400 .75rem/1.5 var(--mono); color: var(--ink-2); white-space: nowrap; }
+  .hm ul.rows .m b { display: block; color: var(--indigo); font-weight: 700; font-size: .8125rem; }
+  .hm .doors { display: grid; gap: 1px; background: var(--rule); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); margin-top: 3rem; }
+  @media (min-width: 52rem) { .hm .doors { grid-template-columns: repeat(3, 1fr); } }
+  .hm .door { background: var(--paper); padding: 1.5rem 1.25rem 1.75rem; }
+  .hm .door:hover { background: var(--white); }
+  .hm .door .n { font: 400 .8125rem/1 var(--mono); color: var(--ink-2); margin: 0 0 .7rem; }
+  .hm .door h5 { font-size: 1.1875rem; letter-spacing: -.02em; margin: 0 0 .35rem; }
+  .hm .door p { font-size: .9375rem; color: var(--ink-2); margin: 0; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .s a, .s button, .s .chip, .lst .row { transition: background-color .12s ease, color .12s ease, border-color .12s ease; }
+  }
+  @media (max-width: 40rem) {
+    body { padding: 1.5rem .75rem 4rem; }
+    .s .wrap { padding: 0 1rem; }
+    .s nav.main { display: none; }
+    .lst .row { grid-template-columns: 4rem 1fr; }
+    .lst .tags { grid-column: 1 / -1; }
+    .sr a.res { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>a11y playground — the rest of variant A</h1>
+<p>Direction A, eight screens, opening with the reworked home screen: paper surface, ink text, Inter for interface text, monospace reserved for anything that is a code (criterion numbers, article numbers, dates), and the yellow marker carrying one meaning throughout, what the user gains. Interface copy is Polish. Headings inside the mocks start at <code>h3</code> so this page keeps a valid outline; in the app they would be <code>h1</code>. Sample content is real WCAG and real statute structure, but every date and legal detail still needs verifying against ISAP before it ships.</p>
+
+<!-- ============ 0. home ============ -->
+<h2>0 — / (nowa wersja)</h2>
+<p class="note">Reworked home screen. The hero is no longer a sentence about the product, it is the catalogue of faults you will actually meet, ordered by payoff. Six flagship patterns get a picture of the fault; twelve more sit in a dense list. The yellow marker now has one fixed job across the whole screen: it marks what the user gains. Effort is stated in monospace next to each fix, because "one line" and "a refactor" are different decisions.</p>
+<div class="frame">
+<div class="s hm">
+  <div class="wrap">
+    <div class="bar">
+      <a class="mark" href="#"><span>a11y</span> playground</a>
+      <nav class="main" aria-label="Główna nawigacja, ekran 0">
+        <a href="#" aria-current="page">Start</a><a href="#">Kryteria</a><a href="#">Prawo</a><a href="#">Praktyka</a><a href="#">Ścieżki</a>
+      </nav>
+    </div>
+
+    <div class="hero">
+      <p class="eyebrow">WCAG 2.1 · WCAG 2.2 · prawo polskie</p>
+      <h3>Zacznij od tego, co psuje najwięcej.</h3>
+      <p class="lead">Wzorce, które spotkasz w prawie każdym projekcie. Przy każdym: co poprawić, ile to zajmie i co konkretnie zyskuje użytkownik.</p>
+      <div class="searchrow">
+        <input type="search" aria-label="Szukaj w kryteriach i przepisach" placeholder="Szukaj: kontrast, modal, 1.4.3, deklaracja">
+        <button type="button">Szukaj</button>
+      </div>
+    </div>
+
+    <div class="fixhead">
+      <h4>Napraw to najpierw</h4>
+      <p>6 wzorców o największym zysku</p>
+    </div>
+    <p class="legend">Żółta krawędź oznacza zysk z poprawki. Czas obok to szacunek na jedno miejsce w kodzie, nie na cały projekt.</p>
+
+    <div class="cards">
+      <div class="card">
+        <div class="stage"><span class="fake fake-x" aria-hidden="true">×</span></div>
+        <h5>Przycisk-ikona bez nazwy</h5>
+        <p class="fix">Ikona wstawiona jako znak, bez dostępnej nazwy. Dodaj <code>aria-label</code> i schowaj ikonę przed czytnikiem.</p>
+        <p class="gain"><b>Zysk:</b> kontrolka przestaje być niewidzialna. Teraz czytnik mówi „Zamknij okno, przycisk” zamiast milczeć.</p>
+        <p class="row"><a class="sc" href="#">1.1.1</a><a class="sc" href="#">4.1.2</a><span class="eff">1 linia</span></p>
+      </div>
+
+      <div class="card">
+        <div class="stage"><span class="fake fake-btn" aria-hidden="true">Zapisz</span></div>
+        <h5>Skasowany wskaźnik fokusu</h5>
+        <p class="fix"><code>outline: none</code> bez zamiennika. Przywróć obrys przez <code>:focus-visible</code>, o kontraście 3 do 1.</p>
+        <p class="gain"><b>Zysk:</b> nawigacja klawiaturą przestaje być zgadywaniem, gdzie właśnie jesteś. Zyskuje każdy, kto nie używa myszy, także tymczasowo.</p>
+        <p class="row"><a class="sc" href="#">2.4.7</a><a class="sc" href="#">2.4.13</a><span class="eff">1 linia</span></p>
+      </div>
+
+      <div class="card">
+        <div class="stage"><span class="fake fake-in" aria-hidden="true">Imię i nazwisko</span></div>
+        <h5>Placeholder w roli etykiety</h5>
+        <p class="fix">Pole bez <code>label</code>. Dodaj widoczną etykietę nad polem, placeholder zostaw na przykład formatu albo usuń.</p>
+        <p class="gain"><b>Zysk:</b> etykieta nie znika po wpisaniu pierwszego znaku. Pomaga każdemu, kto wrócił do formularza po przerwie.</p>
+        <p class="row"><a class="sc" href="#">1.3.1</a><a class="sc" href="#">3.3.2</a><span class="eff">5 minut</span></p>
+      </div>
+
+      <div class="card">
+        <div class="stage"><span class="fake fake-in err" aria-hidden="true">jan.kowalski@</span></div>
+        <h5>Błąd oznaczony samym kolorem</h5>
+        <p class="fix">Czerwona ramka i nic więcej. Dopisz komunikat tekstowy przy polu i powiąż go przez <code>aria-describedby</code>.</p>
+        <p class="gain"><b>Zysk:</b> osoba, która nie rozróżnia czerwieni, dowiaduje się, które pole i co jest w nim nie tak. A poza tym każdy dowiaduje się <em>dlaczego</em>.</p>
+        <p class="row"><a class="sc" href="#">1.4.1</a><a class="sc" href="#">3.3.1</a><span class="eff">15 minut</span></p>
+      </div>
+
+      <div class="card">
+        <div class="stage"><span class="fake" style="color:#B9B9B4" aria-hidden="true">Hasło musi mieć 8 znaków</span></div>
+        <h5>Jasnoszary tekst pomocniczy</h5>
+        <p class="fix">Kontrast 2,1 do 1. Zejdź z jasności koloru, nie z rozmiaru tekstu. Wpisz zmierzoną wartość do tokenu.</p>
+        <p class="gain"><b>Zysk:</b> czytelne dla osób po czterdziestce, przy zaćmie, i dla każdego, kto patrzy na telefon w słońcu.</p>
+        <p class="row"><a class="sc" href="#">1.4.3</a><span class="eff">1 token</span></p>
+      </div>
+
+      <div class="card">
+        <div class="stage"><span class="fake-code" aria-hidden="true">&lt;meta name="viewport" content="width=device-width, <b>maximum-scale=1</b>"&gt;</span></div>
+        <h5>Zablokowane powiększanie</h5>
+        <p class="fix"><code>maximum-scale=1</code> albo <code>user-scalable=no</code> w meta viewport. Usuń to.</p>
+        <p class="gain"><b>Zysk:</b> osoba słabowidząca może powiększyć stronę na telefonie. Jedna z najtańszych poprawek o największym skutku.</p>
+        <p class="row"><a class="sc" href="#">1.4.4</a><a class="sc" href="#">1.4.10</a><span class="eff">1 linia</span></p>
+      </div>
+    </div>
+
+    <div class="rest">
+      <h4>Dalsze wzorce</h4>
+      <p class="sub">12 z 40 · uporządkowane od najtańszych</p>
+      <ul class="rows">
+        <li><a href="#"><span class="t">Brak atrybutu lang na html</span><span class="g">Synteza mowy czyta polski tekst z angielską wymową.</span><span class="m"><b>3.1.1</b>1 linia</span></a></li>
+        <li><a href="#"><span class="t">div z onclick zamiast button</span><span class="g">Element wchodzi w Tab, dostaje rolę i reaguje na Enter.</span><span class="m"><b>2.1.1 · 4.1.2</b>1 linia</span></a></li>
+        <li><a href="#"><span class="t">Obrazek dekoracyjny z opisowym alt</span><span class="g">Czytnik przestaje czytać na głos nazwy plików i ozdób.</span><span class="m"><b>1.1.1</b>2 minuty</span></a></li>
+        <li><a href="#"><span class="t">aria-label na elemencie bez roli</span><span class="g">Nazwa zaczyna być w ogóle odczytywana. Bez roli jest ignorowana.</span><span class="m"><b>4.1.2</b>2 minuty</span></a></li>
+        <li><a href="#"><span class="t">Komunikat „Zapisano” bez regionu aktywnego</span><span class="g">Potwierdzenie zostaje ogłoszone, a nie tylko mignie na ekranie.</span><span class="m"><b>4.1.3</b>5 minut</span></a></li>
+        <li><a href="#"><span class="t">Cele dotykowe 20 na 20 pikseli</span><span class="g">Mniej pomyłek u każdego, kto klika w biegu albo drżącą ręką.</span><span class="m"><b>2.5.8</b>10 minut</span></a></li>
+        <li><a href="#"><span class="t">Brak linku pomijającego nawigację</span><span class="g">Osoba na klawiaturze nie przechodzi 30 linków na każdej podstronie.</span><span class="m"><b>2.4.1</b>10 minut</span></a></li>
+        <li><a href="#"><span class="t">Dwanaście linków „czytaj więcej”</span><span class="g">Lista linków w czytniku ekranu staje się użyteczna.</span><span class="m"><b>2.4.4</b>15 minut</span></a></li>
+        <li><a href="#"><span class="t">Karuzela z autoodtwarzaniem bez pauzy</span><span class="g">Treść przestaje uciekać w trakcie czytania.</span><span class="m"><b>2.2.2</b>20 minut</span></a></li>
+        <li><a href="#"><span class="t">Modal bez Escape i bez zwrotu fokusu</span><span class="g">Da się wyjść, i wraca się tam, skąd się weszło.</span><span class="m"><b>2.1.2 · 2.4.3</b>30 minut</span></a></li>
+        <li><a href="#"><span class="t">Nagłówki wybrane pod rozmiar tekstu</span><span class="g">Skakanie po nagłówkach działa, czytnik podaje spis treści strony.</span><span class="m"><b>1.3.1 · 2.4.6</b>refaktor</span></a></li>
+        <li><a href="#"><span class="t">Tabela zbudowana z divów</span><span class="g">Czytnik podaje nagłówek kolumny przy każdej komórce.</span><span class="m"><b>1.3.1</b>refaktor</span></a></li>
+      </ul>
+      <p style="margin:1.25rem 0 0"><a class="link" href="#">Wszystkie 40 wzorców</a> · <a class="link" href="#">Uporządkuj po kryterium</a> · <a class="link" href="#">Tylko poprawki na jedną linię</a></p>
+    </div>
+
+    <div class="doors">
+      <a class="door" href="#">
+        <p class="n">86 kryteriów</p>
+        <h5>Kryteria WCAG</h5>
+        <p>Wersje 2.1 i 2.2, wszystkie trzy poziomy, wyjaśnione prostym językiem.</p>
+      </a>
+      <a class="door" href="#">
+        <p class="n">3 ustawy · EAA · EN 301 549</p>
+        <h5>Prawo</h5>
+        <p>Kogo dotyczy, od kiedy, i które kryteria wynikają z którego przepisu.</p>
+      </a>
+      <a class="door" href="#">
+        <p class="n">ścieżki · quizy · symulatory</p>
+        <h5>Nauka po kolei</h5>
+        <p>Jeśli wolisz uczyć się systematycznie, a nie od konkretnego błędu.</p>
+      </a>
+    </div>
+
+    <div class="foot">
+      <span>Materiał edukacyjny, nie porada prawna.</span>
+      <span class="mono">Treść zweryfikowana: 2026-09-27</span>
+      <a href="#">Deklaracja dostępności</a>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============ 1. criteria list ============ -->
+<h2>1 — /kryteria</h2>
+<p class="note">Filters are the whole screen. Criterion numbers set in monospace at list level do the work a colour-coded badge would otherwise do, and the level still carries its letters.</p>
+<div class="frame">
+<div class="s lst">
+  <div class="wrap">
+    <div class="bar">
+      <a class="mark" href="#"><span>a11y</span> playground</a>
+      <nav class="main" aria-label="Główna nawigacja, ekran 1">
+        <a href="#">Start</a><a href="#" aria-current="page">Kryteria</a><a href="#">Prawo</a><a href="#">Praktyka</a><a href="#">Ścieżki</a>
+      </nav>
+    </div>
+
+    <div class="head">
+      <h3>Kryteria</h3>
+      <p class="count">86 w WCAG 2.2 · 24 spełniają filtry</p>
+    </div>
+
+    <div class="searchrow">
+      <input type="search" aria-label="Szukaj w kryteriach" placeholder="Szukaj: kontrast, modal, 1.4.3">
+      <button type="button">Szukaj</button>
+    </div>
+
+    <div class="filters">
+      <div class="fgroup"><span class="flabel">Wersja</span>
+        <div class="chips">
+          <button type="button" class="chip" aria-pressed="true">2.2</button>
+          <button type="button" class="chip" aria-pressed="false">2.1</button>
+          <button type="button" class="chip" aria-pressed="false">2.0</button>
+        </div>
+      </div>
+      <div class="fgroup"><span class="flabel">Poziom</span>
+        <div class="chips">
+          <button type="button" class="chip" aria-pressed="true">A</button>
+          <button type="button" class="chip" aria-pressed="true">AA</button>
+          <button type="button" class="chip" aria-pressed="false">AAA</button>
+        </div>
+      </div>
+      <div class="fgroup"><span class="flabel">Rola</span>
+        <div class="chips">
+          <button type="button" class="chip" aria-pressed="true">programista</button>
+          <button type="button" class="chip" aria-pressed="false">projektant</button>
+          <button type="button" class="chip" aria-pressed="false">treść</button>
+          <button type="button" class="chip" aria-pressed="false">tester</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="applied">Pokazuję kryteria <strong>A i AA</strong> z WCAG 2.2, przypisane do roli <strong>programista</strong>. <a class="link" href="#">Wyczyść filtry</a></p>
+
+    <ol>
+      <li><a class="row" href="#"><span class="id">1.1.1</span><span class="name">Treść nietekstowa<em>Każda treść, która nie jest tekstem, potrzebuje tekstowego odpowiednika.</em></span><span class="tags"><span class="lvl">A</span></span></a></li>
+      <li><a class="row" href="#"><span class="id">1.3.1</span><span class="name">Informacje i relacje<em>Struktura widoczna dla oka musi być też zapisana w znacznikach.</em></span><span class="tags"><span class="lvl">A</span></span></a></li>
+      <li><a class="row" href="#"><span class="id">1.4.3</span><span class="name">Kontrast (minimum)<em>Tekst wobec tła co najmniej 4,5 do 1. Duży tekst co najmniej 3 do 1.</em></span><span class="tags"><span class="lvl">AA</span></span></a></li>
+      <li><a class="row" href="#"><span class="id">2.1.1</span><span class="name">Klawiatura<em>Wszystko, co da się zrobić myszą, musi dać się zrobić klawiaturą.</em></span><span class="tags"><span class="lvl">A</span></span></a></li>
+      <li><a class="row" href="#"><span class="id">2.4.11</span><span class="name">Fokus niezasłonięty (minimum)<em>Element z fokusem nie może być całkowicie zakryty przez inną treść.</em></span><span class="tags"><span class="new">nowe w 2.2</span><span class="lvl">AA</span></span></a></li>
+      <li><a class="row" href="#"><span class="id">2.5.7</span><span class="name">Ruchy przeciągania<em>Wszystko, co przeciągasz, musi dać się zrobić jednym kliknięciem.</em></span><span class="tags"><span class="new">nowe w 2.2</span><span class="lvl">AA</span></span></a></li>
+      <li><a class="row" href="#"><span class="id">3.3.8</span><span class="name">Dostępne uwierzytelnianie (minimum)<em>Logowanie nie może wymagać testu pamięci ani przepisywania kodu z obrazka.</em></span><span class="tags"><span class="new">nowe w 2.2</span><span class="lvl">AA</span></span></a></li>
+      <li><a class="row" href="#"><span class="id">4.1.2</span><span class="name">Nazwa, rola, wartość<em>Każda kontrolka ma nazwę, rolę i stan, które oprogramowanie potrafi odczytać.</em></span><span class="tags"><span class="lvl">A</span></span></a></li>
+    </ol>
+
+    <p style="margin:1.25rem 0 0"><a class="link" href="#">Pokaż pozostałe 16</a></p>
+
+    <div class="foot">
+      <span>Materiał edukacyjny, nie porada prawna.</span>
+      <span class="mono">Treść zweryfikowana: 2026-09-27</span>
+      <a href="#">Deklaracja dostępności</a>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============ 2. criterion page ============ -->
+<h2>2 — /kryteria/1.4.3</h2>
+<p class="note">The most important screen. The criterion number is the display element, set in monospace at 4rem, because the number is how people cite and search for this thing. Fixed section order, normative text collapsed by default, plain language on top.</p>
+<div class="frame">
+<div class="s cr">
+  <div class="wrap">
+    <div class="bar">
+      <a class="mark" href="#"><span>a11y</span> playground</a>
+      <nav class="main" aria-label="Główna nawigacja, ekran 2">
+        <a href="#">Start</a><a href="#" aria-current="page">Kryteria</a><a href="#">Prawo</a><a href="#">Praktyka</a><a href="#">Ścieżki</a>
+      </nav>
+    </div>
+
+    <p class="crumbs"><a href="#">Kryteria</a> / <a href="#">1. Postrzegalność</a> / <a href="#">1.4 Rozróżnialność</a></p>
+
+    <div class="hd">
+      <span class="num">1.4.3</span>
+      <h3>Kontrast (minimum)</h3>
+      <p class="badges"><span class="lvl">AA</span> <span>od WCAG 2.0</span> <span>·</span> <span>dotyczy: projektant, programista</span></p>
+      <p class="one">Tekst musi odcinać się od tła w stosunku <span class="mk">co najmniej 4,5 do 1</span>. Duży tekst wystarczy 3 do 1.</p>
+    </div>
+
+    <div class="grid">
+      <div class="rail">
+        <h4>Na tej stronie</h4>
+        <ol>
+          <li><a href="#">Kogo to dotyczy</a></li>
+          <li><a href="#">Treść normy</a></li>
+          <li><a href="#">Jak to spełnić</a></li>
+          <li><a href="#">Typowe błędy</a></li>
+          <li><a href="#">Przykład</a></li>
+          <li><a href="#">Jak sprawdzić</a></li>
+          <li><a href="#">Prawo</a></li>
+          <li><a href="#">Powiązane</a></li>
+        </ol>
+      </div>
+
+      <div>
+        <section>
+          <h4>Kogo to dotyczy</h4>
+          <p>Osoby po czterdziestce, którym spada wrażliwość na kontrast. Osoby z jaskrą i zaćmą. Każdy, kto czyta telefon w słońcu. To jedno z niewielu kryteriów, na którym zyskują wszyscy użytkownicy, a nie tylko wąska grupa.</p>
+        </section>
+
+        <section>
+          <h4>Treść normy</h4>
+          <details>
+            <summary>Rozwiń dosłowne brzmienie kryterium 1.4.3</summary>
+            <div class="body">
+              <blockquote>Wizualna prezentacja tekstu i obrazu tekstu posiada współczynnik kontrastu wynoszący przynajmniej 4,5:1, poza następującymi wyjątkami: duży tekst, tekst przypadkowy, logotypy.</blockquote>
+              <p class="verified">Oficjalne tłumaczenie W3C · <a class="link" href="#">źródło</a> · <a class="link" href="#">pokaż oryginał angielski</a></p>
+            </div>
+          </details>
+        </section>
+
+        <section>
+          <h4>Jak to spełnić</h4>
+          <p class="role">Projektant</p>
+          <ul class="do">
+            <li>Sprawdź kontrast na etapie palety, nie po wdrożeniu. Wpisz zmierzone wartości do tokenów.</li>
+            <li>Sprawdź też stany: hover, aktywny, zaznaczony, i tekst na obrazku.</li>
+            <li>Jasnoszary tekst pomocniczy to najczęstsze źródło błędu. Zejdź z jasności, nie z rozmiaru.</li>
+          </ul>
+          <p class="role">Programista</p>
+          <ul class="do">
+            <li>Nie przykrywaj tekstu półprzezroczystą warstwą. Kontrast liczy się dla tego, co widzi oko.</li>
+            <li>Dodaj test kontrastu do CI, żeby nowy token nie wjechał niezmierzony.</li>
+          </ul>
+          <p style="margin-top:1.25rem"><strong>Duży tekst</strong> to 18 punktów zwykłej grubości albo 14 punktów pogrubione. Poniżej tego progu obowiązuje 4,5 do 1.</p>
+        </section>
+
+        <section>
+          <h4>Typowe błędy</h4>
+          <ul class="dont">
+            <li>Placeholder w polu formularza jako jedyna etykieta, w dodatku w jasnym szarym.</li>
+            <li>Stan <code>disabled</code> uznany za zwolniony z kontrastu. Kryterium nie zwalnia z tego wyglądu, jeśli tekst nadal przekazuje informację.</li>
+            <li>Tekst na zdjęciu bez przyciemnienia, sprawdzony tylko na jednym kadrze.</li>
+            <li>Kontrast policzony dla koloru z projektu, a nie dla koloru po nałożeniu przezroczystości.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h4>Przykład</h4>
+          <p>Ten sam tekst pomocniczy pod polem, dwa razy. <a class="link" href="#">Otwórz pełny przykład</a></p>
+          <div class="split" style="margin-top:1rem">
+            <div class="test">
+              <h5 style="color:var(--bad)">✕ 2,1 do 1</h5>
+              <p style="margin:0;font-size:.9375rem"><span style="color:#B9B9B4">Hasło musi mieć 8 znaków</span></p>
+            </div>
+            <div class="test">
+              <h5 style="color:var(--good)">✓ 7,4 do 1</h5>
+              <p style="margin:0;font-size:.9375rem"><span style="color:var(--ink-2)">Hasło musi mieć 8 znaków</span></p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h4>Jak sprawdzić</h4>
+          <div class="split">
+            <div class="test">
+              <h5>Ręcznie</h5>
+              <ol>
+                <li>Pobierz kolor tekstu i kolor tła pipetą, po wyrenderowaniu.</li>
+                <li>Policz stosunek kontrastu.</li>
+                <li>Sprawdź rozmiar i grubość, żeby wiedzieć, czy obowiązuje 4,5 czy 3.</li>
+                <li>Powtórz dla hover, focus i disabled.</li>
+              </ol>
+            </div>
+            <div class="test">
+              <h5>Narzędzie automatyczne</h5>
+              <p style="margin:0 0 .4rem;font-size:.9375rem"><strong>Wyłapie:</strong></p>
+              <ul><li>tekst na jednolitym tle</li></ul>
+              <p style="margin:.6rem 0 .4rem;font-size:.9375rem"><strong>Nie wyłapie:</strong></p>
+              <ul><li>tekstu na zdjęciu i na gradiencie</li><li>stanów, do których nie dotarło</li><li>tekstu w obrazku</li></ul>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h4>Prawo</h4>
+          <table>
+            <thead><tr><th>Przepis</th><th>Powiązanie</th></tr></thead>
+            <tbody>
+              <tr><td><a class="link" href="#"><span class="mono">Zał. 1</span> do ustawy o dostępności cyfrowej</a></td><td>wprost, kryterium wymienione</td></tr>
+              <tr><td><a class="link" href="#"><span class="mono">9.1.4.3</span> EN 301 549</a></td><td>wprost</td></tr>
+              <tr><td><a class="link" href="#"><span class="mono">Art. 8</span> ustawy o dostępności produktów i usług</a></td><td>pośrednio, przez normy zharmonizowane</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section>
+          <h4>Powiązane</h4>
+          <div class="rel">
+            <a href="#"><b>1.4.6</b> Kontrast wzmocniony <span class="lvl">AAA</span></a>
+            <a href="#"><b>1.4.11</b> Kontrast elementów nietekstowych <span class="lvl">AA</span></a>
+            <a href="#"><b>1.4.1</b> Użycie koloru <span class="lvl">A</span></a>
+          </div>
+          <p style="margin-top:1rem"><strong>Częsta pomyłka:</strong> obramowanie pola i ikona to nie 1.4.3, tylko 1.4.11. 1.4.3 dotyczy wyłącznie tekstu.</p>
+        </section>
+
+        <p class="verified">Źródła: WCAG 2.2, Understanding SC 1.4.3 · Treść zweryfikowana: 2026-09-27</p>
+      </div>
+    </div>
+
+    <div class="foot">
+      <span>Materiał edukacyjny, nie porada prawna.</span>
+      <span class="mono">Treść zweryfikowana: 2026-09-27</span>
+      <a href="#">Deklaracja dostępności</a>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============ 3. example ============ -->
+<h2>3 — /praktyka/ikona-jako-przycisk</h2>
+<p class="note">Bad and good side by side. The broken variant is described in text and rendered inside a sandboxed iframe in the real app, so it cannot leak into the page's accessibility tree; here it is a static picture of the fault, marked <code>aria-hidden</code>. The announcement line is the payoff: it is what the criterion actually costs a user.</p>
+<div class="frame">
+<div class="s ex">
+  <div class="wrap">
+    <div class="bar">
+      <a class="mark" href="#"><span>a11y</span> playground</a>
+      <nav class="main" aria-label="Główna nawigacja, ekran 3">
+        <a href="#">Start</a><a href="#">Kryteria</a><a href="#">Prawo</a><a href="#" aria-current="page">Praktyka</a><a href="#">Ścieżki</a>
+      </nav>
+    </div>
+
+    <p class="crumbs"><a href="#">Praktyka</a> / Ikona jako przycisk</p>
+
+    <div style="padding:1.25rem 0 1.5rem">
+      <h3 style="font-size:clamp(1.5rem,4vw,2rem);letter-spacing:-.03em;margin:0 0 .75rem">Ikona jako przycisk</h3>
+      <p style="max-width:64ch;margin:0 0 1rem">Przycisk zamykający okno, w którym cała treść to znak <code>×</code>. Wygląda identycznie w obu wersjach. Różnica jest w tym, co usłyszy osoba, która go nie widzi.</p>
+      <p class="badges" style="display:flex;gap:.4rem;flex-wrap:wrap"><a href="#" class="lvl" style="text-decoration:none">1.1.1</a> <a href="#" class="lvl" style="text-decoration:none">4.1.2</a> <a href="#" class="lvl" style="text-decoration:none">2.5.8</a></p>
+    </div>
+
+    <div class="panes">
+      <div class="pane">
+        <p class="tag b">✕ Zepsute</p>
+        <p class="why">Ikona wstawiona jako tekst, bez nazwy. Cel dotykowy 20 na 20 pikseli.</p>
+        <div class="stage"><span class="fake-bad" aria-hidden="true">×</span></div>
+        <p class="stagenote">Renderowane w izolowanym iframe, żeby nie zatruć drzewa dostępności tej strony.</p>
+<pre><code>&lt;div class="close" onclick="close()"&gt;×&lt;/div&gt;</code></pre>
+        <div class="sr">
+          <h5>Czytnik ekranu powie</h5>
+          <p>Nic. Element nie jest kontrolką, więc <q>×</q> przeleci jako zwykły tekst, a Tab go pominie.</p>
+        </div>
+      </div>
+
+      <div class="pane">
+        <p class="tag g">✓ Poprawne</p>
+        <p class="why">Prawdziwy <code>button</code> z dostępną nazwą. Ikona schowana przed czytnikiem, bo nazwa już ją opisuje.</p>
+        <div class="stage"><span class="fake-good">Zamknij ×</span></div>
+        <p class="stagenote">Wersja poprawna renderuje się wprost na stronie.</p>
+<pre><code>&lt;button type="button" aria-label="Zamknij okno"&gt;
+  &lt;svg aria-hidden="true" focusable="false"&gt;…&lt;/svg&gt;
+&lt;/button&gt;</code></pre>
+        <div class="sr">
+          <h5>Czytnik ekranu powie</h5>
+          <p><q>Zamknij okno, przycisk</q>. Element jest w kolejności Tab i reaguje na Enter oraz spację.</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:.6rem;margin:1.5rem 0 0">
+      <button type="button" class="btn-quiet">Podgląd tylko klawiaturą</button>
+      <button type="button" class="btn-quiet">Symulacja czytnika ekranu</button>
+      <button type="button" class="btn-quiet">Zmniejszony kontrast</button>
+    </div>
+    <p style="font-size:.875rem;color:var(--ink-2);margin:.7rem 0 0;max-width:64ch">Symulatory są przybliżeniem. Nie zastąpią sprawdzenia w NVDA ani w VoiceOverze.</p>
+
+    <div class="foot">
+      <span>Materiał edukacyjny, nie porada prawna.</span>
+      <span class="mono">Treść zweryfikowana: 2026-09-27</span>
+      <a href="#">Deklaracja dostępności</a>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============ 4. law ============ -->
+<h2>4 — /prawo/ustawa-2019-848/art-5</h2>
+<p class="note">Plain summary first, the literal wording behind a disclosure. The provision links out to the criteria it imposes, with the strength of the link stated, so nothing implies the act mandates AAA.</p>
+<div class="frame">
+<div class="s lw">
+  <div class="wrap">
+    <div class="bar">
+      <a class="mark" href="#"><span>a11y</span> playground</a>
+      <nav class="main" aria-label="Główna nawigacja, ekran 4">
+        <a href="#">Start</a><a href="#">Kryteria</a><a href="#" aria-current="page">Prawo</a><a href="#">Praktyka</a><a href="#">Ścieżki</a>
+      </nav>
+    </div>
+
+    <p class="crumbs"><a href="#">Prawo</a> / <a href="#">Ustawa o dostępności cyfrowej</a> / Art. 5</p>
+
+    <div class="grid">
+      <div class="toc">
+        <h4>Ustawa, spis treści</h4>
+        <ul>
+          <li><a href="#"><span class="n">Art. 1</span> Zakres</a></li>
+          <li><a href="#"><span class="n">Art. 3</span> Kogo dotyczy</a></li>
+          <li><a href="#" aria-current="page"><span class="n">Art. 5</span> Wymagania</a></li>
+          <li><a href="#"><span class="n">Art. 8</span> Wyłączenia</a></li>
+          <li><a href="#"><span class="n">Art. 10</span> Deklaracja</a></li>
+          <li><a href="#"><span class="n">Art. 18</span> Skarga</a></li>
+          <li><a href="#"><span class="n">Zał. 1</span> Kryteria sukcesu</a></li>
+        </ul>
+        <p style="margin:1.25rem 0 0"><a class="link" href="#">Tekst jednolity w ISAP</a></p>
+      </div>
+
+      <div>
+        <p class="act">Ustawa z 4 kwietnia 2019 r. o dostępności cyfrowej stron internetowych i aplikacji mobilnych podmiotów publicznych</p>
+        <h3>Art. 5. Wymagania dostępności cyfrowej</h3>
+        <p class="plain">Podmiot publiczny ma zapewnić, żeby jego strona i aplikacja mobilna spełniały <span class="mk">kryteria z załącznika do ustawy</span>. Załącznik to lista kryteriów WCAG na poziomie A i AA. Poziom AAA nie jest wymagany.</p>
+
+        <div class="who">
+          <span><b>Kogo dotyczy</b> podmioty publiczne</span>
+          <span><b>Od kiedy</b> strony: 23 września 2020</span>
+          <span><b>Aplikacje mobilne</b> 23 czerwca 2021</span>
+        </div>
+
+        <details>
+          <summary>Rozwiń dosłowne brzmienie art. 5</summary>
+          <div class="body">
+            <p>Dosłowny tekst przepisu, wraz z ustępami, pobrany z tekstu jednolitego. Streszczenie powyżej jest nasze i nie ma mocy prawnej.</p>
+            <p class="verified">Źródło: ISAP, tekst jednolity · pobrano 2026-09-27</p>
+          </div>
+        </details>
+
+        <h4 class="sec">Co z tego wynika w praktyce</h4>
+        <p style="max-width:64ch">Sam przepis nie wymienia kryteriów. Wymienia je załącznik, i to on jest punktem odniesienia w kontroli. Jeśli sprawdzasz zgodność, pracujesz na załączniku, nie na art. 5.</p>
+
+        <h4 class="sec" style="margin-top:1.75rem">Wymaga tych kryteriów</h4>
+        <ul class="crit">
+          <li><a href="#"><span class="id">1.1.1</span><span>Treść nietekstowa</span><span class="strength">wprost · <span class="lvl">A</span></span></a></li>
+          <li><a href="#"><span class="id">1.4.3</span><span>Kontrast (minimum)</span><span class="strength">wprost · <span class="lvl">AA</span></span></a></li>
+          <li><a href="#"><span class="id">2.1.1</span><span>Klawiatura</span><span class="strength">wprost · <span class="lvl">A</span></span></a></li>
+          <li><a href="#"><span class="id">4.1.2</span><span>Nazwa, rola, wartość</span><span class="strength">wprost · <span class="lvl">A</span></span></a></li>
+        </ul>
+        <p style="margin:1rem 0 0"><a class="link" href="#">Zobacz wszystkie kryteria z załącznika</a></p>
+
+        <div class="foot">
+          <span>Materiał edukacyjny, nie porada prawna. Wiążące jest brzmienie z Dziennika Ustaw.</span>
+          <span class="mono">Zweryfikowano: 2026-09-27</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============ 5. mapping ============ -->
+<h2>5 — /mapowanie</h2>
+<p class="note">Not a grid. You state your situation, the screen answers with dated obligations and the criteria under each. The date column is monospace because the deadline is the thing people came for.</p>
+<div class="frame">
+<div class="s mp">
+  <div class="wrap">
+    <div class="bar">
+      <a class="mark" href="#"><span>a11y</span> playground</a>
+      <nav class="main" aria-label="Główna nawigacja, ekran 5">
+        <a href="#">Start</a><a href="#">Kryteria</a><a href="#" aria-current="page">Prawo</a><a href="#">Praktyka</a><a href="#">Ścieżki</a>
+      </nav>
+    </div>
+
+    <div class="pick">
+      <h3>Co mnie obowiązuje</h3>
+      <p class="q">Wybierz, czym jest twój produkt. Reszta strony dostosuje się do wyboru.</p>
+      <div class="chips">
+        <button type="button" class="chip" aria-pressed="false">Strona podmiotu publicznego</button>
+        <button type="button" class="chip" aria-pressed="true">Produkt lub usługa komercyjna w UE</button>
+        <button type="button" class="chip" aria-pressed="false">Aplikacja mobilna</button>
+        <button type="button" class="chip" aria-pressed="false">Nie wiem</button>
+      </div>
+      <p style="font-size:.9375rem;color:var(--ink-2);margin:1rem 0 0">Wybrane: <strong>produkt lub usługa komercyjna w UE</strong>. Podstawą jest ustawa z 26 kwietnia 2024 r., wdrażająca Europejski Akt o Dostępności.</p>
+    </div>
+
+    <ol class="tl">
+      <li>
+        <div class="when">28.06.2025<em>obowiązuje</em></div>
+        <div>
+          <p class="what">Produkty i usługi wprowadzane na rynek muszą spełniać wymagania dostępności</p>
+          <p class="src">Podstawa: <a class="link" href="#">art. 3 i 8 ustawy z 2024 r.</a> · technicznie: <a class="link" href="#">EN 301 549</a></p>
+          <details>
+            <summary>Pokaż 24 kryteria, które z tego wynikają</summary>
+            <div class="pills">
+              <a href="#">1.1.1</a><a href="#">1.3.1</a><a href="#">1.4.3</a><a href="#">1.4.11</a><a href="#">2.1.1</a>
+              <a href="#">2.4.3</a><a href="#">2.4.7</a><a href="#">2.5.8</a><a href="#">3.3.2</a><a href="#">4.1.2</a>
+              <a href="#" class="link" style="border:0;background:none">i 14 dalszych</a>
+            </div>
+          </details>
+        </div>
+      </li>
+      <li>
+        <div class="when">28.06.2025<em>obowiązuje</em></div>
+        <div>
+          <p class="what">Informacja o dostępności produktu w dokumentacji i przy sprzedaży</p>
+          <p class="src">Podstawa: <a class="link" href="#">art. 12 ustawy z 2024 r.</a> · obowiązek producenta i sprzedawcy</p>
+        </div>
+      </li>
+      <li>
+        <div class="when">28.06.2030<em>termin przejściowy</em></div>
+        <div>
+          <p class="what">Koniec okresu, w którym można używać usług świadczonych na starszych rozwiązaniach</p>
+          <p class="src">Podstawa: <a class="link" href="#">przepisy przejściowe</a> · do potwierdzenia przy wpisywaniu treści</p>
+        </div>
+      </li>
+    </ol>
+
+    <p style="margin:1.5rem 0 0"><a class="link" href="#">Wolę zobaczyć pełną tabelę przepis do kryterium</a></p>
+
+    <div class="foot">
+      <span>Materiał edukacyjny, nie porada prawna.</span>
+      <span class="mono">Zweryfikowano: 2026-09-27</span>
+      <a href="#">Deklaracja dostępności</a>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============ 6. path and quiz ============ -->
+<h2>6 — /sciezki/programista</h2>
+<p class="note">Lesson list with state in words, not colour alone, and the current lesson marked by a marker-yellow edge. The quiz below shows a wrong answer: the explanation is the point, so it names the confusion and links to the criterion.</p>
+<div class="frame">
+<div class="s pt">
+  <div class="wrap">
+    <div class="bar">
+      <a class="mark" href="#"><span>a11y</span> playground</a>
+      <nav class="main" aria-label="Główna nawigacja, ekran 6">
+        <a href="#">Start</a><a href="#">Kryteria</a><a href="#">Prawo</a><a href="#">Praktyka</a><a href="#" aria-current="page">Ścieżki</a>
+      </nav>
+    </div>
+
+    <p class="crumbs"><a href="#">Ścieżki</a> / Programista</p>
+
+    <div class="hd">
+      <h3>Ścieżka programisty</h3>
+      <p class="meta">12 lekcji · 3 ukończone · około 2 godzin · bez blokad, możesz skakać</p>
+    </div>
+
+    <ol class="les">
+      <li data-state="done"><a href="#"><span class="n">01</span><span class="t">Drzewo dostępności<em>Skąd czytnik ekranu bierze to, co mówi</em></span><span class="st">✓ ukończona</span></a></li>
+      <li data-state="done"><a href="#"><span class="n">02</span><span class="t">Nazwa, rola, wartość<em>4.1.2 w praktyce, na czterech kontrolkach</em></span><span class="st">✓ ukończona</span></a></li>
+      <li data-state="done"><a href="#"><span class="n">03</span><span class="t">Kolejność Tab<em>2.4.3 i co psuje ją najczęściej</em></span><span class="st">✓ ukończona</span></a></li>
+      <li data-state="here"><a href="#"><span class="n">04</span><span class="t">Fokus, którego nie widać<em>2.4.11 kontra 2.4.7, i sticky nagłówek</em></span><span class="st">▸ w toku</span></a></li>
+      <li><a href="#"><span class="n">05</span><span class="t">Modal bez pułapki<em>2.1.2, zwracanie fokusu, Escape</em></span><span class="st">nierozpoczęta</span></a></li>
+      <li><a href="#"><span class="n">06</span><span class="t">Formularz, który mówi, co jest nie tak<em>3.3.1, 3.3.2, 3.3.3</em></span><span class="st">nierozpoczęta</span></a></li>
+    </ol>
+    <p style="margin:1rem 0 0"><a class="link" href="#">Pokaż pozostałe 6 lekcji</a></p>
+
+    <div class="quiz">
+      <p class="qn">Lekcja 03 · pytanie 2 z 4</p>
+      <h4>Sticky nagłówek całkowicie zasłania pole, na które właśnie wszedł fokus. Które kryterium jest złamane?</h4>
+      <div class="opts">
+        <button type="button" class="opt" aria-pressed="true"><span class="k">A</span><span>2.4.7 Widoczny fokus</span></button>
+        <button type="button" class="opt" aria-pressed="false"><span class="k">B</span><span>2.4.11 Fokus niezasłonięty (minimum)</span></button>
+        <button type="button" class="opt" aria-pressed="false"><span class="k">C</span><span>1.4.11 Kontrast elementów nietekstowych</span></button>
+        <button type="button" class="opt" aria-pressed="false"><span class="k">D</span><span>Żadne, to kwestia estetyki</span></button>
+      </div>
+      <div class="fb" role="status">
+        <p class="v">✕ Niepoprawnie</p>
+        <p>Poprawna jest <strong>B</strong>. 2.4.7 wymaga, żeby wskaźnik fokusu istniał i był widoczny, i tu istnieje: zakrywa go inna treść. Tym zajmuje się 2.4.11. Gdyby nagłówek zasłaniał pole tylko częściowo, 2.4.11 byłoby spełnione, a złamane byłoby 2.4.12 na poziomie AAA.</p>
+        <p style="margin:0"><a class="link" href="#">2.4.11 Fokus niezasłonięty (minimum)</a> · <a class="link" href="#">2.4.12 (AAA)</a> · <a class="link" href="#">2.4.7 Widoczny fokus</a></p>
+      </div>
+      <div class="acts">
+        <button type="button" class="btn">Następne pytanie</button>
+        <button type="button" class="btn-quiet">Wróć do lekcji</button>
+      </div>
+    </div>
+
+    <div class="foot">
+      <span>Materiał edukacyjny, nie porada prawna.</span>
+      <span class="mono">Treść zweryfikowana: 2026-09-27</span>
+      <a href="#">Deklaracja dostępności</a>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============ 7. search ============ -->
+<h2>7 — /szukaj?q=kontrast</h2>
+<p class="note">Results grouped by what they are, since a criterion, a provision and an example need different framing. The kind label is monospace and comes first, so the eye can skip a whole group.</p>
+<div class="frame">
+<div class="s sr">
+  <div class="wrap">
+    <div class="bar">
+      <a class="mark" href="#"><span>a11y</span> playground</a>
+      <nav class="main" aria-label="Główna nawigacja, ekran 7">
+        <a href="#">Start</a><a href="#">Kryteria</a><a href="#">Prawo</a><a href="#">Praktyka</a><a href="#">Ścieżki</a>
+      </nav>
+    </div>
+
+    <div class="hd">
+      <div class="searchrow">
+        <input type="search" aria-label="Szukaj w całej treści" value="kontrast">
+        <button type="button">Szukaj</button>
+      </div>
+      <p class="count">14 wyników dla <strong>kontrast</strong> · kryteria, przepisy, przykłady, słownik</p>
+    </div>
+
+    <h4>Kryteria</h4>
+    <ul>
+      <li><a class="res" href="#"><span class="k">1.4.3 · AA</span><span class="t">Kontrast (minimum)<em>Tekst wobec tła co najmniej 4,5 do 1. Duży tekst co najmniej 3 do 1.</em></span></a></li>
+      <li><a class="res" href="#"><span class="k">1.4.6 · AAA</span><span class="t">Kontrast wzmocniony<em>Podniesiony próg: 7 do 1 dla zwykłego tekstu.</em></span></a></li>
+      <li><a class="res" href="#"><span class="k">1.4.11 · AA</span><span class="t">Kontrast elementów nietekstowych<em>Obramowania pól, ikony i wskaźniki stanu: 3 do 1.</em></span></a></li>
+    </ul>
+
+    <h4>Przepisy</h4>
+    <ul>
+      <li><a class="res" href="#"><span class="k">Zał. 1</span><span class="t">Ustawa o dostępności cyfrowej, załącznik<em>…wymaga <mark>kontrast</mark>u tekstu na poziomie AA dla stron podmiotów publicznych…</em></span></a></li>
+      <li><a class="res" href="#"><span class="k">9.1.4.3</span><span class="t">EN 301 549<em>…odpowiednik kryterium 1.4.3 w normie zharmonizowanej…</em></span></a></li>
+    </ul>
+
+    <h4>Przykłady i słownik</h4>
+    <ul>
+      <li><a class="res" href="#"><span class="k">przykład</span><span class="t">Kontrast na stanach hover i disabled<em>Cztery stany przycisku, zmierzone.</em></span></a></li>
+      <li><a class="res" href="#"><span class="k">słownik</span><span class="t">Współczynnik kontrastu<em>Jak liczy się stosunek jasności dwóch kolorów.</em></span></a></li>
+    </ul>
+
+    <div class="foot">
+      <span>Materiał edukacyjny, nie porada prawna.</span>
+      <span class="mono">Treść zweryfikowana: 2026-09-27</span>
+      <a href="#">Deklaracja dostępności</a>
+    </div>
+  </div>
+</div>
+</div>
+
+</div>
+</body>
+</html>
