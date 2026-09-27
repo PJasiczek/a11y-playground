@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { type } from "arktype";
-import { criterionContent } from "./criterion-content";
+import { type CriterionContent, criterionContent } from "./criterion-content";
 import { criteria, type CriterionId } from "./wcag";
 
 // Server functions over content/kryteria. They keep the Markdown parser and the raw files
@@ -13,9 +13,9 @@ export const getCriterionContent = createServerFn({ method: "GET" })
   .validator(CriterionIdInput)
   .handler(({ data }) => criterionContent.get(data) ?? null);
 
-/** One-sentence summaries for the criteria list, keyed by id. Criteria without content are absent. */
-export const getCriterionSummaries = createServerFn({ method: "GET" }).handler(() => {
-  const summaries: Partial<Record<CriterionId, string>> = {};
-  for (const [id, content] of criterionContent) summaries[id] = content.summary;
-  return summaries;
+/** What the criteria list shows per criterion, keyed by id. Criteria without content are absent. */
+export const getCriteriaOverview = createServerFn({ method: "GET" }).handler(() => {
+  const overview: Partial<Record<CriterionId, Pick<CriterionContent, "summary" | "status">>> = {};
+  for (const [id, { summary, status }] of criterionContent) overview[id] = { summary, status };
+  return overview;
 });

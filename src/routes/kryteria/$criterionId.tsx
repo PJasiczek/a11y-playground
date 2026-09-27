@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { LevelBadge, NewBadge } from "~/components/level-badge";
+import { DraftBadge, LevelBadge, NewBadge } from "~/components/level-badge";
 import { getCriterionContent } from "~/content/content.functions";
 import type { SectionKey } from "~/content/sections";
 import { findCriterion, guidelineOf, isNewIn22, isObsolete, principleOf } from "~/content/wcag";
@@ -106,6 +106,7 @@ function CriterionPage() {
         <p className="mt-4 flex flex-wrap items-center gap-2 font-mono text-[0.8125rem] text-ink-2">
           <LevelBadge level={criterion.level} />
           {isNewIn22(criterion) ? <NewBadge /> : null}
+          {content?.status === "szkic" ? <DraftBadge long /> : null}
           {isObsolete(criterion) ? <span>wycofane w WCAG 2.2</span> : <span>od WCAG {criterion.versions[0]}</span>}
           <span aria-hidden="true">·</span>
           <span>
@@ -165,7 +166,8 @@ function CriterionPage() {
               </a>
               .
             </p>
-            {content ? <p className="mt-1">Treść zweryfikowana: {content.lastVerified}</p> : null}
+            {content?.status === "zweryfikowane" ? <p className="mt-1">Treść zweryfikowana: {content.lastVerified}</p> : null}
+            {content?.status === "szkic" ? <p className="mt-1">Treść jest szkicem i czeka na weryfikację.</p> : null}
           </footer>
         </div>
       </div>

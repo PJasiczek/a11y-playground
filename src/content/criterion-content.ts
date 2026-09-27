@@ -12,19 +12,31 @@ import { type CriterionId, isCriterionId } from "./wcag";
 
 export const roles = ["programista", "projektant", "autor treści", "tester"] as const;
 
+/** A verified file older than this fails the content tests and needs a fresh check. */
+export const maxVerifiedAgeMonths = 12;
+
 const Frontmatter = type({
+  status: "'szkic' | 'zweryfikowane'",
   summary: "0 < string <= 200",
   roles: type.enumerated(...roles).array(),
   "related?": "string[]",
-  lastVerified: /^\d{4}-\d{2}-\d{2}$/,
+  "keywords?": "string[]",
+  "lastVerified?": /^\d{4}-\d{2}-\d{2}$/,
   "+": "reject",
 });
 
-export type CriterionContent = {
+/**
+ * A draft never carries a verification date, so the app cannot claim a check that did not
+ * happen. Verified content always does.
+ */
+export type Verification = { status: "szkic" } | { status: "zweryfikowane"; lastVerified: string };
+
+export type CriterionContent = Verification & {
   summary: string;
   roles: (typeof roles)[number][];
   related: CriterionId[];
-  lastVerified: string;
+  /** Extra words people search with ("modal", "placeholder"); feeds search, not shown. */
+  keywords: string[];
   /** Rendered HTML per section. Sections the author has not written yet are absent. */
   sections: Partial<Record<SectionKey, string>>;
 };
@@ -41,6 +53,16 @@ export function parseCriterionMarkdown(file: string, source: string): CriterionC
 
   const meta = Frontmatter(parseYaml(yaml));
   if (meta instanceof type.errors) throw fail(meta.summary);
+
+  const { status, lastVerified } = meta;
+  let verification: Verification;
+  if (status === "szkic") {
+    if (lastVerified) throw fail("a draft (status: szkic) cannot have lastVerified");
+    verification = { status };
+  } else {
+    if (!lastVerified) throw fail("status: zweryfikowane needs lastVerified");
+    verification = { status, lastVerified };
+  }
 
   const related = meta.related ?? [];
   const unknown = related.filter((id) => !isCriterionId(id));
@@ -63,7 +85,14 @@ export function parseCriterionMarkdown(file: string, source: string): CriterionC
     if (markdown !== "") sections[section.key] = marked.parse(markdown, { async: false });
   }
 
-  return { ...meta, related: related.filter(isCriterionId), sections };
+  return {
+    ...verification,
+    summary: meta.summary,
+    roles: meta.roles,
+    related: related.filter(isCriterionId),
+    keywords: meta.keywords ?? [],
+    sections,
+  };
 }
 
 const files = import.meta.glob<string>("/content/kryteria/*.md", { query: "?raw", import: "default", eager: true });

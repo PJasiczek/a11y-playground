@@ -18,3 +18,13 @@ export function NewBadge() {
     </span>
   );
 }
+
+/** Content written but not yet checked by a person. Dashed border and a glyph, so not colour alone. */
+export function DraftBadge({ long = false }: { long?: boolean }) {
+  return (
+    <span className="rounded-xs border border-dashed border-ink px-1.5 py-1 font-mono text-xs leading-none font-semibold whitespace-nowrap text-ink">
+      <span aria-hidden="true">✎ </span>
+      {long ? "szkic, czeka na weryfikację" : "szkic"}
+    </span>
+  );
+}

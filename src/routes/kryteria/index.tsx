@@ -1,8 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { type } from "arktype";
 import type { ReactNode } from "react";
-import { LevelBadge, NewBadge } from "~/components/level-badge";
-import { getCriterionSummaries } from "~/content/content.functions";
+import { DraftBadge, LevelBadge, NewBadge } from "~/components/level-badge";
+import { getCriteriaOverview } from "~/content/content.functions";
 import {
   criteria,
   inVersion,
@@ -33,13 +33,13 @@ function validateSearch(search: Record<string, unknown>) {
 
 export const Route = createFileRoute("/kryteria/")({
   validateSearch,
-  loader: () => getCriterionSummaries(),
+  loader: () => getCriteriaOverview(),
   head: () => ({ meta: [{ title: "Kryteria · a11y playground" }] }),
   component: CriteriaPage,
 });
 
 function CriteriaPage() {
-  const summaries = Route.useLoaderData();
+  const overview = Route.useLoaderData();
   const search = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
 
@@ -113,12 +113,13 @@ function CriteriaPage() {
                 <span className="font-mono text-lg font-bold tracking-tight">{c.id}</span>
                 <span className="text-[1.0625rem] font-semibold tracking-tight">
                   {c.name}
-                  {summaries[c.id] ? (
-                    <span className="mt-1 block text-[0.9375rem] font-normal text-ink-2">{summaries[c.id]}</span>
+                  {overview[c.id] ? (
+                    <span className="mt-1 block text-[0.9375rem] font-normal text-ink-2">{overview[c.id]?.summary}</span>
                   ) : null}
                 </span>
                 <span className="col-start-2 flex flex-wrap items-center gap-1.5 sm:col-start-auto">
                   {isNewIn22(c) ? <NewBadge /> : null}
+                  {overview[c.id]?.status === "szkic" ? <DraftBadge /> : null}
                   {isObsolete(c) ? <span className="font-mono text-xs text-ink-2">wycofane w 2.2</span> : null}
                   <LevelBadge level={c.level} />
                 </span>
