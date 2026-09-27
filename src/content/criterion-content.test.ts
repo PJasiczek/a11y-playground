@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
-import { criterionContent, maxVerifiedAgeMonths, parseCriterionMarkdown } from "./criterion-content";
+import { criterionContent, parseCriterionMarkdown } from "./criterion-content";
+import { maxVerifiedAgeMonths, staleEntries } from "./markdown";
 
 const frontmatter = `---
 status: szkic
@@ -15,16 +16,22 @@ describe("content files", () => {
   });
 
   test(`verified content is at most ${String(maxVerifiedAgeMonths)} months old`, () => {
-    const limit = new Date();
-    limit.setMonth(limit.getMonth() - maxVerifiedAgeMonths);
-    const stale = [...criterionContent].flatMap(([id, c]) =>
-      c.status === "zweryfikowane" && new Date(c.lastVerified) < limit ? [`${id} (${c.lastVerified})`] : [],
-    );
-    expect(stale).toEqual([]);
+    expect(staleEntries(criterionContent)).toEqual([]);
   });
 });
 
 describe("parseCriterionMarkdown", () => {
+  test("turns the first glossary mark into a link with a preview button and later ones into text", () => {
+    const content = parseCriterionMarkdown(
+      "x.md",
+      `${frontmatter}## Kogo to dotyczy\n\nCzytnik czyta [nazwę](slownik:nazwa). Potem znowu [nazwę](slownik:nazwa).`,
+    );
+    expect(content.terms).toEqual(["nazwa"]);
+    const html = content.sections["kogo-dotyczy"] ?? "";
+    expect(html).toContain('<a href="/slownik#nazwa">nazwę</a><button type="button" class="term-tip" data-term="nazwa"');
+    expect(html).toContain("Potem znowu nazwę.");
+  });
+
   test("renders known sections to HTML and skips empty ones", () => {
     const content = parseCriterionMarkdown("x.md", `${frontmatter}\n## Kogo to dotyczy\n\nKażdego.\n\n## Typowe błędy\n`);
     expect(content.sections).toEqual({ "kogo-dotyczy": "<p>Każdego.</p>\n" });
@@ -39,6 +46,7 @@ describe("parseCriterionMarkdown", () => {
     ["an unknown frontmatter key", frontmatter.replace("roles:", "autor: ktoś\nroles:"), /autor/],
     ["a draft with lastVerified", frontmatter.replace("roles:", "lastVerified: 2026-09-27\nroles:"), /draft/],
     ["verified content without lastVerified", frontmatter.replace("status: szkic", "status: zweryfikowane"), /needs lastVerified/],
+    ["an unknown glossary term", `${frontmatter}## Kogo to dotyczy\n\n[x](slownik:nie-ma)`, /unknown glossary term "nie-ma"/],
     ["an unknown status", frontmatter.replace("status: szkic", "status: gotowe"), /status/],
   ])("rejects %s", (_, source, message) => {
     expect(() => parseCriterionMarkdown("x.md", source)).toThrow(message);
