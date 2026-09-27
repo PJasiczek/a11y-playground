@@ -2,7 +2,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
 // Routes scanned by axe. Grows with the app; representative pages, not every criterion page.
-const routes = ["/", "/kryteria", "/kryteria/1.4.3", "/kryteria/2.4.11", "/kryteria/4.1.1", "/prawo", "/praktyka", "/sciezki"];
+const routes = ["/", "/kryteria", "/kryteria/1.4.3", "/kryteria/2.4.11", "/kryteria/4.1.1", "/prawo", "/praktyka", "/sciezki", "/slownik"];
 
 // wcag2aaa is included on purpose: we opt into 1.4.6 Contrast (Enhanced).
 const tags = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa", "wcag2aaa"];

@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { DraftBadge, LevelBadge, NewBadge } from "~/components/level-badge";
+import { TermTips } from "~/components/term-tips";
 import { getCriterionPage } from "~/content/content.functions";
 import type { SectionKey } from "~/content/sections";
 import { findCriterion, guidelineOf, isNewIn22, isObsolete, principleOf } from "~/content/wcag";
@@ -9,8 +10,8 @@ export const Route = createFileRoute("/kryteria/$criterionId")({
   loader: async ({ params }) => {
     const criterion = findCriterion(params.criterionId);
     if (!criterion) throw notFound();
-    const { content, normative } = await getCriterionPage({ data: criterion.id });
-    return { criterion, content, normative };
+    const { content, normative, terms } = await getCriterionPage({ data: criterion.id });
+    return { criterion, content, normative, terms };
   },
   head: ({ loaderData }) => ({
     meta: [{ title: loaderData ? `${loaderData.criterion.id} ${loaderData.criterion.name} · a11y playground` : "a11y playground" }],
@@ -36,7 +37,7 @@ const pageSections = [
 const emptyNote = <p className="text-ink-2">Ta sekcja nie ma jeszcze treści.</p>;
 
 function CriterionPage() {
-  const { criterion, content, normative } = Route.useLoaderData();
+  const { criterion, content, normative, terms } = Route.useLoaderData();
   const principle = principleOf(criterion);
   const guideline = guidelineOf(criterion);
 
@@ -166,6 +167,7 @@ function CriterionPage() {
         </nav>
 
         <div>
+<TermTips terms={terms}>
           {pageSections.map((section) => (
             <section key={section.id} id={section.id} aria-labelledby={`${section.id}-title`} className="pb-9">
               <h2 id={`${section.id}-title`} className="mb-3 border-t-2 border-ink pt-5 text-xl font-bold tracking-tight">
@@ -174,6 +176,7 @@ function CriterionPage() {
               {"pending" in section ? <p className="text-ink-2">{section.pending}</p> : body[section.id]}
             </section>
           ))}
+</TermTips>
 
           <footer className="font-mono text-[0.8125rem] text-ink-2">
             <p>

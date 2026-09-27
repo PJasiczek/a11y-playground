@@ -14,7 +14,14 @@ export default defineConfig({
       // Content is static, so every page is rendered to HTML at build time. Crawling finds the
       // linked pages; criterion pages are listed explicitly because some (4.1.1) are only linked
       // from filtered views.
-      prerender: { enabled: true, crawlLinks: true, failOnError: true },
+      prerender: {
+        enabled: true,
+        crawlLinks: true,
+        failOnError: true,
+        // A link like /slownik#nazwa points at the same page as /slownik. Crawling each anchor
+        // separately writes the same file in parallel, which can leave it empty.
+        filter: ({ path }) => !path.includes("#"),
+      },
       pages: criteria.map((c) => ({ path: `/kryteria/${c.id}` })),
     }),
     nitro(),

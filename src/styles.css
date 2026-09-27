@@ -153,6 +153,52 @@
     }
   }
 
+  /*
+   * A glossary term in rendered Markdown: the link, then the preview button from TermTips.
+   * The 24px button sits inside a sentence, which 2.5.5 exempts from the 44px rule.
+   */
+  .term-tip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-left: 0.2rem;
+    vertical-align: 0.1em;
+    border: 1px solid var(--control);
+    border-radius: 9999px;
+    background: var(--surface);
+    color: var(--ink);
+    font: 700 0.75rem/1 var(--font-mono);
+    cursor: pointer;
+  }
+
+  .prose-tip {
+    & p + p {
+      margin-top: 0.5rem;
+    }
+    & code {
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+    }
+  }
+
+  .term-tip[hidden] {
+    display: none;
+  }
+
+  .term-tip[aria-expanded="true"] {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .prose .term a {
+    color: inherit;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 2px;
+  }
+
   .prose[data-section="typowe-bledy"] ul > li::before {
     content: "✕" / "";
     color: var(--bad);
