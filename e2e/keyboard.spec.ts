@@ -35,3 +35,25 @@ test("theme toggle works from the keyboard and survives a reload", async ({ page
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await expect(toggle).toHaveAttribute("aria-pressed", "true");
 });
+
+test("criteria filters work from the keyboard, keep focus and survive a reload", async ({ page }) => {
+  await page.goto("/kryteria");
+  const status = page.getByRole("status");
+  await expect(status).toHaveText("Pokazuję 86 z 86 kryteriów WCAG 2.2");
+
+  const version21 = page.getByRole("radio", { name: "2.1" });
+  await version21.focus();
+  await page.keyboard.press("Space");
+  await expect(status).toHaveText("Pokazuję 78 z 78 kryteriów WCAG 2.1");
+  await expect(version21).toBeFocused();
+
+  const aaa = page.getByRole("checkbox", { name: "AAA" });
+  await aaa.focus();
+  await page.keyboard.press("Space");
+  await expect(status).toHaveText("Pokazuję 50 z 78 kryteriów WCAG 2.1");
+  await expect(aaa).toBeFocused();
+
+  await page.reload();
+  await expect(status).toHaveText("Pokazuję 50 z 78 kryteriów WCAG 2.1");
+  await expect(page.getByRole("link", { name: /^4\.1\.1 Poprawność kodu/ })).toBeVisible();
+});
