@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SectionPlaceholder } from "~/components/section-placeholder";
 
-export const Route = createFileRoute("/kryteria")({
+export const Route = createFileRoute("/kryteria/")({
   head: () => ({ meta: [{ title: "Kryteria · a11y playground" }] }),
   component: () => (
     <SectionPlaceholder
