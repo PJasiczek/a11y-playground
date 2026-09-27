@@ -1,13 +1,19 @@
 /**
- * Imports the WCAG 2.2 structure with Polish names into src/content/wcag.gen.ts.
- * Run by hand with `pnpm import:wcag`; review the diff of the generated file in a PR.
+ * Imports the WCAG 2.2 structure with Polish names into src/content/wcag.gen.ts, and the Polish
+ * normative text of criteria and glossary terms into src/content/wcag-text.gen.ts.
+ * Run by hand with `pnpm import:wcag`; review the diff of the generated files in a PR.
  *
  * Sources:
  * - numbers, W3C ids, levels and versions: the wcag.json that W3C publishes for WCAG 2.2,
  * - Polish names of principles, guidelines and the 78 criteria of WCAG 2.1:
  *   the authorized W3C translation of WCAG 2.1,
  * - Polish names of the 9 criteria new in 2.2: the unofficial IRDPL translation of WCAG 2.2,
- *   because W3C has no authorized Polish translation of 2.2 yet.
+ *   because W3C has no authorized Polish translation of 2.2 yet,
+ * - normative text of criteria and glossary definitions: the authorized translation of 2.1 only.
+ *   Text from IRDPL is not copied until IRDPL confirms the licence.
+ *
+ * The text files are kept apart from the structure because only the server needs them;
+ * the structure is small enough to ship to the browser.
  */
 import { type } from "arktype";
 import { writeFileSync } from "node:fs";
@@ -19,6 +25,7 @@ const sources = {
 } as const;
 
 const outFile = new URL("../src/content/wcag.gen.ts", import.meta.url);
+const textFile = new URL("../src/content/wcag-text.gen.ts", import.meta.url);
 
 // Only the fields we use; ArkType ignores the rest and fails loudly if W3C changes the shape.
 const W3cStructure = type({
@@ -56,6 +63,82 @@ function readHeadings(html: string) {
     levels.set(num, level);
   }
   return { names, levels };
+}
+
+const keptTags = new Set(["p", "ul", "ol", "li", "dl", "dt", "dd", "em", "strong", "code"]);
+
+/**
+ * Reduces ReSpec HTML to paragraphs, lists, definition lists and emphasis, with no attributes.
+ * Links become plain text. W3C notes ("Uwaga") become blockquotes that keep their title, and
+ * examples get a "Przykład:" lead, so the meaning survives without the original styling.
+ */
+function sanitize(html: string) {
+  const out: string[] = [];
+  const divs: ("note" | "title" | "plain")[] = [];
+  let title = "";
+  for (const token of html.split(/(<[^>]+>)/)) {
+    const tag = /^<(\/?)([a-z0-9]+)([^>]*)>$/i.exec(token);
+    const inTitle = divs.includes("title");
+    if (!tag) {
+      if (inTitle) title += token;
+      else out.push(token);
+      continue;
+    }
+    const [, close = "", name = "", attrs = ""] = tag;
+    if (name === "div") {
+      if (!close) {
+        const kind = attrs.includes("note-title") ? "title" : attrs.includes('class="note"') ? "note" : "plain";
+        divs.push(kind);
+        if (kind === "note") out.push("<blockquote>");
+        if (kind === "title") title = "";
+      } else {
+        const kind = divs.pop();
+        if (kind === "note") out.push("</blockquote>");
+        if (kind === "title") out.push(`<p><strong>${title.trim()}</strong></p>`);
+      }
+    } else if (inTitle) {
+      continue;
+    } else if (keptTags.has(name)) {
+      out.push(`<${close}${name}>`);
+      if (!close && name === "p" && attrs.includes('class="example"')) out.push("<em>Przykład:</em> ");
+    } else if (name === "br") {
+      out.push(" ");
+    }
+  }
+  return out
+    .join("")
+    .replace(/\s+/g, " ")
+    .replace(/(<(?:p|li|dt|dd|blockquote)>) /g, "$1")
+    .replace(/ (<\/(?:p|li|dt|dd|blockquote)>)/g, "$1")
+    .replace(/ ([,.;:!?)])/g, "$1")
+    .replace(/\( /g, "(")
+    .replace(/<p><\/p>/g, "")
+    .replace(/> </g, "><")
+    .trim();
+}
+
+/** Normative text of every criterion in the 2.1 translation, keyed by number. */
+function readCriterionTexts(html: string) {
+  const texts = new Map<string, string>();
+  for (const [, section = ""] of html.matchAll(/<section class="sc"[^>]*>([\s\S]*?)<\/section>/g)) {
+    const num = /Kryterium sukcesu ([\d.]+)/.exec(section)?.[1];
+    const body = section.split(/<p class="conformance-level">[^<]*<\/p>/)[1];
+    if (!num || body === undefined) throw new Error("Unexpected criterion section shape");
+    texts.set(num, sanitize(body));
+  }
+  return texts;
+}
+
+/** Definitions from the glossary (section 8) of the 2.1 translation, keyed by the defined term. */
+function readGlossary(html: string) {
+  const start = html.indexOf('id="x8-s-ownik"');
+  const end = html.indexOf('id="x9-', start);
+  const terms = new Map<string, string>();
+  for (const [, dt = "", dd = ""] of html.slice(start, end).matchAll(/<dt[^>]*>([\s\S]*?)<\/dt>\s*<dd[^>]*>([\s\S]*?)<\/dd>/g)) {
+    const term = dt.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
+    terms.set(term, sanitize(dd));
+  }
+  return terms;
 }
 
 function pick(map: Map<string, string>, key: string, what: string) {
@@ -116,4 +199,22 @@ export const criteria = ${json(criteria)} as const;
 `,
 );
 
+const criterionTexts = readCriterionTexts(w3cHtml);
+const glossary = readGlossary(w3cHtml);
+
+writeFileSync(
+  textFile,
+  `// Generated by scripts/import-wcag.ts on ${today}. Do not edit by hand, rerun \`pnpm import:wcag\`.
+// Source: ${sources.w3cPl} (authorized translation of WCAG 2.1, W3C Document License).
+// Server-only: import it from server code, never from components.
+
+/** Normative Polish text of criteria in WCAG 2.1, as sanitized HTML, keyed by criterion number. */
+export const criterionTexts: Readonly<Record<string, string>> = ${json(Object.fromEntries(criterionTexts))};
+
+/** Normative Polish definitions from the WCAG 2.1 glossary, as sanitized HTML, keyed by term. */
+export const wcagGlossary: Readonly<Record<string, string>> = ${json(Object.fromEntries(glossary))};
+`,
+);
+
 console.log(`Wrote ${String(criteria.length)} criteria to ${outFile.pathname}`);
+console.log(`Wrote ${String(criterionTexts.size)} criterion texts and ${String(glossary.size)} terms to ${textFile.pathname}`);
