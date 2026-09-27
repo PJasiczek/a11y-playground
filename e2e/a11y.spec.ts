@@ -2,7 +2,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
 // Routes scanned by axe. Grows with the app; representative pages, not every criterion page.
-const routes = ["/"];
+const routes = ["/", "/kryteria", "/prawo", "/praktyka", "/sciezki"];
 
 // wcag2aaa is included on purpose: we opt into 1.4.6 Contrast (Enhanced).
 const tags = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa", "wcag2aaa"];
@@ -18,7 +18,7 @@ for (const route of routes) {
   }
 
   // 2.5.5 Target Size (Enhanced), which we opt into. Inline links in running text are exempt,
-  // and so is anything visually hidden with .sr-only.
+  // and so is the skip link while it is visually hidden (keyboard.spec.ts checks it on focus).
   test(`${route} has 44px targets`, async ({ page }) => {
     await page.goto(route);
     await page.waitForLoadState("networkidle");
