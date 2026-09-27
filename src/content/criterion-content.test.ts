@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { criterionContent, parseCriterionMarkdown } from "./criterion-content";
 import { maxVerifiedAgeMonths, staleEntries } from "./markdown";
+import { criteria, isObsolete } from "./wcag";
 
 const frontmatter = `---
 status: szkic
@@ -50,5 +51,17 @@ describe("parseCriterionMarkdown", () => {
     ["an unknown status", frontmatter.replace("status: szkic", "status: gotowe"), /status/],
   ])("rejects %s", (_, source, message) => {
     expect(() => parseCriterionMarkdown("x.md", source)).toThrow(message);
+  });
+});
+
+// Phase 2 promise: every A and AA criterion of WCAG 2.2 has a usable explanation.
+describe("completeness", () => {
+  const required = ["kogo-dotyczy", "jak-spelnic", "typowe-bledy", "jak-sprawdzic"] as const;
+
+  test.each(criteria.filter((c) => !isObsolete(c) && c.level !== "AAA").map((c) => c.id))("%s has complete content", (id) => {
+    const content = criterionContent.get(id);
+    expect(content, `content/kryteria/${id}.md is missing`).toBeDefined();
+    expect(content?.roles.length).toBeGreaterThan(0);
+    expect(required.filter((key) => !content?.sections[key])).toEqual([]);
   });
 });
