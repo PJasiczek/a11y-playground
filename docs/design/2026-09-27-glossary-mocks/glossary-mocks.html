@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Glossary mocks: terms in text A / B / C, glossary page D / E</title>
+<style>
+  :root {
+    --paper: #FBFAF7; --paper-2: #F1EFE8; --surface: #FFFFFF;
+    --ink: #14171A; --ink-2: #484D52; --rule: #DFDBD1; --control: #857F72;
+    --accent: #2C36A8; --marker: #F4E75B; --good: #145537; --bad: #9A1B1B;
+    --sans: "Inter var", Inter, "Segoe UI", -apple-system, system-ui, sans-serif;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, "SF Mono", monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 2.5rem 1rem 6rem; background: #000; color: #fff; font: 16px/1.6 var(--sans); }
+  .page { max-width: 1180px; margin: 0 auto; }
+  .page > h1 { font-size: 1.4rem; margin: 0 0 .35rem; letter-spacing: -.02em; }
+  .page > p, .note { color: #B8BDC2; font-size: .9rem; margin: 0 0 1rem; max-width: 76ch; }
+  .page > h2 { font: 600 .8rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; margin: 3.5rem 0 .6rem; }
+  .page code { font-family: var(--mono); font-size: .9em; }
+  .frame { border: 1px solid #2A2D31; border-radius: 6px; overflow: hidden; }
+
+  /* ---------- app surface (variant A tokens) ---------- */
+  .s { background: var(--paper); color: var(--ink); font-family: var(--sans); padding: 1.75rem 1.75rem 2.25rem; }
+  .s a { color: var(--accent); text-underline-offset: 3px; }
+  .s :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .s .crumbs { font: .8125rem var(--mono); color: var(--ink-2); margin: 0 0 1rem; }
+  .s .num { display: block; font: 700 3rem/.9 var(--mono); letter-spacing: -.06em; margin: 0 0 .4rem; }
+  .s h3.name { font-size: 1.75rem; letter-spacing: -.03em; line-height: 1.15; margin: 0 0 .8rem; }
+  .s .badges { display: flex; flex-wrap: wrap; gap: .45rem; align-items: center; font: .8125rem var(--mono); color: var(--ink-2); margin: 0; }
+  .s .lvl { font: 600 .75rem/1 var(--mono); border: 1px solid currentColor; border-radius: 2px; padding: .25rem .35rem; color: var(--ink); }
+  .s .draft { font: 600 .75rem/1 var(--mono); border: 1px dashed var(--ink); border-radius: 2px; padding: .25rem .4rem; color: var(--ink); }
+  .s .draft::before { content: "✎ " / ""; }
+  .s section { margin-top: 1.75rem; }
+  .s section > h4 { font-size: 1.2rem; letter-spacing: -.02em; margin: 0 0 .7rem; padding-top: 1.1rem; border-top: 2px solid var(--ink); }
+  .s p { max-width: 64ch; margin: 0 0 .9rem; }
+
+  /* A: disclosure under the paragraph */
+  .termA { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer;
+    text-decoration: underline dotted 2px; text-decoration-color: var(--accent); text-underline-offset: 4px; }
+  .termA[aria-expanded="true"] { background: var(--marker); color: var(--ink); text-decoration-style: solid; }
+  .termA::after { content: "?" / ""; font: 700 .7em var(--mono); color: var(--accent); vertical-align: super; margin-left: 1px; }
+  .defA { max-width: 64ch; margin: -.2rem 0 1rem; padding: .9rem 1rem 1rem; background: var(--surface); border: 1px solid var(--control); border-left: 4px solid var(--ink); border-radius: 3px; }
+  .defA .t { font-weight: 700; margin: 0 0 .5rem; }
+  .pair { display: grid; gap: .75rem; }
+  @media (min-width: 44rem) { .pair { grid-template-columns: 1fr 1fr; } }
+  .pair dt { font: 600 .72rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 .25rem; }
+  .pair dd { margin: 0; font-size: .9375rem; }
+  .pair blockquote { margin: 0; padding-left: .7rem; border-left: 3px solid var(--rule); font-size: .9375rem; }
+  .defA .more, .tipC .more { margin: .75rem 0 0; font-size: .9375rem; }
+
+  /* B: gloss in the margin */
+  .gridB { display: grid; gap: 1rem 2.25rem; }
+  @media (min-width: 60rem) { .gridB { grid-template-columns: minmax(0, 1fr) 17rem; } }
+  .gridB p { margin: 0; }
+  .termB { text-decoration: underline 2px; text-decoration-color: var(--control); text-underline-offset: 4px; color: inherit !important; }
+  .termB sup { font: 700 .7em var(--mono); color: var(--accent); margin-left: 1px; }
+  .gloss { font-size: .875rem; border-top: 2px solid var(--ink); padding-top: .5rem; align-self: start; }
+  .gloss .t { font-weight: 700; margin: 0 0 .25rem; }
+  .gloss .t b { font-family: var(--mono); color: var(--accent); margin-right: .35rem; }
+  .gloss p { margin: 0 0 .4rem; color: var(--ink); }
+  .gloss .q { color: var(--ink-2); font-style: italic; }
+
+  /* C: link plus toggletip */
+  .tipwrap { position: relative; }
+  .tipbtn { display: inline-flex; align-items: center; justify-content: center; min-width: 1.5rem; height: 1.5rem; margin-left: .2rem; vertical-align: .1em;
+    font: 700 .75rem/1 var(--mono); color: var(--ink); background: var(--surface); border: 1px solid var(--control); border-radius: 50%; cursor: pointer; }
+  .tipbtn[aria-expanded="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .tipC { position: absolute; left: 0; top: calc(100% + .5rem); z-index: 2; width: min(26rem, 80vw); padding: .9rem 1rem 1rem; background: var(--surface);
+    border: 2px solid var(--ink); border-radius: 4px; box-shadow: 0 10px 30px rgba(20, 23, 26, .18); font-size: .9375rem; }
+  .tipC .line { display: block; margin: 0 0 .5rem; padding-right: 2rem; }
+  .tipC .close { position: absolute; top: .35rem; right: .35rem; min-width: 44px; min-height: 44px; border: 0; background: none; font: 700 1rem var(--mono); cursor: pointer; color: var(--ink); }
+  .spacer { height: 9.5rem; }
+
+  /* D and E: glossary page */
+  .gh { display: flex; flex-wrap: wrap; align-items: baseline; gap: .4rem 1.25rem; margin: 0 0 1.1rem; }
+  .gh h3 { font-size: 1.875rem; letter-spacing: -.03em; margin: 0; }
+  .gh .count { font: .875rem var(--mono); color: var(--ink-2); }
+  .az { display: flex; flex-wrap: wrap; gap: .25rem; margin: 0 0 1.5rem; padding: 0; list-style: none; border-bottom: 1px solid var(--rule); padding-bottom: 1rem; }
+  .az a, .az span { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; font: 700 .9375rem var(--mono); border-radius: 3px; text-decoration: none; }
+  .az a { color: var(--ink); border: 1px solid var(--control); background: var(--surface); }
+  .az span { color: var(--ink-2); font-weight: 400; }
+  .entry { display: grid; gap: .4rem 2rem; padding: 1.25rem 0; border-top: 1px solid var(--rule); }
+  @media (min-width: 52rem) { .entry { grid-template-columns: 13rem minmax(0, 1fr); } }
+  .entry h4 { margin: 0; font-size: 1.25rem; letter-spacing: -.02em; }
+  .entry h4 small { display: block; font: 400 .8125rem var(--mono); color: var(--ink-2); letter-spacing: 0; margin-top: .2rem; }
+  .entry p { margin: 0 0 .6rem; }
+  .letter { font: 700 2.25rem/1 var(--mono); letter-spacing: -.04em; margin: 1.75rem 0 .5rem; }
+  .crit { display: flex; flex-wrap: wrap; gap: .4rem; margin: .5rem 0 0; padding: 0; list-style: none; }
+  .crit a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 .65rem; border: 1px solid var(--control); border-radius: 4px; background: var(--surface); color: var(--ink); text-decoration: none; font: 600 .875rem var(--mono); }
+  .filterE { display: flex; flex-direction: column; gap: .3rem; max-width: 26rem; margin: 0 0 1.5rem; }
+  .filterE label { font-weight: 600; font-size: .9375rem; }
+  .filterE input { min-height: 48px; border: 2px solid var(--ink); border-radius: 4px; padding: 0 .85rem; font: 1rem var(--sans); background: var(--surface); color: var(--ink); }
+  .filterE .hint { font-size: .875rem; color: var(--ink-2); }
+  .groups { display: grid; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+  @media (min-width: 52rem) { .groups { grid-template-columns: 1fr 1fr; } }
+  .s .group { background: var(--paper); padding: 1.1rem 1.25rem 1.3rem; margin: 0; }
+  .s .group > h4 { margin: 0 0 .15rem; padding: 0; border: 0; font-size: 1.125rem; letter-spacing: -.02em; }
+  .group .sub { margin: 0 0 .8rem; font-size: .875rem; color: var(--ink-2); }
+  .group dl { margin: 0; }
+  .group dt { font-weight: 700; margin-top: .6rem; }
+  .group dt a { color: var(--ink); }
+  .group dd { margin: .1rem 0 0; font-size: .9375rem; color: var(--ink); }
+
+  @media (max-width: 40rem) { body { padding: 1.5rem .6rem 4rem; } .s { padding: 1.25rem 1rem 1.75rem; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>Glossary mocks: phase 2</h1>
+<p>Two decisions. First, how a term looks where it first appears in a criterion page (A, B, C). Second, how the glossary page at <code>/slownik</code> is laid out (D, E). Pick one from each group. All five use the variant A tokens already in the app. Sample criterion 4.1.2. Definitions quoted "w normie" are the real text of the authorized Polish translation of WCAG 2.1. The header also shows the new draft badge from the plan.</p>
+<p>Terms are marked by the author in Markdown, <code>[nazwa](slownik:nazwa)</code>, not matched automatically, because Polish inflection makes automatic matching unreliable. Only the first occurrence on a page gets the treatment below; later ones are plain text.</p>
+
+<!-- ================= A ================= -->
+<h2>A: Definition opens under the paragraph</h2>
+<p class="note">The term is a button with a dotted underline and a small question mark. Activating it opens the definition as a block right under the paragraph, pushing the text down. Nothing floats, so nothing covers focus (2.4.11) and zoom and reflow work as for any text. A disclosure button with <code>aria-expanded</code>. Shown open.</p>
+<div class="frame"><div class="s">
+  <p class="crumbs">Kryteria / 4.1.2</p>
+  <span class="num">4.1.2</span>
+  <h3 class="name">Nazwa, rola, wartość</h3>
+  <p class="badges"><span class="lvl">A</span> <span>od WCAG 2.0</span> <span>·</span> <span class="draft">szkic, czeka na weryfikację</span></p>
+  <section>
+    <h4>Kogo to dotyczy</h4>
+    <p>Osoby korzystające z czytnika ekranu albo sterowania głosem. Czytnik mówi o kontrolce trzy rzeczy: jej <button type="button" class="termA" aria-expanded="true" aria-controls="defA">nazwę</button>, czym jest i w jakim jest stanie. Jeśli którejś brakuje, kontrolka jest dla tej osoby niema albo nie wiadomo, co zrobi.</p>
+    <div class="defA" id="defA">
+      <p class="t">Nazwa</p>
+      <dl class="pair">
+        <div><dt>Po ludzku</dt><dd>To, co czytnik powie o kontrolce, zanim powie, czym ona jest: „Zamknij okno, przycisk”. Zwykle pochodzi z tekstu przycisku, z <code>label</code> albo z <code>aria-label</code>.</dd></div>
+        <div><dt>W normie</dt><dd><blockquote>tekst, po którym oprogramowanie może zidentyfikować obiekty w treści</blockquote></dd></div>
+      </dl>
+      <p class="more">Nie myl z atrybutem <code>name</code> w HTML. <a href="#">Całe hasło w słowniku</a></p>
+    </div>
+    <p>Osoba sterująca głosem mówi „kliknij Zamknij okno”. Jeśli nazwa w kodzie brzmi inaczej niż napis na ekranie, polecenie nie trafi.</p>
+  </section>
+</div></div>
+
+<!-- ================= B ================= -->
+<h2>B: Gloss in the margin</h2>
+<p class="note">No interaction at all. On a wide screen the definition sits in the margin next to the paragraph that uses the term, like a sidenote in a textbook. On a narrow screen it drops under the paragraph. The marker is a number because it pairs a term with its note in reading order. Always visible, so nothing is hidden behind a click, but the page gets denser and the margin competes with the "Na tej stronie" rail, which would have to move above the sections.</p>
+<div class="frame"><div class="s">
+  <p class="crumbs">Kryteria / 4.1.2</p>
+  <span class="num">4.1.2</span>
+  <h3 class="name">Nazwa, rola, wartość</h3>
+  <p class="badges"><span class="lvl">A</span> <span>od WCAG 2.0</span> <span>·</span> <span class="draft">szkic, czeka na weryfikację</span></p>
+  <section>
+    <h4>Kogo to dotyczy</h4>
+    <div class="gridB">
+      <p>Osoby korzystające z czytnika ekranu albo sterowania głosem. Czytnik mówi o kontrolce trzy rzeczy: jej <a class="termB" href="#glossB1">nazwę<sup>1</sup></a>, czym jest, czyli <a class="termB" href="#glossB2">rolę<sup>2</sup></a>, i w jakim jest stanie. Jeśli którejś brakuje, kontrolka jest dla tej osoby niema albo nie wiadomo, co zrobi.</p>
+      <aside class="gloss" aria-label="Pojęcia z tego akapitu">
+        <div id="glossB1">
+          <p class="t"><b>1</b>Nazwa</p>
+          <p>To, co czytnik powie o kontrolce: „Zamknij okno, przycisk”. Nie myl z atrybutem <code>name</code>.</p>
+          <p class="q">W normie: tekst, po którym oprogramowanie może zidentyfikować obiekty w treści.</p>
+        </div>
+        <div id="glossB2">
+          <p class="t"><b>2</b>Rola</p>
+          <p>Czym kontrolka jest: przycisk, łącze, pole wyboru.</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+</div></div>
+
+<!-- ================= C ================= -->
+<h2>C: Term links to the glossary, a small button shows a preview</h2>
+<p class="note">The term itself is an ordinary link to its glossary entry, so it works without JavaScript and opens in a new page like any link. Next to it, a small round button opens a toggletip with the short definition. Esc and the close button dismiss it, focus stays on the button. The fastest to read for sighted mouse users; the preview floats over text, so it must never cover the focused element, and it is the most code of the three. The 24px button relies on the inline-target exception in 2.5.5. Shown open.</p>
+<div class="frame"><div class="s">
+  <p class="crumbs">Kryteria / 4.1.2</p>
+  <span class="num">4.1.2</span>
+  <h3 class="name">Nazwa, rola, wartość</h3>
+  <p class="badges"><span class="lvl">A</span> <span>od WCAG 2.0</span> <span>·</span> <span class="draft">szkic, czeka na weryfikację</span></p>
+  <section>
+    <h4>Kogo to dotyczy</h4>
+    <p>Osoby korzystające z czytnika ekranu albo sterowania głosem. Czytnik mówi o kontrolce trzy rzeczy: jej
+      <span class="tipwrap"><a href="#">nazwę</a><button type="button" class="tipbtn" aria-expanded="true" aria-label="Definicja: nazwa">?</button>
+        <span class="tipC" role="status">
+          <button type="button" class="close" aria-label="Zamknij definicję">✕</button>
+          <span class="line"><strong>Nazwa.</strong> To, co czytnik powie o kontrolce, zanim powie, czym ona jest: „Zamknij okno, przycisk”.</span>
+          <span class="line">Nie myl z atrybutem <code>name</code> w HTML.</span>
+          <span class="line more"><a href="#">Całe hasło, z brzmieniem normy</a></span>
+        </span>
+      </span>, czym jest i w jakim jest stanie. Jeśli którejś brakuje, kontrolka jest dla tej osoby niema albo nie wiadomo, co zrobi.</p>
+    <div class="spacer" aria-hidden="true"></div>
+  </section>
+</div></div>
+
+<!-- ================= D ================= -->
+<h2>D: Glossary page, A to Z</h2>
+<p class="note">One page, alphabetical, with a letter index. Letters without terms are plain text, not dead links. Each entry is a heading, the plain explanation first, the normative wording next to it, and the criteria where the term matters. Works like a dictionary: good when you already have a word to look up.</p>
+<div class="frame"><div class="s">
+  <div class="gh"><h3>Słownik</h3><span class="count">30 pojęć</span></div>
+  <nav aria-label="Litery">
+    <ul class="az">
+      <li><span>A</span></li><li><a href="#">C</a></li><li><a href="#">D</a></li><li><a href="#">F</a></li><li><span>G</span></li><li><a href="#">K</a></li><li><a href="#">M</a></li><li><a href="#">N</a></li><li><a href="#">O</a></li><li><a href="#">R</a></li><li><a href="#">S</a></li><li><a href="#">T</a></li><li><span>W</span></li>
+    </ul>
+  </nav>
+  <p class="letter" aria-hidden="true">K</p>
+  <div class="entry">
+    <h4>komunikat o stanie</h4>
+    <div>
+      <p>Informacja, która pojawia się bez przenoszenia fokusu: „Zapisano”, „3 wyniki”, „Trwa wysyłanie”. Czytnik ekranu musi ją przeczytać sam, bez tego, żeby użytkownik jej szukał.</p>
+      <dl class="pair">
+        <div><dt>W normie</dt><dd><blockquote>zmiana treści, która nie jest zmianą kontekstu i która dostarcza użytkownikowi informacji o powodzeniu lub wynikach działania, o stanie oczekiwania aplikacji, o postępie procesu lub o istnieniu błędów</blockquote></dd></div>
+      </dl>
+      <ul class="crit" aria-label="Kryteria"><li><a href="#">4.1.3</a></li></ul>
+    </div>
+  </div>
+  <p class="letter" aria-hidden="true">M</p>
+  <div class="entry">
+    <h4>mechanizm</h4>
+    <div>
+      <p>Sposób, w jaki użytkownik osiąga coś, czego wymaga kryterium: przycisk „Pauza”, ustawienie w profilu, funkcja przeglądarki. Może go dać strona albo przeglądarka, byle działał.</p>
+      <dl class="pair">
+        <div><dt>W normie</dt><dd><blockquote>procedura lub technika prowadząca do osiągnięcia rezultatu</blockquote></dd></div>
+      </dl>
+      <ul class="crit" aria-label="Kryteria"><li><a href="#">1.4.2</a></li><li><a href="#">2.2.2</a></li><li><a href="#">2.4.5</a></li></ul>
+    </div>
+  </div>
+  <p class="letter" aria-hidden="true">N</p>
+  <div class="entry">
+    <h4>nazwa<small>potocznie: dostępna nazwa</small></h4>
+    <div>
+      <p>To, co czytnik powie o kontrolce, zanim powie, czym ona jest. Nie myl z atrybutem <code>name</code> w HTML.</p>
+      <dl class="pair">
+        <div><dt>W normie</dt><dd><blockquote>tekst, po którym oprogramowanie może zidentyfikować obiekty w treści</blockquote></dd></div>
+      </dl>
+      <ul class="crit" aria-label="Kryteria"><li><a href="#">1.1.1</a></li><li><a href="#">2.5.3</a></li><li><a href="#">4.1.2</a></li></ul>
+    </div>
+  </div>
+</div></div>
+
+<!-- ================= E ================= -->
+<h2>E: Glossary page, grouped by topic</h2>
+<p class="note">The same entries grouped by what you are working on, with a field that filters the list as you type. Works like a textbook index: better for someone learning, who does not yet know which word to look up. Each term still has its own anchor, so links from criterion pages land on it. The filter is a plain text field with a live count; without JavaScript the full list shows.</p>
+<div class="frame"><div class="s">
+  <div class="gh"><h3>Słownik</h3><span class="count">30 pojęć w 4 tematach</span></div>
+  <div class="filterE">
+    <label for="fE">Znajdź pojęcie</label>
+    <input id="fE" type="text" value="">
+    <span class="hint" role="status">Pokazuję wszystkie 30</span>
+  </div>
+  <div class="groups">
+    <section class="group">
+      <h4>Czytniki ekranu i kod</h4>
+      <p class="sub">Co oprogramowanie wie o stronie</p>
+      <dl>
+        <dt><a href="#">komunikat o stanie</a></dt><dd>Informacja, którą czytnik przeczyta bez przenoszenia fokusu.</dd>
+        <dt><a href="#">nazwa</a></dt><dd>To, co czytnik powie o kontrolce, zanim powie, czym ona jest.</dd>
+        <dt><a href="#">rola</a></dt><dd>Czym kontrolka jest: przycisk, łącze, pole wyboru.</dd>
+      </dl>
+    </section>
+    <section class="group">
+      <h4>Klawiatura i fokus</h4>
+      <p class="sub">Obsługa bez myszy</p>
+      <dl>
+        <dt><a href="#">fokus</a></dt><dd>Miejsce, do którego trafią naciśnięcia klawiszy.</dd>
+        <dt><a href="#">interfejs klawiaturowy</a></dt><dd>Wszystko, co przyjmuje klawisze, także klawiatura ekranowa i dyktowanie.</dd>
+      </dl>
+    </section>
+    <section class="group">
+      <h4>Wygląd i kolor</h4>
+      <p class="sub">Kontrast, rozmiar, powiększanie</p>
+      <dl>
+        <dt><a href="#">duży tekst</a></dt><dd>Co najmniej 18 punktów, albo 14 punktów pogrubione.</dd>
+        <dt><a href="#">cel</a></dt><dd>Obszar, który reaguje na kliknięcie albo dotyk.</dd>
+      </dl>
+    </section>
+    <section class="group">
+      <h4>Czas i ruch</h4>
+      <p class="sub">Animacje, limity czasu, treść, która sama się zmienia</p>
+      <dl>
+        <dt><a href="#">mechanizm</a></dt><dd>Sposób, w jaki użytkownik osiąga to, czego wymaga kryterium.</dd>
+      </dl>
+    </section>
+  </div>
+</div></div>
+
+</div>
+</body>
+</html>
