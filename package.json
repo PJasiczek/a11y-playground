@@ -8,7 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . && tsc",
-    "test": "playwright test",
+    "test": "vitest run && playwright test",
     "import:wcag": "node scripts/import-wcag.ts"
   },
   "dependencies": {
