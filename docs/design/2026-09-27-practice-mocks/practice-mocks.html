@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practice mocks: catalogue A / B / C and the example page</title>
+<style>
+  :root {
+    --paper: #FBFAF7; --paper-2: #F1EFE8; --surface: #FFFFFF;
+    --ink: #14171A; --ink-2: #484D52; --rule: #DFDBD1; --control: #857F72;
+    --accent: #2C36A8; --marker: #F4E75B; --good: #145537; --bad: #9A1B1B;
+    --sans: "Inter var", Inter, "Segoe UI", -apple-system, system-ui, sans-serif;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, "SF Mono", monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 2.5rem 1rem 6rem; background: #000; color: #fff; font: 16px/1.6 var(--sans); }
+  .page { max-width: 1180px; margin: 0 auto; }
+  .page > h1 { font-size: 1.4rem; margin: 0 0 .35rem; letter-spacing: -.02em; }
+  .page > p, .note { color: #B8BDC2; font-size: .9rem; margin: 0 0 1rem; max-width: 76ch; }
+  .page > h2 { font: 600 .8rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; margin: 3.5rem 0 .6rem; }
+  .page code { font-family: var(--mono); font-size: .9em; }
+  .frame { border: 1px solid #2A2D31; border-radius: 6px; overflow: hidden; }
+
+  .s { background: var(--paper); color: var(--ink); padding: 1.75rem 1.75rem 2.25rem; }
+  .s a { color: inherit; text-decoration: none; }
+  .s :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .s code { font-family: var(--mono); font-size: .9em; }
+  .hd { display: flex; flex-wrap: wrap; align-items: baseline; gap: .4rem 1.25rem; margin: 0 0 .5rem; }
+  .hd h3 { font-size: 1.875rem; letter-spacing: -.03em; margin: 0; }
+  .hd .count { font: .875rem var(--mono); color: var(--ink-2); }
+  .lead { max-width: 60ch; color: var(--ink-2); margin: 0 0 1.5rem; }
+  .sc { display: inline-flex; align-items: center; min-height: 28px; padding: 0 .4rem; font: 600 .75rem var(--mono); border: 1px solid var(--control); border-radius: 2px; background: var(--surface); }
+  .eff { font: .75rem var(--mono); color: var(--ink-2); white-space: nowrap; }
+  .draft { font: 600 .75rem/1 var(--mono); border: 1px dashed var(--ink); border-radius: 2px; padding: .25rem .4rem; white-space: nowrap; }
+  .draft::before { content: "✎ " / ""; }
+
+  /* A: grouped list */
+  .grp h4 { font: 600 .75rem var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); margin: 1.75rem 0 .4rem; }
+  .grp ul { list-style: none; margin: 0; padding: 0; }
+  .grp li { border-top: 1px solid var(--rule); }
+  .grp li:last-child { border-bottom: 1px solid var(--rule); }
+  .grp a.row { display: grid; grid-template-columns: 1fr auto; gap: .3rem 1rem; padding: .9rem .4rem; }
+  .grp a.row:hover { background: var(--surface); }
+  .grp .t { font-size: 1.0625rem; font-weight: 600; }
+  .grp .t em { display: block; font-style: normal; font-weight: 400; font-size: .9375rem; color: var(--ink-2); margin-top: .15rem; }
+  .grp .m { display: flex; flex-wrap: wrap; gap: .35rem; align-items: center; justify-content: flex-end; align-self: center; }
+  @media (max-width: 40rem) { .grp a.row { grid-template-columns: 1fr; } .grp .m { justify-content: flex-start; } }
+
+  /* B: fix cards */
+  .cards { display: grid; gap: 1px; background: var(--rule); border: 1px solid var(--rule); list-style: none; margin: 0; padding: 0; }
+  @media (min-width: 44rem) { .cards { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 68rem) { .cards { grid-template-columns: repeat(3, 1fr); } }
+  .card { position: relative; background: var(--paper); padding: 1.25rem 1.25rem 1.4rem; display: flex; flex-direction: column; }
+  .card:hover, .card:focus-within { background: var(--surface); }
+  .stage { border: 1px dashed var(--control); background: var(--paper-2); border-radius: 3px; min-height: 5rem; display: flex; align-items: center; justify-content: center; padding: .9rem; margin: 0 0 1rem; }
+  .card h4 { font-size: 1.0625rem; letter-spacing: -.01em; margin: 0 0 .4rem; }
+  .card h4 a::after { content: ""; position: absolute; inset: 0; }
+  .card .fix { font-size: .9375rem; color: var(--ink-2); margin: 0 0 .9rem; }
+  .card .gain { font-size: .9375rem; margin: 0 0 1rem; padding: .1rem 0 .1rem .8rem; border-left: 4px solid var(--marker); }
+  .card .row { display: flex; flex-wrap: wrap; gap: .35rem; align-items: center; margin-top: auto; }
+  .card .row .eff { margin-left: auto; }
+  .fake-x { background: #EDEDEA; color: #BDBDB8; border: 1px solid #DCDCD8; border-radius: 3px; padding: .3rem .6rem; font-size: .9rem; }
+  .fake-in { background: var(--surface); border: 2px solid #D33; border-radius: 3px; padding: .45rem .7rem; width: 100%; color: #8a8a86; font-size: .875rem; }
+  .fake-dlg { width: 80%; border: 1px solid var(--control); background: var(--surface); padding: .5rem; font-size: .8rem; box-shadow: 0 6px 16px rgba(0,0,0,.12); }
+
+  /* C: filterable table */
+  .ctl { display: flex; flex-wrap: wrap; gap: 1rem 1.5rem; align-items: flex-end; margin: 0 0 1rem; }
+  .ctl label { display: block; font-weight: 600; font-size: .9375rem; margin: 0 0 .3rem; }
+  .ctl input, .ctl select { min-height: 44px; border: 2px solid var(--ink); border-radius: 4px; padding: 0 .75rem; font: 1rem var(--sans); background: var(--surface); color: var(--ink); }
+  table { width: 100%; border-collapse: collapse; font-size: .9375rem; }
+  caption { text-align: left; font: .875rem var(--mono); color: var(--ink-2); padding: 0 0 .5rem; }
+  th, td { text-align: left; vertical-align: top; padding: .7rem .5rem; border-bottom: 1px solid var(--rule); }
+  th { font: 600 .75rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+  td a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; font-weight: 600; }
+  .tw { overflow-x: auto; }
+
+  /* example page */
+  .crumbs { font: .8125rem var(--mono); color: var(--ink-2); margin: 0 0 1rem; }
+  .crumbs a { text-decoration: underline; text-underline-offset: 3px; }
+  .ex h3 { font-size: 2rem; letter-spacing: -.03em; margin: 0 0 .75rem; }
+  .ex .intro { max-width: 64ch; margin: 0 0 1rem; }
+  .panes { display: grid; gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; margin-top: 1.5rem; }
+  @media (min-width: 52rem) { .panes { grid-template-columns: 1fr 1fr; } }
+  .pane { background: var(--surface); padding: 1.1rem 1.25rem 1.4rem; }
+  .pane h4 { margin: 0; font: 700 .8125rem var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+  .pane h4.b { color: var(--bad); } .pane h4.g { color: var(--good); }
+  .pane .why { font-size: .9375rem; color: var(--ink-2); margin: .5rem 0 1rem; }
+  .ifr { border: 2px solid var(--control); border-radius: 3px; background: var(--paper-2); min-height: 7rem; display: flex; align-items: center; justify-content: center; position: relative; }
+  .ifr .lbl { position: absolute; top: .3rem; left: .5rem; font: .7rem var(--mono); color: var(--ink-2); }
+  .run { display: inline-flex; align-items: center; min-height: 44px; padding: 0 1rem; border: 2px solid var(--ink); background: var(--marker); font: 700 .9375rem var(--sans); border-radius: 4px; }
+  details { margin-top: 1rem; border: 1px solid var(--control); border-radius: 4px; }
+  summary { min-height: 44px; display: flex; align-items: center; padding: 0 .9rem; font-weight: 600; cursor: pointer; }
+  pre { margin: 0; background: #101314; color: #E8E6E1; padding: .85rem 1rem; overflow-x: auto; border-radius: 0 0 3px 3px; }
+  pre code { font-size: .8125rem; line-height: 1.55; }
+  .sr { margin: 1rem 0 0; border-top: 1px solid var(--rule); padding-top: .8rem; }
+  .sr h5 { font: 600 .75rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 .35rem; }
+  .sr p { margin: 0; font-size: .9375rem; }
+  .sr q { font-family: var(--mono); font-size: .875rem; }
+  @media (max-width: 40rem) { body { padding: 1.5rem .6rem 4rem; } .s { padding: 1.25rem 1rem 1.75rem; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>Practice mocks: phase 3</h1>
+<p>One decision: how the catalogue at <code>/praktyka</code> is laid out (A, B, C). Pick one. The last frame is the example page itself, adapted from screen 3 of variant A with what phase 3 adds: labelled iframes, a run button for examples that move, and the code behind a disclosure. It is not a variant to pick, just the reference for the plan. All frames use the variant A tokens. Copy is real for the ten starter examples.</p>
+
+<!-- ================= A ================= -->
+<h2>A: List grouped by what you are working on</h2>
+<p class="note">Rows grouped by topic: images, keyboard and focus, forms, appearance, motion. Each row names the problem, the fix in one line, the criteria and the effort. Dense and scannable; works like the criteria list the reader already knows. No pictures of the fault.</p>
+<div class="frame"><div class="s">
+  <div class="hd"><h3>Praktyka</h3><span class="count">10 przykładów</span></div>
+  <p class="lead">Ten sam fragment interfejsu dwa razy: zepsuty i poprawny, z kodem i z tym, co usłyszy czytnik ekranu.</p>
+  <div class="grp">
+    <h4>Obrazy i ikony</h4>
+    <ul>
+      <li><a class="row" href="#"><span class="t">Ikona jako przycisk<em>Znak × bez nazwy. Daj przyciskowi nazwę, ikonę schowaj przed czytnikiem.</em></span><span class="m"><span class="sc">1.1.1</span><span class="sc">4.1.2</span><span class="eff">1 linia</span></span></a></li>
+      <li><a class="row" href="#"><span class="t">Obraz dekoracyjny i informacyjny<em>Ten sam alt dla ozdobnika i wykresu. Opisz cel albo zostaw pusty alt.</em></span><span class="m"><span class="sc">1.1.1</span><span class="eff">2 minuty</span></span></a></li>
+    </ul>
+    <h4>Klawiatura i fokus</h4>
+    <ul>
+      <li><a class="row" href="#"><span class="t">Okno modalne i fokus<em>Fokus zostaje za oknem. Użyj dialog i showModal.</em></span><span class="m"><span class="sc">2.4.3</span><span class="sc">2.1.2</span><span class="eff">refaktor</span></span></a></li>
+      <li><a class="row" href="#"><span class="t">Własna lista zamiast select<em>Div, który wygląda jak lista, ale nie działa z klawiatury.</em></span><span class="m"><span class="sc">4.1.2</span><span class="sc">2.1.1</span><span class="eff">refaktor</span></span></a></li>
+    </ul>
+    <h4>Formularze</h4>
+    <ul>
+      <li><a class="row" href="#"><span class="t">Formularz z błędami<em>Czerwona ramka i nic więcej. Dopisz komunikat i powiąż go z polem.</em></span><span class="m"><span class="sc">3.3.1</span><span class="sc">1.4.1</span><span class="eff">15 minut</span></span></a></li>
+    </ul>
+  </div>
+</div></div>
+
+<!-- ================= B ================= -->
+<h2>B: Cards ordered by payoff</h2>
+<p class="note">The "napraw to najpierw" cards from the reworked home screen (screen 0 of variant A), as the catalogue. Each card shows a small static picture of the fault, the fix, and on a yellow edge what the user gains. Ordered from cheapest fix with the biggest gain. The most visual and the most persuasive; the pictures are decorative and hidden from screen readers, so the text must carry everything.</p>
+<div class="frame"><div class="s">
+  <div class="hd"><h3>Praktyka</h3><span class="count">10 przykładów, od najtańszej poprawki</span></div>
+  <p class="lead">Żółta krawędź oznacza, co zyskuje użytkownik. Czas obok to szacunek na jedno miejsce w kodzie.</p>
+  <ul class="cards">
+    <li class="card">
+      <div class="stage" aria-hidden="true"><span class="fake-x">×</span></div>
+      <h4><a href="#">Ikona jako przycisk</a></h4>
+      <p class="fix">Znak × bez nazwy. Daj przyciskowi nazwę, ikonę schowaj przed czytnikiem.</p>
+      <p class="gain">Czytnik mówi „Zamknij okno, przycisk” zamiast milczeć.</p>
+      <p class="row"><span class="sc">1.1.1</span><span class="sc">4.1.2</span><span class="eff">1 linia</span></p>
+    </li>
+    <li class="card">
+      <div class="stage" aria-hidden="true"><span class="fake-in">jan.kowalski@</span></div>
+      <h4><a href="#">Formularz z błędami</a></h4>
+      <p class="fix">Czerwona ramka i nic więcej. Dopisz komunikat i powiąż go z polem.</p>
+      <p class="gain">Każdy dowiaduje się, które pole jest złe i dlaczego.</p>
+      <p class="row"><span class="sc">3.3.1</span><span class="sc">1.4.1</span><span class="eff">15 minut</span></p>
+    </li>
+    <li class="card">
+      <div class="stage" aria-hidden="true"><span class="fake-dlg">Czy na pewno?</span></div>
+      <h4><a href="#">Okno modalne i fokus</a></h4>
+      <p class="fix">Fokus zostaje za oknem. Użyj dialog i showModal.</p>
+      <p class="gain">Klawiatura trafia do okna i wraca tam, skąd przyszła.</p>
+      <p class="row"><span class="sc">2.4.3</span><span class="sc">2.1.2</span><span class="eff">refaktor</span></p>
+    </li>
+  </ul>
+</div></div>
+
+<!-- ================= C ================= -->
+<h2>C: Table with filters</h2>
+<p class="note">A real data table: example, criteria, level, effort, with a text filter and a criterion select above it. Best for someone who comes with a criterion number and wants its examples; weakest for browsing. Sortable columns would come later if the set grows.</p>
+<div class="frame"><div class="s">
+  <div class="hd"><h3>Praktyka</h3><span class="count">10 przykładów</span></div>
+  <div class="ctl">
+    <div><label for="fC">Szukaj przykładu</label><input id="fC" type="text"></div>
+    <div><label for="kC">Kryterium</label><select id="kC"><option>wszystkie</option><option>1.1.1</option><option>2.1.1</option></select></div>
+  </div>
+  <div class="tw">
+    <table>
+      <caption>Pokazuję 10 z 10</caption>
+      <thead><tr><th scope="col">Przykład</th><th scope="col">Kryteria</th><th scope="col">Poziom</th><th scope="col">Nakład</th></tr></thead>
+      <tbody>
+        <tr><td><a href="#">Ikona jako przycisk</a></td><td>1.1.1, 4.1.2, 2.5.8</td><td>A, AA</td><td>1 linia</td></tr>
+        <tr><td><a href="#">Obraz dekoracyjny i informacyjny</a></td><td>1.1.1</td><td>A</td><td>2 minuty</td></tr>
+        <tr><td><a href="#">Formularz z błędami</a></td><td>3.3.1, 3.3.2, 1.4.1</td><td>A</td><td>15 minut</td></tr>
+        <tr><td><a href="#">Cel 24 na 24 piksele</a></td><td>2.5.8</td><td>AA</td><td>1 token</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div></div>
+
+<!-- ================= example page ================= -->
+<h2>Reference: the example page</h2>
+<p class="note">Adapted from screen 3. Both variants render in sandboxed iframes with their own title, so the broken one cannot leak into this page's accessibility tree and neither picks up the app's styles. Examples that move or change on their own, such as the carousel, start only after "Uruchom przykład", because our own page must still meet 2.2.2. The code sits in a disclosure under each variant and is the same file the iframe renders, so it cannot drift from the demo. The simulator buttons from screen 3 come in phase 7.</p>
+<div class="frame"><div class="s ex">
+  <p class="crumbs"><a href="#">Praktyka</a> / Ikona jako przycisk</p>
+  <h3>Ikona jako przycisk</h3>
+  <p class="intro">Przycisk zamykający okno, w którym cała treść to znak ×. Wygląda identycznie w obu wersjach. Różnica jest w tym, co usłyszy osoba, która go nie widzi.</p>
+  <p style="display:flex;gap:.4rem;flex-wrap:wrap;margin:0"><a href="#" class="sc">1.1.1</a><a href="#" class="sc">4.1.2</a><a href="#" class="sc">2.5.8</a><span class="draft">szkic</span></p>
+  <div class="panes">
+    <section class="pane" aria-label="Wersja zepsuta">
+      <h4 class="b">✕ Zepsute</h4>
+      <p class="why">Ikona wstawiona jako tekst, bez nazwy. Cel 20 na 20 pikseli.</p>
+      <div class="ifr"><span class="lbl">iframe: „Przykład zepsuty: ikona jako przycisk”</span><span class="fake-x" aria-hidden="true">×</span></div>
+      <details><summary>Pokaż kod</summary><pre><code>&lt;div class="close" onclick="close()"&gt;×&lt;/div&gt;</code></pre></details>
+      <div class="sr"><h5>Czytnik ekranu powie</h5><p>Nic. Element nie jest kontrolką, więc <q>×</q> przeleci jako zwykły tekst, a Tab go pominie.</p></div>
+    </section>
+    <section class="pane" aria-label="Wersja poprawna">
+      <h4 class="g">✓ Poprawne</h4>
+      <p class="why">Prawdziwy <code>button</code> z nazwą. Ikona schowana przed czytnikiem.</p>
+      <div class="ifr"><span class="lbl">iframe: „Przykład poprawny: ikona jako przycisk”</span><span class="run" aria-hidden="true" style="background:var(--ink);color:#fff;border-color:var(--ink)">Zamknij ×</span></div>
+      <details open><summary>Ukryj kod</summary><pre><code>&lt;button type="button" aria-label="Zamknij okno"&gt;
+  &lt;svg aria-hidden="true" focusable="false"&gt;…&lt;/svg&gt;
+&lt;/button&gt;</code></pre></details>
+      <div class="sr"><h5>Czytnik ekranu powie</h5><p><q>Zamknij okno, przycisk</q>. Element jest w kolejności Tab i reaguje na Enter oraz spację.</p></div>
+    </section>
+  </div>
+</div></div>
+
+</div>
+</body>
+</html>

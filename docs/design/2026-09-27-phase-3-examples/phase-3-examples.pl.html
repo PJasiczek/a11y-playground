@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan: faza 3, przykłady zepsute i poprawne</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1.25rem 6rem;
+    background: #000; color: #fff;
+    font: 16px/1.65 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  main { max-width: 82ch; margin: 0 auto; }
+  h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 .5rem; letter-spacing: -.02em; }
+  h2 { font-size: 1.2rem; margin: 3rem 0 .75rem; padding-top: 1rem; border-top: 1px solid #262626; letter-spacing: -.01em; }
+  h3 { font-size: 1rem; margin: 1.75rem 0 .5rem; }
+  p, li, dd { color: #e5e5e5; }
+  a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  ul, ol { padding-left: 1.3rem; }
+  li { margin: .3rem 0; }
+  code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .875em; background: #141414; border: 1px solid #262626; border-radius: 3px; padding: .08em .3em; }
+  pre { background: #0b0b0b; border: 1px solid #262626; border-radius: 4px; padding: .9rem 1rem; overflow-x: auto; }
+  pre code { background: none; border: 0; padding: 0; font-size: .82rem; line-height: 1.55; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; display: block; overflow-x: auto; }
+  th, td { border: 1px solid #262626; padding: .45rem .6rem; text-align: left; vertical-align: top; }
+  th { background: #101010; font-weight: 600; }
+  .meta { color: #a3a3a3; font-size: .85rem; margin: 0 0 1.5rem; }
+  .meta a { color: #fff; }
+  .flag { border-left: 2px solid #737373; padding: .1rem 0 .1rem .85rem; margin: 1rem 0; color: #d4d4d4; font-size: .93rem; }
+  .toc { border: 1px solid #262626; padding: 1rem 1rem 1rem 2.4rem; margin: 1.5rem 0 0; }
+  .toc li { margin: .15rem 0; }
+  @media (max-width: 40rem) { body { padding: 1.25rem .9rem 4rem; } h1 { font-size: 1.45rem; } }
+</style>
+</head>
+<body>
+<main>
+
+<p class="meta"><a href="phase-3-examples.en.html" hreflang="en">English version</a></p>
+
+<h1>Plan: faza 3, przykłady zepsute i poprawne</h1>
+<p class="meta">Szczegółowy plan fazy 3 z <a href="../2026-09-27-wcag-learning-app/wcag-learning-app.pl.html">planu głównego</a>. Mocki katalogu i strony przykładu: <a href="../2026-09-27-practice-mocks/practice-mocks.html">practice-mocks.html</a>. Wersja planu: 2026-09-27.</p>
+
+<ol class="toc">
+  <li><a href="#cel">Cel i warunek ukończenia</a></li>
+  <li><a href="#zakres">Zakres</a></li>
+  <li><a href="#format">Format przykładu</a></li>
+  <li><a href="#izolacja">Wyświetlanie i izolacja</a></li>
+  <li><a href="#zasady">Zasady dla wersji zepsutych</a></li>
+  <li><a href="#strony">Strony</a></li>
+  <li><a href="#zestaw">Zestaw startowy</a></li>
+  <li><a href="#testy">Testy</a></li>
+  <li><a href="#commity">Commity i pull request</a></li>
+  <li><a href="#ryzyka">Ryzyka</a></li>
+  <li><a href="#decyzje">Decyzje</a></li>
+</ol>
+
+<h2 id="cel">1. Cel i warunek ukończenia</h2>
+<p>Po fazie 3 czytelnik widzi, jak kryterium nie jest spełnione i jak jest spełnione w tym samym fragmencie interfejsu, czyta kod obu wersji i dowiaduje się, co w każdej powie czytnik ekranu. Strona kryterium linkuje do swoich przykładów, więc wyjaśnienie i praktyka są od siebie o jedno kliknięcie.</p>
+<p>Faza jest skończona, gdy:</p>
+<ul>
+  <li>Dziesięć przykładów startowych się wyświetla, obie wersje w opisanych, izolowanych ramkach iframe.</li>
+  <li>Test potwierdza, że nic z wersji zepsutej nie trafia do drzewa dostępności strony, a axe na każdej stronie przykładu przechodzi z wyłączeniem ramek z wersją zepsutą.</li>
+  <li>Każda wersja poprawna przechodzi axe samodzielnie, a każda wersja zepsuta, którą axe potrafi wykryć, zgłasza zadeklarowane reguły.</li>
+  <li>Każdy przykład, który sam się rusza albo zmienia, startuje dopiero na żądanie.</li>
+  <li>Strona główna zaczyna się od kart „napraw to najpierw” zamiast trzech drzwi.</li>
+</ul>
+
+<h2 id="zakres">2. Zakres</h2>
+<table>
+  <thead><tr><th>W fazie 3</th><th>Poza nią, i gdzie trafia</th></tr></thead>
+  <tbody>
+    <tr><td>Dziesięć przykładów startowych z sekcji 8.1 planu głównego</td><td>Kolejne 12 wzorców z przebudowanej strony głównej w mocku: później, jeden pull request na partię</td></tr>
+    <tr><td>Katalog <code>/praktyka</code> jako karty (wariant B), strona przykładu <code>/praktyka/$slug</code></td><td>Symulatory, czyli przyciski pod ekranem 3: faza 7</td></tr>
+    <tr><td>Sekcja „Przykład” na stronach kryteriów, przykłady w wyszukiwarce</td><td>Edytor kodu na żywo: poza zakresem, zgodnie z planem głównym</td></tr>
+    <tr><td>Przebudowana strona główna z ekranu 0 wariantu A</td><td></td></tr>
+  </tbody>
+</table>
+
+<h2 id="format">3. Format przykładu</h2>
+<p>Jeden folder na przykład w <code>content/praktyka/&lt;slug&gt;/</code>, z trzema plikami:</p>
+<pre><code>content/praktyka/ikona-jako-przycisk/
+  index.md    frontmatter, wstęp, opisy obu wersji
+  bad.html    fragment zepsuty
+  good.html   fragment poprawny</code></pre>
+<pre><code>---
+title: Ikona jako przycisk
+summary: Znak × bez nazwy. Daj przyciskowi nazwę, ikonę schowaj przed czytnikiem.
+criteria: ["1.1.1", "4.1.2", "2.5.8"]
+effort: 1 linia
+gain: Czytnik mówi „Zamknij okno, przycisk” zamiast milczeć.   # żółta krawędź na karcie
+motion: false                      # true: ramki startują dopiero na żądanie
+status: szkic
+bad:
+  why: Ikona wstawiona jako tekst, bez nazwy. Cel 20 na 20 pikseli.
+  announces: Nic. Element nie jest kontrolką, więc „×” przeleci jako zwykły tekst, a Tab go pominie.
+  axe: [button-name]               # reguły, które axe musi zgłosić; puste, gdy axe błędu nie widzi
+good:
+  why: Prawdziwy button z nazwą. Ikona schowana przed czytnikiem.
+  announces: „Zamknij okno, przycisk”. Element jest w kolejności Tab i reaguje na Enter oraz spację.
+---
+Przycisk zamykający okno, w którym cała treść to znak ×. …</code></pre>
+<p>Pliki HTML to fragmenty: znaczniki plus opcjonalne <code>&lt;style&gt;</code> i <code>&lt;script&gt;</code>. Kod pokazany na stronie to ten sam plik, który renderuje ramka, wczytany przy budowaniu, więc demo i kod nie mogą się rozjechać. Frontmatter sprawdza ArkType, tak jak przy kryteriach: nieznane kryterium, brak pliku wersji albo nieznana reguła axe przerywają build. Treść to Markdown z odwołaniami do słownika, renderowany tym samym parserem.</p>
+<p><code>effort</code> i <code>gain</code> zasilają karty katalogu (wariant B): etykietę nakładu pracy i żółtą krawędź z tym, co zyskuje użytkownik. Katalog jest uporządkowany według <code>effort</code>, od najtańszej poprawki, na stałej skali: 1 linia, 1 token, 2 minuty, 15 minut, refaktor.</p>
+
+<h2 id="izolacja">4. Wyświetlanie i izolacja</h2>
+<ul>
+  <li><strong>Obie wersje w ramkach iframe.</strong> Zgodnie z ustaleniem: <code>&lt;iframe sandbox="allow-scripts" srcdoc="…" title="Przykład zepsuty: Ikona jako przycisk"&gt;</code>. Bez <code>allow-same-origin</code>, więc fragment nie odczyta ani nie zmieni strony, i bez <code>allow-top-navigation</code> czy <code>allow-popups</code>.</li>
+  <li><strong>Mały dokument wokół każdego fragmentu:</strong> <code>lang="pl"</code>, neutralny arkusz stylów z fontami i kolorami aplikacji oraz skrypt, który przez <code>postMessage</code> podaje stronie wysokość treści. Strona dopasowuje ramkę, więc powiększenie i przepływ treści (1.4.4, 1.4.10) nie ucinają przykładu. Zanim skrypt zadziała, ramkę trzyma minimalna wysokość.</li>
+  <li><strong>Opis wokół ramki, nie tylko w niej:</strong> każda wersja to <code>section</code> z nagłówkiem („Zepsute”, „Poprawne”), opisem przyczyny, ramką, kodem w rozwijanym <code>details</code> i akapitem „Czytnik ekranu powie”. Osoba z czytnikiem słyszy opis, zanim wejdzie do zepsutej ramki.</li>
+  <li><strong>Przykłady z ruchem</strong> (<code>motion: true</code>) pokazują statyczny stan początkowy i przycisk „Uruchom przykład” w ramce. Nasza strona nadal musi spełniać 2.2.2.</li>
+</ul>
+
+<h2 id="zasady">5. Zasady dla wersji zepsutych</h2>
+<p>Wersja zepsuta jest zepsuta celowo, ale mieszka na naszej stronie, więc nigdy nie może zepsuć samej strony. Każda wersja zepsuta:</p>
+<ul>
+  <li>nigdy nie więzi fokusu bez wyjścia: przykład z oknem modalnym pokazuje fokus uciekający za okno, czyli częstszy błąd, a nie pułapkę bez wyjścia;</li>
+  <li>nigdy nie gra dźwięku, nie rusza się ani nie miga, zanim czytelnik jej nie uruchomi, i nigdy nie błyska częściej niż 3 razy na sekundę;</li>
+  <li>nigdy nie pobiera niczego z sieci i nie przenosi na inną stronę;</li>
+  <li>jest opisana tekstem obok ramki, żeby nikt nie musiał doświadczyć błędu, by się o nim dowiedzieć.</li>
+</ul>
+<p>Te zasady trafią do README treści i będą sprawdzane w przeglądzie. Resztę wyłapią testy axe i izolacji z sekcji 8.</p>
+
+<h2 id="strony">6. Strony</h2>
+<ul>
+  <li><strong><code>/praktyka</code>:</strong> katalog jako karty uporządkowane według zysku, wariant B z mocków. Każda karta ma mały statyczny obrazek błędu, ukryty przed czytnikiem ekranu, więc tytuł, poprawka i zysk niosą całą informację. Karta jest jednym dużym celem: łącze w tytule jest rozciągnięte na całą kartę, jak na stronie głównej. Zastępuje placeholder.</li>
+  <li><strong><code>/praktyka/$slug</code>:</strong> ramka referencyjna z mocków, przerobiona z ekranu 3: tytuł, wstęp, kryteria jako łącza, oznaczenie szkicu, obie wersje obok siebie na szerokim ekranie i jedna pod drugą na wąskim. Prerenderowana jak strony kryteriów.</li>
+  <li><strong>Strona kryterium, sekcja „Przykład”:</strong> zastępuje placeholder listą przykładów, które wymieniają to kryterium, jako łącza z podsumowaniem. Bez ramek na stronie kryterium, żeby pozostała lekka.</li>
+  <li><strong>Strona główna <code>/</code>:</strong> według ekranu 0 wariantu A („nowa wersja”). Nagłówek zmienia się na „Zacznij od tego, co psuje najwięcej.”, z wstępem i obecnym polem wyszukiwania. Pod nim „Napraw to najpierw”: sześć najtańszych przykładów jako te same karty co w katalogu, jeden wspólny komponent. Pozostałe przykłady idą niżej jako zwarta lista w tej samej kolejności, a łącze prowadzi do <code>/praktyka</code>. Trzy drzwi znikają: kryteria, prawo i praktyka zostają w głównej nawigacji.</li>
+  <li><strong>Wyszukiwarka:</strong> przykłady trafiają do indeksu z tytułem, podsumowaniem, opisami i kryteriami, jako trzecia grupa wyników, „Przykłady”.</li>
+</ul>
+
+<h2 id="zestaw">7. Zestaw startowy</h2>
+<table>
+  <thead><tr><th>Slug</th><th>Zepsute</th><th>Poprawne</th><th>Kryteria</th></tr></thead>
+  <tbody>
+    <tr><td><code>obraz-dekoracyjny-i-informacyjny</code></td><td>Ozdobnik z opisowym alt, wykres z <code>alt="wykres"</code></td><td><code>alt=""</code> przy ozdobniku, wykres opisany z danymi obok</td><td>1.1.1</td></tr>
+    <tr><td><code>ikona-jako-przycisk</code></td><td><code>div</code> ze znakiem ×, bez nazwy, 20 px</td><td><code>button</code> z <code>aria-label</code>, ikona ukryta, 44 px</td><td>1.1.1, 4.1.2, 2.5.8</td></tr>
+    <tr><td><code>okno-modalne-i-fokus</code></td><td>Nakładka z <code>div</code>, fokus zostaje za nią</td><td><code>dialog</code> z <code>showModal()</code>, fokus wraca do przycisku</td><td>2.4.3, 2.1.2, 4.1.2</td></tr>
+    <tr><td><code>formularz-z-bledami</code></td><td>Sama czerwona ramka, placeholder zamiast etykiety</td><td>Etykieta, tekst błędu powiązany przez <code>aria-describedby</code>, podsumowanie z fokusem</td><td>3.3.1, 3.3.2, 1.4.1</td></tr>
+    <tr><td><code>tabela-z-naglowkami</code></td><td>Wiersz nagłówka z pogrubionych <code>td</code></td><td><code>th</code> ze <code>scope</code> i podpis tabeli</td><td>1.3.1</td></tr>
+    <tr><td><code>wlasna-lista-zamiast-select</code></td><td>Lista z <code>div</code>, tylko dla myszy</td><td>Natywny <code>select</code></td><td>4.1.2, 2.1.1</td></tr>
+    <tr><td><code>karuzela-automatyczna</code></td><td>Slajdy zmieniają się co 3 s, bez pauzy (na żądanie)</td><td>Bez autoodtwarzania albo z widocznym przyciskiem pauzy; zatrzymanie przy fokusie</td><td>2.2.2</td></tr>
+    <tr><td><code>kontrast-stanow</code></td><td>Jasnoszary tekst przy najechaniu i tekst pomocniczy</td><td>Zmierzone tokeny, 4,5:1 dla tekstu i 3:1 dla obramowań</td><td>1.4.3, 1.4.11</td></tr>
+    <tr><td><code>cel-24-na-24</code></td><td>Ikony 16 px tuż obok siebie</td><td>Cele 24 px albo wystarczający odstęp</td><td>2.5.8</td></tr>
+    <tr><td><code>przeciaganie-z-alternatywa</code></td><td>Lista sortowana tylko przeciąganiem</td><td>Ta sama lista z przyciskami „w górę” i „w dół”</td><td>2.5.7, 2.1.1</td></tr>
+  </tbody>
+</table>
+
+<h2 id="testy">8. Testy</h2>
+<ul>
+  <li><strong>Treść (Vitest):</strong> każdy folder przykładu się parsuje, ma oba pliki HTML i wymienia istniejące kryteria; zadeklarowane reguły axe istnieją w axe-core.</li>
+  <li><strong>Izolacja (Playwright):</strong> na każdej stronie przykładu drzewo dostępności dokumentu nie zawiera żadnego węzła z fragmentu zepsutego; fragmenty mają atrybut znacznikowy, po którym to sprawdzamy.</li>
+  <li><strong>Axe na stronach:</strong> <code>/praktyka</code> i każda strona przykładu przechodzą z wyłączeniem ramek z wersją zepsutą.</li>
+  <li><strong>Axe na fragmentach:</strong> każdy <code>good.html</code> przechodzi samodzielnie; każdy <code>bad.html</code> zgłasza co najmniej reguły z listy <code>axe</code>. To dowód, że wersje zepsute są zepsute tak, jak mówi tekst.</li>
+  <li><strong>Klawiatura:</strong> przykłady z oknem modalnym i z przeciąganiem działają z klawiatury w wersji poprawnej; karuzela nie rusza się przed „Uruchom przykład”.</li>
+</ul>
+
+<h2 id="commity">9. Commity i pull request</h2>
+<p>Jeden pull request, gałąź <code>feat/practice-examples</code>:</p>
+<ol>
+  <li><code>feat(practice): add example format and parser</code>, z testami.</li>
+  <li><code>feat(practice): render examples in sandboxed iframes</code>, strona przykładu, testy izolacji i axe, z jednym przykładem do wyświetlenia.</li>
+  <li><code>docs(practice): write the starter set of examples</code>, pozostałe dziewięć.</li>
+  <li><code>feat(practice): add the catalogue page</code>, wariant B.</li>
+  <li><code>feat(home): open the home page with the fix-first cards</code>, ekran 0 wariantu A.</li>
+  <li><code>feat(criteria): link examples from criterion pages</code>.</li>
+  <li><code>feat(search): index examples</code>.</li>
+  <li><code>docs: update README for phase 3</code>, ze zrzutami ekranu.</li>
+</ol>
+
+<h2 id="ryzyka">10. Ryzyka</h2>
+<table>
+  <thead><tr><th>Ryzyko</th><th>Co robimy</th></tr></thead>
+  <tbody>
+    <tr><td>Wersja zepsuta psuje dostępność naszej strony</td><td>Ramki iframe, zasady z sekcji 5, uruchamianie ruchu na żądanie, testy izolacji i axe</td></tr>
+    <tr><td>Wersja zepsuta nie jest zepsuta tak, jak mówi tekst</td><td>Zadeklarowane reguły axe sprawdzane na fragmencie; resztę sprawdzamy ręcznie czytnikiem ekranu</td></tr>
+    <tr><td>Ramka ucięta przy powiększeniu albo na wąskim ekranie</td><td>Wysokość podawana przez fragment, minimalna wysokość jako zabezpieczenie, test przy szerokości 320 px</td></tr>
+    <tr><td>„Czytnik ekranu powie” różni się między NVDA a VoiceOverem</td><td>Opisujemy wspólny rdzeń i nazywamy czytnik tam, gdzie się różnią; szkic do czasu sprawdzenia w obu</td></tr>
+  </tbody>
+</table>
+
+<h2 id="decyzje">11. Decyzje</h2>
+<ul>
+  <li><strong>Wariant katalogu: ustalone.</strong> B, karty uporządkowane według zysku, z <a href="../2026-09-27-practice-mocks/practice-mocks.html">practice-mocks.html</a>.</li>
+  <li><strong>Przebudowana strona główna: ustalone, w fazie 3.</strong> Ekran 0 wariantu A zastępuje trzy drzwi kartami „napraw to najpierw”, z tymi samymi kartami co katalog.</li>
+  <li><strong>Obie wersje w ramkach iframe: ustalone.</strong> Uzgodnione przed tym planem.</li>
+  <li><strong>Zestaw startowy: ustalone.</strong> Dziesięć przykładów z planu głównego.</li>
+</ul>
+
+</main>
+</body>
+</html>

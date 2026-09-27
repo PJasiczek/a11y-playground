@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan: phase 3, bad and good examples</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1.25rem 6rem;
+    background: #000; color: #fff;
+    font: 16px/1.65 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  main { max-width: 82ch; margin: 0 auto; }
+  h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 .5rem; letter-spacing: -.02em; }
+  h2 { font-size: 1.2rem; margin: 3rem 0 .75rem; padding-top: 1rem; border-top: 1px solid #262626; letter-spacing: -.01em; }
+  h3 { font-size: 1rem; margin: 1.75rem 0 .5rem; }
+  p, li, dd { color: #e5e5e5; }
+  a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  ul, ol { padding-left: 1.3rem; }
+  li { margin: .3rem 0; }
+  code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .875em; background: #141414; border: 1px solid #262626; border-radius: 3px; padding: .08em .3em; }
+  pre { background: #0b0b0b; border: 1px solid #262626; border-radius: 4px; padding: .9rem 1rem; overflow-x: auto; }
+  pre code { background: none; border: 0; padding: 0; font-size: .82rem; line-height: 1.55; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; display: block; overflow-x: auto; }
+  th, td { border: 1px solid #262626; padding: .45rem .6rem; text-align: left; vertical-align: top; }
+  th { background: #101010; font-weight: 600; }
+  .meta { color: #a3a3a3; font-size: .85rem; margin: 0 0 1.5rem; }
+  .meta a { color: #fff; }
+  .flag { border-left: 2px solid #737373; padding: .1rem 0 .1rem .85rem; margin: 1rem 0; color: #d4d4d4; font-size: .93rem; }
+  .toc { border: 1px solid #262626; padding: 1rem 1rem 1rem 2.4rem; margin: 1.5rem 0 0; }
+  .toc li { margin: .15rem 0; }
+  @media (max-width: 40rem) { body { padding: 1.25rem .9rem 4rem; } h1 { font-size: 1.45rem; } }
+</style>
+</head>
+<body>
+<main>
+
+<p class="meta"><a href="phase-3-examples.pl.html" hreflang="pl">Wersja polska</a></p>
+
+<h1>Plan: phase 3, bad and good examples</h1>
+<p class="meta">Detailed plan for phase 3 of the <a href="../2026-09-27-wcag-learning-app/wcag-learning-app.en.html">main plan</a>. Catalogue mocks and the example page: <a href="../2026-09-27-practice-mocks/practice-mocks.html">practice-mocks.html</a>. Plan version: 2026-09-27.</p>
+
+<ol class="toc">
+  <li><a href="#goal">Goal and definition of done</a></li>
+  <li><a href="#scope">Scope</a></li>
+  <li><a href="#format">Example format</a></li>
+  <li><a href="#isolation">Rendering and isolation</a></li>
+  <li><a href="#rules">Rules for broken examples</a></li>
+  <li><a href="#pages">Pages</a></li>
+  <li><a href="#set">The starter set</a></li>
+  <li><a href="#tests">Tests</a></li>
+  <li><a href="#commits">Commits and the pull request</a></li>
+  <li><a href="#risks">Risks</a></li>
+  <li><a href="#decisions">Decisions</a></li>
+</ol>
+
+<h2 id="goal">1. Goal and definition of done</h2>
+<p>After phase 3 a reader can see a criterion fail and pass in the same interface fragment, read the code of both, and learn what a screen reader says in each. The criterion page links to its examples, so explanation and practice sit one click apart.</p>
+<p>Done when:</p>
+<ul>
+  <li>The ten starter examples render, both variants in labelled sandboxed iframes.</li>
+  <li>A test confirms that nothing from a broken example reaches the accessibility tree of the host page, and axe on every example page passes with the broken iframes excluded.</li>
+  <li>Every good variant passes axe on its own, and every broken variant that axe can detect fails with the rules it declares.</li>
+  <li>Every example that moves or changes on its own starts only on request.</li>
+  <li>The home page opens with the fix-first cards instead of the three doors.</li>
+</ul>
+
+<h2 id="scope">2. Scope</h2>
+<table>
+  <thead><tr><th>In</th><th>Out, and where it goes</th></tr></thead>
+  <tbody>
+    <tr><td>The ten starter examples from section 8.1 of the main plan</td><td>The further 12 patterns from the reworked home mock: later, one pull request per batch</td></tr>
+    <tr><td><code>/praktyka</code> catalogue as cards (variant B), <code>/praktyka/$slug</code> example page</td><td>Impairment simulators, the buttons under screen 3: phase 7</td></tr>
+    <tr><td>"Przykład" section on criterion pages, examples in search</td><td>A live code editor: out of scope, as decided in the main plan</td></tr>
+    <tr><td>The reworked home screen from screen 0 of variant A</td><td></td></tr>
+  </tbody>
+</table>
+
+<h2 id="format">3. Example format</h2>
+<p>One folder per example in <code>content/praktyka/&lt;slug&gt;/</code>, with three files:</p>
+<pre><code>content/praktyka/ikona-jako-przycisk/
+  index.md    frontmatter, introduction, notes per variant
+  bad.html    the broken fragment
+  good.html   the fixed fragment</code></pre>
+<pre><code>---
+title: Ikona jako przycisk
+summary: Znak × bez nazwy. Daj przyciskowi nazwę, ikonę schowaj przed czytnikiem.
+criteria: ["1.1.1", "4.1.2", "2.5.8"]
+effort: 1 linia
+gain: Czytnik mówi „Zamknij okno, przycisk” zamiast milczeć.   # the yellow edge on the card
+motion: false                      # true: the iframes start only on request
+status: szkic
+bad:
+  why: Ikona wstawiona jako tekst, bez nazwy. Cel 20 na 20 pikseli.
+  announces: Nic. Element nie jest kontrolką, więc „×” przeleci jako zwykły tekst, a Tab go pominie.
+  axe: [button-name]               # rules axe must report; empty when axe cannot see the fault
+good:
+  why: Prawdziwy button z nazwą. Ikona schowana przed czytnikiem.
+  announces: „Zamknij okno, przycisk”. Element jest w kolejności Tab i reaguje na Enter oraz spację.
+---
+Przycisk zamykający okno, w którym cała treść to znak ×. …</code></pre>
+<p>The HTML files are fragments: markup, plus an optional <code>&lt;style&gt;</code> and <code>&lt;script&gt;</code>. The code shown on the page is the same file the iframe renders, read at build time, so the demo and the code cannot drift apart. Frontmatter is validated with ArkType like criteria: unknown criteria, a missing variant file or an unknown axe rule fail the build. The body is Markdown with glossary links, rendered by the same parser.</p>
+<p><code>effort</code> and <code>gain</code> feed the catalogue cards (variant B): the effort label and the yellow edge with what the user gains. The catalogue is ordered by <code>effort</code>, cheapest first, using a fixed scale: 1 linia, 1 token, 2 minuty, 15 minut, refaktor.</p>
+
+<h2 id="isolation">4. Rendering and isolation</h2>
+<ul>
+  <li><strong>Both variants in iframes.</strong> As agreed: <code>&lt;iframe sandbox="allow-scripts" srcdoc="…" title="Przykład zepsuty: Ikona jako przycisk"&gt;</code>. No <code>allow-same-origin</code>, so a fragment cannot read or change the host page, and no <code>allow-top-navigation</code> or <code>allow-popups</code>.</li>
+  <li><strong>A small document around each fragment:</strong> <code>lang="pl"</code>, a neutral demo stylesheet with the app's fonts and colours, and a script that reports the content height to the parent through <code>postMessage</code>. The parent resizes the iframe, so zoom and reflow (1.4.4, 1.4.10) do not cut the demo off. Before the script runs, a minimum height keeps the frame usable.</li>
+  <li><strong>Labels around the frame, not only in it:</strong> each variant is a <code>section</code> with a heading ("Zepsute", "Poprawne"), the "why" note, the iframe, the code in a <code>details</code> disclosure, and "Czytnik ekranu powie". A screen reader user hears the description before entering the broken frame.</li>
+  <li><strong>Examples that move</strong> (<code>motion: true</code>) render a static first state and a "Uruchom przykład" button inside the iframe. Our own page must still meet 2.2.2.</li>
+</ul>
+
+<h2 id="rules">5. Rules for broken examples</h2>
+<p>A broken example is broken on purpose, but it lives inside our page, so it must never break the page itself. Every broken example:</p>
+<ul>
+  <li>never traps keyboard focus with no way out: the modal example shows focus escaping behind the dialog, the more common fault, instead of an inescapable trap;</li>
+  <li>never plays sound, moves or flashes before the reader starts it, and never flashes more than three times a second;</li>
+  <li>never loads anything from the network and never navigates away;</li>
+  <li>is described in text next to the frame, so nobody has to experience the fault to learn about it.</li>
+</ul>
+<p>These rules go into the content README and are checked in review. The axe and isolation tests in section 8 catch the rest.</p>
+
+<h2 id="pages">6. Pages</h2>
+<ul>
+  <li><strong><code>/praktyka</code>:</strong> the catalogue as cards ordered by payoff, variant B from the mocks. Each card has a small static picture of the fault, hidden from screen readers, so the title, fix and gain carry everything. The card is one large target: the title link is stretched over it, as on the home page. It replaces the placeholder.</li>
+  <li><strong><code>/praktyka/$slug</code>:</strong> the reference frame in the mocks, adapted from screen 3: title, introduction, criteria as links, the draft badge, the two variants side by side on a wide screen and stacked on a narrow one. Prerendered like criterion pages.</li>
+  <li><strong>Criterion page, section "Przykład":</strong> replaces the placeholder with the examples that list the criterion, as links with their summary. No iframes on the criterion page, so it stays light.</li>
+  <li><strong>Home page <code>/</code>:</strong> follows screen 0 of variant A ("nowa wersja"). The hero becomes "Zacznij od tego, co psuje najwięcej." with the lead and the existing search field. Below it, "Napraw to najpierw": the six cheapest examples as the same cards as the catalogue, one shared component. The remaining examples follow as a compact list, ordered the same way, and a link leads to <code>/praktyka</code>. The three doors go: criteria, law and practice stay in the main navigation.</li>
+  <li><strong>Search:</strong> examples join the index with title, summary, notes and criteria, as a third result group, "Przykłady".</li>
+</ul>
+
+<h2 id="set">7. The starter set</h2>
+<table>
+  <thead><tr><th>Slug</th><th>Broken</th><th>Fixed</th><th>Criteria</th></tr></thead>
+  <tbody>
+    <tr><td><code>obraz-dekoracyjny-i-informacyjny</code></td><td>Ornament with a descriptive alt, chart with <code>alt="wykres"</code></td><td><code>alt=""</code> on the ornament, chart described with the data next to it</td><td>1.1.1</td></tr>
+    <tr><td><code>ikona-jako-przycisk</code></td><td><code>div</code> with ×, no name, 20 px</td><td><code>button</code> with <code>aria-label</code>, icon hidden, 44 px</td><td>1.1.1, 4.1.2, 2.5.8</td></tr>
+    <tr><td><code>okno-modalne-i-fokus</code></td><td>Div overlay, focus stays behind it</td><td><code>dialog</code> with <code>showModal()</code>, focus returns to the trigger</td><td>2.4.3, 2.1.2, 4.1.2</td></tr>
+    <tr><td><code>formularz-z-bledami</code></td><td>Red border only, placeholder as label</td><td>Label, text error linked by <code>aria-describedby</code>, summary with focus</td><td>3.3.1, 3.3.2, 1.4.1</td></tr>
+    <tr><td><code>tabela-z-naglowkami</code></td><td>Header row in bold <code>td</code></td><td><code>th</code> with <code>scope</code> and a caption</td><td>1.3.1</td></tr>
+    <tr><td><code>wlasna-lista-zamiast-select</code></td><td>Div dropdown, mouse only</td><td>Native <code>select</code></td><td>4.1.2, 2.1.1</td></tr>
+    <tr><td><code>karuzela-automatyczna</code></td><td>Slides change every 3 s, no pause (on request)</td><td>No autoplay, or a visible pause button; stops on focus</td><td>2.2.2</td></tr>
+    <tr><td><code>kontrast-stanow</code></td><td>Light grey hover and helper text</td><td>Measured tokens, 4.5:1 text and 3:1 borders</td><td>1.4.3, 1.4.11</td></tr>
+    <tr><td><code>cel-24-na-24</code></td><td>16 px icons side by side</td><td>24 px targets or enough spacing</td><td>2.5.8</td></tr>
+    <tr><td><code>przeciaganie-z-alternatywa</code></td><td>Sortable list, drag only</td><td>The same list with "w górę" and "w dół" buttons</td><td>2.5.7, 2.1.1</td></tr>
+  </tbody>
+</table>
+
+<h2 id="tests">8. Tests</h2>
+<ul>
+  <li><strong>Content (Vitest):</strong> every example folder parses, has both HTML files, and lists existing criteria; declared axe rule ids exist in axe-core.</li>
+  <li><strong>Isolation (Playwright):</strong> on every example page, the host document's accessibility tree contains no node from a broken fragment; the fragments carry a marker attribute to check against.</li>
+  <li><strong>Axe on pages:</strong> <code>/praktyka</code> and every example page pass with broken iframes excluded.</li>
+  <li><strong>Axe on fragments:</strong> every <code>good.html</code> passes on its own; every <code>bad.html</code> reports at least the rules in its <code>axe</code> list. This proves the broken examples are broken in the way the text says.</li>
+  <li><strong>Keyboard:</strong> the modal and the drag examples work from the keyboard in their good variant; the carousel does not move before "Uruchom przykład".</li>
+</ul>
+
+<h2 id="commits">9. Commits and the pull request</h2>
+<p>One pull request, branch <code>feat/practice-examples</code>:</p>
+<ol>
+  <li><code>feat(practice): add example format and parser</code>, with tests.</li>
+  <li><code>feat(practice): render examples in sandboxed iframes</code>, the example page, isolation and axe tests, with one example to render.</li>
+  <li><code>docs(practice): write the starter set of examples</code>, the other nine.</li>
+  <li><code>feat(practice): add the catalogue page</code>, variant B.</li>
+  <li><code>feat(home): open the home page with the fix-first cards</code>, screen 0 of variant A.</li>
+  <li><code>feat(criteria): link examples from criterion pages</code>.</li>
+  <li><code>feat(search): index examples</code>.</li>
+  <li><code>docs: update README for phase 3</code>, with screenshots.</li>
+</ol>
+
+<h2 id="risks">10. Risks</h2>
+<table>
+  <thead><tr><th>Risk</th><th>What we do</th></tr></thead>
+  <tbody>
+    <tr><td>A broken example breaks our own accessibility</td><td>Iframes, the rules in section 5, run on request for motion, isolation and axe tests</td></tr>
+    <tr><td>A broken example is not broken the way the text says</td><td>Declared axe rules checked against the fragment; manual screen reader check for the rest</td></tr>
+    <tr><td>An iframe cut off at zoom or on a narrow screen</td><td>Height reported by the fragment, minimum height as fallback, a test at 320 px width</td></tr>
+    <tr><td>"Czytnik ekranu powie" differs between NVDA and VoiceOver</td><td>Write the common core and name the reader where they differ; marked as a draft until checked in both</td></tr>
+  </tbody>
+</table>
+
+<h2 id="decisions">11. Decisions</h2>
+<ul>
+  <li><strong>Catalogue variant: decided.</strong> B, cards ordered by payoff, from <a href="../2026-09-27-practice-mocks/practice-mocks.html">practice-mocks.html</a>.</li>
+  <li><strong>Reworked home screen: decided, in phase 3.</strong> Screen 0 of variant A replaces the three doors with the "napraw to najpierw" cards, reusing the catalogue cards.</li>
+  <li><strong>Both variants in iframes: decided.</strong> Agreed before this plan.</li>
+  <li><strong>Starter set: decided.</strong> The ten examples from the main plan.</li>
+</ul>
+
+</main>
+</body>
+</html>
