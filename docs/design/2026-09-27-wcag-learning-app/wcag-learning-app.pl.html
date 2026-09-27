@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan: aplikacja do nauki dostępności (WCAG + prawo PL)</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1.25rem 6rem;
+    background: #000; color: #fff;
+    font: 16px/1.65 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  main { max-width: 82ch; margin: 0 auto; }
+  h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 .5rem; letter-spacing: -.02em; }
+  h2 { font-size: 1.2rem; margin: 3rem 0 .75rem; padding-top: 1rem; border-top: 1px solid #262626; letter-spacing: -.01em; }
+  h3 { font-size: 1rem; margin: 1.75rem 0 .5rem; }
+  p, li, dd { color: #e5e5e5; }
+  a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  ul, ol { padding-left: 1.3rem; }
+  li { margin: .3rem 0; }
+  code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .875em; background: #141414; border: 1px solid #262626; border-radius: 3px; padding: .08em .3em; }
+  pre { background: #0b0b0b; border: 1px solid #262626; border-radius: 4px; padding: .9rem 1rem; overflow-x: auto; }
+  pre code { background: none; border: 0; padding: 0; font-size: .82rem; line-height: 1.55; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; display: block; overflow-x: auto; }
+  th, td { border: 1px solid #262626; padding: .45rem .6rem; text-align: left; vertical-align: top; }
+  th { background: #101010; font-weight: 600; }
+  .meta { color: #a3a3a3; font-size: .85rem; margin: 0 0 1.5rem; }
+  .meta a { color: #fff; }
+  .flag { border-left: 2px solid #737373; padding: .1rem 0 .1rem .85rem; margin: 1rem 0; color: #d4d4d4; font-size: .93rem; }
+  .toc { border: 1px solid #262626; padding: 1rem 1rem 1rem 2.4rem; margin: 1.5rem 0 0; }
+  .toc li { margin: .15rem 0; }
+  dt { font-weight: 600; margin-top: .9rem; }
+  dd { margin: .15rem 0 0 1.2rem; }
+  @media (max-width: 40rem) { body { padding: 1.25rem .9rem 4rem; } h1 { font-size: 1.45rem; } }
+</style>
+</head>
+<body>
+<main>
+
+<p class="meta"><a href="wcag-learning-app.en.html" hreflang="en">English version</a></p>
+
+<h1>Plan: aplikacja do nauki dostępności</h1>
+<p class="meta">WCAG 2.1 (A/AA/AAA), WCAG 2.2, draft WCAG 3.0, prawo polskie i EAA. TanStack Start, shadcn/ui, Tailwind, Convex. Wersja planu: 2026-09-27.</p>
+
+<ol class="toc">
+  <li><a href="#cel">Cel produktu</a></li>
+  <li><a href="#decyzje">Zatwierdzone decyzje</a></li>
+  <li><a href="#zakres">Zakres treści</a></li>
+  <li><a href="#ia">Architektura informacji i routing</a></li>
+  <li><a href="#model">Model treści jako kod</a></li>
+  <li><a href="#wyjasnienia">Moduł prostych wyjaśnień</a></li>
+  <li><a href="#prawo">Moduł prawny i mapowanie</a></li>
+  <li><a href="#praktyka">Praktyka: przykłady, symulatory, quizy</a></li>
+  <li><a href="#convex">Convex: dane użytkownika</a></li>
+  <li><a href="#stack">Stack i konwencje kodu</a></li>
+  <li><a href="#a11y">Dostępność samej aplikacji</a></li>
+  <li><a href="#testy">Testy i CI</a></li>
+  <li><a href="#licencje">Licencje i pozyskiwanie treści</a></li>
+  <li><a href="#fazy">Fazy dostawy</a></li>
+  <li><a href="#ryzyka">Ryzyka</a></li>
+  <li><a href="#pytania">Do decyzji przed startem</a></li>
+</ol>
+
+<h2 id="cel">1. Cel produktu</h2>
+<p>Jedno miejsce, w którym osoba pracująca nad produktem cyfrowym w Polsce dowiaduje się trzech rzeczy: co dokładnie mówi kryterium WCAG, jak to wygląda w kodzie, i który przepis polskiego prawa tego od niej wymaga. Dzisiaj te trzy warstwy leżą w trzech różnych miejscach: norma na w3.org, wyjaśnienia w dokumentach Understanding, obowiązki w Dzienniku Ustaw. Aplikacja je zszywa.</p>
+
+<p>Trzy pytania, na które użytkownik ma dostać odpowiedź w dwóch kliknięciach:</p>
+<ul>
+  <li>Mam element interfejsu, coś z nim nie tak. Które kryterium tego dotyczy i jak je spełnić?</li>
+  <li>Jestem podmiotem publicznym albo sprzedaję produkt w UE. Co muszę zrobić i do kiedy?</li>
+  <li>Znam kryterium z nazwy, ale nie rozumiem treści normy. Wyjaśnij to prosto, na przykładzie.</li>
+</ul>
+
+<p>To nie jest narzędzie do audytu cudzych stron. Audyt robi się axe, Lighthouse i ręcznie. To jest materiał do nauki z warstwą praktyczną.</p>
+
+<h2 id="decyzje">2. Zatwierdzone decyzje</h2>
+<table>
+  <thead><tr><th>Obszar</th><th>Decyzja</th><th>Konsekwencja</th></tr></thead>
+  <tbody>
+    <tr><td>Warstwa treści</td><td>Treść jako kod w repo, Convex tylko na dane użytkownika</td><td>Zero zapytań do bazy przy czytaniu kryterium, pełna typesafety, treść przechodzi przez review w PR</td></tr>
+    <tr><td>Język</td><td>Tylko polski</td><td>Brak routingu i18n, brak podwójnych plików treści. Angielski oryginał normy pokazywany tylko tam, gdzie tłumaczenie jest niejasne</td></tr>
+    <tr><td>Praktyka</td><td>Przykłady zły i dobry, quizy i ścieżki nauki, symulatory ograniczeń</td><td>Bez edytora na żywo w pierwszej wersji. Kod przykładów jest statyczny, aplikacja nie wykonuje kodu użytkownika</td></tr>
+    <tr><td>Prawo</td><td>Pełne teksty aktów plus mapowanie na kryteria</td><td>Największy nakład na treść. Dostaje własną fazę i własny pipeline importu</td></tr>
+  </tbody>
+</table>
+
+<p>Brak edytora na żywo jest świadomym zawężeniem. Edytor to osobny problem: sandbox, bundling w przeglądarce, uruchamianie axe na wyniku. Dorzucony do pierwszej wersji opóźniłby wszystko inne. Zostawiamy furtkę: komponent renderujący przykład dostaje kod jako parametr, więc podmiana źródła kodu na edytowalne pole to później zmiana w jednym miejscu.</p>
+
+<h2 id="zakres">3. Zakres treści</h2>
+
+<h3>3.1 Wersje WCAG</h3>
+<table>
+  <thead><tr><th>Wersja</th><th>Liczba kryteriów</th><th>Status w aplikacji</th></tr></thead>
+  <tbody>
+    <tr><td>WCAG 2.0</td><td>61</td><td>Nie jest osobnym modułem. Widoczna jako pole <code>since</code> na kryterium, bo część audytów i starszych umów wciąż powołuje się na 2.0</td></tr>
+    <tr><td>WCAG 2.1</td><td>78 (30 A, 20 AA, 28 AAA)</td><td>Rdzeń. Wszystkie trzy poziomy, w tym AAA, które większość materiałów szkoleniowych pomija</td></tr>
+    <tr><td>WCAG 2.2</td><td>86 (31 A, 24 AA, 31 AAA)</td><td>Rdzeń. Dziewięć nowych kryteriów z osobnym znacznikiem, 4.1.1 Parsing oznaczone jako wycofane, z wyjaśnieniem dlaczego</td></tr>
+    <tr><td>WCAG 3.0</td><td>wersja robocza, niestabilna</td><td>Osobny moduł obserwacyjny, nie materiał do nauki. Wyraźnie oznaczony jako draft, z datą ostatniego przeglądu</td></tr>
+  </tbody>
+</table>
+
+<p>Nowe w 2.2: 2.4.11 Fokus niezasłonięty (minimum), 2.4.12 Fokus niezasłonięty (rozszerzony), 2.4.13 Wygląd fokusu, 2.5.7 Ruchy przeciągania, 2.5.8 Rozmiar celu (minimum), 3.2.6 Spójna pomoc, 3.3.7 Nadmiarowe wprowadzanie, 3.3.8 Dostępne uwierzytelnianie (minimum), 3.3.9 Dostępne uwierzytelnianie (rozszerzone).</p>
+
+<h3>3.2 Moduł WCAG 3.0</h3>
+<p>WCAG 3.0 zmienia model: zamiast kryteriów sukcesu ze sztywnym zaliczone albo niezaliczone pojawiają się wymagania podstawowe, rezultaty i twierdzenia, a model zgodności jest wciąż przedmiotem dyskusji w grupie roboczej. Koncepcje z wcześniejszych szkiców, jak poziomy brązowy, srebrny i złoty, zostały porzucone albo przepisane. Wniosek dla planu: nie uczymy 3.0, pokazujemy różnicę modelu i śledzimy zmiany.</p>
+<p>Moduł ma trzy rzeczy: krótkie wyjaśnienie, czym 3.0 różni się od 2.x, tabelę „co dziś odpowiada rezultatowi X w 3.0” z linkami do kryteriów 2.2, oraz jedno zdanie o statusie z datą. Każda strona w tym module nosi widoczne ostrzeżenie, że treść może się zmienić, i pokazuje pole <code>lastVerified</code>.</p>
+
+<h3>3.3 Akty prawne</h3>
+<table>
+  <thead><tr><th>Akt</th><th>Czego dotyczy</th><th>Dlaczego jest w aplikacji</th></tr></thead>
+  <tbody>
+    <tr><td>Ustawa z 4 kwietnia 2019 o dostępności cyfrowej stron internetowych i aplikacji mobilnych podmiotów publicznych</td><td>Podmioty publiczne, strony i aplikacje mobilne, deklaracja dostępności, postępowanie skargowe</td><td>Jedyny polski akt, który wprost przypisuje kryteria WCAG do obowiązku prawnego. Załącznik do ustawy jest naturalnym punktem mapowania</td></tr>
+    <tr><td>Ustawa z 19 lipca 2019 o zapewnianiu dostępności osobom ze szczególnymi potrzebami</td><td>Minimalne wymagania architektoniczne, cyfrowe i informacyjno-komunikacyjne, koordynator dostępności, wniosek o zapewnienie dostępności</td><td>Szersza niż cyfrowa. Wyjaśnia, dlaczego w organizacji istnieje rola koordynatora i skąd biorą się wnioski od użytkowników</td></tr>
+    <tr><td>Ustawa z 26 kwietnia 2024 o zapewnianiu spełniania wymagań dostępności niektórych produktów i usług przez podmioty gospodarcze</td><td>Wdrożenie Europejskiego Aktu o Dostępności. Sektor prywatny, produkty i usługi, obowiązki producenta, importera i dystrybutora</td><td>To ten akt zmienia sytuację produktów komercyjnych. Stosowany od 28 czerwca 2025</td></tr>
+    <tr><td>Dyrektywa (UE) 2019/882 (EAA) i dyrektywa (UE) 2016/2102</td><td>Źródła obu ustaw wdrażających</td><td>Kontekst. Wyjaśnia, dlaczego polskie przepisy mają taki kształt, i pomaga przy produktach sprzedawanych w kilku krajach</td></tr>
+    <tr><td>EN 301 549</td><td>Zharmonizowana norma techniczna. Zawiera WCAG jako podzbiór i dodaje wymagania poza WWW</td><td>Ogniwo łączące. Przez nią przechodzi większość mapowań z prawa na technikę</td></tr>
+  </tbody>
+</table>
+
+<div class="flag">Każdy akt dostaje pole <code>lastVerified</code> i link do tekstu jednolitego w ISAP. Daty, numery Dz.U. i progi stosowania trzeba potwierdzić przy wpisywaniu treści, nie przepisywać z pamięci ani z tego planu. To samo dotyczy dokładnej liczby kryteriów wymienionych w załączniku do ustawy z 2019 roku.</div>
+
+<h3>3.4 Poza zakresem pierwszej wersji</h3>
+<ul>
+  <li>Edytor kodu na żywo i audyt w locie.</li>
+  <li>Dokumenty Techniques i Failures z W3C w całości. Linkujemy, nie kopiujemy. Wybrane techniki wchodzą do sekcji „jak to spełnić”, przepisane własnymi słowami.</li>
+  <li>Prawo poza Polską i UE.</li>
+  <li>Produkcja własnych nagrań wideo i audiodeskrypcji. Kryteria 1.2.x oczywiście są, ale z cudzymi przykładami.</li>
+  <li>ATAG i WAI-ARIA Authoring Practices jako osobne moduły.</li>
+</ul>
+
+<h2 id="ia">4. Architektura informacji i routing</h2>
+
+<p>Sześć wejść na treść, bo ludzie szukają na różne sposoby: przez numer kryterium, przez objaw („mam modal”), przez rolę, przez przepis, przez ścieżkę nauki i przez wyszukiwanie.</p>
+
+<pre><code>/                             pulpit: kontynuuj naukę, co nowego, szybkie wejścia
+/kryteria                     lista z filtrami: wersja, poziom, zasada, rola
+/kryteria/$criterionId        karta kryterium (np. /kryteria/1.1.1)
+/zasady/$principleId          cztery zasady jako strony przeglądowe
+/prawo                        lista aktów z osią czasu obowiązków
+/prawo/$actSlug               akt: streszczenie, kogo dotyczy, terminy, spis treści
+/prawo/$actSlug/$unitId       jednostka redakcyjna z pełnym tekstem
+/mapowanie                    przepis do kryterium do EN 301 549
+/praktyka                     katalog przykładów zły i dobry
+/praktyka/$exampleId          przykład: dwie wersje, kod, co czyta czytnik ekranu
+/symulatory                   symulatory ograniczeń
+/sciezki                      ścieżki nauki
+/sciezki/$pathSlug            ścieżka: lekcje w kolejności, postęp
+/sciezki/$pathSlug/$lessonId  lekcja
+/quiz/$quizId                 quiz
+/szukaj                       wyszukiwanie po całej treści
+/profil                       postęp, notatki, zakładki
+/o-projekcie                  źródła, licencje, daty weryfikacji treści
+/deklaracja-dostepnosci       deklaracja dla samej aplikacji</code></pre>
+
+<h3>4.1 Karta kryterium</h3>
+<p>Najważniejszy ekran w aplikacji. Stała kolejność sekcji, żeby dało się ją czytać nawykowo:</p>
+<ol>
+  <li><strong>Nagłówek</strong>: numer, nazwa, poziom, wersja, znacznik „nowe w 2.2” albo „wycofane”.</li>
+  <li><strong>Jednym zdaniem</strong>: o co chodzi, bez żargonu, do 200 znaków.</li>
+  <li><strong>Kogo to dotyczy</strong>: konkretne sytuacje użytkowników, nie lista nazw niepełnosprawności.</li>
+  <li><strong>Treść normy</strong>: oficjalne tłumaczenie, zwinięte domyślnie, z linkiem do źródła i przełącznikiem na angielski oryginał.</li>
+  <li><strong>Jak to spełnić</strong>: konkretne działania, pogrupowane po rolach.</li>
+  <li><strong>Typowe błędy</strong>: to, co w Understanding jest rozproszone po Failures.</li>
+  <li><strong>Przykłady</strong>: co najmniej jeden zły i dobry, obok siebie.</li>
+  <li><strong>Jak sprawdzić</strong>: procedura ręczna w krokach, plus co zgłasza narzędzie automatyczne i czego nie wyłapie.</li>
+  <li><strong>Prawo</strong>: które przepisy tego wymagają, jako linki.</li>
+  <li><strong>Powiązane kryteria</strong> i częste pomyłki („to nie 1.3.1, to 4.1.2, bo…”).</li>
+  <li><strong>Źródła</strong>: linki do WCAG, Understanding, technik, oraz data ostatniego przeglądu.</li>
+</ol>
+
+<h2 id="model">5. Model treści jako kod</h2>
+
+<p>Treść mieszka w <code>src/content/</code>, jeden plik na kryterium i jeden na jednostkę redakcyjną aktu. Pliki są modułami TypeScript, nie JSON i nie luźnym MDX, bo chcemy, żeby błędne <code>id</code> albo martwy odnośnik do kryterium wysypywały <code>tsc</code>, nie produkcję.</p>
+
+<h3>5.1 Kształt typów</h3>
+<p>Zasada: definiujemy dane jako stałe obiekty i wyprowadzamy z nich typy, nie odwrotnie. Bez <code>any</code>, bez rzutowań, identyfikatory jako unie wyprowadzone z rejestru.</p>
+
+<pre><code>// src/content/wcag/criteria/1.1.1.ts
+import { defineCriterion } from "../define";
+
+export default defineCriterion({
+  id: "1.1.1",
+  slug: "tresc-nietekstowa",
+  name: "Treść nietekstowa",
+  level: "A",
+  since: "2.0",
+  principle: "postrzegalnosc",
+  guideline: "1.1",
+  inOneSentence: "Każda treść, która nie jest tekstem, potrzebuje tekstowego odpowiednika.",
+  roles: ["dev", "design", "content"],
+  howTo: [ /* ... */ ],
+  commonFailures: [ /* ... */ ],
+  examples: ["alt-dekoracyjny-vs-informacyjny", "ikona-jako-przycisk"],
+  testing: {
+    manual: [ /* ... */ ],
+    automated: { catches: [ /* ... */ ], misses: [ /* ... */ ] },
+  },
+  legalRefs: ["ustawa-2019-848/zal-1", "en-301-549/9.1.1.1"],
+  related: ["1.4.5", "4.1.2"],
+  sources: [ /* ... */ ],
+  lastVerified: "2026-09-27",
+});</code></pre>
+
+<pre><code>// src/content/wcag/define.ts
+export const defineCriterion = &lt;const T extends CriterionInput&gt;(c: T) =&gt; c;
+
+// src/content/wcag/registry.ts  (generowany skryptem, nie pisany ręcznie)
+import c111 from "./criteria/1.1.1";
+// ...
+export const criteria = [c111, /* ... */] as const;
+export type Criterion = (typeof criteria)[number];
+export type CriterionId = Criterion["id"];   // "1.1.1" | "1.2.1" | ...</code></pre>
+
+<p><code>CriterionId</code> wyprowadzone z rejestru sprawia, że <code>related: ["1.4.5"]</code> przestaje się kompilować w dniu, w którym ktoś skasuje 1.4.5. To samo dla <code>examples</code>, <code>legalRefs</code> i identyfikatorów ścieżek. Zmiana w treści propaguje się przez typy, zamiast wymagać ręcznego przejścia po plikach.</p>
+
+<h3>5.2 Walidacja treści</h3>
+<p>Typy łapią kształt, ale nie łapią reguł w rodzaju „opis w jednym zdaniu nie może przekraczać 200 znaków” ani „kryterium AA musi mieć co najmniej jeden przykład”. Do tego ArkType i jeden test przechodzący po całym rejestrze, uruchamiany w CI, więc pusta sekcja nie wejdzie na master.</p>
+
+<h3>5.3 Dłuższa proza</h3>
+<p>Sekcje narracyjne (lekcje, streszczenia aktów) trzymamy jako MDX obok pliku kryterium i importujemy do obiektu. Krótkie pola zostają w TS, żeby dały się filtrować i indeksować bez parsowania MDX.</p>
+
+<h3>5.4 Wyszukiwanie</h3>
+<p>Indeks budowany w czasie builda z rejestrów i zapisywany jako statyczny plik, ładowany leniwie na trasie <code>/szukaj</code>. MiniSearch albo FlexSearch. Bez backendu wyszukiwania i bez zapytań do Convex. Konfiguracja pod polski: bez stemmingu, z dopasowaniem po prefiksie i tolerancją literówek, plus ręczne aliasy („focus” na „fokus”, „alt” na „tekst alternatywny”, „aria-label”).</p>
+
+<h2 id="wyjasnienia">6. Moduł prostych wyjaśnień</h2>
+
+<p>To jest właściwy powód istnienia aplikacji. Dokumenty Understanding z W3C są dobre i wyczerpujące, ale napisane dla osób, które już rozumieją normę. Nasza wersja ma inny cel: ktoś czyta jeden ekran i wie, co zrobić.</p>
+
+<h3>6.1 Reguły pisania</h3>
+<ul>
+  <li>Najpierw sytuacja użytkownika, potem wymóg. „Osoba używająca czytnika ekranu trafia na przycisk i słyszy tylko słowo przycisk” przed „kontrolka musi mieć dostępną nazwę”.</li>
+  <li>Bez żargonu bez wyjaśnienia. Pierwsze użycie terminu jest linkiem do słownika.</li>
+  <li>Zawsze konkretna liczba, jeśli norma ją podaje. „4,5 do 1” zamiast „wystarczający kontrast”.</li>
+  <li>Sekcja „jak to spełnić” to czasowniki w trybie rozkazującym, nie opis stanu docelowego.</li>
+  <li>Podział na role przy kryteriach, które dotyczą kilku osób. 1.4.3 to inne zadanie dla projektanta i inne dla programisty.</li>
+</ul>
+
+<h3>6.2 Słownik</h3>
+<p>Osobny rejestr terminów z definicjami po polsku: dostępna nazwa, drzewo dostępności, fokus, region aktywny, tryb wymuszonych kolorów, cel wskaźnika, mechanizm. Renderowany jako element rozwijalny przy pierwszym wystąpieniu, dostępny też jako osobna strona. Tam, gdzie definicja normy różni się od potocznego rozumienia, pokazujemy obie.</p>
+
+<h3>6.3 Skąd bierzemy treść</h3>
+<p>Numery, nazwy, poziomy i przynależność do wytycznych importujemy jednorazowo skryptem z danych publikowanych przez W3C, żeby nie było literówek w danych strukturalnych. Cała proza jest pisana od zera. Powody są dwa: licencja i to, że przepisane Understanding nie byłoby prostsze od Understanding.</p>
+
+<h2 id="prawo">7. Moduł prawny i mapowanie</h2>
+
+<h3>7.1 Struktura aktu</h3>
+<p>Akt to nie jeden długi tekst, tylko drzewo jednostek redakcyjnych, bo mapowanie musi wskazywać na konkretny ustęp, nie na plik PDF.</p>
+
+<pre><code>src/content/legal/
+  ustawa-2019-848/          dostępność cyfrowa podmiotów publicznych
+    act.ts                  metadane: tytuł, Dz.U., data, zakres podmiotowy, terminy
+    units/art-5.ts          { id, label: "Art. 5 ust. 1", text, plainSummary }
+    units/zal-1.ts
+    summary.mdx
+  ustawa-2019-1696/         osoby ze szczególnymi potrzebami
+  ustawa-2024-731/          polski akt o dostępności (wdrożenie EAA)
+  en-301-549/               klauzule jako jednostki, ogniwo mapowania
+  dyrektywy/                2016/2102 i 2019/882, tylko streszczenia i kontekst</code></pre>
+
+<p>Każda jednostka ma dwa pola tekstowe: <code>text</code> z dosłownym brzmieniem przepisu i <code>plainSummary</code> z wyjaśnieniem po ludzku. Domyślnie pokazujemy wyjaśnienie, dosłowny tekst na rozwinięcie. Odwrotna kolejność zniechęca po dwóch zdaniach.</p>
+
+<h3>7.2 Mapowanie</h3>
+<p>Relacja jest wiele do wielu i czytana z dwóch stron, więc trzymamy ją w jednym miejscu i generujemy z niej indeksy w obu kierunkach, zamiast duplikować listy po obu stronach.</p>
+
+<pre><code>// src/content/mapping/edges.ts
+export const edges = [
+  { legal: "ustawa-2019-848/zal-1", criterion: "1.1.1", strength: "wprost" },
+  { legal: "en-301-549/9.1.1.1",    criterion: "1.1.1", strength: "wprost" },
+  { legal: "ustawa-2024-731/art-8", criterion: "1.4.3", strength: "posrednio",
+    note: "Przez odesłanie do norm zharmonizowanych." },
+] as const satisfies readonly MappingEdge[];</code></pre>
+
+<p><code>strength</code> ma trzy wartości: <em>wprost</em>, gdy przepis nazywa kryterium, <em>pośrednio</em>, gdy dochodzi do niego przez normę zharmonizowaną, <em>powiązane</em>, gdy to kontekst, a nie obowiązek. Bez tego rozróżnienia aplikacja sugerowałaby, że ustawa wymaga kryteriów AAA, czego nie robi.</p>
+
+<h3>7.3 Ekran mapowania</h3>
+<p>Nie macierz 86 na 200 komórek, bo tego nikt nie czyta. Zamiast tego wybierasz swoją sytuację (podmiot publiczny, produkt komercyjny w UE, oba), a aplikacja pokazuje listę obowiązków z terminami i rozwijalnymi listami kryteriów przy każdym. Pełna tabela zostaje dostępna pod przełącznikiem, dla osób, które faktycznie chcą siatkę.</p>
+
+<h3>7.4 Oś czasu obowiązków</h3>
+<p>Pionowa lista dat z opisem, co wtedy zaczyna albo przestaje obowiązywać. Bez wykresu, bo to kilkanaście punktów. Każdy punkt linkuje do jednostki redakcyjnej, z której data wynika.</p>
+
+<h2 id="praktyka">8. Praktyka: przykłady, symulatory, quizy</h2>
+
+<h3>8.1 Przykłady zły i dobry</h3>
+<p>Jeden przykład to obiekt z dwoma wariantami, krótkim opisem różnicy i notatką o tym, co w każdym wariancie usłyszy czytnik ekranu. Renderowany jako dwie kolumny na szerokim ekranie, jedna pod drugą na wąskim, z zakładką na kod.</p>
+
+<div class="flag">Ważne rozwiązanie techniczne: zły przykład renderujemy w <code>iframe</code> z atrybutem <code>sandbox</code>, nie inline. Niedostępny fragment wstawiony wprost do dokumentu zatruwa drzewo dostępności całej aplikacji, a czytnik ekranu użytkownika napotkałby w środku strony o dostępności przycisk bez nazwy i nagłówek poza hierarchią. Iframe izoluje drzewo, dostaje własny <code>title</code>, a wokół niego stoi tekstowy opis tego, co jest w środku zepsute. Dobry wariant może być inline.</div>
+
+<p>Zestaw startowy, po jednym przykładzie na najczęstsze sytuacje: tekst alternatywny dekoracyjny kontra informacyjny, ikona jako przycisk, modal i pułapka fokusu, formularz z błędami i komunikatem, tabela danych z nagłówkami, własna lista rozwijana kontra <code>select</code>, karuzela z autoodtwarzaniem, kontrast na stanach hover i disabled, cel dotykowy 24 na 24 piksele, przeciąganie z alternatywą klikaniem.</p>
+
+<h3>8.2 Symulatory ograniczeń</h3>
+<table>
+  <thead><tr><th>Symulator</th><th>Jak</th><th>Czego uczy</th></tr></thead>
+  <tbody>
+    <tr><td>Brak rozróżniania kolorów</td><td>Filtr SVG na kontenerze przykładu, kilka typów</td><td>1.4.1, dlaczego samo czerwone obramowanie nie wystarcza na oznaczenie błędu</td></tr>
+    <tr><td>Niska ostrość i niski kontrast</td><td><code>filter: blur()</code> i obniżony kontrast</td><td>1.4.3, 1.4.11, czemu jasnoszary na białym nie przechodzi</td></tr>
+    <tr><td>Tylko klawiatura</td><td>Tryb, w którym przykład sygnalizuje każde użycie myszy jako nieudane, plus widoczny ślad kolejności fokusu</td><td>2.1.1, 2.4.3, 2.4.7, 2.4.11</td></tr>
+    <tr><td>Symulowany czytnik ekranu</td><td>Lista tego, co zostałoby odczytane, wyliczona z drzewa dostępności przykładu</td><td>1.1.1, 1.3.1, 4.1.2, z jasnym zdaniem, że to przybliżenie, a nie zamiennik NVDA</td></tr>
+    <tr><td>Powiększenie do 200 procent i szerokość 320 pikseli</td><td>Przeskalowany kontener o zadanych wymiarach</td><td>1.4.4, 1.4.10</td></tr>
+  </tbody>
+</table>
+
+<p>Symulatory działają na przykładach w aplikacji, nie na dowolnych stronach. Dwie reguły: nigdy nie są jedynym nośnikiem informacji, bo wtedy sam moduł łamałby 1.4.1, więc obok filtru zawsze stoi opis tekstowy. I nigdy nie są włączone domyślnie.</p>
+
+<h3>8.3 Ścieżki nauki</h3>
+<p>Ścieżka to uporządkowana lista lekcji, gdzie lekcja odsyła do kryteriów, przykładów i quizu. Cztery na start, po roli: programista, projektant, osoba tworząca treść, tester. Piąta, przekrojowa, „minimum prawne dla podmiotu publicznego”, prowadzi przez kryteria z załącznika i przez deklarację dostępności.</p>
+<p>Ścieżki są liniowe i bez blokad. Nie wymuszamy quizu przed dalszym czytaniem, bo to materiał dla dorosłych w pracy, a nie kurs z certyfikatem.</p>
+
+<h3>8.4 Quizy</h3>
+<p>Typy pytań: jedna odpowiedź, wiele odpowiedzi, „które kryterium łamie ten kod” z widocznym fragmentem, „wskaż błąd w tym interfejsie” z listą elementów do wyboru. Każda odpowiedź, także poprawna, dostaje wyjaśnienie z linkiem do kryterium. Wynik pokazywany w regionie aktywnym, żeby czytnik ekranu ogłosił go bez przenoszenia fokusu.</p>
+<p>Bez punktów, odznak i serii dni. Postęp jest informacją o tym, gdzie skończyłeś, nie mechaniką.</p>
+
+<h2 id="convex">9. Convex: dane użytkownika</h2>
+
+<p>Convex trzyma wyłącznie to, co należy do konkretnej osoby. Treść nigdy nie wchodzi do bazy.</p>
+
+<pre><code>convex/schema.ts
+
+users          { subject, displayName, createdAt }               // subject od dostawcy auth
+progress       { userId, lessonId, status, updatedAt }           // czytane, ukończone
+quizAttempts   { userId, quizId, answers, score, completedAt }
+notes          { userId, targetType, targetId, body, updatedAt }  // notatka na kryterium lub przepisie
+bookmarks      { userId, targetType, targetId, createdAt }</code></pre>
+
+<p><code>targetId</code> waliduje się w mutacji przeciwko rejestrowi treści, żeby nie dało się zapisać notatki na nieistniejącym kryterium. Indeksy po <code>userId</code> plus <code>targetId</code>, bo wszystkie zapytania są w zakresie jednego użytkownika.</p>
+<p>Uwierzytelnianie: Clerk jako domyślny wybór, dobrze zintegrowany z Convex i z TanStack Start. Jeśli ma być samohostowane, better-auth. Cała aplikacja jest do czytania bez logowania. Logowanie włącza tylko postęp, notatki i zakładki, więc pierwsza wizyta nie zaczyna się od ekranu rejestracji.</p>
+
+<h2 id="stack">10. Stack i konwencje kodu</h2>
+<table>
+  <thead><tr><th>Element</th><th>Wybór</th><th>Uwaga</th></tr></thead>
+  <tbody>
+    <tr><td>Framework</td><td>TanStack Start, trasy plikowe</td><td>Treść jest statyczna, więc strony kryteriów i przepisów prerenderujemy. Server functions tylko tam, gdzie wchodzi Convex</td></tr>
+    <tr><td>Build</td><td>Vite, pnpm</td><td></td></tr>
+    <tr><td>Styl</td><td>Tailwind</td><td>Tokeny kolorów jako zmienne CSS, żeby motywy i tryb wymuszonych kolorów dały się obsłużyć w jednym miejscu</td></tr>
+    <tr><td>Typografia</td><td>Inter na tekst interfejsu, monospace systemowy na kody</td><td>Inter samohostowany przez <code>@fontsource-variable/inter</code>, nie z Google Fonts. Trzy powody: brak żądania do zewnętrznego serwera przy każdym wejściu, co przy produkcie kierowanym do podmiotów publicznych jest argumentem samym w sobie, brak przeskoku układu przy ładowaniu, i działanie bez sieci. Monospace zostaje systemowy: numery kryteriów, numery artykułów i daty są kodami i mają wyglądać inaczej niż proza</td></tr>
+    <tr><td>Komponenty</td><td>shadcn/ui na Radix</td><td>Radix ma sensowne zachowanie fokusu i ARIA, co nie znaczy, że jest dostępny z pudełka. Każdy komponent wchodzący do repo przechodzi sprawdzenie z klawiatury i czytnikiem ekranu. Aplikacja o dostępności z niedostępnym menu byłaby żartem</td></tr>
+    <tr><td>Walidacja</td><td>ArkType</td><td>Walidacja treści przy buildzie i wejść do Convex</td></tr>
+    <tr><td>Stan serwera</td><td>Convex React, dla reszty TanStack Query</td><td>Bez Zustand na start. Stan lokalny siedzi w URL i w komponentach. Zustand wchodzi, jeśli symulatory rozrosną się w stan globalny</td></tr>
+    <tr><td>Wyszukiwanie</td><td>MiniSearch, indeks statyczny</td><td>Ładowany leniwie</td></tr>
+    <tr><td>Treść długa</td><td>MDX</td><td>Z listą dozwolonych komponentów, nie z dowolnym JSX</td></tr>
+  </tbody>
+</table>
+
+<p>Konwencje: bez <code>any</code>, bez rzutowań na typy treści, identyfikatory jako unie wyprowadzone z rejestrów. Filtry i parametry list idą przez walidowane <code>search params</code> TanStack Routera, żeby stan filtrów dał się skopiować linkiem. Bez jednolinijkowych funkcji, które tylko przepakowują typ. Komentarze nad funkcjami mówią, jak się ich używa, nie powtarzają sygnatury.</p>
+
+<h2 id="a11y">11. Dostępność samej aplikacji</h2>
+
+<p>Cel bazowy z <code>docs/accessibility.md</code>: WCAG 2.2 na poziomie AA, plus 2.3.3 i 2.5.5 na AAA. Dla tej konkretnej aplikacji idziemy wyżej tam, gdzie to tanie, bo inaczej treść byłaby niewiarygodna.</p>
+<ul>
+  <li>AAA celowo dla 1.4.6 (kontrast wzmocniony) i 2.4.13 (wygląd fokusu). Kontrast i fokus są pierwszą rzeczą, którą ktoś sprawdzi w aplikacji o dostępności.</li>
+  <li>Cele dotykowe 44 na 44 piksele, nie 24, wszędzie.</li>
+  <li>Link pomijający nawigację, stała struktura punktów orientacyjnych, jeden <code>h1</code> na stronę, bez przeskoków poziomów nagłówków.</li>
+  <li>Zmiana trasy ogłaszana w regionie aktywnym i fokus przenoszony na nagłówek, bo aplikacja jednostronicowa nie robi tego sama.</li>
+  <li><code>prefers-reduced-motion</code> obsłużone. Bez animacji malujących się bez przerwy.</li>
+  <li>Bez przekazywania informacji samym kolorem. Poziomy A, AA i AAA mają obok koloru tekst i kształt.</li>
+  <li>Tryb wymuszonych kolorów Windows sprawdzony, bo część użytkowników tej aplikacji będzie z niego korzystać.</li>
+  <li>Deklaracja dostępności jako podstrona, napisana zgodnie z wymogami ustawy. Sama jest przykładem i linkuje do lekcji o deklaracji.</li>
+</ul>
+
+<h2 id="testy">12. Testy i CI</h2>
+<ul>
+  <li><strong>Niezmienniki treści</strong> (Vitest, jeden przebieg po rejestrach): każde kryterium ma opis w jednym zdaniu, sekcję jak spełnić i źródło. Każde kryterium AA ma przykład. Każda krawędź mapowania wskazuje na istniejący przepis i istniejące kryterium. Każdy identyfikator w <code>related</code>, <code>examples</code> i <code>legalRefs</code> się rozwiązuje. Każdy akt i każde kryterium ma <code>lastVerified</code>. To najcenniejsze testy w projekcie: pilnują treści, której nie pilnuje kompilator.</li>
+  <li><strong>Dostępność</strong> (Playwright plus axe-core) na reprezentatywnym zestawie tras, nie na wszystkich 86 kartach. Osobny test sprawdza, że zły przykład siedzi w iframe i nie wystaje do drzewa dostępności strony.</li>
+  <li><strong>Klawiatura</strong>: przejście po głównych przepływach bez myszy, w tym quiz i filtry listy.</li>
+  <li><strong>Ręcznie, bo nieautomatyzowalne</strong>: NVDA z Firefoksem i VoiceOver z Safari, na liście kontrolnej przed każdym wydaniem. Zapisane w repo jako lista kroków, nie jako test.</li>
+  <li>CI: <code>pnpm lint</code>, <code>pnpm build</code>, <code>pnpm test</code>, plus axe na podglądzie.</li>
+</ul>
+
+<h2 id="licencje">13. Licencje i pozyskiwanie treści</h2>
+<dl>
+  <dt>Dokumenty W3C (WCAG 2.1, 2.2, Understanding, tłumaczenie polskie)</dt>
+  <dd>Objęte licencją W3C Software and Document License, która pozwala na redystrybucję z podaniem źródła i zachowaniem noty. Strategia: dosłownie cytujemy tylko treść kryteriów sukcesu, z jasnym oznaczeniem i linkiem. Wyjaśnienia piszemy własne. Nie kopiujemy Understanding ani technik w całości. Dokładne brzmienie noty do potwierdzenia przy pierwszym imporcie.</dd>
+
+  <dt>Dane strukturalne WCAG</dt>
+  <dd>Numery, nazwy, poziomy i hierarchia wytycznych importowane jednorazowo skryptem w <code>scripts/</code> z danych publikowanych przez W3C. Skrypt uruchamiany ręcznie, wynik zatwierdzany w PR. Aplikacja nie pobiera niczego w czasie działania.</dd>
+
+  <dt>Polskie akty prawne</dt>
+  <dd>Akty normatywne i ich urzędowe projekty nie są przedmiotem prawa autorskiego, więc pełne teksty możemy przechowywać i cytować. Źródłem jest tekst jednolity z ISAP, z zapisaną datą pobrania. Streszczenia własne oznaczamy jako nasze, żeby nikt nie wziął ich za brzmienie przepisu.</dd>
+
+  <dt>EN 301 549</dt>
+  <dd>Norma zharmonizowana, tekst dostępny publicznie u ETSI, ale na innych warunkach niż akty prawne. Przechowujemy numery i tytuły klauzul oraz własne streszczenia, bez pełnego tekstu. Do potwierdzenia przed fazą prawną.</dd>
+
+  <dt>Zastrzeżenie</dt>
+  <dd>Strona <code>/o-projekcie</code> mówi wprost, że moduł prawny to materiał edukacyjny, nie porada prawna, i że wiążące jest brzmienie z Dziennika Ustaw. Każda strona przepisu pokazuje datę weryfikacji.</dd>
+</dl>
+
+<h2 id="fazy">14. Fazy dostawy</h2>
+<p>Każda faza kończy się czymś, co da się otworzyć i przeczytać. Kolejność jest taka, żeby najdroższa treść, czyli prawo, weszła, gdy szkielet już stoi i jest sprawdzony.</p>
+
+<table>
+  <thead><tr><th>Faza</th><th>Zawartość</th><th>Gotowe, gdy</th></tr></thead>
+  <tbody>
+    <tr><td>0. Fundament</td><td>TanStack Start, Tailwind, shadcn, lint, testy, CI, układ z nawigacją, tryb jasny i ciemny, deklaracja dostępności jako szkielet</td><td>Pusta aplikacja przechodzi axe i przejście z klawiatury</td></tr>
+    <tr><td>1. Szkielet treści</td><td>Typy, <code>defineCriterion</code>, rejestr, import danych strukturalnych, testy niezmienników, lista kryteriów z filtrami, karta kryterium z pustymi sekcjami</td><td>86 kryteriów jest na liście, filtry działają, trasy się prerenderują</td></tr>
+    <tr><td>2. Wyjaśnienia, pierwsza partia</td><td>Pełna treść dla wszystkich kryteriów A i AA z 2.1 i 2.2, słownik, wyszukiwanie</td><td>Kryterium AA bez treści wywala test niezmienników</td></tr>
+    <tr><td>3. Przykłady</td><td>Komponent przykładu z izolacją w iframe, podglądem kodu i opisem odczytu, zestaw startowy z punktu 8.1</td><td>Test potwierdza izolację złego przykładu od drzewa dostępności</td></tr>
+    <tr><td>4. Moduł prawny</td><td>Trzy ustawy z pełnym tekstem, klauzule EN 301 549, krawędzie mapowania, ekran mapowania, oś czasu</td><td>Z karty kryterium da się dojść do przepisu i z powrotem</td></tr>
+    <tr><td>5. Konto i postęp</td><td>Convex, Clerk, postęp, notatki, zakładki, wszystko opcjonalne</td><td>Aplikacja czyta się w całości po wylogowaniu</td></tr>
+    <tr><td>6. Ścieżki i quizy</td><td>Cztery ścieżki po rolach, ścieżka minimum prawnego, quizy do lekcji</td><td>Ścieżka przechodzi się od początku do końca z klawiatury</td></tr>
+    <tr><td>7. Symulatory</td><td>Pięć symulatorów z punktu 8.2, każdy z tekstową alternatywą</td><td>Żaden symulator nie jest jedynym nośnikiem informacji</td></tr>
+    <tr><td>8. AAA i WCAG 3.0</td><td>Uzupełnienie kryteriów AAA, moduł obserwacyjny 3.0</td><td>Wszystkie 86 kryteriów ma treść, strony 3.0 mają widoczne oznaczenie draftu</td></tr>
+  </tbody>
+</table>
+
+<p>Faza 2 jest najdłuższa i to ona decyduje o tym, czy aplikacja jest coś warta. Warto ją podzielić na partie po zasadach WCAG i wypuszczać po kolei, zamiast czekać na całość.</p>
+
+<h2 id="ryzyka">15. Ryzyka</h2>
+<table>
+  <thead><tr><th>Ryzyko</th><th>Co robimy</th></tr></thead>
+  <tbody>
+    <tr><td>Wolumen treści. 86 kryteriów razy dziewięć sekcji to setki akapitów pisanych ręcznie</td><td>Fazowanie po poziomach, testy niezmienników zamiast dobrej woli, aplikacja użyteczna już przy samym A i AA</td></tr>
+    <tr><td>Treść się starzeje. Norma i prawo się zmieniają, a nieaktualna aplikacja o dostępności jest szkodliwa</td><td><code>lastVerified</code> na każdej jednostce treści, widoczne dla użytkownika, i test ostrzegający, gdy data przekroczy ustalony wiek</td></tr>
+    <tr><td>Draft 3.0 zmieni się w trakcie pisania</td><td>Moduł obserwacyjny, nie materiał do nauki. Mało treści, wyraźne oznaczenie, łatwy do przepisania</td></tr>
+    <tr><td>Złe przykłady psują dostępność aplikacji</td><td>Izolacja w iframe plus test, który tego pilnuje</td></tr>
+    <tr><td>Symulatory jako karykatura doświadczenia użytkowników</td><td>Jasne oznaczenie, że to przybliżenie, nazwanie ograniczeń, kierowanie do prawdziwych czytników ekranu</td></tr>
+    <tr><td>Moduł prawny wzięty za poradę prawną</td><td>Zastrzeżenie, oddzielenie brzmienia przepisu od streszczenia, widoczne daty weryfikacji</td></tr>
+    <tr><td>Rozlanie zakresu na audyt, wtyczkę do przeglądarki, generator deklaracji</td><td>Wypisane jako poza zakresem. Kolejny pomysł idzie na listę, nie do sprintu</td></tr>
+  </tbody>
+</table>
+
+<h2 id="pytania">16. Do decyzji przed startem</h2>
+<ol>
+  <li><strong>Publiczne czy prywatne.</strong> Jeśli aplikacja ma być publiczna, moduł prawny potrzebuje ostrożniejszego zastrzeżenia, a treść wyższej poprzeczki redakcyjnej. Jeśli to narzędzie dla ciebie i zespołu, można pisać szybciej.</li>
+  <li><strong>Hosting.</strong> Wybór między Netlify, Vercel i Cloudflare wpływa na prerenderowanie w TanStack Start. Convex jest od tego niezależny.</li>
+  <li><strong>Uwierzytelnianie.</strong> Clerk czy better-auth. Ma znaczenie dopiero od fazy 5, więc decyzja może poczekać.</li>
+  <li><strong>Kto pisze treść.</strong> Piszesz sam, ja piszę pierwsze wersje do twojej korekty, czy mieszamy. To zmienia tempo faz 2 i 4 bardziej niż cokolwiek technicznego.</li>
+  <li><strong>Zakres tekstów aktów.</strong> Wszystkie artykuły trzech ustaw, czy tylko te, z których wynikają obowiązki cyfrowe. Pełny tekst ustawy z 2024 roku to bardzo dużo treści, z której część nie dotyczy interfejsów.</li>
+  <li><strong>Mocki wizualne.</strong> Zanim powstanie faza 0, karta kryterium i ekran mapowania powinny przejść przez kilka statycznych wariantów do wyboru. To osobne zadanie, nie część tego planu.</li>
+</ol>
+
+<div class="flag">Uwaga porządkowa: katalog projektu nie jest jeszcze repozytorium git, więc plan nie został zacommitowany. Twoje ustalenia mówią, że plany i mocki trafiają do git z zachowaną historią. Powiedz, czy mam zainicjować repozytorium, czy zrobisz to sam.</div>
+
+</main>
+</body>
+</html>

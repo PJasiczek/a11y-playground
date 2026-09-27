@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home screen mocks A / B / C</title>
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&display=swap");
+  /* ---------- shared tokens ---------- */
+  :root {
+    --paper:      #FBFAF7;
+    --paper-2:    #F1EFE8;
+    --ink:        #14171A;
+    --ink-2:      #545A60;
+    --rule:       #DFDBD1;
+    --indigo:     #2C36A8;
+    --marker:     #F4E75B;
+    --night:      #14171A;
+    --night-2:    #1D2125;
+    --night-ink:  #F2F1EB;
+    --night-ink2: #A2A9B0;
+    --night-rule: #2E3338;
+    --night-link: #AEB6FF;
+
+    --sans: "Inter var", Inter, "Segoe UI", -apple-system, system-ui, sans-serif;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, "SF Mono", monospace;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; padding: 2.5rem 1rem 6rem;
+    background: #0A0B0C; color: #fff;
+    font: 16px/1.6 var(--sans);
+  }
+  .page { max-width: 1180px; margin: 0 auto; }
+  .page > h1 { font-size: 1.4rem; margin: 0 0 .35rem; letter-spacing: -.02em; }
+  .frame-note, .page > p { color: #9AA0A6; font-size: .875rem; margin: 0 0 2rem; max-width: 70ch; }
+  .page h2 {
+    font: 600 .8rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase;
+    color: #fff; margin: 3.5rem 0 .4rem;
+  }
+  .frame-note { margin: 0 0 .9rem; }
+  .frame {
+    border: 1px solid #23262A; border-radius: 6px; overflow: hidden;
+  }
+  a:focus-visible, button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
+    outline: 3px solid var(--indigo); outline-offset: 2px;
+  }
+
+  /* ---------- mock chrome, shared by variants ---------- */
+  .m { font-family: var(--sans); }
+  .m a { text-decoration: none; }
+  .m .wrap { max-width: 980px; margin: 0 auto; padding: 0 1.75rem; }
+  .m .bar {
+    display: flex; align-items: center; gap: 1.25rem;
+    min-height: 60px; border-bottom: 1px solid var(--rule);
+  }
+  .m .mark { font: 700 1.0625rem/1 var(--sans); letter-spacing: -.02em; color: inherit; }
+  .m .mark span { font-family: var(--mono); font-weight: 700; letter-spacing: -.03em; }
+  .m nav { margin-left: auto; display: flex; gap: .25rem; }
+  .m nav a {
+    display: inline-flex; align-items: center; min-height: 44px; padding: 0 .7rem;
+    font-size: .9375rem; color: var(--ink-2); border-radius: 4px;
+  }
+  .m nav a:hover { color: var(--ink); background: var(--paper-2); }
+  .m nav a[aria-current] { color: var(--ink); font-weight: 600; box-shadow: inset 0 -2px 0 var(--ink); border-radius: 0; }
+  .m .lvl {
+    font: 600 .75rem/1 var(--mono); letter-spacing: .04em;
+    border: 1px solid currentColor; border-radius: 2px; padding: .2rem .3rem;
+  }
+  .m .foot {
+    border-top: 1px solid var(--rule); padding: 1rem 0 1.5rem;
+    display: flex; flex-wrap: wrap; gap: .4rem 1.5rem;
+    font-size: .8125rem; color: var(--ink-2);
+  }
+  .m .foot .mono { font-family: var(--mono); }
+  .mk { background: linear-gradient(transparent 62%, var(--marker) 62%, var(--marker) 96%, transparent 96%); }
+
+  /* ---------- A: three doors ---------- */
+  .va { background: var(--paper); color: var(--ink); }
+  .va .hero { padding: 4.5rem 0 3rem; }
+  .va .eyebrow { font: 400 .8125rem/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 1.1rem; }
+  .va h3 {
+    font-size: clamp(2rem, 5.2vw, 3.25rem); line-height: 1.04; letter-spacing: -.035em;
+    font-weight: 700; margin: 0 0 1.25rem; max-width: 24ch;
+  }
+  .va .lead { font-size: 1.0625rem; color: var(--ink-2); margin: 0 0 2rem; max-width: 52ch; }
+  .va .search { display: flex; max-width: 34rem; border: 2px solid var(--ink); border-radius: 4px; background: #fff; }
+  .va .search input {
+    flex: 1; min-width: 0; min-height: 48px; border: 0; background: none; padding: 0 .9rem;
+    font: 400 1rem var(--sans); color: var(--ink);
+  }
+  .va .search button {
+    min-height: 48px; padding: 0 1.1rem; border: 0; border-left: 2px solid var(--ink);
+    background: var(--marker); color: var(--ink); font: 600 .9375rem var(--sans); cursor: pointer;
+  }
+  .va .doors { display: grid; gap: 1px; background: var(--rule); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+  @media (min-width: 52rem) { .va .doors { grid-template-columns: repeat(3, 1fr); } }
+  .va .door { background: var(--paper); padding: 2rem 1.75rem 2.25rem; display: block; color: var(--ink); }
+  .va .door:hover { background: #fff; }
+  .va .door .n { font: 400 .8125rem/1 var(--mono); color: var(--ink-2); }
+  .va .door h4 { font-size: 1.375rem; letter-spacing: -.02em; margin: .9rem 0 .5rem; }
+  .va .door p { font-size: .9375rem; color: var(--ink-2); margin: 0 0 1.1rem; }
+  .va .door .go { font-size: .9375rem; font-weight: 600; color: var(--indigo); }
+  .va .door:hover .go { text-decoration: underline; text-underline-offset: 3px; }
+  .va .strip { padding: 1.5rem 0 .5rem; }
+
+  /* ---------- B: index first ---------- */
+  .vb { background: var(--paper-2); color: var(--ink); }
+  .vb .bar { border-color: var(--rule); background: var(--paper); }
+  .vb .bar .search { margin-left: auto; display: flex; align-items: center; gap: .5rem;
+    border: 1px solid var(--ink-2); border-radius: 4px; padding: 0 .7rem; min-height: 40px; background: #fff; }
+  .vb .bar .search input { border: 0; background: none; min-height: 38px; width: min(22rem, 40vw); font: 400 .9375rem var(--sans); color: var(--ink); }
+  .vb .bar nav { margin-left: 0; }
+  .vb .sub { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.5rem; padding: 1rem 0; border-bottom: 1px solid var(--rule); }
+  .vb .sub h3 { font-size: 1.0625rem; margin: 0; letter-spacing: -.01em; }
+  .vb .count { font: 400 .8125rem var(--mono); color: var(--ink-2); }
+  .vb .filters { display: flex; flex-wrap: wrap; gap: .4rem; margin-left: auto; }
+  .vb .chip {
+    display: inline-flex; align-items: center; min-height: 36px; padding: 0 .65rem;
+    font: 500 .875rem var(--sans); color: var(--ink); background: #fff;
+    border: 1px solid var(--rule); border-radius: 999px;
+  }
+  .vb .chip[aria-pressed="true"] { background: var(--marker); border-color: var(--ink); font-weight: 600; }
+  .vb .chip[aria-pressed="true"]::before { content: "✓ "; font-family: var(--mono); }
+  .vb ol { list-style: none; margin: 0; padding: 0; }
+  .vb li { border-bottom: 1px solid var(--rule); }
+  .vb .row { display: grid; grid-template-columns: 4.5rem 1fr auto; gap: .5rem 1rem; align-items: baseline;
+    padding: .95rem .5rem; color: var(--ink); background: transparent; }
+  .vb .row:hover { background: #fff; }
+  .vb .id { font: 600 1.0625rem/1.3 var(--mono); letter-spacing: -.02em; }
+  .vb .name { font-size: 1.0625rem; font-weight: 600; letter-spacing: -.01em; }
+  .vb .name span { display: block; font-size: .9375rem; font-weight: 400; color: var(--ink-2); margin-top: .15rem; }
+  .vb .tags { display: flex; align-items: center; gap: .5rem; grid-column: 3; grid-row: 1; }
+  .vb .new { font: 600 .75rem var(--mono); background: var(--marker); border: 1px solid var(--ink); border-radius: 2px; padding: .2rem .3rem; }
+  .vb .more { display: inline-flex; align-items: center; min-height: 44px; margin: 1.25rem 0 2rem;
+    font-weight: 600; color: var(--indigo); text-decoration: underline; text-underline-offset: 3px; }
+  .vb .resume { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem 1rem; padding: .85rem 0;
+    border-bottom: 1px solid var(--rule); font-size: .9375rem; color: var(--ink-2); background: var(--paper); }
+  .vb .resume a { color: var(--indigo); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+
+  /* ---------- C: continue ---------- */
+  .vc { background: var(--night); color: var(--night-ink); }
+  .vc .bar { border-color: var(--night-rule); }
+  .vc nav a { color: var(--night-ink2); }
+  .vc nav a:hover { color: var(--night-ink); background: var(--night-2); }
+  .vc nav a[aria-current] { color: var(--night-ink); box-shadow: inset 0 -2px 0 var(--night-ink); }
+  .vc .now { padding: 3.25rem 0 2.5rem; }
+  .vc .kicker { display: flex; flex-wrap: wrap; gap: .5rem .9rem; align-items: center;
+    font: 400 .8125rem/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--night-ink2); margin: 0 0 1.25rem; }
+  .vc h3 { font-size: clamp(1.75rem, 4.4vw, 2.625rem); line-height: 1.08; letter-spacing: -.03em; font-weight: 700; margin: 0 0 1rem; max-width: 26ch; }
+  .vc h3 .mk { color: var(--night); }
+  .vc .why { font-size: 1.0625rem; color: var(--night-ink2); margin: 0 0 1.75rem; max-width: 54ch; }
+  .vc .cta { display: inline-flex; align-items: center; min-height: 48px; padding: 0 1.25rem;
+    background: var(--marker); color: var(--night); font-weight: 700; border-radius: 4px; }
+  .vc .cta:hover { background: #fff; }
+  .vc .ghost { display: inline-flex; align-items: center; min-height: 48px; padding: 0 1rem;
+    color: var(--night-link); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+  .vc .steps { display: flex; gap: .3rem; margin: 2.5rem 0 .6rem; }
+  .vc .steps i { height: 6px; flex: 1; background: var(--night-rule); border-radius: 2px; }
+  .vc .steps i.done { background: var(--night-ink2); }
+  .vc .steps i.here { background: var(--marker); }
+  .vc .stepnote { font: 400 .8125rem var(--mono); color: var(--night-ink2); margin: 0; }
+  .vc .cols { display: grid; gap: 1px; background: var(--night-rule); border-top: 1px solid var(--night-rule); }
+  @media (min-width: 46rem) { .vc .cols { grid-template-columns: 1fr 1fr; } }
+  .vc .col { background: var(--night); padding: 1.75rem 1.75rem 2rem; }
+  .vc .col h4 { font: 600 .8125rem/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--night-ink2); margin: 0 0 1rem; }
+  .vc .col ul { list-style: none; margin: 0; padding: 0; }
+  .vc .col li + li { border-top: 1px solid var(--night-rule); }
+  .vc .col a { display: flex; gap: .75rem; align-items: baseline; min-height: 48px; padding: .6rem 0; color: var(--night-ink); }
+  .vc .col a:hover { color: #fff; }
+  .vc .col a:hover .t { text-decoration: underline; text-underline-offset: 3px; }
+  .vc .col .id { font: 600 .9375rem var(--mono); color: var(--night-ink2); min-width: 3.5rem; }
+  .vc .foot { border-color: var(--night-rule); color: var(--night-ink2); }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .m a, .m button, .vb .chip, .vb .row { transition: background-color .12s ease, color .12s ease; }
+  }
+  @media (max-width: 40rem) {
+    body { padding: 1.5rem .75rem 4rem; }
+    .m .wrap { padding: 0 1rem; }
+    .m nav { display: none; }
+    .vb .bar .search input { width: 100%; }
+    .vb .row { grid-template-columns: 3.75rem 1fr; }
+    .vb .tags { grid-column: 1 / -1; grid-row: 2; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>Home screen: three directions</h1>
+<p>Same content, three ideas about what the home screen is for. Shared across all three: Inter for interface text, a monospace face reserved for criterion numbers and dates because those are codes, and one yellow marker highlight as the signature, borrowed from marking up a printed statute. Interface copy is Polish. Headings inside the mocks start at <code>h3</code> so this comparison page keeps a valid outline; in the app they would be <code>h1</code>. The wordmark sets <code>a11y</code> in the monospace face, since the 11 is a numeronym and belongs with the other codes.</p>
+
+<h2>A — Trzy drzwi</h2>
+<p class="frame-note">A question-led opening plus search, then exactly three doors: criteria, law, practice. Assumes most visits start with "I do not know where to look". Safest, most explanatory.</p>
+<div class="frame">
+  <div class="m va">
+    <div class="wrap">
+      <div class="bar">
+        <a class="mark" href="#"><span>a11y</span> playground</a>
+        <nav aria-label="Główna nawigacja, wariant A">
+          <a href="#" aria-current="page">Start</a>
+          <a href="#">Kryteria</a>
+          <a href="#">Prawo</a>
+          <a href="#">Praktyka</a>
+          <a href="#">Ścieżki</a>
+        </nav>
+      </div>
+    </div>
+
+    <div class="wrap hero">
+      <p class="eyebrow">WCAG 2.1 · WCAG 2.2 · prawo polskie</p>
+      <h3>Wiesz, co trzeba poprawić. Tu znajdziesz <span class="mk">czym to jest</span> i kto tego wymaga.</h3>
+      <p class="lead">86 kryteriów wyjaśnionych prostym językiem, z przykładami w kodzie i z odesłaniem do przepisu, który je nakłada.</p>
+      <div class="search">
+        <input type="search" aria-label="Szukaj w kryteriach i przepisach" placeholder="Szukaj: kontrast, modal, 1.4.3, deklaracja">
+        <button type="button">Szukaj</button>
+      </div>
+    </div>
+
+    <div class="doors">
+      <a class="door" href="#">
+        <p class="n">86 kryteriów</p>
+        <h4>Kryteria WCAG</h4>
+        <p>Każde kryterium w jednym zdaniu, jak je spełnić, typowe błędy i jak to sprawdzić.</p>
+        <span class="go">Przejdź do listy</span>
+      </a>
+      <a class="door" href="#">
+        <p class="n">3 ustawy · EAA · EN 301 549</p>
+        <h4>Prawo</h4>
+        <p>Kogo dotyczy, od kiedy, i które kryteria wynikają z którego przepisu.</p>
+        <span class="go">Sprawdź obowiązki</span>
+      </a>
+      <a class="door" href="#">
+        <p class="n">przykłady · symulatory · quizy</p>
+        <h4>Praktyka</h4>
+        <p>Wersja zepsuta i poprawna obok siebie, z kodem i z tym, co usłyszy czytnik ekranu.</p>
+        <span class="go">Otwórz przykłady</span>
+      </a>
+    </div>
+
+    <div class="wrap strip">
+      <div class="foot">
+        <span>Materiał edukacyjny, nie porada prawna.</span>
+        <span class="mono">Treść zweryfikowana: 2026-09-27</span>
+        <a href="#" style="color:var(--indigo);text-decoration:underline;text-underline-offset:3px">Deklaracja dostępności</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h2>B — Katalog od razu</h2>
+<p class="frame-note">No hero at all. The home screen is the criteria index with filters, and search sits in the top bar. The boldest simplification: treats the app as a tool you return to, not a site you are introduced to. Resume line sits above the list, one row tall.</p>
+<div class="frame">
+  <div class="m vb">
+    <div class="wrap">
+      <div class="bar">
+        <a class="mark" href="#"><span>a11y</span> playground</a>
+        <nav aria-label="Główna nawigacja, wariant B">
+          <a href="#" aria-current="page">Kryteria</a>
+          <a href="#">Prawo</a>
+          <a href="#">Praktyka</a>
+          <a href="#">Ścieżki</a>
+        </nav>
+        <div class="search">
+          <span aria-hidden="true" style="font-family:var(--mono);color:var(--ink-2)">/</span>
+          <input type="search" aria-label="Szukaj w kryteriach i przepisach" placeholder="Szukaj: kontrast, modal, 1.4.3">
+        </div>
+      </div>
+
+      <p class="resume">Ostatnio czytane: <a href="#">2.4.11 Fokus niezasłonięty (minimum)</a> · Ścieżka programisty, lekcja 4 z 12 · <a href="#">Wróć do lekcji</a></p>
+
+      <div class="sub">
+        <h3>Kryteria</h3>
+        <span class="count">86 kryteriów · pokazane 24</span>
+        <div class="filters">
+          <button type="button" class="chip" aria-pressed="true">WCAG 2.2</button>
+          <button type="button" class="chip" aria-pressed="true">Poziom A</button>
+          <button type="button" class="chip" aria-pressed="true">Poziom AA</button>
+          <button type="button" class="chip" aria-pressed="false">Poziom AAA</button>
+          <button type="button" class="chip" aria-pressed="false">Rola: programista</button>
+        </div>
+      </div>
+
+      <ol>
+        <li><a class="row" href="#">
+          <span class="id">1.1.1</span>
+          <span class="name">Treść nietekstowa<span>Każda treść, która nie jest tekstem, potrzebuje tekstowego odpowiednika.</span></span>
+          <span class="tags"><span class="lvl">A</span></span>
+        </a></li>
+        <li><a class="row" href="#">
+          <span class="id">1.3.1</span>
+          <span class="name">Informacje i relacje<span>Struktura widoczna dla oka musi być też zapisana w znacznikach.</span></span>
+          <span class="tags"><span class="lvl">A</span></span>
+        </a></li>
+        <li><a class="row" href="#">
+          <span class="id">1.4.3</span>
+          <span class="name">Kontrast (minimum)<span>Tekst wobec tła co najmniej 4,5 do 1. Duży tekst co najmniej 3 do 1.</span></span>
+          <span class="tags"><span class="lvl">AA</span></span>
+        </a></li>
+        <li><a class="row" href="#">
+          <span class="id">2.4.11</span>
+          <span class="name">Fokus niezasłonięty (minimum)<span>Element z fokusem nie może być całkowicie zakryty przez inną treść.</span></span>
+          <span class="tags"><span class="new">nowe w 2.2</span><span class="lvl">AA</span></span>
+        </a></li>
+        <li><a class="row" href="#">
+          <span class="id">2.5.7</span>
+          <span class="name">Ruchy przeciągania<span>Wszystko, co przeciągasz, musi dać się zrobić jednym kliknięciem.</span></span>
+          <span class="tags"><span class="new">nowe w 2.2</span><span class="lvl">AA</span></span>
+        </a></li>
+        <li><a class="row" href="#">
+          <span class="id">3.3.8</span>
+          <span class="name">Dostępne uwierzytelnianie (minimum)<span>Logowanie nie może wymagać testu pamięci ani przepisywania kodu z obrazka.</span></span>
+          <span class="tags"><span class="new">nowe w 2.2</span><span class="lvl">AA</span></span>
+        </a></li>
+        <li><a class="row" href="#">
+          <span class="id">4.1.2</span>
+          <span class="name">Nazwa, rola, wartość<span>Każda kontrolka ma nazwę, rolę i stan, które oprogramowanie potrafi odczytać.</span></span>
+          <span class="tags"><span class="lvl">A</span></span>
+        </a></li>
+      </ol>
+      <a class="more" href="#">Pokaż pozostałe 17</a>
+
+      <div class="foot">
+        <span>Materiał edukacyjny, nie porada prawna.</span>
+        <span class="mono">Treść zweryfikowana: 2026-09-27</span>
+        <a href="#" style="color:var(--indigo);text-decoration:underline;text-underline-offset:3px">Deklaracja dostępności</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h2>C — Kontynuuj</h2>
+<p class="frame-note">One thing to do next, named. The home screen is your current position in a path, with the criteria and law indexes demoted to two quiet columns. Dark surface, so you can also judge light against dark here. Strongest for repeat learning, weakest for a first visit.</p>
+<div class="frame">
+  <div class="m vc">
+    <div class="wrap">
+      <div class="bar">
+        <a class="mark" href="#" style="color:var(--night-ink)"><span>a11y</span> playground</a>
+        <nav aria-label="Główna nawigacja, wariant C">
+          <a href="#" aria-current="page">Start</a>
+          <a href="#">Kryteria</a>
+          <a href="#">Prawo</a>
+          <a href="#">Praktyka</a>
+          <a href="#">Ścieżki</a>
+        </nav>
+      </div>
+    </div>
+
+    <div class="wrap now">
+      <p class="kicker"><span>Ścieżka programisty</span><span>Lekcja 4 z 12</span><span>około 12 minut</span></p>
+      <h3>Dalej: <span class="mk">fokus, którego nie widać</span></h3>
+      <p class="why">Sticky nagłówek zasłania element z fokusem. Pokażę, czym różni się 2.4.11 od 2.4.7, i jak to sprawdzić bez narzędzi.</p>
+      <p style="margin:0"><a class="cta" href="#">Kontynuuj lekcję</a> <a class="ghost" href="#">Zobacz całą ścieżkę</a></p>
+
+      <div class="steps" role="img" aria-label="Postęp ścieżki: 3 lekcje ukończone, jesteś na czwartej z dwunastu">
+        <i class="done"></i><i class="done"></i><i class="done"></i><i class="here"></i>
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
+      <p class="stepnote">3 ukończone · 1 w toku · 8 przed tobą</p>
+    </div>
+
+    <div class="cols">
+      <div class="col">
+        <h4>Wróć do</h4>
+        <ul>
+          <li><a href="#"><span class="id">1.4.3</span><span class="t">Kontrast (minimum)</span></a></li>
+          <li><a href="#"><span class="id">2.5.8</span><span class="t">Rozmiar celu (minimum)</span></a></li>
+          <li><a href="#"><span class="id">Art. 5</span><span class="t">Ustawa o dostępności cyfrowej: co musi zawierać deklaracja</span></a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <h4>Wejdź inaczej</h4>
+        <ul>
+          <li><a href="#"><span class="id">86</span><span class="t">Wszystkie kryteria, z filtrami</span></a></li>
+          <li><a href="#"><span class="id">3</span><span class="t">Ustawy i terminy, mapowanie na kryteria</span></a></li>
+          <li><a href="#"><span class="id">/</span><span class="t">Szukaj w całej treści</span></a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <div class="foot">
+        <span>Materiał edukacyjny, nie porada prawna.</span>
+        <span class="mono">Treść zweryfikowana: 2026-09-27</span>
+        <a href="#" style="color:var(--night-link);text-decoration:underline;text-underline-offset:3px">Deklaracja dostępności</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>
