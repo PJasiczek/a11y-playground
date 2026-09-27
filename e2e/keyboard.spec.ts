@@ -95,3 +95,17 @@ test("the role filter works from the keyboard and explains what it hides", async
   await expect(page.getByRole("link", { name: /^1\.2\.3 / })).toHaveCount(0);
   await expect(tester).toBeFocused();
 });
+
+test("search from the home page works from the keyboard", async ({ page }) => {
+  await page.goto("/");
+  await page.getByLabel("Szukaj w kryteriach i słowniku").fill("kontrast");
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/\/szukaj\?q=kontrast/);
+  await expect(page.getByRole("status").filter({ hasText: "dla „kontrast”" })).toBeVisible();
+  await page.keyboard.press("Tab");
+  const first = page.getByRole("link", { name: /^1\.4\.3 Kontrast \(minimum\)/ });
+  await expect(first).toBeVisible();
+  await first.focus();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL("/kryteria/1.4.3");
+});
