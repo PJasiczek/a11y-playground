@@ -8,7 +8,7 @@
 ![WCAG 2.2 AA+](https://img.shields.io/badge/target-WCAG%202.2%20AA%20%2B%20selected%20AAA-2c36a8)
 ![TanStack Start](https://img.shields.io/badge/TanStack-Start-14171a)
 
-[Overview](#overview) • [Getting started](#getting-started) • [Scripts](#scripts) • [Accessibility](#accessibility-of-the-app-itself) • [Roadmap](#roadmap)
+[Overview](#overview) • [Getting started](#getting-started) • [Writing content](#writing-content) • [Scripts](#scripts) • [Accessibility](#accessibility-of-the-app-itself) • [Roadmap](#roadmap)
 
 </div>
 
@@ -19,7 +19,7 @@ a11y playground is a learning app for people who build digital products in Polan
 The interface is in Polish. This README is in English.
 
 > [!NOTE]
-> The project is in phase 0 (foundation). The app shell, navigation and accessibility tooling are in place. The Kryteria, Prawo, Praktyka and Ścieżki sections are placeholders until their content lands in later phases.
+> The project is in phase 1 (content skeleton). All 86 WCAG 2.2 criteria are listed and have their own page, but most pages are still empty sections. Explanations arrive in phase 2. Prawo, Praktyka and Ścieżki are placeholders until later phases.
 
 ### What works today
 
@@ -27,10 +27,16 @@ The interface is in Polish. This README is in English.
 - Main navigation that wraps onto its own row on narrow screens instead of hiding behind a menu button.
 - Light and dark mode. It follows the operating system by default, and the header toggle stores an explicit choice.
 - Skip link, a stable landmark structure, and focus moved to the new `h1` with the page title announced after every client-side route change.
+- **Criteria list** (`/kryteria`) with filters for WCAG version, level and principle. The filters are native radio buttons and checkboxes, their state lives in the URL, and the result count is announced to screen readers.
+- **Criterion pages** (`/kryteria/1.4.3`) with a fixed section order, a "nowe w 2.2" badge for the nine new criteria, and 4.1.1 marked as removed in 2.2. Every page is prerendered to static HTML.
 
 | Light | Dark | Mobile |
 | --- | --- | --- |
 | ![Home, light mode](docs/screenshots/home-light.png) | ![Home, dark mode](docs/screenshots/home-dark.png) | ![Home on a 390px wide screen](docs/screenshots/home-mobile.png) |
+
+| Criteria list | Criterion page |
+| --- | --- |
+| ![Criteria list with version, level and principle filters](docs/screenshots/criteria-list.png) | ![Criterion page for 1.4.3 Kontrast (minimum)](docs/screenshots/criterion-page.png) |
 
 ## Getting started
 
@@ -47,6 +53,49 @@ The dev server prints its local URL. To run the end-to-end tests locally, instal
 pnpm exec playwright install chromium
 ```
 
+## Writing content
+
+Criterion names, levels and versions are generated. The explanations are written by hand in Markdown, one file per criterion in `content/kryteria/<id>.md`:
+
+```markdown
+---
+summary: Tekst musi odcinać się od tła w stosunku co najmniej 4,5 do 1.
+roles: [projektant, programista]
+related: ["1.4.6", "1.4.11"]
+lastVerified: 2026-09-27
+---
+
+## Kogo to dotyczy
+
+Osoby po czterdziestce, którym spada wrażliwość na kontrast.
+
+## Jak to spełnić
+
+### Projektant
+
+- Sprawdź kontrast na etapie palety, nie po wdrożeniu.
+```
+
+- **Frontmatter:**
+  - `summary`: one sentence, up to 200 characters.
+  - `roles`: any of `programista`, `projektant`, `autor treści`, `tester`.
+  - `related`: other criterion numbers.
+  - `lastVerified`: date of the last check against the sources.
+- **Sections** must use these `##` titles, in this order: Kogo to dotyczy, Jak to spełnić, Typowe błędy, Jak sprawdzić, Częste pomyłki. Leave out any you have not written yet. Use `###` inside a section, for example to split it by role.
+- **Checks:** a file with a typo in a section title, an unknown key, a summary that is too long, or a reference to a criterion that does not exist fails `pnpm test` and the build, with the file name and the reason.
+
+> [!NOTE]
+> Later the content will be edited in Notion. A sync script will write these same files, so this format stays the contract between editors and the app.
+
+### Where the criterion names come from
+
+`pnpm import:wcag` regenerates `src/content/wcag.gen.ts`. It takes numbers, levels and versions from the W3C WCAG 2.2 data. Polish names come from two sources:
+
+- the [authorized W3C translation of WCAG 2.1](https://www.w3.org/Translations/WCAG21-pl/),
+- for the nine criteria new in 2.2, the [unofficial IRDPL translation](https://wcag.irdpl.pl/guidelines/22/), because there is no authorized Polish translation of 2.2 yet. Each criterion page says which source its name comes from.
+
+Run the import by hand and review the diff of the generated file in a PR.
+
 ## Scripts
 
 | Command | What it does |
@@ -55,7 +104,8 @@ pnpm exec playwright install chromium
 | `pnpm build` | Builds the production app into `.output/`. |
 | `pnpm preview` | Serves the production build locally. |
 | `pnpm lint` | Runs ESLint (with `jsx-a11y` in strict mode) and the TypeScript compiler. |
-| `pnpm test` | Builds the app and runs the Playwright suite: axe in light and dark mode, 44px target checks, and keyboard flows. |
+| `pnpm test` | Runs the Vitest content and data tests, then builds the app and runs the Playwright suite: axe in light and dark mode, 44px target checks, and keyboard flows. |
+| `pnpm import:wcag` | Regenerates the WCAG structure with Polish names. See [Where the criterion names come from](#where-the-criterion-names-come-from). |
 
 CI runs `lint`, `build` and `test` on every pull request and on pushes to `master`.
 
@@ -65,7 +115,8 @@ CI runs `lint`, `build` and `test` on every pull request and on pushes to `maste
 - [Tailwind CSS](https://tailwindcss.com) v4. Colour tokens live in `src/styles.css` as CSS variables using `light-dark()`, so themes and forced colours mode are handled in one place.
 - Inter, self-hosted through `@fontsource-variable/inter`. Criterion numbers, article numbers and dates use the system monospace font.
 - [Nitro](https://nitro.build) for the server build. It picks the Vercel preset automatically when the build runs on Vercel.
-- [Playwright](https://playwright.dev) with [axe-core](https://github.com/dequelabs/axe-core) for end-to-end accessibility tests.
+- [ArkType](https://arktype.io) to validate content files and URL filters, [marked](https://marked.js.org) to render Markdown on the server.
+- [Vitest](https://vitest.dev) for content tests, [Playwright](https://playwright.dev) with [axe-core](https://github.com/dequelabs/axe-core) for end-to-end accessibility tests.
 
 ## Accessibility of the app itself
 
@@ -82,10 +133,15 @@ The baseline is WCAG 2.2 Level AA, plus 2.3.3 and 2.5.5 at AAA. See [`docs/acces
 ## Project structure
 
 ```text
+content/
+  kryteria/      one Markdown file per criterion
+scripts/
+  import-wcag.ts generates src/content/wcag.gen.ts
 src/
+  content/       WCAG structure, Markdown parsing and validation, server functions
   routes/        file-based routes (__root.tsx holds the layout)
-  components/    header, theme toggle, route announcer
-  styles.css     Tailwind setup and colour tokens
+  components/    header, theme toggle, route announcer, level badges
+  styles.css     Tailwind setup, colour tokens, styles for rendered Markdown
 e2e/             Playwright tests: axe, target size, keyboard
 docs/
   accessibility.md   the accessibility checklist
@@ -98,7 +154,7 @@ docs/
 The full plan, with content scope, architecture and risks, is in [`docs/design/2026-09-27-wcag-learning-app`](docs/design/2026-09-27-wcag-learning-app/wcag-learning-app.en.html) ([Polish version](docs/design/2026-09-27-wcag-learning-app/wcag-learning-app.pl.html)). Each phase ships on its own branch.
 
 - [x] **0. Foundation.** App shell, navigation, themes, lint, tests, CI.
-- [ ] **1. Content skeleton.** Criterion types and registry, criterion list with filters, criterion pages.
+- [x] **1. Content skeleton.** WCAG structure with Polish names, Markdown content format, criteria list with filters, prerendered criterion pages.
 - [ ] **2. Explanations.** Plain-language content for every A and AA criterion, glossary, search.
 - [ ] **3. Examples.** Bad and good examples, with the bad one isolated in an iframe.
 - [ ] **4. Legal module.** Polish acts, EN 301 549, the law-to-criterion mapping.

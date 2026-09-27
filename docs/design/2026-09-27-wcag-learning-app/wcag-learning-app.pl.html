@@ -43,7 +43,7 @@
 <p class="meta"><a href="wcag-learning-app.en.html" hreflang="en">English version</a></p>
 
 <h1>Plan: aplikacja do nauki dostępności</h1>
-<p class="meta">WCAG 2.1 (A/AA/AAA), WCAG 2.2, draft WCAG 3.0, prawo polskie i EAA. TanStack Start, shadcn/ui, Tailwind, Convex. Wersja planu: 2026-09-27.</p>
+<p class="meta">WCAG 2.1 (A/AA/AAA), WCAG 2.2, draft WCAG 3.0, prawo polskie i EAA. TanStack Start, shadcn/ui, Tailwind, Convex. Wersja planu: 2026-09-27, zaktualizowana 2026-09-27.</p>
 
 <ol class="toc">
   <li><a href="#cel">Cel produktu</a></li>
@@ -63,6 +63,16 @@
   <li><a href="#ryzyka">Ryzyka</a></li>
   <li><a href="#pytania">Do decyzji przed startem</a></li>
 </ol>
+
+<h2 id="zmiany">Zmiany po rozpoczęciu prac</h2>
+<p>Decyzje podjęte przy budowie faz 0 i 1. Tam, gdzie kolidują z sekcjami poniżej, obowiązują te.</p>
+<ul>
+  <li><strong>Treść w Markdownie, nie w modułach TypeScript (sekcja 5).</strong> Treść redakcyjna kryterium leży w <code>content/kryteria/&lt;id&gt;.md</code>: frontmatter (<code>summary</code>, <code>roles</code>, <code>related</code>, <code>lastVerified</code>) i stałe sekcje <code>##</code>. ArkType sprawdza każdy plik przy budowaniu, a reguły pokrywa Vitest. Numery, nazwy, poziomy i wersje zostają w generowanym TypeScripcie (<code>src/content/wcag.gen.ts</code>), więc <code>CriterionId</code> nadal jest unią typów. Koszt: martwe odwołanie w Markdownie wywala test, a nie <code>tsc</code>.</li>
+  <li><strong>Notion później.</strong> Docelowo treść będzie edytowana w Notion. Skrypt synchronizujący zapisze te same pliki Markdown, a wynik przejdzie przez PR, więc powyższy format jest kontraktem. Powstanie, gdy będzie baza w Notion.</li>
+  <li><strong>Tylko po polsku, także norma (sekcje 4.1 i 13).</strong> Bez przełącznika na angielski oryginał. Nazwy kryteriów pochodzą z autoryzowanego tłumaczenia WCAG 2.1 (W3C). Dziewięć kryteriów nowych w 2.2 ma nazwy z nieoficjalnego tłumaczenia IRDPL, oznaczone tak na stronie, bo W3C nie ma autoryzowanego polskiego tłumaczenia 2.2. Linki do angielskiej specyfikacji zostają jako źródła, z dopiskiem, że są po angielsku.</li>
+  <li><strong>Hosting: Vercel (sekcja 16).</strong> Wszystkie strony są prerenderowane przy budowaniu.</li>
+  <li><strong>Na razie bez deklaracji dostępności (sekcja 11).</strong></li>
+</ul>
 
 <h2 id="cel">1. Cel produktu</h2>
 <p>Jedno miejsce, w którym osoba pracująca nad produktem cyfrowym w Polsce dowiaduje się trzech rzeczy: co dokładnie mówi kryterium WCAG, jak to wygląda w kodzie, i który przepis polskiego prawa tego od niej wymaga. Dzisiaj te trzy warstwy leżą w trzech różnych miejscach: norma na w3.org, wyjaśnienia w dokumentach Understanding, obowiązki w Dzienniku Ustaw. Aplikacja je zszywa.</p>
