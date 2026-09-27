@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan: faza 2, wyjaśnienia, słownik i wyszukiwarka</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1.25rem 6rem;
+    background: #000; color: #fff;
+    font: 16px/1.65 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  main { max-width: 82ch; margin: 0 auto; }
+  h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 .5rem; letter-spacing: -.02em; }
+  h2 { font-size: 1.2rem; margin: 3rem 0 .75rem; padding-top: 1rem; border-top: 1px solid #262626; letter-spacing: -.01em; }
+  h3 { font-size: 1rem; margin: 1.75rem 0 .5rem; }
+  p, li, dd { color: #e5e5e5; }
+  a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  ul, ol { padding-left: 1.3rem; }
+  li { margin: .3rem 0; }
+  code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .875em; background: #141414; border: 1px solid #262626; border-radius: 3px; padding: .08em .3em; }
+  pre { background: #0b0b0b; border: 1px solid #262626; border-radius: 4px; padding: .9rem 1rem; overflow-x: auto; }
+  pre code { background: none; border: 0; padding: 0; font-size: .82rem; line-height: 1.55; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; display: block; overflow-x: auto; }
+  th, td { border: 1px solid #262626; padding: .45rem .6rem; text-align: left; vertical-align: top; }
+  th { background: #101010; font-weight: 600; }
+  .meta { color: #a3a3a3; font-size: .85rem; margin: 0 0 1.5rem; }
+  .meta a { color: #fff; }
+  .flag { border-left: 2px solid #737373; padding: .1rem 0 .1rem .85rem; margin: 1rem 0; color: #d4d4d4; font-size: .93rem; }
+  .toc { border: 1px solid #262626; padding: 1rem 1rem 1rem 2.4rem; margin: 1.5rem 0 0; }
+  .toc li { margin: .15rem 0; }
+  @media (max-width: 40rem) { body { padding: 1.25rem .9rem 4rem; } h1 { font-size: 1.45rem; } }
+</style>
+</head>
+<body>
+<main>
+
+<p class="meta"><a href="phase-2-content.en.html" hreflang="en">English version</a></p>
+
+<h1>Plan: faza 2, wyjaśnienia, słownik i wyszukiwarka</h1>
+<p class="meta">Szczegółowy plan fazy 2 z <a href="../2026-09-27-wcag-learning-app/wcag-learning-app.pl.html">planu głównego</a>. Mocki słownika: <a href="../2026-09-27-glossary-mocks/glossary-mocks.html">glossary-mocks.html</a>. Wersja planu: 2026-09-27.</p>
+
+<ol class="toc">
+  <li><a href="#cel">Cel i warunek ukończenia</a></li>
+  <li><a href="#zakres">Zakres</a></li>
+  <li><a href="#format">Zmiany w formacie treści</a></li>
+  <li><a href="#pisanie">Pisanie 55 kryteriów</a></li>
+  <li><a href="#norma">Treść normy</a></li>
+  <li><a href="#slownik">Słownik</a></li>
+  <li><a href="#szukaj">Wyszukiwarka</a></li>
+  <li><a href="#role">Filtr ról</a></li>
+  <li><a href="#testy">Testy</a></li>
+  <li><a href="#commity">Commity i pull request</a></li>
+  <li><a href="#ryzyka">Ryzyka</a></li>
+  <li><a href="#decyzje">Decyzje</a></li>
+</ol>
+
+<h2 id="cel">1. Cel i warunek ukończenia</h2>
+<p>Po fazie 2 aplikacja sama w sobie wystarcza komuś, kto musi spełnić poziom AA. Każde kryterium A i AA z WCAG 2.2 ma wyjaśnienie prostym językiem, pojęcia, na których czytelnik się potyka, są objaśnione tam, gdzie się pojawiają, a kryterium da się znaleźć, wpisując, co jest nie tak z interfejsem.</p>
+<p>Faza jest skończona, gdy:</p>
+<ul>
+  <li>Kryterium A lub AA bez kompletnego pliku z treścią wywala <code>pnpm test</code>.</li>
+  <li>Każda strona ze szkicem treści wyraźnie to pokazuje.</li>
+  <li>Wyszukiwanie „modal”, „alt” albo „kontrast” zwraca właściwe kryteria.</li>
+  <li>Pojęcie oznaczone w treści kryterium otwiera podgląd definicji z klawiatury, a samo pojęcie linkuje do słownika.</li>
+</ul>
+
+<h2 id="zakres">2. Zakres</h2>
+<table>
+  <thead><tr><th>W fazie 2</th><th>Poza nią, i gdzie trafia</th></tr></thead>
+  <tbody>
+    <tr><td>Treść dla 55 kryteriów A i AA z WCAG 2.2 (31 A, 24 AA). To obejmuje też wszystkie kryteria A i AA z 2.1</td><td>31 kryteriów AAA i wyjaśnienie wycofanego 4.1.1: faza 8</td></tr>
+    <tr><td>Pole <code>status</code>, widoczne oznaczenie szkicu</td><td>Obieg redakcyjny albo CMS: Notion, gdy powstanie</td></tr>
+    <tr><td>Treść normy po polsku dla kryteriów z autoryzowanego tłumaczenia W3C</td><td>Angielski oryginał, zgodnie z decyzją</td></tr>
+    <tr><td>Słownik: format, hasła, wyświetlanie w tekście, strona <code>/slownik</code></td><td>Słownik pojęć prawnych: faza 4</td></tr>
+    <tr><td>Wyszukiwanie w kryteriach i słowniku, <code>/szukaj</code>, pole wyszukiwania na stronie głównej</td><td>Wyszukiwanie w przepisach i przykładach: dochodzi w fazach 3 i 4, razem z nimi</td></tr>
+    <tr><td>Filtr ról na <code>/kryteria</code></td><td>Przykłady w sekcji „Przykład”: faza 3</td></tr>
+  </tbody>
+</table>
+
+<h2 id="format">3. Zmiany w formacie treści</h2>
+<h3>3.1 Status</h3>
+<p>Nowe wymagane pole <code>status</code> z dwiema wartościami. <code>lastVerified</code> staje się wymagane dopiero wtedy, gdy człowiek sprawdzi treść, więc aplikacja nigdy nie twierdzi, że coś zweryfikowano, jeśli tak nie było.</p>
+<pre><code>---
+status: szkic            # albo: zweryfikowane
+summary: ...
+roles: [programista, projektant]
+related: ["1.4.11"]
+keywords: [kontrast, szary tekst, placeholder]   # nowe, opcjonalne, zasila wyszukiwarkę
+lastVerified: 2026-10-14 # wymagane przy statusie zweryfikowane, zabronione przy szkicu
+---</code></pre>
+<p>Szkic pokazuje w nagłówku strony oznaczenie: przerywana ramka, znak ołówka i słowa „szkic, czeka na weryfikację”, więc nie opiera się na kolorze. Widać je we wszystkich trzech mockach słownika. Lista pokazuje ten sam znacznik obok poziomu.</p>
+<p>Przeglądasz plik, zmieniasz <code>status</code> na <code>zweryfikowane</code> i dopisujesz datę. Ta jedna edycja to cały obieg weryfikacji.</p>
+
+<h3>3.2 Kompletność</h3>
+<p>Kryterium A lub AA musi mieć plik z <code>summary</code>, <code>roles</code> i co najmniej sekcjami Kogo to dotyczy, Jak to spełnić, Typowe błędy i Jak sprawdzić. Częste pomyłki zostają opcjonalne, bo nie przy każdym kryterium istnieje pomyłka warta osobnej sekcji. Pliki AAA pozostają opcjonalne do fazy 8.</p>
+
+<h3>3.3 Odwołania do słownika</h3>
+<p>Autor oznacza pojęcie wprost: <code>[nazwę](slownik:nazwa)</code>. Parser sprawdza slug w słowniku i zgłasza błąd przy nieznanym, tak samo jak przy <code>related</code>. Nie dopasowujemy pojęć automatycznie: polskie rzeczowniki się odmieniają (nazwa, nazwę, nazwy), więc automat albo by je gubił, albo trafiał w przypadkowe słowa. Tylko pierwsze oznaczone wystąpienie na stronie dostaje oprawę słownikową, kolejne są zwykłym tekstem, żeby strona nie zamieniła się w morze podkreśleń.</p>
+
+<h2 id="pisanie">4. Pisanie 55 kryteriów</h2>
+<p>Piszę wersje robocze, Ty je przeglądasz i zmieniasz status. Zasady pisania z sekcji 6.1 planu głównego obowiązują bez zmian: najpierw sytuacja użytkownika, konkretna liczba zawsze, gdy norma ją podaje, tryb rozkazujący w „Jak to spełnić”, podział według ról tam, gdzie pracuje kilka osób.</p>
+<p>Przy każdym kryterium pracuję na dokumencie Understanding z W3C oraz na technikach wystarczających i błędach, i piszę własnymi słowami. Z Understanding nic nie kopiuję, ze względu na licencję i dlatego, że przetłumaczony Understanding nie byłby prostszy od oryginału. Wzorcem długości i tonu jest 1.4.3: mniej więcej od 250 do 450 słów na kryterium.</p>
+<p>Kolejność: według zasad, jeden commit na zasadę, żeby historię i przegląd dało się prowadzić zasada po zasadzie w ramach jednego pull requesta.</p>
+<table>
+  <thead><tr><th>Zasada</th><th>A</th><th>AA</th><th>Razem</th></tr></thead>
+  <tbody>
+    <tr><td>1. Postrzegalność</td><td>9</td><td>11</td><td>20</td></tr>
+    <tr><td>2. Funkcjonalność</td><td>14</td><td>6</td><td>20</td></tr>
+    <tr><td>3. Zrozumiałość</td><td>7</td><td>6</td><td>13</td></tr>
+    <tr><td>4. Solidność</td><td>1</td><td>1</td><td>2</td></tr>
+  </tbody>
+</table>
+<p class="flag">4.1.1 nie jest liczone w zasadzie 4: w 2.2 zostało wycofane, a jego wyjaśnienie należy do fazy 8. Liczby na zasadę sprawdza test na zaimportowanych danych, nikt ich nie przepisuje ręcznie. Tabela powyżej służy tylko orientacji.</p>
+
+<h2 id="norma">5. Treść normy</h2>
+<p>Sekcja „Treść normy” na stronie kryterium dostaje tekst z autoryzowanego tłumaczenia WCAG 2.1 (W3C). <code>pnpm import:wcag</code> zyskuje krok, który wyciąga brzmienie każdego kryterium, razem z listami wyjątków i uwagami, do <code>wcag.gen.ts</code> jako mały, ściśle ograniczony podzbiór HTML (akapity, listy, wyróżnienia). Odnośniki w tym tekście prowadzą do naszego słownika, jeśli mamy dane pojęcie, a w przeciwnym razie nigdzie. Sekcja jest domyślnie zwinięta i podaje źródło.</p>
+<p>Sześć kryteriów A i AA jest nowych w 2.2 i nie ma autoryzowanego polskiego tekstu: 2.4.11, 2.5.7, 2.5.8, 3.2.6, 3.3.7 i 3.3.8. Przy nich sekcja zamiast cytatu linkuje do tłumaczenia IRDPL i do specyfikacji W3C, dopóki IRDPL nie potwierdzi licencji. Potem tekst jest cytowany z podaniem IRDPL jako źródła.</p>
+
+<h2 id="slownik">6. Słownik</h2>
+<h3>6.1 Format</h3>
+<p>Jeden plik na pojęcie w <code>content/slownik/&lt;slug&gt;.md</code>, sprawdzany w ten sam sposób co kryteria:</p>
+<pre><code>---
+term: nazwa
+also: [dostępna nazwa]          # nazwy potoczne, widoczne i wyszukiwalne
+normative: nazwa                # hasło w słowniku WCAG, jeśli istnieje
+status: szkic
+---
+To, co czytnik powie o kontrolce, zanim powie, czym ona jest: „Zamknij okno, przycisk”.
+Nie myl z atrybutem `name` w HTML.</code></pre>
+<p>Definicja normatywna, gdy ustawione jest <code>normative</code>, przychodzi z importu tłumaczenia W3C opisanego w sekcji 5, a nie jest przepisywana ręcznie. Lista kryteriów pod hasłem wylicza się z odwołań <code>slownik:</code> w plikach kryteriów, więc nigdy się nie rozjedzie.</p>
+<h3>6.2 Zestaw startowy</h3>
+<p>Około 30 pojęć, wybranych spośród tych, które utrudniają zrozumienie 55 kryteriów: nazwa, rola, wartość, stan, fokus, kolejność fokusu, interfejs klawiaturowy, pułapka na klawiaturę, czytnik ekranu, technologie wspomagające, drzewo dostępności, określone programowo, komunikat o stanie, zmiana kontekstu, etykieta, instrukcja, tekst alternatywny, treść nietekstowa, stosunek kontrastu, duży tekst, cel, wskaźnik, gest wielopunktowy, mechanizm, alternatywa dla mediów, napisy rozszerzone, audiodeskrypcja, blok treści, relacje, sekwencja znacząca.</p>
+<h3>6.3 Wyświetlanie i strona</h3>
+<p>Wybrane z <a href="../2026-09-27-glossary-mocks/glossary-mocks.html">glossary-mocks.html</a>: <strong>C</strong> dla pojęcia w tekście i <strong>D</strong> dla <code>/slownik</code>.</p>
+<ul>
+  <li><strong>Pojęcie w tekście (C).</strong> Pojęcie jest zwykłym linkiem do swojej kotwicy na <code>/slownik</code>, więc działa bez JavaScriptu. Obok niego przycisk otwiera dymek z krótką definicją: <code>aria-expanded</code> na przycisku, treść ogłaszana w regionie statusu, zamykanie klawiszem Esc albo przyciskiem 44 px, fokus zostaje na przycisku. Dymek jest ustawiany tak, żeby nigdy nie zasłaniał elementu z fokusem (2.4.11), a przy dolnej krawędzi okna otwiera się nad tekstem. Przycisk 24 px korzysta z wyjątku dla celów w tekście z 2.5.5.</li>
+  <li><strong>Strona słownika (D).</strong> Jedna strona alfabetyczna z indeksem liter. Litery bez pojęć są zwykłym tekstem. Każde hasło: pojęcie jako nagłówek, nazwy potoczne, wyjaśnienie prostym językiem, brzmienie normy i kryteria, w których się pojawia.</li>
+</ul>
+
+<h2 id="szukaj">7. Wyszukiwarka</h2>
+<ul>
+  <li><strong>Indeks przy budowaniu.</strong> Trasa serwerowa <code>/search-index.json</code> buduje indeks z treści kryteriów i słownika, a prerendering zapisuje go jako plik statyczny. Bez osobnego skryptu i bez backendu wyszukiwania. <code>/szukaj</code> ładuje go leniwie, więc inne strony za niego nie płacą.</li>
+  <li><strong>Silnik:</strong> MiniSearch. Pola: numer, nazwa, podsumowanie, <code>keywords</code>, tekst sekcji oraz pojęcie ze słownika z nazwami z <code>also</code>. Dopasowanie po początku słowa i niewielka tolerancja literówek.</li>
+  <li><strong>Polski:</strong> bez stemmingu. Słowa są zamieniane na małe litery, a polskie znaki na ich podstawowe odpowiedniki, więc „zrodlo” znajdzie „źródło”. Słowa opisujące objaw („modal”, „karuzela”, „placeholder”) pochodzą z <code>keywords</code>, pisanych razem z treścią.</li>
+  <li><strong>Strona:</strong> według ekranu 7 wariantu A, z jedną zmianą. Pole dostaje widoczną etykietę zamiast samego placeholdera, bo nasza własna treść wymienia placeholder w roli etykiety jako typowy błąd. Formularz ma <code>role="search"</code>, wysyła GET na <code>/szukaj?q=</code>, a liczba wyników jest ogłaszana w regionie statusu. Wyniki są pogrupowane: kryteria, słownik.</li>
+  <li><strong>Strona główna:</strong> pole wyszukiwania z ekranu 0 wariantu A, wysyłające na <code>/szukaj</code>.</li>
+  <li><strong>Bez JavaScriptu:</strong> strona wyjaśnia, że wyszukiwarka go wymaga, i linkuje do listy kryteriów i słownika.</li>
+</ul>
+
+<h2 id="role">8. Filtr ról</h2>
+<p>Gdy każde kryterium A i AA ma <code>roles</code>, wraca filtr ról z ekranu 1 wariantu A: pola wyboru programista, projektant, autor treści i tester, zapisywane w URL jak pozostałe filtry. Kryteria bez treści (na razie AAA) nie pasują do żadnej roli i wiersz z zastosowanymi filtrami mówi o tym wprost, żeby filtrujący według roli nie pomyślał, że kryteria AAA zniknęły.</p>
+
+<h2 id="testy">9. Testy</h2>
+<ul>
+  <li><strong>Treść (Vitest):</strong> kompletność każdego kryterium A i AA; <code>lastVerified</code> obecne dokładnie wtedy, gdy <code>status</code> to <code>zweryfikowane</code>; każde odwołanie <code>slownik:</code> prowadzi do istniejącego hasła; każdy klucz <code>normative</code> istnieje w zaimportowanym słowniku WCAG; zweryfikowana treść starsza niż ustalony wiek wywala test (sekcja 12).</li>
+  <li><strong>Wyszukiwarka (Vitest):</strong> krótka tabela zapytań i oczekiwanych pierwszych wyników, w tym zapytanie bez polskich znaków i zapytanie ze słowa kluczowego. Pilnuje trafności, gdy zmienia się treść.</li>
+  <li><strong>Dostępność (Playwright i axe):</strong> <code>/szukaj</code> z wynikami i bez nich, <code>/slownik</code>, strona kryterium z otwartym podglądem definicji i jedna strona ze szkicem. Osobny test sprawdza, że otwarty dymek nie zachodzi na przycisk z fokusem.</li>
+  <li><strong>Klawiatura:</strong> wpisanie zapytania i dojście do pierwszego wyniku; otwarcie i zamknięcie definicji; filtrowanie listy według roli.</li>
+</ul>
+
+<h2 id="commity">10. Commity i pull request</h2>
+<p>Jeden pull request na całą fazę, na gałęzi <code>feat/criteria-content</code>, z commitami w tej kolejności, żeby każdy przechodził lint, build i testy:</p>
+<ol>
+  <li><code>feat(content): add draft status and keywords to criterion content</code>, razem z oznaczeniem na stronie i na liście.</li>
+  <li><code>feat(content): import normative text of WCAG 2.1 in Polish</code>, zmiana skryptu.</li>
+  <li><code>chore(content): regenerate WCAG data with normative text</code>, sam wygenerowany plik.</li>
+  <li><code>feat(glossary): add glossary format and term links in content</code>.</li>
+  <li><code>docs(glossary): write the starting set of terms</code>.</li>
+  <li><code>docs(content): explain A and AA criteria of principle 1</code>, potem to samo dla zasad 2, 3 i 4, razem cztery commity.</li>
+  <li><code>test(content): require complete content for A and AA criteria</code>. Trafia po treści celowo: wcześniej wywalałby commity pośrednie.</li>
+  <li><code>feat(glossary): render terms in text and add the glossary page</code>, warianty C i D.</li>
+  <li><code>feat(criteria): add role filter</code>.</li>
+  <li><code>feat(search): add search page, index and home search field</code>.</li>
+  <li><code>docs: update README for phase 2</code>, z nowymi zrzutami ekranu.</li>
+</ol>
+
+<h2 id="ryzyka">11. Ryzyka</h2>
+<table>
+  <thead><tr><th>Ryzyko</th><th>Co robimy</th></tr></thead>
+  <tbody>
+    <tr><td>Objętość. 55 kryteriów po 250 do 450 słów i 30 pojęć to dla Ciebie duży przegląd</td><td>Jeden commit na zasadę, więc przegląd może iść zasada po zasadzie. Szkice są oznaczone, więc aplikacja pozostaje uczciwa w trakcie przeglądu</td></tr>
+    <tr><td>Błędne stwierdzenie w szkicu, jak to o <code>disabled</code> w mocku 1.4.3</td><td>Oznaczenie szkicu, źródła podane przy każdym kryterium i treść normy na tej samej stronie, jedno kliknięcie dalej, do porównania</td></tr>
+    <tr><td>Wyszukiwarka nie trafia przez polską odmianę</td><td>Dopasowanie po początku słowa, sprowadzanie polskich znaków, <code>keywords</code> przy każdym kryterium i test z tabelą zapytań</td></tr>
+    <tr><td>Za dużo oznaczeń słownikowych</td><td>Tylko jawne oznaczanie i tylko pierwsze wystąpienie</td></tr>
+    <tr><td>Pull request rośnie ponad to, co da się przejrzeć za jednym podejściem</td><td>Commity są ułożone tak, że commity z treścią można czytać osobno, niezależnie od kodu</td></tr>
+  </tbody>
+</table>
+
+<h2 id="decyzje">12. Decyzje</h2>
+<ul>
+  <li><strong>Warianty słownika: ustalone.</strong> C dla pojęcia w tekście, D dla strony słownika.</li>
+  <li><strong>Maksymalny wiek zweryfikowanej treści: ustalone.</strong> 12 miesięcy. Po tym czasie test zgłasza błąd i kryterium wymaga ponownego sprawdzenia.</li>
+  <li><strong>Tekst IRDPL dla sześciu nowych kryteriów: ustalone.</strong> IRDPL, czyli Polska Izba Rzemiosła Dostępnościowego, tłumaczy WCAG 2.2 jako projekt społeczny; to tłumaczenie nie jest autoryzowane przez W3C. Cytujemy je z podaniem źródła, gdy IRDPL potwierdzi licencję. Do tego czasu sekcja linkuje do IRDPL i W3C.</li>
+</ul>
+
+</main>
+</body>
+</html>
