@@ -2,7 +2,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
 // Routes scanned by axe. Grows with the app; representative pages, not every criterion page.
-const routes = ["/", "/kryteria", "/kryteria/1.4.3", "/kryteria/2.4.11", "/kryteria/4.1.1", "/prawo", "/praktyka", "/sciezki"];
+const routes = ["/", "/kryteria", "/kryteria/1.4.3", "/kryteria/2.4.11", "/kryteria/4.1.1", "/prawo", "/praktyka", "/sciezki", "/slownik", "/szukaj"];
 
 // wcag2aaa is included on purpose: we opt into 1.4.6 Contrast (Enhanced).
 const tags = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa", "wcag2aaa"];
@@ -37,5 +37,27 @@ for (const route of routes) {
           .filter(({ width, height }) => width < 44 || height < 44),
       );
     expect(tooSmall).toEqual([]);
+  });
+}
+
+test("normative text opens from the keyboard and has no axe violations", async ({ page }) => {
+  await page.goto("/kryteria/1.4.3");
+  const summary = page.getByText("Rozwiń dosłowne brzmienie kryterium 1.4.3");
+  await summary.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.getByText("Logotyp", { exact: true })).toBeVisible();
+  const { violations } = await new AxeBuilder({ page }).withTags(tags).analyze();
+  expect(violations).toEqual([]);
+});
+
+for (const [query, label] of [
+  ["kontrast", "with results"],
+  ["qqqzzz", "without results"],
+] as const) {
+  test(`/szukaj ${label} has no axe violations`, async ({ page }) => {
+    await page.goto(`/szukaj?q=${query}`);
+    await expect(page.getByRole("status").filter({ hasText: query })).toBeVisible();
+    const { violations } = await new AxeBuilder({ page }).withTags(tags).analyze();
+    expect(violations).toEqual([]);
   });
 }

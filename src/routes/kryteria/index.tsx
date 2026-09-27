@@ -1,8 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { type } from "arktype";
 import type { ReactNode } from "react";
-import { LevelBadge, NewBadge } from "~/components/level-badge";
-import { getCriterionSummaries } from "~/content/content.functions";
+import { DraftBadge, LevelBadge, NewBadge } from "~/components/level-badge";
+import { getCriteriaOverview } from "~/content/content.functions";
+import { type Role, roles } from "~/content/sections";
 import {
   criteria,
   inVersion,
@@ -11,6 +12,7 @@ import {
   type Level,
   levels,
   principles,
+  type CriterionId,
   versions,
 } from "~/content/wcag";
 
@@ -22,35 +24,48 @@ const PrincipleParam = type.enumerated(...principles.map((p) => p.num));
  * of the URL, and anything invalid is dropped rather than turned into an error page.
  */
 function validateSearch(search: Record<string, unknown>) {
-  const { wersja, poziom, zasada } = search;
+  const { wersja, poziom, zasada, rola } = search;
   const picked = Array.isArray(poziom) ? levels.filter((level) => poziom.includes(level)) : [];
+  const pickedRoles = Array.isArray(rola) ? roles.filter((role) => rola.includes(role)) : [];
   return {
     ...(VersionParam.allows(wersja) && wersja !== "2.2" ? { wersja } : {}),
     ...(picked.length > 0 && picked.length < levels.length ? { poziom: picked } : {}),
     ...(PrincipleParam.allows(zasada) ? { zasada } : {}),
+    ...(pickedRoles.length > 0 ? { rola: pickedRoles } : {}),
   };
 }
 
 export const Route = createFileRoute("/kryteria/")({
   validateSearch,
-  loader: () => getCriterionSummaries(),
+  loader: () => getCriteriaOverview(),
   head: () => ({ meta: [{ title: "Kryteria · a11y playground" }] }),
   component: CriteriaPage,
 });
 
 function CriteriaPage() {
-  const summaries = Route.useLoaderData();
+  const overview = Route.useLoaderData();
   const search = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
 
   const version = search.wersja ?? "2.2";
   const pickedLevels: readonly Level[] = search.poziom ?? levels;
   const inScope = criteria.filter((c) => inVersion(c, version));
-  const shown = inScope.filter((c) => pickedLevels.includes(c.level) && (!search.zasada || c.principle === search.zasada));
+  // No role picked means no role filter. Criteria without content have no roles yet, so a role
+  // filter hides them; the note under the filters says so.
+  const pickedRoles: readonly Role[] = search.rola ?? [];
+  const matchesRole = (id: CriterionId) =>
+    pickedRoles.length === 0 || (overview[id]?.roles.some((role) => pickedRoles.includes(role)) ?? false);
+  const shown = inScope.filter(
+    (c) => pickedLevels.includes(c.level) && (!search.zasada || c.principle === search.zasada) && matchesRole(c.id),
+  );
   const filtered = Object.keys(search).length > 0;
 
   const setSearch = (next: Parameters<typeof validateSearch>[0]) => {
     void navigate({ search: validateSearch({ ...search, ...next }), replace: true, resetScroll: false });
+  };
+
+  const toggleRole = (role: Role) => {
+    setSearch({ rola: pickedRoles.includes(role) ? pickedRoles.filter((r) => r !== role) : [...pickedRoles, role] });
   };
 
   const toggleLevel = (level: Level) => {
@@ -91,7 +106,20 @@ function CriteriaPage() {
             </Chip>
           ))}
         </FilterGroup>
+        <FilterGroup legend="Rola">
+          {roles.map((role) => (
+            <Chip key={role} type="checkbox" checked={pickedRoles.includes(role)} onChange={() => { toggleRole(role); }}>
+              {role}
+            </Chip>
+          ))}
+        </FilterGroup>
       </div>
+
+      {pickedRoles.length > 0 ? (
+        <p className="pt-3 text-[0.9375rem] text-ink-2">
+          Filtr ról pokazuje tylko kryteria z opisaną treścią. Kryteria AAA nie mają jeszcze przypisanych ról.
+        </p>
+      ) : null}
 
       {filtered ? (
         <p className="py-3">
@@ -113,12 +141,13 @@ function CriteriaPage() {
                 <span className="font-mono text-lg font-bold tracking-tight">{c.id}</span>
                 <span className="text-[1.0625rem] font-semibold tracking-tight">
                   {c.name}
-                  {summaries[c.id] ? (
-                    <span className="mt-1 block text-[0.9375rem] font-normal text-ink-2">{summaries[c.id]}</span>
+                  {overview[c.id] ? (
+                    <span className="mt-1 block text-[0.9375rem] font-normal text-ink-2">{overview[c.id]?.summary}</span>
                   ) : null}
                 </span>
                 <span className="col-start-2 flex flex-wrap items-center gap-1.5 sm:col-start-auto">
                   {isNewIn22(c) ? <NewBadge /> : null}
+                  {overview[c.id]?.status === "szkic" ? <DraftBadge /> : null}
                   {isObsolete(c) ? <span className="font-mono text-xs text-ink-2">wycofane w 2.2</span> : null}
                   <LevelBadge level={c.level} />
                 </span>

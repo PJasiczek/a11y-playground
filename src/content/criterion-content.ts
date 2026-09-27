@@ -1,7 +1,8 @@
 import { type } from "arktype";
-import { marked } from "marked";
-import { parse as parseYaml } from "yaml";
-import { contentSections, type SectionKey } from "./sections";
+import { Marked, type Tokens } from "marked";
+import { glossary } from "./glossary";
+import { type Fail, IsoDate, readVerification, splitFrontmatter, Status, type Verification } from "./markdown";
+import { contentSections, type Role, roles, type SectionKey } from "./sections";
 import { type CriterionId, isCriterionId } from "./wcag";
 
 /**
@@ -10,36 +11,65 @@ import { type CriterionId, isCriterionId } from "./wcag";
  * so the app reaches it through server functions, never from a component.
  */
 
-export const roles = ["programista", "projektant", "autor treści", "tester"] as const;
-
 const Frontmatter = type({
+  status: Status,
   summary: "0 < string <= 200",
   roles: type.enumerated(...roles).array(),
   "related?": "string[]",
-  lastVerified: /^\d{4}-\d{2}-\d{2}$/,
+  "keywords?": "string[]",
+  "lastVerified?": IsoDate,
   "+": "reject",
 });
 
-export type CriterionContent = {
+export type CriterionContent = Verification & {
   summary: string;
-  roles: (typeof roles)[number][];
+  roles: Role[];
   related: CriterionId[];
-  lastVerified: string;
+  /** Extra words people search with ("modal", "placeholder"); feeds search, not shown. */
+  keywords: string[];
+  /** Glossary slugs marked in the text, in order of first use. */
+  terms: string[];
   /** Rendered HTML per section. Sections the author has not written yet are absent. */
   sections: Partial<Record<SectionKey, string>>;
 };
+
+const termPrefix = "slownik:";
+
+/**
+ * A Markdown renderer for one file. `[nazwę](slownik:nazwa)` marks a glossary term: its first
+ * use on the page becomes a link to the glossary plus a preview button (hidden until the page
+ * is interactive), later uses stay plain text. Unknown slugs fail the file.
+ */
+function createRenderer(fail: Fail) {
+  const terms: string[] = [];
+  const renderer = new Marked({
+    renderer: {
+      link(token: Tokens.Link) {
+        if (!token.href.startsWith(termPrefix)) return false;
+        const slug = token.href.slice(termPrefix.length);
+        const entry = glossary.get(slug);
+        if (!entry) throw fail(`unknown glossary term "${slug}"`);
+        const text = this.parser.parseInline(token.tokens);
+        if (terms.includes(slug)) return text;
+        terms.push(slug);
+        return (
+          `<span class="term"><a href="/slownik#${slug}">${text}</a>` +
+          `<button type="button" class="term-tip" data-term="${slug}" aria-expanded="false" aria-label="Definicja: ${entry.term}" hidden>?</button></span>`
+        );
+      },
+    },
+  });
+  return { terms, render: (markdown: string) => renderer.parse(markdown, { async: false }) };
+}
 
 /**
  * Parses one content file. Throws with the file name and the reason, so a bad file fails
  * the build and the tests instead of rendering half a page.
  */
 export function parseCriterionMarkdown(file: string, source: string): CriterionContent {
-  const fail = (reason: string) => new Error(`${file}: ${reason}`);
-  const match = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/.exec(source);
-  if (!match) throw fail("missing frontmatter between --- lines");
-  const [, yaml = "", body = ""] = match;
-
-  const meta = Frontmatter(parseYaml(yaml));
+  const fail: Fail = (reason) => new Error(`${file}: ${reason}`);
+  const { data, body } = splitFrontmatter(source, fail);
+  const meta = Frontmatter(data);
   if (meta instanceof type.errors) throw fail(meta.summary);
 
   const related = meta.related ?? [];
@@ -49,6 +79,7 @@ export function parseCriterionMarkdown(file: string, source: string): CriterionC
   const [preamble = "", ...chunks] = body.split(/^## /m);
   if (preamble.trim() !== "") throw fail("text before the first ## section");
 
+  const { terms, render } = createRenderer(fail);
   const sections: CriterionContent["sections"] = {};
   let lastIndex = -1;
   for (const chunk of chunks) {
@@ -60,10 +91,18 @@ export function parseCriterionMarkdown(file: string, source: string): CriterionC
     if (index <= lastIndex) throw fail(`section "${title}" is out of order or repeated`);
     lastIndex = index;
     const markdown = newline === -1 ? "" : chunk.slice(newline + 1).trim();
-    if (markdown !== "") sections[section.key] = marked.parse(markdown, { async: false });
+    if (markdown !== "") sections[section.key] = render(markdown);
   }
 
-  return { ...meta, related: related.filter(isCriterionId), sections };
+  return {
+    ...readVerification(meta, fail),
+    summary: meta.summary,
+    roles: meta.roles,
+    related: related.filter(isCriterionId),
+    keywords: meta.keywords ?? [],
+    terms,
+    sections,
+  };
 }
 
 const files = import.meta.glob<string>("/content/kryteria/*.md", { query: "?raw", import: "default", eager: true });

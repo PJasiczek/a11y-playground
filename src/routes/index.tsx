@@ -39,6 +39,23 @@ function HomePage() {
           Kryteria WCAG wyjaśnione prostym językiem, z przykładami w kodzie i z odesłaniem do przepisu, który je
           nakłada.
         </p>
+        {/* A plain GET form: it reaches /szukaj?q= even before the page is interactive. */}
+        <form role="search" action="/szukaj" method="get" className="mt-7 max-w-136">
+          <label htmlFor="home-q" className="mb-1.5 block font-semibold">
+            Szukaj w kryteriach i słowniku
+          </label>
+          <div className="flex rounded border-2 border-ink bg-surface">
+            <input
+              id="home-q"
+              name="q"
+              type="search"
+              className="min-h-12 min-w-0 flex-1 bg-transparent px-3.5 text-base text-ink outline-offset-0"
+            />
+            <button type="submit" className="min-h-12 border-l-2 border-ink bg-marker px-4 font-bold text-on-marker">
+              Szukaj
+            </button>
+          </div>
+        </form>
       </div>
 
       <ul className="grid gap-px border-y border-rule bg-rule md:grid-cols-3">

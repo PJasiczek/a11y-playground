@@ -7,6 +7,7 @@ const navItems = [
   { to: "/prawo", label: "Prawo" },
   { to: "/praktyka", label: "Praktyka" },
   { to: "/sciezki", label: "Ścieżki" },
+  { to: "/slownik", label: "Słownik" },
 ] as const;
 
 /** Top bar with the skip link, the wordmark, main navigation and the theme toggle. */

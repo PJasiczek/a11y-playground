@@ -1,7 +1,8 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { LevelBadge, NewBadge } from "~/components/level-badge";
-import { getCriterionContent } from "~/content/content.functions";
+import { DraftBadge, LevelBadge, NewBadge } from "~/components/level-badge";
+import { TermTips } from "~/components/term-tips";
+import { getCriterionPage } from "~/content/content.functions";
 import type { SectionKey } from "~/content/sections";
 import { findCriterion, guidelineOf, isNewIn22, isObsolete, principleOf } from "~/content/wcag";
 
@@ -9,8 +10,8 @@ export const Route = createFileRoute("/kryteria/$criterionId")({
   loader: async ({ params }) => {
     const criterion = findCriterion(params.criterionId);
     if (!criterion) throw notFound();
-    const content = await getCriterionContent({ data: criterion.id });
-    return { criterion, content };
+    const { content, normative, terms } = await getCriterionPage({ data: criterion.id });
+    return { criterion, content, normative, terms };
   },
   head: ({ loaderData }) => ({
     meta: [{ title: loaderData ? `${loaderData.criterion.id} ${loaderData.criterion.name} · a11y playground` : "a11y playground" }],
@@ -24,7 +25,7 @@ export const Route = createFileRoute("/kryteria/$criterionId")({
  */
 const pageSections = [
   { id: "kogo-dotyczy", title: "Kogo to dotyczy", content: "kogo-dotyczy" },
-  { id: "tresc-normy", title: "Treść normy", pending: "Dosłowne brzmienie kryterium w polskim tłumaczeniu pojawi się tutaj." },
+  { id: "tresc-normy", title: "Treść normy" },
   { id: "jak-spelnic", title: "Jak to spełnić", content: "jak-spelnic" },
   { id: "typowe-bledy", title: "Typowe błędy", content: "typowe-bledy" },
   { id: "przyklad", title: "Przykład", pending: "Wersja zepsuta i poprawna pojawią się razem z działem Praktyka." },
@@ -36,7 +37,7 @@ const pageSections = [
 const emptyNote = <p className="text-ink-2">Ta sekcja nie ma jeszcze treści.</p>;
 
 function CriterionPage() {
-  const { criterion, content } = Route.useLoaderData();
+  const { criterion, content, normative, terms } = Route.useLoaderData();
   const principle = principleOf(criterion);
   const guideline = guidelineOf(criterion);
 
@@ -48,7 +49,34 @@ function CriterionPage() {
 
   const body: Record<(typeof pageSections)[number]["id"], ReactNode> = {
     "kogo-dotyczy": html("kogo-dotyczy") ?? emptyNote,
-    "tresc-normy": null,
+    // Normative text comes from the authorized W3C translation, imported and sanitized at build time.
+    "tresc-normy": normative ? (
+      <details className="rounded border border-control bg-surface">
+        <summary className="flex min-h-11 cursor-pointer items-center px-4 font-semibold">
+          Rozwiń dosłowne brzmienie kryterium {criterion.id}
+        </summary>
+        <div className="px-4 pb-4">
+          <div className="normative" dangerouslySetInnerHTML={{ __html: normative }} />
+          <p className="mt-3 font-mono text-[0.8125rem] text-ink-2">
+            <a href="https://www.w3.org/Translations/WCAG21-pl/" className="underline underline-offset-3">
+              Autoryzowane tłumaczenie WCAG 2.1 (W3C)
+            </a>
+          </p>
+        </div>
+      </details>
+    ) : (
+      <p className="text-ink-2">
+        To kryterium doszło w WCAG 2.2, które nie ma jeszcze autoryzowanego polskiego tłumaczenia. Brzmienie znajdziesz w{" "}
+        <a href="https://wcag.irdpl.pl/guidelines/22/" className="text-accent underline underline-offset-3">
+          nieoficjalnym tłumaczeniu IRDPL
+        </a>{" "}
+        i w{" "}
+        <a href={`https://www.w3.org/TR/WCAG22/#${criterion.w3cId}`} hrefLang="en" className="text-accent underline underline-offset-3">
+          specyfikacji WCAG 2.2 (po angielsku)
+        </a>
+        .
+      </p>
+    ),
     "jak-spelnic": html("jak-spelnic") ?? emptyNote,
     "typowe-bledy": html("typowe-bledy") ?? emptyNote,
     przyklad: null,
@@ -106,6 +134,7 @@ function CriterionPage() {
         <p className="mt-4 flex flex-wrap items-center gap-2 font-mono text-[0.8125rem] text-ink-2">
           <LevelBadge level={criterion.level} />
           {isNewIn22(criterion) ? <NewBadge /> : null}
+          {content?.status === "szkic" ? <DraftBadge long /> : null}
           {isObsolete(criterion) ? <span>wycofane w WCAG 2.2</span> : <span>od WCAG {criterion.versions[0]}</span>}
           <span aria-hidden="true">·</span>
           <span>
@@ -138,6 +167,7 @@ function CriterionPage() {
         </nav>
 
         <div>
+<TermTips terms={terms}>
           {pageSections.map((section) => (
             <section key={section.id} id={section.id} aria-labelledby={`${section.id}-title`} className="pb-9">
               <h2 id={`${section.id}-title`} className="mb-3 border-t-2 border-ink pt-5 text-xl font-bold tracking-tight">
@@ -146,6 +176,7 @@ function CriterionPage() {
               {"pending" in section ? <p className="text-ink-2">{section.pending}</p> : body[section.id]}
             </section>
           ))}
+</TermTips>
 
           <footer className="font-mono text-[0.8125rem] text-ink-2">
             <p>
@@ -165,7 +196,8 @@ function CriterionPage() {
               </a>
               .
             </p>
-            {content ? <p className="mt-1">Treść zweryfikowana: {content.lastVerified}</p> : null}
+            {content?.status === "zweryfikowane" ? <p className="mt-1">Treść zweryfikowana: {content.lastVerified}</p> : null}
+            {content?.status === "szkic" ? <p className="mt-1">Treść jest szkicem i czeka na weryfikację.</p> : null}
           </footer>
         </div>
       </div>
