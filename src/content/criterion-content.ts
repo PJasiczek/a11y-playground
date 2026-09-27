@@ -2,7 +2,7 @@ import { type } from "arktype";
 import { Marked, type Tokens } from "marked";
 import { glossary } from "./glossary";
 import { type Fail, IsoDate, readVerification, splitFrontmatter, Status, type Verification } from "./markdown";
-import { contentSections, type SectionKey } from "./sections";
+import { contentSections, type Role, roles, type SectionKey } from "./sections";
 import { type CriterionId, isCriterionId } from "./wcag";
 
 /**
@@ -10,8 +10,6 @@ import { type CriterionId, isCriterionId } from "./wcag";
  * Server-only: this module pulls in the Markdown parser and every content file,
  * so the app reaches it through server functions, never from a component.
  */
-
-export const roles = ["programista", "projektant", "autor treści", "tester"] as const;
 
 const Frontmatter = type({
   status: Status,
@@ -25,7 +23,7 @@ const Frontmatter = type({
 
 export type CriterionContent = Verification & {
   summary: string;
-  roles: (typeof roles)[number][];
+  roles: Role[];
   related: CriterionId[];
   /** Extra words people search with ("modal", "placeholder"); feeds search, not shown. */
   keywords: string[];

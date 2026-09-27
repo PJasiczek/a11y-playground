@@ -42,7 +42,7 @@ export const getGlossary = createServerFn({ method: "GET" }).handler(() => {
 
 /** What the criteria list shows per criterion, keyed by id. Criteria without content are absent. */
 export const getCriteriaOverview = createServerFn({ method: "GET" }).handler(() => {
-  const overview: Partial<Record<CriterionId, Pick<CriterionContent, "summary" | "status">>> = {};
-  for (const [id, { summary, status }] of criterionContent) overview[id] = { summary, status };
+  const overview: Partial<Record<CriterionId, Pick<CriterionContent, "summary" | "status" | "roles">>> = {};
+  for (const [id, { summary, status, roles }] of criterionContent) overview[id] = { summary, status, roles };
   return overview;
 });
