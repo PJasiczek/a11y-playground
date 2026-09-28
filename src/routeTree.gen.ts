@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MapowanieRouteImport } from './routes/mapowanie'
 import { Route as SciezkiRouteImport } from './routes/sciezki'
 import { Route as SearchIndexDotjsonRouteImport } from './routes/search-index[.]json'
 import { Route as SlownikRouteImport } from './routes/slownik'
@@ -27,6 +28,11 @@ import { Route as PrawoActUnitRouteImport } from './routes/prawo/$act/$unit'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MapowanieRoute = MapowanieRouteImport.update({
+  id: '/mapowanie',
+  path: '/mapowanie',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SciezkiRoute = SciezkiRouteImport.update({
@@ -97,6 +103,7 @@ const PrawoActUnitRoute = PrawoActUnitRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/mapowanie': typeof MapowanieRoute
   '/sciezki': typeof SciezkiRoute
   '/search-index.json': typeof SearchIndexDotjsonRoute
   '/slownik': typeof SlownikRoute
@@ -113,6 +120,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/mapowanie': typeof MapowanieRoute
   '/sciezki': typeof SciezkiRoute
   '/search-index.json': typeof SearchIndexDotjsonRoute
   '/slownik': typeof SlownikRoute
@@ -130,6 +138,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/mapowanie': typeof MapowanieRoute
   '/sciezki': typeof SciezkiRoute
   '/search-index.json': typeof SearchIndexDotjsonRoute
   '/slownik': typeof SlownikRoute
@@ -148,6 +157,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/mapowanie'
     | '/sciezki'
     | '/search-index.json'
     | '/slownik'
@@ -164,6 +174,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/mapowanie'
     | '/sciezki'
     | '/search-index.json'
     | '/slownik'
@@ -180,6 +191,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/mapowanie'
     | '/sciezki'
     | '/search-index.json'
     | '/slownik'
@@ -197,6 +209,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  MapowanieRoute: typeof MapowanieRoute
   SciezkiRoute: typeof SciezkiRoute
   SearchIndexDotjsonRoute: typeof SearchIndexDotjsonRoute
   SlownikRoute: typeof SlownikRoute
@@ -219,6 +232,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mapowanie': {
+      id: '/mapowanie'
+      path: '/mapowanie'
+      fullPath: '/mapowanie'
+      preLoaderRoute: typeof MapowanieRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sciezki': {
@@ -317,6 +337,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  MapowanieRoute: MapowanieRoute,
   SciezkiRoute: SciezkiRoute,
   SearchIndexDotjsonRoute: SearchIndexDotjsonRoute,
   SlownikRoute: SlownikRoute,

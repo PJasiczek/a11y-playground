@@ -19,6 +19,22 @@ test("a criterion new in 2.2 says no act requires it", async ({ page }) => {
   await expect(row).toContainText("doszło w 2.2");
 });
 
+test("the obligations screen works from the keyboard and keeps the pick in the URL", async ({ page }) => {
+  await page.goto("/mapowanie");
+  const status = page.getByRole("status");
+  await expect(status).toContainText("Prawo wymaga wprost 49 kryteriów WCAG");
+  const website = page.getByRole("radio", { name: "Strona podmiotu publicznego" });
+  await website.focus();
+  await page.keyboard.press("ArrowRight");
+  const app = page.getByRole("radio", { name: "Aplikacja podmiotu publicznego" });
+  await expect(app).toBeChecked();
+  await expect(app).toBeFocused();
+  await expect(page).toHaveURL(/sytuacja=aplikacja-publiczna/);
+  await expect(status).toContainText("Prawo wymaga wprost 42 kryteriów WCAG");
+  await page.reload();
+  await expect(page.getByRole("radio", { name: "Aplikacja podmiotu publicznego" })).toBeChecked();
+});
+
 test("an article shows each ustęp next to its summary, with an anchor", async ({ page }) => {
   await page.goto("/prawo/ustawa-2019-848/art-5#ust-3");
   const row = page.getByRole("region", { name: "Ustęp 3" });

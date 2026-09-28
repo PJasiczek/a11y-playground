@@ -15,6 +15,7 @@ const routes = [
   "/prawo/ustawa-2019-848/zal",
   "/prawo/ustawa-2024-731/art-20",
   "/prawo/en-301-549",
+  "/mapowanie",
   "/praktyka",
   "/praktyka/ikona-jako-przycisk",
   "/sciezki",
@@ -43,9 +44,10 @@ for (const route of routes) {
         elements
           .filter((el) => !el.closest("p") && !el.matches(".sr-only") && el.getClientRects().length > 0)
           .map((el) => {
-            // A link stretched with an absolute ::after is as big as its positioned card.
+            // A link stretched with an absolute ::after is as big as its positioned card, and a
+            // radio or checkbox is as big as the label that wraps it: both activate the control.
             const stretched = getComputedStyle(el, "::after").position === "absolute";
-            const target = stretched && el instanceof HTMLElement ? (el.offsetParent ?? el) : el;
+            const target = stretched && el instanceof HTMLElement ? (el.offsetParent ?? el) : (el.closest("label") ?? el);
             const { width, height } = target.getBoundingClientRect();
             return { text: el.textContent.trim(), width, height };
           })

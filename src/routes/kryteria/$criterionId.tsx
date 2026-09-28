@@ -151,7 +151,12 @@ function CriterionPage() {
             </tbody>
           </table>
         </div>
-        {clause ? <p className="mt-3 font-mono text-[0.8125rem] text-ink-2">Technicznie: EN 301 549, punkt {clause}</p> : null}
+        <p className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 text-[0.9375rem]">
+          {clause ? <span className="font-mono text-[0.8125rem] text-ink-2">Technicznie: EN 301 549, punkt {clause}</span> : null}
+          <Link to="/mapowanie" className="inline-flex min-h-11 items-center text-accent underline underline-offset-3">
+            Co obowiązuje twój produkt
+          </Link>
+        </p>
       </>
     ),
     powiazane: (

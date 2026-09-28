@@ -20,6 +20,14 @@ function LawPage() {
         Kogo dotyczą polskie przepisy o dostępności, od kiedy i które kryteria WCAG z nich wynikają. Przy każdej ustawie
         najpierw nasze streszczenie, a obok dosłowne brzmienie.
       </p>
+      <p className="mt-5">
+        <Link
+          to="/mapowanie"
+          className="inline-flex min-h-11 items-center rounded border-2 border-ink bg-marker px-4 font-bold text-on-marker"
+        >
+          Sprawdź, co obowiązuje twój produkt
+        </Link>
+      </p>
 
       <section aria-labelledby="ustawy" className="mt-10">
         <h2 id="ustawy" className="border-t-2 border-ink pt-5 text-xl font-bold tracking-tight">
