@@ -1,0 +1,26 @@
+<div class="select" id="select">
+  <div class="value" id="value">Wybierz miasto ▾</div>
+  <div class="options" id="options" hidden>
+    <div class="option">Kraków</div>
+    <div class="option">Gdańsk</div>
+    <div class="option">Wrocław</div>
+  </div>
+</div>
+
+<script>
+  const options = document.getElementById("options");
+  document.getElementById("value").addEventListener("click", () => { options.hidden = !options.hidden; });
+  for (const option of options.children) {
+    option.addEventListener("click", () => {
+      document.getElementById("value").textContent = option.textContent + " ▾";
+      options.hidden = true;
+    });
+  }
+</script>
+
+<style>
+  .select { width: 14rem; min-height: 9rem; }
+  .value, .option { padding: 0.6rem 0.75rem; background: #fff; cursor: pointer; }
+  .value { border: 1px solid #857f72; border-radius: 4px; }
+  .options { border: 1px solid #857f72; border-top: 0; }
+</style>

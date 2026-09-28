@@ -1,0 +1,26 @@
+<div class="stage">
+  <button type="button" id="open">Usuń konto</button>
+  <p>Inne ustawienia konta: <a href="#">zmień hasło</a>.</p>
+  <dialog id="confirm" aria-labelledby="confirm-title">
+    <h2 id="confirm-title">Usunąć konto?</h2>
+    <p>Tej operacji nie da się cofnąć.</p>
+    <form method="dialog">
+      <button value="cancel" autofocus>Anuluj</button>
+      <button value="delete" class="danger">Usuń</button>
+    </form>
+  </dialog>
+</div>
+
+<script>
+  const dialog = document.getElementById("confirm");
+  document.getElementById("open").addEventListener("click", () => dialog.showModal());
+</script>
+
+<style>
+  .stage { min-height: 13rem; }
+  button { min-height: 44px; padding: 0.6rem 1rem; border: 2px solid #14171a; border-radius: 4px; background: #fff; font: inherit; cursor: pointer; }
+  dialog { width: min(18rem, 90%); padding: 1rem; border: 2px solid #14171a; border-radius: 4px; }
+  dialog::backdrop { background: rgb(20 23 26 / 0.5); }
+  dialog h2 { margin: 0; font-size: 1rem; }
+  .danger { background: #9a1b1b; color: #fff; border-color: #9a1b1b; }
+</style>

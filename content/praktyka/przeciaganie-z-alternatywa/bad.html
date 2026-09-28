@@ -1,0 +1,22 @@
+<ol id="list">
+  <li draggable="true">Zadanie 1: raport</li>
+  <li draggable="true">Zadanie 2: faktury</li>
+  <li draggable="true">Zadanie 3: spotkanie</li>
+</ol>
+
+<script>
+  let dragged = null;
+  const list = document.getElementById("list");
+  list.addEventListener("dragstart", (event) => { dragged = event.target; });
+  list.addEventListener("dragover", (event) => event.preventDefault());
+  list.addEventListener("drop", (event) => {
+    event.preventDefault();
+    const target = event.target.closest("li");
+    if (dragged && target && dragged !== target) list.insertBefore(dragged, target);
+  });
+</script>
+
+<style>
+  ol { margin: 0; padding-left: 1.5rem; }
+  li { margin: 0.25rem 0; padding: 0.6rem 0.75rem; border: 1px solid #857f72; border-radius: 4px; background: #fff; cursor: grab; }
+</style>

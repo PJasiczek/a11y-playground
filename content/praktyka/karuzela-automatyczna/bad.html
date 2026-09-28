@@ -1,0 +1,17 @@
+<div class="carousel">
+  <p class="slide" id="slide">Promocja: bilety do Krakowa od 129 zł.</p>
+</div>
+
+<script>
+  const slides = ["Promocja: bilety do Krakowa od 129 zł.", "Nowa trasa: Gdańsk od 19 maja.", "Zapisz się na newsletter i odbierz rabat."];
+  let current = 0;
+  setInterval(() => {
+    current = (current + 1) % slides.length;
+    document.getElementById("slide").textContent = slides[current];
+  }, 3000);
+</script>
+
+<style>
+  .carousel { padding: 1rem; border: 1px solid #857f72; border-radius: 4px; background: #fff; }
+  .slide { margin: 0; font-size: 1.125rem; }
+</style>
