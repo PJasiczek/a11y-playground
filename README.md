@@ -19,11 +19,11 @@ a11y playground is a learning app for people who build digital products in Polan
 The interface is in Polish. This README is in English.
 
 > [!NOTE]
-> The project is in phase 2 (explanations). Every A and AA criterion of WCAG 2.2 has a plain-language explanation, marked as a draft until a person has checked it. AAA criteria get their content in phase 8. Prawo, Praktyka and Ścieżki are placeholders until later phases.
+> The project is in phase 3 (examples). Every A and AA criterion of WCAG 2.2 has a plain-language explanation, and ten common faults have a broken and a fixed example side by side. All content is marked as a draft until a person has checked it. Prawo and Ścieżki are placeholders until later phases.
 
 ### What works today
 
-- Home screen following design variant A ("Trzy drzwi"), with entry points to criteria, law and practice.
+- **Home page** following screen 0 of design variant A: it opens with the six cheapest fixes as cards, then the remaining examples as a list.
 - Main navigation that wraps onto its own row on narrow screens instead of hiding behind a menu button.
 - Light and dark mode. It follows the operating system by default, and the header toggle stores an explicit choice.
 - Skip link, a stable landmark structure, and focus moved to the new `h1` with the page title announced after every client-side route change.
@@ -32,7 +32,8 @@ The interface is in Polish. This README is in English.
 - **Explanations** for all 55 A and AA criteria: who it affects, how to meet it by role, typical errors, how to test it, common confusions. Drafts carry a visible "szkic, czeka na weryfikację" badge.
 - **Normative text** in Polish from the authorized W3C translation of WCAG 2.1, collapsed on each criterion page. The criteria new in 2.2 link to their sources until a licensed Polish text is available.
 - **Glossary** (`/slownik`) of about 30 terms, alphabetical, each with a plain explanation and, where WCAG defines the term, its normative wording. The first use of a term in a criterion links to it, with a small button that opens a short definition.
-- **Search** (`/szukaj`, also on the home page) over criteria and the glossary. It finds criteria by number, name or symptom ("modal", "placeholder") and ignores Polish diacritics.
+- **Search** (`/szukaj`, also on the home page) over criteria, examples and the glossary. It finds criteria by number, name or symptom ("modal", "placeholder") and ignores Polish diacritics.
+- **Practice** (`/praktyka`): ten examples as cards ordered by the cost of the fix, each with what the user gains. An example page (`/praktyka/ikona-jako-przycisk`) shows the broken and the fixed variant side by side, each running in a sandboxed iframe, with its code and what a screen reader says. Examples that move start only when the reader asks. Criterion pages link to their examples.
 
 | Light | Dark | Mobile |
 | --- | --- | --- |
@@ -41,6 +42,10 @@ The interface is in Polish. This README is in English.
 | Criteria list | Criterion page |
 | --- | --- |
 | ![Criteria list with version, level, principle and role filters](docs/screenshots/criteria-list.png) | ![Criterion page for 1.4.3 Kontrast (minimum) with a draft badge](docs/screenshots/criterion-page.png) |
+
+| Practice | Example page |
+| --- | --- |
+| ![Practice catalogue with cards ordered by the cost of the fix](docs/screenshots/practice.png) | ![Example page with the broken and the fixed variant side by side](docs/screenshots/example-page.png) |
 
 | Glossary preview | Glossary | Search |
 | --- | --- | --- |
@@ -117,6 +122,51 @@ To, co czytnik ekranu powie o kontrolce, zanim powie, czym ona jest.
 > [!NOTE]
 > Later the content will be edited in Notion. A sync script will write these same files, so this format stays the contract between editors and the app.
 
+### Examples
+
+One folder per example in `content/praktyka/<slug>/`:
+
+```text
+content/praktyka/ikona-jako-przycisk/
+  index.md    frontmatter and introduction
+  bad.html    the broken fragment
+  good.html   the fixed fragment
+```
+
+```markdown
+---
+title: Ikona jako przycisk
+summary: Znak × bez nazwy zamyka komunikat. Daj przyciskowi nazwę.
+criteria: ["4.1.2", "2.1.1", "1.1.1"]
+effort: 1 linia
+gain: Czytnik mówi „Zamknij komunikat, przycisk” zamiast milczeć.
+preview: <span class="p-x">×</span>
+status: szkic
+bad:
+  why: Znak × w elemencie div z obsługą kliknięcia.
+  announces: Nic sensownego.
+  axe: []
+good:
+  why: Prawdziwy element button z nazwą w aria-label.
+  announces: „Zamknij komunikat, przycisk”.
+---
+Komunikat „Zapisano zmiany” z przyciskiem zamykania w rogu.
+```
+
+- `effort` is one of `1 linia`, `1 token`, `2 minuty`, `15 minut`, `refaktor`. The catalogue and the home page sort by it.
+- `preview` is a small static picture of the fault for the card, built from the `p-*` classes in `src/styles.css`. It is decorative and hidden from screen readers, so `summary` and `gain` must carry the meaning.
+- `motion: true` makes both variants load only after "Uruchom przykład".
+- `bad.axe` lists the axe rules the broken fragment must trigger. Leave it empty when axe cannot see the fault. The tests fail if the fragment does not trigger them.
+- The HTML files are fragments with optional `<style>` and `<script>`. The page shows them as the code, and `/demo/<slug>/bad` and `/demo/<slug>/good` serve them as documents for the sandboxed iframes.
+
+A broken example is broken on purpose, but it runs inside our page. It must never:
+
+- trap keyboard focus with no way out,
+- play sound, move or flash before the reader starts it, or flash more than three times a second,
+- load anything from the network or navigate away.
+
+The tests check that every fixed fragment passes axe, that every page passes axe with the broken iframe excluded, and that nothing from a broken fragment reaches the page's own document.
+
 ### Where the criterion names come from
 
 `pnpm import:wcag` regenerates `src/content/wcag.gen.ts` and `src/content/wcag-text.gen.ts`. It takes numbers, levels and versions from the W3C WCAG 2.2 data. Polish names come from two sources:
@@ -169,15 +219,16 @@ The baseline is WCAG 2.2 Level AA, plus 2.3.3 and 2.5.5 at AAA. See [`docs/acces
 content/
   kryteria/      one Markdown file per criterion
   slownik/       one Markdown file per glossary term
+  praktyka/      one folder per example: index.md, bad.html, good.html
 scripts/
   import-wcag.ts generates src/content/wcag.gen.ts and wcag-text.gen.ts
 src/
   content/       WCAG structure, Markdown parsing and validation, server functions
   search/        search options, index builder and relevance tests
   routes/        file-based routes (__root.tsx holds the layout)
-  components/    header, theme toggle, route announcer, badges, glossary previews
+  components/    header, theme toggle, route announcer, badges, glossary previews, example frames and cards
   styles.css     Tailwind setup, colour tokens, styles for rendered Markdown
-e2e/             Playwright tests: axe, target size, keyboard
+e2e/             Playwright tests: axe, target size, keyboard, example isolation
 docs/
   accessibility.md   the accessibility checklist
   design/            dated plans and mocks
@@ -191,7 +242,7 @@ The full plan, with content scope, architecture and risks, is in [`docs/design/2
 - [x] **0. Foundation.** App shell, navigation, themes, lint, tests, CI.
 - [x] **1. Content skeleton.** WCAG structure with Polish names, Markdown content format, criteria list with filters, prerendered criterion pages.
 - [x] **2. Explanations.** Plain-language drafts for every A and AA criterion, normative text, glossary, search, role filter. Detailed plan: [`docs/design/2026-09-27-phase-2-content`](docs/design/2026-09-27-phase-2-content/phase-2-content.en.html).
-- [ ] **3. Examples.** Bad and good examples, with the bad one isolated in an iframe.
+- [x] **3. Examples.** Ten bad and good examples in sandboxed iframes, the practice catalogue, and the home page built from it. Detailed plan: [`docs/design/2026-09-27-phase-3-examples`](docs/design/2026-09-27-phase-3-examples/phase-3-examples.en.html).
 - [ ] **4. Legal module.** Polish acts, EN 301 549, the law-to-criterion mapping.
 - [ ] **5. Accounts.** Optional progress, notes and bookmarks with Convex.
 - [ ] **6. Paths and quizzes.**
