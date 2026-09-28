@@ -210,6 +210,62 @@
     content: "▾" / "";
   }
 
+  /*
+   * Static pictures of a fault on the practice cards (the `preview` field of an example).
+   * Decorative and hidden from assistive technology; the colours imitate the broken UI on
+   * purpose, so they are not held to the app's own contrast rules.
+   */
+  .preview {
+    font-size: 0.9375rem;
+    & .p-x,
+    & .p-img,
+    & .p-select,
+    & .p-table,
+    & .p-drag {
+      border: 1px solid #dcdcd8;
+      border-radius: 3px;
+      background: #ededea;
+      color: #6f6f6a;
+      padding: 0.35rem 0.7rem;
+    }
+    & .p-img {
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+    }
+    & .p-input {
+      width: 100%;
+      border: 1px solid var(--control);
+      border-radius: 3px;
+      background: #fff;
+      color: #8a8a86;
+      padding: 0.45rem 0.7rem;
+    }
+    & .p-error {
+      border: 2px solid #d33;
+    }
+    & .p-dialog {
+      width: 80%;
+      border: 1px solid var(--control);
+      background: #fff;
+      color: #14171a;
+      padding: 0.5rem;
+      box-shadow: 0 6px 16px rgb(0 0 0 / 0.12);
+    }
+    & .p-slides {
+      font-family: var(--font-mono);
+      letter-spacing: 0.3em;
+      color: #6f6f6a;
+    }
+    & .p-faint {
+      color: #c4c4bf;
+    }
+    & .p-tiny {
+      font-size: 0.6875rem;
+      letter-spacing: 0.15em;
+      color: #484d52;
+    }
+  }
+
   .prose[data-section="typowe-bledy"] ul > li::before {
     content: "✕" / "";
     color: var(--bad);

@@ -61,3 +61,17 @@ export const getExample = createServerFn({ method: "GET" })
     }
     return { example, terms };
   });
+
+/** Every example as a catalogue card, cheapest fix first. */
+export const getExampleCards = createServerFn({ method: "GET" }).handler(() =>
+  [...examples.values()].map(({ slug, title, summary, criteria, effort, gain, preview, status }) => ({
+    slug,
+    title,
+    summary,
+    criteria,
+    effort,
+    gain,
+    preview,
+    status,
+  })),
+);
