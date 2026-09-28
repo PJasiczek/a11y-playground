@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import MiniSearch, { type SearchResult } from "minisearch";
 import { type ReactNode, type SubmitEvent, useEffect, useState } from "react";
 import { type SearchDoc, searchOptions } from "~/search/options";
+import { countOf } from "~/lib/plural";
 
 export const Route = createFileRoute("/szukaj")({
   validateSearch: (search: Record<string, unknown>) => (typeof search.q === "string" && search.q.trim() ? { q: search.q } : {}),
@@ -29,15 +30,6 @@ function loadIndex() {
     .then((response) => response.text())
     .then((json) => MiniSearch.loadJSON<SearchDoc>(json, searchOptions));
   return indexPromise;
-}
-
-/** Polish count noun for results: 1 wynik, 2–4 wyniki, 5+ wyników (12–14 take the last form). */
-function resultCount(n: number) {
-  const tens = n % 100;
-  const ones = n % 10;
-  if (n === 1) return "1 wynik";
-  if (ones >= 2 && ones <= 4 && (tens < 12 || tens > 14)) return `${String(n)} wyniki`;
-  return `${String(n)} wyników`;
 }
 
 /**
@@ -71,7 +63,7 @@ function SearchPage() {
 
   const criteria = hits?.filter((hit) => hit.kind === "kryterium") ?? [];
   const terms = hits?.filter((hit) => hit.kind === "pojecie") ?? [];
-  const status = !q ? "" : hits ? `${resultCount(hits.length)} dla „${q}”` : "Szukam…";
+  const status = !q ? "" : hits ? `${countOf(hits.length, ["wynik", "wyniki", "wyników"])} dla „${q}”` : "Szukam…";
 
   return (
     <>
