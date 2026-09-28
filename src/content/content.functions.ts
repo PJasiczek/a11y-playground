@@ -13,8 +13,9 @@ const CriterionIdInput = type.enumerated(...criteria.map((c) => c.id));
 
 /**
  * Everything the criterion page shows beyond the structure: the editorial content (null until
- * written), the normative Polish text (null where no authorized translation exists), and the
- * short definitions of the glossary terms the content marks, for the preview bubbles.
+ * written), the normative Polish text (null where no authorized translation exists), the short
+ * definitions of the glossary terms the content marks, for the preview bubbles, and the examples
+ * that show the criterion.
  */
 export const getCriterionPage = createServerFn({ method: "GET" })
   .validator(CriterionIdInput)
@@ -25,7 +26,10 @@ export const getCriterionPage = createServerFn({ method: "GET" })
       const entry = glossary.get(slug);
       if (entry) terms[slug] = { term: entry.term, html: entry.html };
     }
-    return { content, normative: criterionTexts[data] ?? null, terms };
+    const relatedExamples = [...examples.values()]
+      .filter((example) => example.criteria.includes(data))
+      .map(({ slug, title, summary }) => ({ slug, title, summary }));
+    return { content, normative: criterionTexts[data] ?? null, terms, examples: relatedExamples };
   });
 
 /** The whole glossary for /slownik, in Polish alphabetical order, with the criteria that use each term. */
