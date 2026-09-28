@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
-import { actContent, parseActMarkdown } from "./legal-content";
+import { acts } from "./legal";
+import { actContent, deadlines, parseActMarkdown } from "./legal-content";
 import { staleEntries } from "./markdown";
 
 const frontmatter = `---
@@ -14,8 +15,18 @@ const parse = (body: string, head = frontmatter) => parseActMarkdown("x.md", "us
 
 describe("act files", () => {
   // Loading the module parses every file in content/prawo and throws on the first bad one.
+  test("every imported act has a summary file", () => {
+    expect([...actContent.keys()].toSorted()).toEqual(acts.map((a) => a.slug).toSorted());
+  });
+
   test("verified acts are at most 12 months old", () => {
     expect(staleEntries(actContent)).toEqual([]);
+  });
+
+  test("deadlines are sorted and every situation has a start date", () => {
+    expect(deadlines.map((d) => d.date)).toEqual(deadlines.map((d) => d.date).toSorted());
+    const started = new Set(deadlines.filter((d) => d.start).flatMap((d) => d.situations));
+    expect([...started].toSorted()).toEqual(["aplikacja-publiczna", "produkt-ue", "strona-publiczna"]);
   });
 });
 
