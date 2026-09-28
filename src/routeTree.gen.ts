@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as PrawoRouteImport } from './routes/prawo'
 import { Route as SciezkiRouteImport } from './routes/sciezki'
 import { Route as SearchIndexDotjsonRouteImport } from './routes/search-index[.]json'
 import { Route as SlownikRouteImport } from './routes/slownik'
@@ -19,16 +18,12 @@ import { Route as KryteriaIndexRouteImport } from './routes/kryteria/index'
 import { Route as KryteriaCriterionIdRouteImport } from './routes/kryteria/$criterionId'
 import { Route as PraktykaIndexRouteImport } from './routes/praktyka/index'
 import { Route as PraktykaSlugRouteImport } from './routes/praktyka/$slug'
+import { Route as PrawoIndexRouteImport } from './routes/prawo/index'
 import { Route as DemoSlugVariantRouteImport } from './routes/demo/$slug.$variant'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrawoRoute = PrawoRouteImport.update({
-  id: '/prawo',
-  path: '/prawo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SciezkiRoute = SciezkiRouteImport.update({
@@ -71,6 +66,11 @@ const PraktykaSlugRoute = PraktykaSlugRouteImport.update({
   path: '/praktyka/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrawoIndexRoute = PrawoIndexRouteImport.update({
+  id: '/prawo/',
+  path: '/prawo/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DemoSlugVariantRoute = DemoSlugVariantRouteImport.update({
   id: '/demo/$slug/$variant',
   path: '/demo/$slug/$variant',
@@ -79,7 +79,6 @@ const DemoSlugVariantRoute = DemoSlugVariantRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/prawo': typeof PrawoRoute
   '/sciezki': typeof SciezkiRoute
   '/search-index.json': typeof SearchIndexDotjsonRoute
   '/slownik': typeof SlownikRoute
@@ -88,11 +87,11 @@ export interface FileRoutesByFullPath {
   '/praktyka/$slug': typeof PraktykaSlugRoute
   '/kryteria/': typeof KryteriaIndexRoute
   '/praktyka/': typeof PraktykaIndexRoute
+  '/prawo/': typeof PrawoIndexRoute
   '/demo/$slug/$variant': typeof DemoSlugVariantRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/prawo': typeof PrawoRoute
   '/sciezki': typeof SciezkiRoute
   '/search-index.json': typeof SearchIndexDotjsonRoute
   '/slownik': typeof SlownikRoute
@@ -101,12 +100,12 @@ export interface FileRoutesByTo {
   '/praktyka/$slug': typeof PraktykaSlugRoute
   '/kryteria': typeof KryteriaIndexRoute
   '/praktyka': typeof PraktykaIndexRoute
+  '/prawo': typeof PrawoIndexRoute
   '/demo/$slug/$variant': typeof DemoSlugVariantRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/prawo': typeof PrawoRoute
   '/sciezki': typeof SciezkiRoute
   '/search-index.json': typeof SearchIndexDotjsonRoute
   '/slownik': typeof SlownikRoute
@@ -115,13 +114,13 @@ export interface FileRoutesById {
   '/praktyka/$slug': typeof PraktykaSlugRoute
   '/kryteria/': typeof KryteriaIndexRoute
   '/praktyka/': typeof PraktykaIndexRoute
+  '/prawo/': typeof PrawoIndexRoute
   '/demo/$slug/$variant': typeof DemoSlugVariantRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/prawo'
     | '/sciezki'
     | '/search-index.json'
     | '/slownik'
@@ -130,11 +129,11 @@ export interface FileRouteTypes {
     | '/praktyka/$slug'
     | '/kryteria/'
     | '/praktyka/'
+    | '/prawo/'
     | '/demo/$slug/$variant'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/prawo'
     | '/sciezki'
     | '/search-index.json'
     | '/slownik'
@@ -143,11 +142,11 @@ export interface FileRouteTypes {
     | '/praktyka/$slug'
     | '/kryteria'
     | '/praktyka'
+    | '/prawo'
     | '/demo/$slug/$variant'
   id:
     | '__root__'
     | '/'
-    | '/prawo'
     | '/sciezki'
     | '/search-index.json'
     | '/slownik'
@@ -156,12 +155,12 @@ export interface FileRouteTypes {
     | '/praktyka/$slug'
     | '/kryteria/'
     | '/praktyka/'
+    | '/prawo/'
     | '/demo/$slug/$variant'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  PrawoRoute: typeof PrawoRoute
   SciezkiRoute: typeof SciezkiRoute
   SearchIndexDotjsonRoute: typeof SearchIndexDotjsonRoute
   SlownikRoute: typeof SlownikRoute
@@ -170,6 +169,7 @@ export interface RootRouteChildren {
   PraktykaSlugRoute: typeof PraktykaSlugRoute
   KryteriaIndexRoute: typeof KryteriaIndexRoute
   PraktykaIndexRoute: typeof PraktykaIndexRoute
+  PrawoIndexRoute: typeof PrawoIndexRoute
   DemoSlugVariantRoute: typeof DemoSlugVariantRoute
 }
 
@@ -180,13 +180,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/prawo': {
-      id: '/prawo'
-      path: '/prawo'
-      fullPath: '/prawo'
-      preLoaderRoute: typeof PrawoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sciezki': {
@@ -245,6 +238,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PraktykaSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/prawo/': {
+      id: '/prawo/'
+      path: '/prawo'
+      fullPath: '/prawo/'
+      preLoaderRoute: typeof PrawoIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/demo/$slug/$variant': {
       id: '/demo/$slug/$variant'
       path: '/demo/$slug/$variant'
@@ -257,7 +257,6 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  PrawoRoute: PrawoRoute,
   SciezkiRoute: SciezkiRoute,
   SearchIndexDotjsonRoute: SearchIndexDotjsonRoute,
   SlownikRoute: SlownikRoute,
@@ -266,6 +265,7 @@ const rootRouteChildren: RootRouteChildren = {
   PraktykaSlugRoute: PraktykaSlugRoute,
   KryteriaIndexRoute: KryteriaIndexRoute,
   PraktykaIndexRoute: PraktykaIndexRoute,
+  PrawoIndexRoute: PrawoIndexRoute,
   DemoSlugVariantRoute: DemoSlugVariantRoute,
 }
 export const routeTree = rootRouteImport
