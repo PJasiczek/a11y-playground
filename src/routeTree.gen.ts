@@ -18,6 +18,8 @@ import { Route as SzukajRouteImport } from './routes/szukaj'
 import { Route as KryteriaIndexRouteImport } from './routes/kryteria/index'
 import { Route as KryteriaCriterionIdRouteImport } from './routes/kryteria/$criterionId'
 import { Route as PraktykaIndexRouteImport } from './routes/praktyka/index'
+import { Route as PraktykaSlugRouteImport } from './routes/praktyka/$slug'
+import { Route as DemoSlugVariantRouteImport } from './routes/demo/$slug.$variant'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -64,6 +66,16 @@ const PraktykaIndexRoute = PraktykaIndexRouteImport.update({
   path: '/praktyka/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PraktykaSlugRoute = PraktykaSlugRouteImport.update({
+  id: '/praktyka/$slug',
+  path: '/praktyka/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoSlugVariantRoute = DemoSlugVariantRouteImport.update({
+  id: '/demo/$slug/$variant',
+  path: '/demo/$slug/$variant',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -73,8 +85,10 @@ export interface FileRoutesByFullPath {
   '/slownik': typeof SlownikRoute
   '/szukaj': typeof SzukajRoute
   '/kryteria/$criterionId': typeof KryteriaCriterionIdRoute
+  '/praktyka/$slug': typeof PraktykaSlugRoute
   '/kryteria/': typeof KryteriaIndexRoute
   '/praktyka/': typeof PraktykaIndexRoute
+  '/demo/$slug/$variant': typeof DemoSlugVariantRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -84,8 +98,10 @@ export interface FileRoutesByTo {
   '/slownik': typeof SlownikRoute
   '/szukaj': typeof SzukajRoute
   '/kryteria/$criterionId': typeof KryteriaCriterionIdRoute
+  '/praktyka/$slug': typeof PraktykaSlugRoute
   '/kryteria': typeof KryteriaIndexRoute
   '/praktyka': typeof PraktykaIndexRoute
+  '/demo/$slug/$variant': typeof DemoSlugVariantRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -96,8 +112,10 @@ export interface FileRoutesById {
   '/slownik': typeof SlownikRoute
   '/szukaj': typeof SzukajRoute
   '/kryteria/$criterionId': typeof KryteriaCriterionIdRoute
+  '/praktyka/$slug': typeof PraktykaSlugRoute
   '/kryteria/': typeof KryteriaIndexRoute
   '/praktyka/': typeof PraktykaIndexRoute
+  '/demo/$slug/$variant': typeof DemoSlugVariantRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -109,8 +127,10 @@ export interface FileRouteTypes {
     | '/slownik'
     | '/szukaj'
     | '/kryteria/$criterionId'
+    | '/praktyka/$slug'
     | '/kryteria/'
     | '/praktyka/'
+    | '/demo/$slug/$variant'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -120,8 +140,10 @@ export interface FileRouteTypes {
     | '/slownik'
     | '/szukaj'
     | '/kryteria/$criterionId'
+    | '/praktyka/$slug'
     | '/kryteria'
     | '/praktyka'
+    | '/demo/$slug/$variant'
   id:
     | '__root__'
     | '/'
@@ -131,8 +153,10 @@ export interface FileRouteTypes {
     | '/slownik'
     | '/szukaj'
     | '/kryteria/$criterionId'
+    | '/praktyka/$slug'
     | '/kryteria/'
     | '/praktyka/'
+    | '/demo/$slug/$variant'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -143,8 +167,10 @@ export interface RootRouteChildren {
   SlownikRoute: typeof SlownikRoute
   SzukajRoute: typeof SzukajRoute
   KryteriaCriterionIdRoute: typeof KryteriaCriterionIdRoute
+  PraktykaSlugRoute: typeof PraktykaSlugRoute
   KryteriaIndexRoute: typeof KryteriaIndexRoute
   PraktykaIndexRoute: typeof PraktykaIndexRoute
+  DemoSlugVariantRoute: typeof DemoSlugVariantRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -212,6 +238,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PraktykaIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/praktyka/$slug': {
+      id: '/praktyka/$slug'
+      path: '/praktyka/$slug'
+      fullPath: '/praktyka/$slug'
+      preLoaderRoute: typeof PraktykaSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo/$slug/$variant': {
+      id: '/demo/$slug/$variant'
+      path: '/demo/$slug/$variant'
+      fullPath: '/demo/$slug/$variant'
+      preLoaderRoute: typeof DemoSlugVariantRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -223,8 +263,10 @@ const rootRouteChildren: RootRouteChildren = {
   SlownikRoute: SlownikRoute,
   SzukajRoute: SzukajRoute,
   KryteriaCriterionIdRoute: KryteriaCriterionIdRoute,
+  PraktykaSlugRoute: PraktykaSlugRoute,
   KryteriaIndexRoute: KryteriaIndexRoute,
   PraktykaIndexRoute: PraktykaIndexRoute,
+  DemoSlugVariantRoute: DemoSlugVariantRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

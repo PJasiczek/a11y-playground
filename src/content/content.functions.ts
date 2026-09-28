@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { type } from "arktype";
 import { type CriterionContent, criterionContent } from "./criterion-content";
+import { examples } from "./examples";
 import { glossary } from "./glossary";
 import { criteria, type CriterionId } from "./wcag";
 import { criterionTexts } from "./wcag-text.gen";
@@ -46,3 +47,17 @@ export const getCriteriaOverview = createServerFn({ method: "GET" }).handler(() 
   for (const [id, { summary, status, roles }] of criterionContent) overview[id] = { summary, status, roles };
   return overview;
 });
+
+/** One example with both fragments, or null for an unknown slug. */
+export const getExample = createServerFn({ method: "GET" })
+  .validator(type("string"))
+  .handler(({ data }) => {
+    const example = examples.get(data);
+    if (!example) return null;
+    const terms: Record<string, { term: string; html: string }> = {};
+    for (const slug of example.terms) {
+      const entry = glossary.get(slug);
+      if (entry) terms[slug] = { term: entry.term, html: entry.html };
+    }
+    return { example, terms };
+  });
