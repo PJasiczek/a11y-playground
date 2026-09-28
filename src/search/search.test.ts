@@ -17,6 +17,8 @@ describe("search", () => {
     ["autocomplete", "kryterium:1.3.5"],
     ["focus", "pojecie:fokus"],
     ["dostepna nazwa", "pojecie:nazwa"],
+    ["showModal", "przyklad:okno-modalne-i-fokus"],
+    ["karuzela", "przyklad:karuzela-automatyczna"],
   ])("%s finds %s", (query, id) => {
     const top = index
       .search(query)

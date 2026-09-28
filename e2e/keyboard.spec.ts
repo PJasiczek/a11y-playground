@@ -98,7 +98,7 @@ test("the role filter works from the keyboard and explains what it hides", async
 
 test("search from the home page works from the keyboard", async ({ page }) => {
   await page.goto("/");
-  await page.getByLabel("Szukaj w kryteriach i słowniku").fill("kontrast");
+  await page.getByLabel("Szukaj w kryteriach, przykładach i słowniku").fill("kontrast");
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(/\/szukaj\?q=kontrast/);
   await expect(page.getByRole("status").filter({ hasText: "dla „kontrast”" })).toBeVisible();
