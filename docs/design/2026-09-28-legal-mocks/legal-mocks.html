@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Legal mocks: article page, obligations screen, the "Prawo" section</title>
+<style>
+  :root {
+    --paper: #FBFAF7; --paper-2: #F1EFE8; --surface: #FFFFFF;
+    --ink: #14171A; --ink-2: #484D52; --rule: #DFDBD1; --control: #857F72;
+    --accent: #2C36A8; --marker: #F4E75B; --good: #145537; --bad: #9A1B1B;
+    --sans: "Inter var", Inter, "Segoe UI", -apple-system, system-ui, sans-serif;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, "SF Mono", monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 2.5rem 1rem 6rem; background: #000; color: #fff; font: 16px/1.6 var(--sans); }
+  .page { max-width: 1180px; margin: 0 auto; }
+  .page > h1 { font-size: 1.4rem; margin: 0 0 .35rem; letter-spacing: -.02em; }
+  .page > p, .note { color: #B8BDC2; font-size: .9rem; margin: 0 0 1rem; max-width: 76ch; }
+  .page > h2 { font: 600 .8rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; margin: 4rem 0 .6rem; }
+  .page > h2 + p { margin-bottom: 1.5rem; }
+  .page code { font-family: var(--mono); font-size: .9em; }
+  .variant { margin: 0 0 2.5rem; }
+  .variant > h3 { font-size: 1.05rem; margin: 0 0 .25rem; }
+  .variant > h3 b { font-family: var(--mono); display: inline-block; min-width: 1.6rem; }
+  .frame { border: 1px solid #2A2D31; border-radius: 6px; overflow: hidden; }
+
+  /* --- product surface, app tokens --- */
+  .s { background: var(--paper); color: var(--ink); padding: 1.75rem 1.75rem 2.25rem; }
+  .s a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+  .s :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .s code, .s .m { font-family: var(--mono); }
+  .s h4 { margin: 0; }
+  .crumb { font-size: .875rem; color: var(--ink-2); margin: 0 0 1rem; }
+  .crumb a { color: var(--ink-2); }
+  .t1 { font-size: 1.875rem; line-height: 1.15; letter-spacing: -.03em; margin: 0 0 .4rem; }
+  .actname { color: var(--ink-2); margin: 0 0 1.5rem; max-width: 70ch; }
+  .draft { display: inline-block; font: 600 .75rem/1 var(--mono); border: 1px dashed var(--ink); border-radius: 2px; padding: .3rem .45rem; white-space: nowrap; vertical-align: middle; }
+  .draft::before { content: "✎ " / ""; }
+  .ours { font: 600 .75rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 .35rem; }
+  .sc { display: inline-flex; align-items: center; min-height: 44px; padding: 0 .55rem; font: 600 .8125rem var(--mono); border: 1px solid var(--control); border-radius: 2px; background: var(--surface); color: var(--ink) !important; text-decoration: none !important; }
+  .str { font: 600 .75rem var(--mono); letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+  .str.w::before { content: "■ " / ""; }
+  .str.p::before { content: "◧ " / ""; }
+  .str.n::before { content: "□ " / ""; }
+  .lvl { font: 600 .75rem var(--mono); border: 1px solid var(--ink); border-radius: 2px; padding: .1rem .3rem; }
+  details > summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; gap: .5rem; font-weight: 600; color: var(--accent); }
+  details > summary::marker { content: ""; }
+  details > summary::before { content: "▸" / ""; font-family: var(--mono); }
+  details[open] > summary::before { content: "▾" / ""; }
+  .lit { font-size: .9375rem; color: var(--ink); background: var(--paper-2); border-left: 3px solid var(--control); padding: .8rem 1rem; margin: .3rem 0 0; }
+  .lit p { margin: 0 0 .5rem; max-width: 70ch; }
+  .lit p:last-child { margin: 0; }
+  .src { font: .8125rem var(--mono); color: var(--ink-2); margin: .5rem 0 0; }
+  .foot { border-top: 1px solid var(--rule); margin-top: 2rem; padding-top: .9rem; font-size: .875rem; color: var(--ink-2); display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem 2rem; }
+  .foot .m { font-size: .8125rem; }
+  .btnrow { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1rem; }
+  .btn { display: inline-flex; align-items: center; min-height: 44px; padding: 0 .9rem; border: 1px solid var(--control); border-radius: 2px; color: var(--ink) !important; text-decoration: none !important; background: var(--surface); font-weight: 600; font-size: .9375rem; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+  /* 1A: parallel text */
+  .par { border-top: 2px solid var(--ink); }
+  .par-row { display: grid; grid-template-columns: 3.2rem 1fr 1fr; gap: 0 1.5rem; border-bottom: 1px solid var(--rule); padding: 1.1rem 0; }
+  .par-head { display: grid; grid-template-columns: 3.2rem 1fr 1fr; gap: 0 1.5rem; padding: .6rem 0; font: 600 .75rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); border-bottom: 1px solid var(--rule); }
+  .par-n { font: 700 .9375rem var(--mono); padding-top: .1rem; }
+  .par-sum { font-size: 1.0625rem; line-height: 1.55; }
+  .par-sum mark { background: var(--marker); color: var(--ink); padding: 0 .15em; }
+  .par-lit { font-size: .9375rem; color: var(--ink-2); line-height: 1.6; }
+  .par-links { grid-column: 2 / -1; margin-top: .7rem; display: flex; flex-wrap: wrap; gap: .4rem .6rem; align-items: center; font-size: .875rem; }
+  @media (max-width: 760px) {
+    .par-head { display: none; }
+    .par-row { grid-template-columns: 2.4rem 1fr; }
+    .par-lit { grid-column: 2; margin-top: .6rem; border-left: 3px solid var(--rule); padding-left: .8rem; }
+    .par-lit::before { content: "Brzmienie ustawy"; display: block; font: 600 .6875rem var(--mono); letter-spacing: .08em; text-transform: uppercase; margin-bottom: .2rem; }
+  }
+
+  /* 1B: whole act on one page */
+  .whole { display: grid; grid-template-columns: 15rem 1fr; gap: 2rem; }
+  .whole nav ol { list-style: none; margin: 0; padding: 0; font-size: .9375rem; }
+  .whole nav li a { display: flex; gap: .6rem; min-height: 44px; align-items: center; padding: 0 .5rem; color: var(--ink); text-decoration: none; border-left: 3px solid transparent; }
+  .whole nav li a .m { font-size: .8125rem; min-width: 3.4rem; color: var(--ink-2); }
+  .whole nav li a[aria-current="location"] { border-left-color: var(--ink); background: var(--surface); font-weight: 700; }
+  .whole nav li a[aria-current="location"]::after { content: "tu jesteś"; margin-left: auto; font: .6875rem var(--mono); color: var(--ink-2); }
+  .whole nav h4 { font: 600 .75rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 .4rem .5rem; }
+  .whole nav .ch { font: 600 .6875rem var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); padding: .8rem .5rem .2rem; }
+  .art { border-top: 1px solid var(--rule); padding: 1.2rem 0 1.4rem; }
+  .art h4 { font-size: 1.25rem; letter-spacing: -.01em; display: flex; flex-wrap: wrap; gap: .3rem .8rem; align-items: baseline; }
+  .art h4 .m { font-size: 1rem; }
+  .art p.sum { margin: .5rem 0 .4rem; max-width: 66ch; font-size: 1.0625rem; }
+  .art.now { border-top: 2px solid var(--ink); }
+  .art.dim p.sum { color: var(--ink-2); }
+  .req { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .8rem; margin: .8rem 0 .2rem; padding: .7rem .9rem; background: var(--surface); border: 1px solid var(--rule); font-size: .9375rem; }
+  @media (max-width: 760px) { .whole { grid-template-columns: 1fr; } .whole nav { display: none; } }
+
+  /* 1C: questions */
+  .qs { display: grid; gap: 0; border-top: 2px solid var(--ink); }
+  .q { display: grid; grid-template-columns: 13rem 1fr; gap: 1.5rem; padding: 1.25rem 0; border-bottom: 1px solid var(--rule); }
+  .q h4 { font-size: 1.125rem; letter-spacing: -.01em; }
+  .q p { margin: 0 0 .6rem; max-width: 62ch; font-size: 1.0625rem; }
+  .cite { display: inline-flex; align-items: center; min-height: 32px; font: 600 .8125rem var(--mono); padding: 0 .35rem; border-bottom: 2px solid var(--accent); color: var(--ink) !important; text-decoration: none !important; }
+  .q details { margin-top: .2rem; }
+  .q details > summary { font-size: .9375rem; }
+  .big { font: 700 1.5rem/1.1 var(--mono); letter-spacing: -.02em; display: block; margin-bottom: .2rem; }
+  .artidx { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .6rem; }
+  .artidx a { display: inline-flex; min-width: 44px; min-height: 44px; align-items: center; justify-content: center; font: .8125rem var(--mono); color: var(--ink); text-decoration: none; border: 1px solid var(--rule); background: var(--surface); }
+  .artidx a.gone { color: var(--ink-2); border-style: dashed; }
+  @media (max-width: 760px) { .q { grid-template-columns: 1fr; gap: .4rem; } }
+
+  /* situation pickers */
+  fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+  legend { font-weight: 700; font-size: 1.0625rem; margin-bottom: .6rem; padding: 0; }
+  .pick { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .pick label { display: inline-flex; align-items: center; gap: .55rem; min-height: 44px; padding: .4rem .9rem .4rem .7rem; border: 1px solid var(--control); border-radius: 2px; background: var(--surface); cursor: pointer; font-size: .9375rem; }
+  .pick input { width: 20px; height: 20px; margin: 0; accent-color: var(--ink); }
+  .pick label:has(input:checked) { border: 2px solid var(--ink); font-weight: 700; padding: calc(.4rem - 1px) calc(.9rem - 1px) calc(.4rem - 1px) calc(.7rem - 1px); }
+  .pick label:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .status { font-size: .9375rem; color: var(--ink-2); margin: .9rem 0 0; }
+
+  /* 2A: timetable */
+  .tt { list-style: none; margin: 1.5rem 0 0; padding: 0; border-left: 2px solid var(--ink); }
+  .tt li { position: relative; display: grid; grid-template-columns: 9.5rem 1fr; gap: .2rem 1.25rem; padding: .9rem 0 .9rem 1.25rem; }
+  .tt li::before { content: "" / ""; position: absolute; left: -7px; top: 1.25rem; width: 12px; height: 12px; background: var(--paper); border: 2px solid var(--ink); border-radius: 50%; }
+  .tt li.past::before { background: var(--ink); }
+  .tt li.today { padding: .5rem 0 .5rem 1.25rem; }
+  .tt li.today::before { left: -9px; width: 16px; height: 2px; border: 0; border-radius: 0; background: var(--ink); top: 1.05rem; }
+  .tt li.today .d { font-weight: 700; }
+  .tt .d { font: 600 1rem var(--mono); }
+  .tt .d small { display: block; font: .75rem var(--mono); color: var(--ink-2); margin-top: .15rem; }
+  .tt .what { font-size: 1.0625rem; font-weight: 600; }
+  .tt .meta { font-size: .875rem; color: var(--ink-2); margin-top: .2rem; }
+  .tt li.other { opacity: 1; }
+  .tt li.other .what { font-weight: 400; color: var(--ink-2); }
+  .tt li.other .tag { font: .6875rem var(--mono); border: 1px dashed var(--control); padding: .05rem .3rem; margin-left: .3rem; }
+  @media (max-width: 640px) { .tt li { grid-template-columns: 1fr; } }
+
+  /* 2B: obligations card */
+  .card-ans { margin-top: 1.5rem; background: var(--surface); border: 1px solid var(--rule); border-top: 4px solid var(--ink); padding: 1.25rem 1.4rem 1.4rem; }
+  .card-ans > p.lead { font-size: 1.25rem; line-height: 1.35; letter-spacing: -.01em; margin: 0 0 1rem; font-weight: 600; max-width: 50ch; }
+  .obl { list-style: none; margin: 0; padding: 0; }
+  .obl > li { border-top: 1px solid var(--rule); padding: 1rem 0; display: grid; grid-template-columns: 1fr auto; gap: .3rem 1.5rem; }
+  .obl .h { font-size: 1.0625rem; font-weight: 700; }
+  .obl .since { font: 600 .875rem var(--mono); white-space: nowrap; text-align: right; }
+  .obl .since small { display: block; font-weight: 400; color: var(--ink-2); }
+  .obl .b { grid-column: 1 / -1; font-size: .9375rem; color: var(--ink-2); }
+  .obl details { grid-column: 1 / -1; }
+  .prin { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: .75rem; margin: .5rem 0 0; }
+  .prin div { border: 1px solid var(--rule); padding: .6rem .75rem; background: var(--paper); }
+  .prin b { display: block; font-size: .9375rem; }
+  .prin .m { font-size: .8125rem; color: var(--ink-2); }
+  .gain { border-left: 6px solid var(--marker); padding: .5rem .8rem; background: var(--paper); margin: 1rem 0 0; font-size: .9375rem; }
+
+  /* 2C: comparison */
+  .cmp { width: 100%; border-collapse: collapse; margin-top: 1.25rem; font-size: .9375rem; }
+  .cmpwrap { overflow-x: auto; }
+  .cmp th, .cmp td { border-bottom: 1px solid var(--rule); padding: .75rem .7rem; text-align: left; vertical-align: top; }
+  .cmp thead th { font-size: .9375rem; border-bottom: 2px solid var(--ink); vertical-align: bottom; }
+  .cmp thead th.mine { background: var(--surface); border: 2px solid var(--ink); border-bottom: 0; }
+  .cmp thead th.mine::before { content: "Twoja sytuacja"; display: block; font: 600 .6875rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin-bottom: .2rem; }
+  .cmp td.mine { background: var(--surface); border-left: 2px solid var(--ink); border-right: 2px solid var(--ink); }
+  .cmp tbody tr:last-child td.mine { border-bottom: 2px solid var(--ink); }
+  .cmp tbody th { font-weight: 600; min-width: 13rem; }
+  .cmp tbody th small { display: block; font-weight: 400; color: var(--ink-2); font-size: .8125rem; }
+  .cmp td .m { display: block; font-size: .8125rem; color: var(--ink-2); margin-top: .15rem; }
+  .cmp tr.grp th { font: 600 .75rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); padding-top: 1.2rem; border-bottom: 1px solid var(--ink); }
+
+  /* 3: the Prawo section inside a criterion page */
+  .crit-h { display: flex; flex-wrap: wrap; gap: .4rem 1rem; align-items: baseline; margin-bottom: 1.25rem; }
+  .crit-h .m { font-size: 1.25rem; font-weight: 700; }
+  .crit-h b { font-size: 1.25rem; }
+  .sec { border-top: 2px solid var(--ink); padding-top: 1.1rem; }
+  .sec > h4 { font-size: 1.25rem; letter-spacing: -.02em; margin-bottom: .75rem; }
+  .law { width: 100%; border-collapse: collapse; font-size: .9375rem; }
+  .law th, .law td { text-align: left; vertical-align: top; padding: .7rem .6rem; border-bottom: 1px solid var(--rule); }
+  .law thead th { font: 600 .75rem var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); border-bottom: 1px solid var(--ink); }
+  .law td.d { font-family: var(--mono); white-space: nowrap; }
+  .sent { list-style: none; margin: 0; padding: 0; }
+  .sent li { display: grid; grid-template-columns: 8.5rem 1fr; gap: .2rem 1rem; padding: .8rem 0; border-bottom: 1px solid var(--rule); }
+  .sent li p { margin: 0; max-width: 64ch; }
+  .sent li .who { font-weight: 700; }
+  @media (max-width: 640px) { .sent li { grid-template-columns: 1fr; } }
+  .chain { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; }
+  .chain > li { display: grid; grid-template-columns: 11rem 1fr; gap: .8rem 1.25rem; align-items: start; }
+  .chain .who { font-weight: 700; padding-top: .55rem; }
+  .chain .who small { display: block; font-weight: 400; color: var(--ink-2); font-size: .8125rem; }
+  .path { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem; }
+  .node { display: inline-flex; flex-direction: column; justify-content: center; min-height: 44px; padding: .3rem .6rem; border: 1px solid var(--control); background: var(--surface); border-radius: 2px; font-size: .875rem; color: var(--ink) !important; text-decoration: none !important; }
+  .node .m { font-size: .75rem; color: var(--ink-2); }
+  .node.here { border: 2px solid var(--ink); font-weight: 700; }
+  .arrow { font: 600 .75rem var(--mono); color: var(--ink-2); display: inline-flex; flex-direction: column; align-items: center; padding: 0 .2rem; }
+  .arrow::before { content: "→" / ""; font-size: 1rem; color: var(--ink); }
+  .chain .none { padding-top: .55rem; color: var(--ink-2); }
+  @media (max-width: 640px) { .chain > li { grid-template-columns: 1fr; } }
+  .edge { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px dashed var(--control); }
+  .edge-h { font: 600 .75rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 .6rem; }
+  .callout { border-left: 6px solid var(--ink); background: var(--surface); padding: .8rem 1rem; max-width: 70ch; }
+  .callout p { margin: 0 0 .4rem; }
+  .callout p:last-child { margin: 0; }
+  .legend { font-size: .8125rem; color: var(--ink-2); margin: .8rem 0 0; display: flex; flex-wrap: wrap; gap: .3rem 1.2rem; }
+
+  @media (max-width: 640px) { .s { padding: 1.25rem 1rem 1.75rem; } .t1 { font-size: 1.5rem; } }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="page">
+<h1>Legal mocks: three screens, three new variants each</h1>
+<p>Phase 4, <a href="../2026-09-28-phase-4-legal/phase-4-legal.en.html" style="color:#fff">plan</a>. All variants are new; screens 4 and 5 of variant A are not among them. The content is real: article text from Dz.U. 2023 poz. 1440, dates from art. 27, 85 and 88. The strength of the 2024 act's edges is marked as unconfirmed until the harmonised standard question is settled. Light theme only; every colour is an app token, so dark mode follows.</p>
+<p>Legend used on every screen: <code>■ wprost</code> the act names the criterion, <code>◧ pośrednio</code> through a harmonised standard, <code>□ nie wymaga</code>. The strength is always a word; the shape only repeats it.</p>
+
+<!-- =========================================================== -->
+<h2 id="s1">1 · Article page: /prawo/ustawa-2019-848/art-5</h2>
+<p>Question for this screen: how do summary and statute sit together, and is the article its own page at all.</p>
+
+<section class="variant" aria-labelledby="v1a">
+<h3 id="v1a"><b>A</b> Parallel text</h3>
+<p class="note">Each ustęp is a row: our summary on the left, the statute on the right, at the same height. The reader never loses which sentence of the law a summary stands for. On a narrow screen the statute drops under its summary with a label. The key phrase of a summary gets the marker, which in this app always means "what matters to you".</p>
+<div class="frame"><div class="s">
+  <p class="crumb"><a href="#">Prawo</a> / <a href="#">Ustawa o dostępności cyfrowej</a> / Art. 5</p>
+  <h4 class="t1">Art. 5. Jakie wymagania trzeba spełnić <span class="draft">szkic</span></h4>
+  <p class="actname">Ustawa z dnia 4 kwietnia 2019 r. o dostępności cyfrowej stron internetowych i aplikacji mobilnych podmiotów publicznych</p>
+  <div class="par" role="table" aria-label="Art. 5, streszczenie i brzmienie ustawy">
+    <div class="par-head" role="row"><span role="columnheader">Ust.</span><span role="columnheader">Nasze streszczenie</span><span role="columnheader">Brzmienie ustawy</span></div>
+    <div class="par-row" role="row">
+      <span class="par-n" role="rowheader">1</span>
+      <div class="par-sum" role="cell">Strona i aplikacja podmiotu publicznego muszą spełniać <mark>wymagania z załącznika</mark>. Załącznik to 49 kryteriów WCAG 2.1 na poziomach A i AA.</div>
+      <div class="par-lit" role="cell">Podmiot publiczny zapewnia dostępność cyfrową przez spełnienie przez jego stronę internetową, zarządzane elementy strony internetowej, jego aplikację mobilną lub zarządzane elementy aplikacji mobilnej wymagań określonych w załączniku do ustawy.</div>
+      <div class="par-links" role="cell"><span class="str w">wprost</span> <a href="#">Załącznik: 49 kryteriów</a></div>
+    </div>
+    <div class="par-row" role="row">
+      <span class="par-n" role="rowheader">2</span>
+      <div class="par-sum" role="cell">Definicja, nie obowiązek. Cztery słowa to cztery zasady WCAG pod polskimi nazwami.</div>
+      <div class="par-lit" role="cell">Dostępność cyfrowa strony internetowej i aplikacji mobilnej polega na zapewnieniu ich funkcjonalności, kompatybilności, postrzegalności i zrozumiałości.</div>
+    </div>
+    <div class="par-row" role="row">
+      <span class="par-n" role="rowheader">3</span>
+      <div class="par-sum" role="cell">Kto spełnia punkty 9, 10 i 11 normy EN 301 549, <mark>ten spełnia załącznik</mark>. Norma jest drogą na skróty przy kontroli, nie dodatkowym wymogiem.</div>
+      <div class="par-lit" role="cell">Wymagania określone w załączniku do ustawy uznaje się za spełnione, gdy podmiot publiczny zapewnia dostępność cyfrową z uwzględnieniem wymagań określonych w pkt 9, 10 i 11 Polskiej Normy wprowadzającej normę ETSI EN 301 549 V3.2.1:2021.</div>
+      <div class="par-links" role="cell"><a href="#">EN 301 549, punkt 9</a></div>
+    </div>
+  </div>
+  <p class="src">Tekst jednolity: Dz.U. 2023 poz. 1440 · pobrano 2026-09-28 · <a href="#">ISAP</a></p>
+  <div class="btnrow"><a class="btn" href="#">← Art. 4. Definicje</a><a class="btn" href="#">Art. 5a. Multimedia na żywo →</a></div>
+  <div class="foot"><span>Materiał edukacyjny, nie porada prawna. Wiążące jest brzmienie z Dziennika Ustaw.</span><span class="m">Zweryfikowano: 2026-09-28</span></div>
+</div></div>
+</section>
+
+<section class="variant" aria-labelledby="v1b">
+<h3 id="v1b"><b>B</b> The whole act on one page</h3>
+<p class="note">No article route: <code>/prawo/ustawa-2019-848#art-5</code>. The act reads top to bottom like the statute, one summary per article, statute text behind a disclosure. The chapter index on the left marks the current article in text, not only by weight. Cheapest to build and to search with Ctrl+F; the cost is a long page for the 2024 act.</p>
+<div class="frame"><div class="s">
+  <p class="crumb"><a href="#">Prawo</a> / Ustawa o dostępności cyfrowej</p>
+  <h4 class="t1">Ustawa o dostępności cyfrowej</h4>
+  <p class="actname">Z dnia 4 kwietnia 2019 r. Wiąże podmioty publiczne. Tekst jednolity: Dz.U. 2023 poz. 1440.</p>
+  <div class="whole">
+    <nav aria-label="Spis artykułów">
+      <h4>Spis</h4>
+      <ol>
+        <li><a href="#"><span class="m">Art. 1–4</span> Zakres i definicje</a></li>
+        <li><a href="#" aria-current="location"><span class="m">Art. 5</span> Wymagania</a></li>
+        <li><a href="#"><span class="m">Art. 5a</span> Multimedia na żywo</a></li>
+        <li><a href="#"><span class="m">Art. 6–8</span> Wyjątki</a></li>
+        <li><a href="#"><span class="m">Art. 10–11</span> Deklaracja</a></li>
+        <li><a href="#"><span class="m">Art. 12–17</span> Nadzór</a></li>
+        <li><a href="#"><span class="m">Art. 18</span> Żądanie i skarga</a></li>
+        <li><a href="#"><span class="m">Art. 19</span> Kary</a></li>
+        <li><a href="#"><span class="m">Art. 22–27</span> Terminy</a></li>
+        <li><a href="#"><span class="m">Zał.</span> 49 kryteriów</a></li>
+      </ol>
+    </nav>
+    <div>
+      <article class="art dim" aria-labelledby="b-a4">
+        <h4 id="b-a4"><span class="m">Art. 4</span> Definicje</h4>
+        <p class="sum">Czym w ustawie jest aplikacja mobilna, strona internetowa i dostępność cyfrowa.</p>
+      </article>
+      <article class="art now" aria-labelledby="b-a5">
+        <h4 id="b-a5"><span class="m">Art. 5</span> Wymagania <span class="draft">szkic</span></h4>
+        <p class="sum">Strona i aplikacja podmiotu publicznego muszą spełniać wymagania z załącznika, czyli 49 kryteriów WCAG 2.1 na poziomach A i AA. Kto spełnia punkty 9–11 normy EN 301 549, ten spełnia załącznik (ust. 3).</p>
+        <div class="req"><span class="str w">wprost</span> <span>Wymaga kryteriów z</span> <a href="#">załącznika (49)</a> <span aria-hidden="true">·</span> <a href="#">EN 301 549, punkt 9</a></div>
+        <details>
+          <summary>Brzmienie art. 5</summary>
+          <div class="lit">
+            <p><span class="m">1.</span> Podmiot publiczny zapewnia dostępność cyfrową przez spełnienie przez jego stronę internetową, zarządzane elementy strony internetowej, jego aplikację mobilną lub zarządzane elementy aplikacji mobilnej wymagań określonych w załączniku do ustawy.</p>
+            <p><span class="m">2.</span> Dostępność cyfrowa strony internetowej i aplikacji mobilnej polega na zapewnieniu ich funkcjonalności, kompatybilności, postrzegalności i zrozumiałości.</p>
+            <p><span class="m">3.</span> Wymagania określone w załączniku do ustawy uznaje się za spełnione, gdy podmiot publiczny zapewnia dostępność cyfrową z uwzględnieniem wymagań określonych w pkt 9, 10 i 11 Polskiej Normy wprowadzającej normę ETSI EN 301 549 V3.2.1:2021.</p>
+          </div>
+        </details>
+      </article>
+      <article class="art dim" aria-labelledby="b-a5a">
+        <h4 id="b-a5a"><span class="m">Art. 5a</span> Multimedia na żywo</h4>
+        <p class="sum">Zapis transmisji na żywo trzeba dostosować do załącznika w 14 dni od jej końca.</p>
+      </article>
+    </div>
+  </div>
+  <div class="foot"><span>Materiał edukacyjny, nie porada prawna. Wiążące jest brzmienie z Dziennika Ustaw.</span><span class="m">Zweryfikowano: 2026-09-28</span></div>
+</div></div>
+</section>
+
+<section class="variant" aria-labelledby="v1c">
+<h3 id="v1c"><b>C</b> The act as answers</h3>
+<p class="note">The act page answers four questions people bring to it, and each answer cites the article it comes from. A cited article expands in place to its statute text. Articles still have their own pages, reachable from the index at the bottom, for people who arrive with "art. 5" in hand. Most writing work of the three, because the questions are ours.</p>
+<div class="frame"><div class="s">
+  <p class="crumb"><a href="#">Prawo</a> / Ustawa o dostępności cyfrowej</p>
+  <h4 class="t1">Ustawa o dostępności cyfrowej</h4>
+  <p class="actname">Z dnia 4 kwietnia 2019 r. Tekst jednolity: Dz.U. 2023 poz. 1440, pobrano 2026-09-28.</p>
+  <div class="qs">
+    <section class="q" aria-labelledby="c-q1">
+      <h4 id="c-q1">Kogo dotyczy?</h4>
+      <div><p>Podmiotów publicznych: urzędów, szkół, sądów i innych jednostek sektora publicznego, a także części spółek i organizacji pozarządowych, które wykonują zadania publiczne. Nie dotyczy nadawców radiowych i telewizyjnych.</p>
+        <a class="cite" href="#">art. 2</a> <a class="cite" href="#">art. 3</a></div>
+    </section>
+    <section class="q" aria-labelledby="c-q2">
+      <h4 id="c-q2">Co trzeba zrobić?</h4>
+      <div><p>Strona i aplikacja muszą spełniać 49 kryteriów WCAG 2.1 z załącznika. Do tego deklaracja dostępności, przeglądana co roku do 31 marca.</p>
+        <details><summary><span class="m">art. 5</span> Brzmienie</summary>
+          <div class="lit"><p><span class="m">1.</span> Podmiot publiczny zapewnia dostępność cyfrową przez spełnienie przez jego stronę internetową, zarządzane elementy strony internetowej, jego aplikację mobilną lub zarządzane elementy aplikacji mobilnej wymagań określonych w załączniku do ustawy.</p><p class="src">Ust. 2 i 3 na <a href="#">stronie art. 5</a></p></div>
+        </details>
+        <a class="cite" href="#">załącznik</a> <a class="cite" href="#">art. 10</a> <a class="cite" href="#">art. 11</a></div>
+    </section>
+    <section class="q" aria-labelledby="c-q3">
+      <h4 id="c-q3">Od kiedy?</h4>
+      <div><span class="big">23.06.2021</span><p>Od tego dnia ustawa obejmuje już wszystko: nowe strony od 23.09.2019, starsze od 23.09.2020, aplikacje od 23.06.2021.</p>
+        <a class="cite" href="#">art. 27</a></div>
+    </section>
+    <section class="q" aria-labelledby="c-q4">
+      <h4 id="c-q4">Co grozi?</h4>
+      <div><span class="big">do 10 000 zł</span><p>Kara za nieuzasadnione i uporczywe niezapewnianie dostępności. Do 5000 zł za brak deklaracji dostępności. Każdy może też zażądać dostępności konkretnego elementu.</p>
+        <a class="cite" href="#">art. 19</a> <a class="cite" href="#">art. 18</a></div>
+    </section>
+  </div>
+  <h4 style="font-size:1rem;margin:1.5rem 0 0">Wszystkie artykuły</h4>
+  <nav class="artidx" aria-label="Artykuły ustawy">
+    <a href="#">1</a><a href="#">2</a><a href="#">3</a><a href="#">4</a><a href="#" aria-current="page" style="border:2px solid var(--ink);font-weight:700">5</a><a href="#">5a</a><a href="#">6</a><a href="#">7</a><a href="#">8</a><a class="gone" href="#" aria-label="9, uchylony">9</a><a href="#">10</a><a href="#">11</a><a href="#">…</a><a href="#">27</a><a href="#">zał.</a>
+  </nav>
+  <div class="foot"><span>Materiał edukacyjny, nie porada prawna. Wiążące jest brzmienie z Dziennika Ustaw.</span><span class="m">Zweryfikowano: 2026-09-28</span></div>
+</div></div>
+</section>
+
+<!-- =========================================================== -->
+<h2 id="s2">2 · Obligations: /mapowanie</h2>
+<p>Question for this screen: after picking a situation, what is the answer's shape. The picker is the same native radio group in all three, stored in <code>?sytuacja=</code>. The answer changes; the count is announced.</p>
+
+<section class="variant" aria-labelledby="v2a">
+<h3 id="v2a"><b>A</b> Timetable</h3>
+<p class="note">Dates are the spine. Every deadline from all acts sits on one line, with today marked on it. Deadlines of the chosen situation are full; the others stay visible, lighter and labelled, so nobody wonders whether something was left out. Criteria live one click away, on the act. Answers "by when" best, "which criteria" worst.</p>
+<div class="frame"><div class="s">
+  <h4 class="t1">Co mnie obowiązuje</h4>
+  <fieldset>
+    <legend>Czym jest twój produkt?</legend>
+    <div class="pick">
+      <label><input type="radio" name="p2a"> Strona podmiotu publicznego</label>
+      <label><input type="radio" name="p2a" checked> Aplikacja podmiotu publicznego</label>
+      <label><input type="radio" name="p2a"> Produkt lub usługa firmy w UE</label>
+    </div>
+  </fieldset>
+  <p class="status" role="status">4 terminy dotyczą aplikacji podmiotu publicznego. 2 dotyczą innych sytuacji.</p>
+  <ol class="tt">
+    <li class="past"><span class="d">23.09.2019</span><div><div class="what">Ustawa obejmuje nowe strony podmiotów publicznych</div><div class="meta"><a href="#">art. 27 pkt 1</a> ustawy o dostępności cyfrowej</div></div></li>
+    <li class="past"><span class="d">23.06.2021</span><div><div class="what">Aplikacje mobilne muszą spełniać 42 kryteria z załącznika</div><div class="meta"><a href="#">art. 27 pkt 3</a> · siedem kryteriów załącznika nie dotyczy aplikacji</div></div></li>
+    <li class="past"><span class="d">co rok, 31.03</span><div><div class="what">Przegląd i aktualizacja deklaracji dostępności</div><div class="meta"><a href="#">art. 11</a></div></div></li>
+    <li class="past other"><span class="d">28.06.2025</span><div><div class="what">Wymagania dla produktów i usług firm <span class="tag">inna sytuacja</span></div><div class="meta"><a href="#">art. 88</a> ustawy z 2024 r.</div></div></li>
+    <li class="today"><span class="d">dziś, 28.09.2026</span><div></div></li>
+    <li class="other"><span class="d">28.06.2030<small>za 3 lata i 9 miesięcy</small></span><div><div class="what">Koniec okresu przejściowego dla starszych umów i produktów <span class="tag">inna sytuacja</span></div><div class="meta"><a href="#">art. 85</a> ustawy z 2024 r.</div></div></li>
+  </ol>
+  <div class="btnrow"><a class="btn" href="#">42 kryteria dla aplikacji</a><a class="btn" href="#">Pełna tabela przepis → kryterium</a></div>
+  <div class="foot"><span>Materiał edukacyjny, nie porada prawna.</span><span class="m">Zweryfikowano: 2026-09-28</span></div>
+</div></div>
+</section>
+
+<section class="variant" aria-labelledby="v2b">
+<h3 id="v2b"><b>B</b> Obligations as a letter</h3>
+<p class="note">The answer is written to the reader: one sentence stating what binds them, then each obligation with its start date on the right and the criteria behind a disclosure, counted per principle. It reads like advice, so the disclaimer sits inside the answer, not only at the foot. The yellow edge says what users gain, as on the practice cards.</p>
+<div class="frame"><div class="s">
+  <h4 class="t1">Co mnie obowiązuje</h4>
+  <fieldset>
+    <legend>Czym jest twój produkt?</legend>
+    <div class="pick">
+      <label><input type="radio" name="p2b"> Strona podmiotu publicznego</label>
+      <label><input type="radio" name="p2b" checked> Aplikacja podmiotu publicznego</label>
+      <label><input type="radio" name="p2b"> Produkt lub usługa firmy w UE</label>
+    </div>
+  </fieldset>
+  <div class="card-ans" role="region" aria-labelledby="b2-lead">
+    <p class="lead" id="b2-lead">Aplikację podmiotu publicznego wiąże ustawa o dostępności cyfrowej. Wynikają z niej trzy obowiązki.</p>
+    <ol class="obl">
+      <li><span class="h">Spełnij 42 kryteria WCAG 2.1 A i AA</span><span class="since">od 23.06.2021<small>obowiązuje</small></span>
+        <span class="b"><span class="str w">wprost</span> · <a href="#">załącznik</a> i <a href="#">art. 5</a>. Załącznik ma 49 kryteriów, siedem z nich nie dotyczy aplikacji.</span>
+        <details><summary>Pokaż 42 kryteria według zasad</summary>
+          <div class="prin">
+            <div><b>Postrzegalność</b><span class="m">19 kryteriów · 9 A, 10 AA</span></div>
+            <div><b>Funkcjonalność</b><span class="m">14 kryteriów · 12 A, 2 AA</span></div>
+            <div><b>Zrozumiałość</b><span class="m">7 kryteriów · 5 A, 2 AA</span></div>
+            <div><b>Kompatybilność</b><span class="m">2 kryteria · 2 A</span></div>
+          </div>
+        </details></li>
+      <li><span class="h">Opublikuj deklarację dostępności i przeglądaj ją</span><span class="since">co rok do 31.03<small>obowiązuje</small></span>
+        <span class="b"><a href="#">art. 10</a>, <a href="#">art. 11</a>. Deklaracja mówi, co jeszcze nie działa i jak to zgłosić.</span></li>
+      <li><span class="h">Odpowiadaj na żądania zapewnienia dostępności</span><span class="since">bez terminu<small>w 7 dni</small></span>
+        <span class="b"><a href="#">art. 18</a>. Każdy może zażądać dostępnej wersji elementu albo alternatywy.</span></li>
+    </ol>
+    <p class="gain">Osoba z czytnikiem ekranu może załatwić sprawę w aplikacji sama, bez dzwonienia do urzędu.</p>
+    <p class="src">To streszczenie, nie porada prawna. Wiążące jest brzmienie z Dziennika Ustaw.</p>
+  </div>
+  <div class="btnrow"><a class="btn" href="#">Pełna tabela przepis → kryterium</a></div>
+</div></div>
+</section>
+
+<section class="variant" aria-labelledby="v2c">
+<h3 id="v2c"><b>C</b> Side by side</h3>
+<p class="note">All three situations as columns, obligations and criterion groups as rows, the chosen situation outlined and labelled "Twoja sytuacja". It answers the question consultants get most often: "we are a public body and we also sell a service, what is the difference". A real table with row and column headers; scrolls sideways on a phone.</p>
+<div class="frame"><div class="s">
+  <h4 class="t1">Co mnie obowiązuje</h4>
+  <fieldset>
+    <legend>Czym jest twój produkt?</legend>
+    <div class="pick">
+      <label><input type="radio" name="p2c"> Strona podmiotu publicznego</label>
+      <label><input type="radio" name="p2c" checked> Aplikacja podmiotu publicznego</label>
+      <label><input type="radio" name="p2c"> Produkt lub usługa firmy w UE</label>
+    </div>
+  </fieldset>
+  <div class="cmpwrap" role="region" aria-label="Porównanie sytuacji" tabindex="0">
+  <table class="cmp">
+    <caption class="sr">Obowiązki i kryteria w trzech sytuacjach. Twoja sytuacja: aplikacja podmiotu publicznego.</caption>
+    <thead><tr><td></td><th scope="col">Strona podmiotu publicznego</th><th scope="col" class="mine">Aplikacja podmiotu publicznego</th><th scope="col">Produkt lub usługa firmy w UE</th></tr></thead>
+    <tbody>
+      <tr class="grp"><th colspan="4" scope="colgroup">Obowiązki</th></tr>
+      <tr><th scope="row">Od kiedy</th><td class="m">23.09.2020<span class="m">nowsze strony od 23.09.2019</span></td><td class="mine m">23.06.2021</td><td class="m">28.06.2025</td></tr>
+      <tr><th scope="row">Podstawa</th><td>Ustawa o dostępności cyfrowej</td><td class="mine">Ustawa o dostępności cyfrowej</td><td>Ustawa o produktach i usługach</td></tr>
+      <tr><th scope="row">Deklaracja dostępności</th><td>tak<span class="m">art. 10</span></td><td class="mine">tak<span class="m">art. 10</span></td><td>informacja o dostępności usługi<span class="m">art. 32 i 33</span></td></tr>
+      <tr><th scope="row">Kara</th><td>do 10 000 zł<span class="m">art. 19</span></td><td class="mine">do 10 000 zł<span class="m">art. 19</span></td><td>kary pieniężne<span class="m">art. 73, wysokość do potwierdzenia</span></td></tr>
+      <tr class="grp"><th colspan="4" scope="colgroup">Kryteria WCAG</th></tr>
+      <tr><th scope="row">WCAG 2.1 A i AA<small>50 kryteriów</small></th><td><span class="str w">wprost</span> 49<span class="m">bez 1.2.4</span></td><td class="mine"><span class="str w">wprost</span> 42<span class="m">bez 1.2.4 i 7 wyłączonych</span></td><td><span class="str p">pośrednio</span><span class="m">art. 20, do potwierdzenia</span></td></tr>
+      <tr><th scope="row">Nowe w 2.2<small>9 kryteriów, 6 na A i AA</small></th><td><span class="str n">nie wymaga</span></td><td class="mine"><span class="str n">nie wymaga</span></td><td><span class="str n">nie wymaga</span><span class="m">do potwierdzenia</span></td></tr>
+      <tr><th scope="row">AAA<small>28 kryteriów w 2.1</small></th><td><span class="str n">nie wymaga</span></td><td class="mine"><span class="str n">nie wymaga</span></td><td><span class="str n">nie wymaga</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="foot"><span>Materiał edukacyjny, nie porada prawna.</span><span class="m">Zweryfikowano: 2026-09-28</span></div>
+</div></div>
+</section>
+
+<!-- =========================================================== -->
+<h2 id="s3">3 · Criterion page, section "Prawo": /kryteria/1.4.3</h2>
+<p>Question for this screen: how a criterion says who must meet it. Each variant also shows the hard case under a dashed rule: 2.4.11, new in 2.2, which no act requires.</p>
+
+<section class="variant" aria-labelledby="v3a">
+<h3 id="v3a"><b>A</b> Table by situation</h3>
+<p class="note">One row per situation, three columns: required how, by which provision, since when. Dense, scannable, the same shape on every criterion. The "no" case is a row like any other, which keeps it honest but also quiet.</p>
+<div class="frame"><div class="s">
+  <div class="crit-h"><span class="m">1.4.3</span><b>Kontrast (minimum)</b><span class="lvl">AA</span></div>
+  <section class="sec" aria-labelledby="a3-h">
+    <h4 id="a3-h">Prawo</h4>
+    <table class="law">
+      <caption class="sr">Kto musi spełnić 1.4.3</caption>
+      <thead><tr><th scope="col">Sytuacja</th><th scope="col">Wymagane</th><th scope="col">Przepis</th><th scope="col">Od</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Strona podmiotu publicznego</th><td><span class="str w">wprost</span></td><td><a href="#">Załącznik</a> do ustawy o dostępności cyfrowej</td><td class="d">23.09.2020</td></tr>
+        <tr><th scope="row">Aplikacja podmiotu publicznego</th><td><span class="str w">wprost</span></td><td><a href="#">Załącznik</a>, tak samo</td><td class="d">23.06.2021</td></tr>
+        <tr><th scope="row">Produkt lub usługa firmy w UE</th><td><span class="str p">pośrednio</span></td><td><a href="#">Art. 20</a> ustawy o produktach i usługach, przez normy zharmonizowane. Do potwierdzenia.</td><td class="d">28.06.2025</td></tr>
+      </tbody>
+    </table>
+    <p class="src">Technicznie: EN 301 549, punkt 9.1.4.3</p>
+    <div class="edge">
+      <p class="edge-h">Ta sama sekcja dla 2.4.11 Fokus niezasłonięty (minimum)</p>
+      <table class="law">
+        <thead><tr><th scope="col">Sytuacja</th><th scope="col">Wymagane</th><th scope="col">Przepis</th><th scope="col">Od</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Wszystkie trzy</th><td><span class="str n">nie wymaga</span></td><td>Załącznik wymienia kryteria WCAG 2.1, a to kryterium doszło w 2.2.</td><td class="d">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div></div>
+</section>
+
+<section class="variant" aria-labelledby="v3b">
+<h3 id="v3b"><b>B</b> Plain sentences</h3>
+<p class="note">One sentence per situation, written like the rest of the page. The strength opens the line in words. The "no" case gets a callout of its own, because "you do not have to, but here is why you should" is the most useful thing the section can say about 2.4.11.</p>
+<div class="frame"><div class="s">
+  <div class="crit-h"><span class="m">1.4.3</span><b>Kontrast (minimum)</b><span class="lvl">AA</span></div>
+  <section class="sec" aria-labelledby="b3-h">
+    <h4 id="b3-h">Prawo</h4>
+    <ul class="sent">
+      <li><span class="str w">wprost</span><p><span class="who">Podmiot publiczny, strona i aplikacja.</span> Kryterium jest w <a href="#">załączniku do ustawy o dostępności cyfrowej</a>. Strony od 23.09.2020, aplikacje od 23.06.2021.</p></li>
+      <li><span class="str p">pośrednio</span><p><span class="who">Firma w UE.</span> <a href="#">Ustawa o produktach i usługach</a> nie wymienia WCAG. Wymaga, żeby treść była postrzegalna, a za spełnione uznaje to, co zgodne z normami zharmonizowanymi (<a href="#">art. 20</a>). Do potwierdzenia.</p></li>
+    </ul>
+    <p class="src">Technicznie: EN 301 549, punkt 9.1.4.3</p>
+    <div class="edge">
+      <p class="edge-h">Ta sama sekcja dla 2.4.11 Fokus niezasłonięty (minimum)</p>
+      <div class="callout">
+        <p><span class="str n">nie wymaga</span> <strong>Żadna polska ustawa nie wymaga dziś tego kryterium.</strong></p>
+        <p>Załącznik do ustawy o dostępności cyfrowej to WCAG 2.1, a 2.4.11 doszło w WCAG 2.2. Warto je spełnić mimo to: audytorzy coraz częściej badają według 2.2, a przyklejony nagłówek zasłaniający fokus psuje obsługę z klawiatury niezależnie od wersji.</p>
+      </div>
+    </div>
+  </section>
+</div></div>
+</section>
+
+<section class="variant" aria-labelledby="v3c">
+<h3 id="v3c"><b>C</b> The route from law to criterion</h3>
+<p class="note">For each situation, the chain of links that reaches this criterion, drawn left to right as real links: act, provision, standard, criterion. It teaches the thing the module exists for: the law rarely names a criterion, it gets there through something. Each arrow says how it links. On a phone the chain wraps.</p>
+<div class="frame"><div class="s">
+  <div class="crit-h"><span class="m">1.4.3</span><b>Kontrast (minimum)</b><span class="lvl">AA</span></div>
+  <section class="sec" aria-labelledby="c3-h">
+    <h4 id="c3-h">Prawo</h4>
+    <ul class="chain">
+      <li><span class="who">Podmiot publiczny<small>strona i aplikacja</small></span>
+        <p class="path"><a class="node" href="#"><span class="m">ustawa 2019</span>Dostępność cyfrowa</a><span class="arrow">art. 5</span><a class="node" href="#"><span class="m">zał.</span>49 kryteriów</a><span class="arrow">wprost</span><span class="node here"><span class="m">1.4.3</span>to kryterium</span></p></li>
+      <li><span class="who">Podmiot publiczny<small>droga przez normę</small></span>
+        <p class="path"><a class="node" href="#"><span class="m">ustawa 2019</span>Art. 5 ust. 3</a><span class="arrow">domniemanie</span><a class="node" href="#"><span class="m">EN 301 549</span>punkt 9.1.4.3</a><span class="arrow">to samo</span><span class="node here"><span class="m">1.4.3</span>to kryterium</span></p></li>
+      <li><span class="who">Firma w UE<small>produkt lub usługa</small></span>
+        <p class="path"><a class="node" href="#"><span class="m">ustawa 2024</span>Produkty i usługi</a><span class="arrow">art. 20</span><a class="node" href="#"><span class="m">norma zharm.</span>do potwierdzenia</a><span class="arrow">pośrednio</span><span class="node here"><span class="m">1.4.3</span>to kryterium</span></p></li>
+    </ul>
+    <p class="legend"><span>Od: strony 23.09.2020 · aplikacje 23.06.2021 · firmy 28.06.2025</span></p>
+    <div class="edge">
+      <p class="edge-h">Ta sama sekcja dla 2.4.11 Fokus niezasłonięty (minimum)</p>
+      <ul class="chain">
+        <li><span class="who">Podmiot publiczny</span>
+          <p class="path"><a class="node" href="#"><span class="m">zał.</span>WCAG 2.1</a><span class="arrow">brak</span><span class="node here"><span class="m">2.4.11</span>nowe w 2.2</span></p></li>
+        <li><span class="who">Firma w UE</span><p class="none"><span class="str n">nie wymaga</span> Żadna droga nie prowadzi dziś do tego kryterium.</p></li>
+      </ul>
+    </div>
+  </section>
+</div></div>
+</section>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan: faza 4, moduł prawny</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1.25rem 6rem;
+    background: #000; color: #fff;
+    font: 16px/1.65 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  main { max-width: 82ch; margin: 0 auto; }
+  h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 .5rem; letter-spacing: -.02em; }
+  h2 { font-size: 1.2rem; margin: 3rem 0 .75rem; padding-top: 1rem; border-top: 1px solid #262626; letter-spacing: -.01em; }
+  h3 { font-size: 1rem; margin: 1.75rem 0 .5rem; }
+  p, li, dd { color: #e5e5e5; }
+  a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  ul, ol { padding-left: 1.3rem; }
+  li { margin: .3rem 0; }
+  code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .875em; background: #141414; border: 1px solid #262626; border-radius: 3px; padding: .08em .3em; }
+  pre { background: #0b0b0b; border: 1px solid #262626; border-radius: 4px; padding: .9rem 1rem; overflow-x: auto; }
+  pre code { background: none; border: 0; padding: 0; font-size: .82rem; line-height: 1.55; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; display: block; overflow-x: auto; }
+  th, td { border: 1px solid #262626; padding: .45rem .6rem; text-align: left; vertical-align: top; }
+  th { background: #101010; font-weight: 600; }
+  .meta { color: #a3a3a3; font-size: .85rem; margin: 0 0 1.5rem; }
+  .meta a { color: #fff; }
+  .flag { border-left: 2px solid #737373; padding: .1rem 0 .1rem .85rem; margin: 1rem 0; color: #d4d4d4; font-size: .93rem; }
+  .toc { border: 1px solid #262626; padding: 1rem 1rem 1rem 2.4rem; margin: 1.5rem 0 0; }
+  .toc li { margin: .15rem 0; }
+  @media (max-width: 40rem) { body { padding: 1.25rem .9rem 4rem; } h1 { font-size: 1.45rem; } }
+</style>
+</head>
+<body>
+<main>
+
+<p class="meta"><a href="phase-4-legal.en.html" hreflang="en">English version</a></p>
+
+<h1>Plan: faza 4, moduł prawny</h1>
+<p class="meta">Szczegółowy plan fazy 4 z <a href="../2026-09-27-wcag-learning-app/wcag-learning-app.pl.html">planu głównego</a>. Makiety strony ustawy, ekranu obowiązków i sekcji „Prawo”: <a href="../2026-09-28-legal-mocks/legal-mocks.html">legal-mocks.html</a>. Wersja planu: 2026-09-28, zaktualizowana 2026-09-28.</p>
+
+<h2 id="changes">Zmiany po rozpoczęciu prac</h2>
+<p>Decyzje podjęte w trakcie budowy fazy 4. Jeśli kłócą się z sekcjami poniżej, obowiązują te.</p>
+<ul>
+  <li><strong>Krawędzie ustawy z 2024 r. są <code>powiazane</code>.</strong> EN 301 549 V4.1.1 (wrzesień 2026, WCAG 2.2) to pierwsza wersja pisana z myślą o EAA, ale Dziennik Urzędowy UE jeszcze jej nie wskazał, więc art. 20 nie daje dziś domniemania zgodności. Krawędzie obejmują kryteria A i AA z WCAG 2.2, jako kontekst, z tą informacją.</li>
+  <li><strong>Szkic nie ma <code>lastVerified</code>.</strong> Pliki ustaw podlegają tej samej regule co kryteria: szkic pokazuje plakietkę szkicu, plik zweryfikowany ma datę. Przykład w sekcji 5 jest poprawiony.</li>
+  <li><strong>Streszczenia ustępów.</strong> Widok równoległy (wariant A) potrzebuje streszczenia dla każdego wiersza, więc sekcja artykułu może mieć podsekcje <code>### ust. 3</code>. Tytuł artykułu jest nasz: <code>## Art. 5. Wymagania</code>.</li>
+  <li><strong>Słownik przed streszczeniami.</strong> Streszczenia linkują nowe pojęcia prawne, więc <code>docs(glossary): add legal terms</code> idzie w serii commitów przed nimi.</li>
+  <li><strong>„Stan prawny na”, nie „dziś”.</strong> Strony są prerenderowane, więc oś czasu zaznacza dzień pobrania tekstu, a nie dzisiejszą datę czytelnika.</li>
+</ul>
+
+<ol class="toc">
+  <li><a href="#goal">Cel i warunek ukończenia</a></li>
+  <li><a href="#scope">Zakres</a></li>
+  <li><a href="#findings">Co mówią źródła</a></li>
+  <li><a href="#import">Import tekstu</a></li>
+  <li><a href="#format">Format treści</a></li>
+  <li><a href="#mapping">Mapowanie</a></li>
+  <li><a href="#pages">Strony</a></li>
+  <li><a href="#tests">Testy</a></li>
+  <li><a href="#commits">Commity i pull request</a></li>
+  <li><a href="#risks">Ryzyka</a></li>
+  <li><a href="#decisions">Decyzje</a></li>
+</ol>
+
+<h2 id="goal">1. Cel i warunek ukończenia</h2>
+<p>Po fazie 4 czytelnik odpowie sobie na drugie pytanie z planu głównego: „Jestem podmiotem publicznym albo sprzedaję produkt w UE. Co muszę zrobić i do kiedy?”. Przejdzie też od kryterium do przepisu, który go wymaga, i z powrotem, a sam przepis przeczyta w brzmieniu ustawy.</p>
+<p>Faza jest skończona, gdy:</p>
+<ul>
+  <li>Trzy ustawy są w aplikacji jako drzewo jednostek redakcyjnych, zaimportowane skryptem z API ELI Sejmu. Przy każdej widać tekst jednolity, z którego pochodzi, i datę pobrania.</li>
+  <li>Każdy przepis z zakresu ma nasze streszczenie prostym językiem. Streszczenie jest widoczne od razu, dosłowny tekst po rozwinięciu.</li>
+  <li>Test end-to-end przechodzi z <code>/kryteria/1.4.3</code> do przepisu, który go wymaga, i wraca.</li>
+  <li><code>/mapowanie</code> odpowiada na pytanie „co mnie obowiązuje” dla trzech sytuacji: obowiązki z datami i kryteria pod każdym z nich.</li>
+  <li>Żadna strona nie sugeruje, że ustawa wymaga kryteriów AAA albo dziewięciu kryteriów nowych w 2.2. Pilnuje tego test na mapowaniu.</li>
+</ul>
+
+<h2 id="scope">2. Zakres</h2>
+<table>
+  <thead><tr><th>W fazie</th><th>Poza nią, i dokąd trafia</th></tr></thead>
+  <tbody>
+    <tr><td>Ustawa z 4 kwietnia 2019 r. o dostępności cyfrowej (Dz.U. 2019 poz. 848): wszystkie artykuły i załącznik</td><td>Rozporządzenia wykonawcze: później, jeśli będą potrzebne w lekcji</td></tr>
+    <tr><td>Ustawa z 19 lipca 2019 r. o osobach ze szczególnymi potrzebami (Dz.U. 2019 poz. 1696): rozdział 1, art. 14 (koordynator), rozdział 4 (skargi i wnioski o zapewnienie dostępności)</td><td>Rozdziały o certyfikacji, Funduszu Dostępności i zmianach w przepisach</td></tr>
+    <tr><td>Ustawa z 26 kwietnia 2024 r. o produktach i usługach (Dz.U. 2024 poz. 731): rozdziały 1–4, 6 (kary) i 8 (przepisy przejściowe)</td><td>Rozdział 5 (procedura nadzoru rynku) i 7 (zmiany w innych ustawach)</td></tr>
+    <tr><td>EN 301 549: czym jest, którą wersję wskazuje ustawa z 2019 r., punkt 9 jako lustro WCAG, pozostałe rozdziały jako jedna tabela tytułów opisanych naszymi słowami</td><td>Tekst normy: nie przechowujemy go, tak jak ustaliliśmy</td></tr>
+    <tr><td>Dyrektywy 2016/2102 i 2019/882: po akapicie na stronie ustawy, jako jej źródło</td><td>Osobne strony dyrektyw</td></tr>
+    <tr><td><code>/prawo</code>, strony ustaw, strony przepisów, <code>/mapowanie</code>, oś czasu, sekcja „Prawo” na stronach kryteriów, przepisy w wyszukiwarce, pojęcia prawne w słowniku</td><td><code>/o-projekcie</code>: zastrzeżenie trafia zamiast tego na każdą stronę prawną</td></tr>
+  </tbody>
+</table>
+
+<h2 id="findings">3. Co mówią źródła</h2>
+<p>Sprawdzone w API ELI Sejmu 2026-09-28. Te ustalenia wpływają na projekt, dlatego są w planie. Całą resztę sprawdzimy ponownie przy pisaniu treści.</p>
+<ul>
+  <li><strong>Strony ISAP pokazują CAPTCHA.</strong> Sama strona z CAPTCHA odsyła do <code>api.sejm.gov.pl/eli</code>, gdzie te same akty są dostępne bez niej jako metadane JSON, tekst HTML i PDF. Importer korzysta z API.</li>
+  <li><strong>HTML jest już drzewem.</strong> Artykuły, ustępy, punkty i litery to zagnieżdżone elementy ze stałymi identyfikatorami (<code>arti_5</code>, <code>pass_3</code>, <code>pint_1</code>). Importer je przepisuje, zamiast parsować tekst.</li>
+  <li><strong>Najnowsze teksty jednolite:</strong> ustawa 2019/848 w Dz.U. 2023 poz. 1440, ustawa 2019/1696 w Dz.U. 2024 poz. 1411. Ustawa z 2024 r. nie ma jeszcze tekstu jednolitego, więc importujemy tekst pierwotny.</li>
+  <li><strong>Tekst jednolity ustawy 1696 jest starszy niż jedna z jej zmian.</strong> Ustawa z 2024 r. zmienia ustawę 1696 od 28 czerwca 2025 r., już po ogłoszeniu tekstu jednolitego z 2024 r. Strona ustawy musi to powiedzieć i wskazać ustawę zmieniającą. Sami zmian nie nanosimy.</li>
+  <li><strong>W HTML brakuje załącznika do ustawy z 2019 r.</strong> Jest tylko jako tabela w PDF. Wymienia 49 kryteriów: wszystkie kryteria A i AA z WCAG 2.1 poza 1.2.4 (napisy na żywo). Siedem nie dotyczy aplikacji mobilnych: 2.4.1, 2.4.2, 2.4.5, 3.1.2, 3.2.3, 3.2.4, 4.1.3. Jest tam nadal 4.1.1, choć WCAG 2.2 je usunęło.</li>
+  <li><strong>Art. 5 ust. 3 ustawy z 2019 r.</strong> uznaje wymagania za spełnione, jeśli podmiot uwzględnia punkty 9, 10 i 11 Polskiej Normy wprowadzającej EN 301 549 V3.2.1:2021. To jest łącznik z normą.</li>
+  <li><strong>Ustawa z 2024 r. nie wymienia WCAG.</strong> Art. 8 i 12 opisują wymagania funkcjonalne. Art. 20 wprowadza domniemanie zgodności z normami zharmonizowanymi. Przy pisaniu krawędzi trzeba sprawdzić, czy w Dzienniku Urzędowym UE ukazała się norma zharmonizowana do EAA. Od odpowiedzi zależy, czy te krawędzie będą <code>posrednio</code>, czy <code>powiazane</code>. Sprawdzone: jeszcze nie, patrz „Zmiany po rozpoczęciu prac”.</li>
+  <li><strong>Daty z tekstu:</strong> ustawa z 2019 r. wiąże strony opublikowane 23 września 2018 r. lub później od 23 września 2019 r., starsze strony od 23 września 2020 r., a aplikacje mobilne od 23 czerwca 2021 r. (art. 27). Ustawę z 2024 r. stosuje się od 28 czerwca 2025 r. (art. 88). Dotychczasowe umowy i produkty używane do świadczenia usług mają czas do 28 czerwca 2030 r. (art. 85). Część treści internetowych opublikowanych przed 28 czerwca 2025 r. jest wyłączona (art. 86). Deklarację dostępności z ustawy z 2019 r. przegląda się do 31 marca każdego roku (art. 11).</li>
+</ul>
+
+<h2 id="import">4. Import tekstu</h2>
+<p><code>scripts/import-legal.ts</code> uruchamiamy ręcznie, tak jak <code>import:wcag</code>, a wynik przechodzi przegląd w pull requeście. Aplikacja niczego nie pobiera w czasie działania.</p>
+<ul>
+  <li>Wejście: lista ustaw, a przy każdej identyfikator ELI, tekst jednolity do wczytania i jednostki z zakresu (wszystkie albo lista rozdziałów i artykułów).</li>
+  <li>Dla każdej ustawy: metadane z API (tytuł, daty, status, akty zmieniające), tekst HTML, przejście po drzewie jednostek.</li>
+  <li>Porządki: znika treść przypisów w rodzaju „W brzmieniu ustalonym przez…”, a <code>(uchylony)</code> i <code>(pominięty)</code> zostają jako puste zaślepki, żeby numeracja się nie rwała.</li>
+  <li>Ostrzeżenie, nie błąd, gdy ustawę zmieniono po ogłoszeniu jej tekstu jednolitego. Trafia do wygenerowanego pliku jako <code>amendedAfter</code>, a strona je pokazuje.</li>
+  <li>Wyjście: <code>src/content/legal.gen.ts</code>, na wzór <code>wcag.gen.ts</code>. Identyfikatory jednostek są typem unii.</li>
+</ul>
+<p>Załącznik przepisujemy raz, ręcznie, do <code>src/content/annex-2019-848.ts</code> (49 identyfikatorów i flaga dla aplikacji mobilnych). Komentarz wskazuje strony 11 i 12 Dz.U. 2023 poz. 1440. To taniej niż parser PDF dla jednej tabeli, którą może zmienić tylko ustawa. Test przypina ją do „WCAG 2.1 A i AA bez 1.2.4”, więc literówka nie przejdzie.</p>
+<pre><code>// src/content/legal.gen.ts (generated)
+export const acts = {
+  "ustawa-2019-848": {
+    title: "Ustawa z dnia 4 kwietnia 2019 r. o dostępności cyfrowej…",
+    eli: "DU/2019/848",
+    consolidated: { eli: "DU/2023/1440", label: "Dz.U. 2023 poz. 1440" },
+    retrieved: "2026-09-28",
+    amendedAfter: [],
+  },
+  // …
+} as const;
+
+export const units = [
+  { id: "ustawa-2019-848/art-5", act: "ustawa-2019-848", label: "Art. 5",
+    chapter: null, text: [{ label: "1.", text: "Podmiot publiczny zapewnia…" }, /* ust. 2, 3 */] },
+  // …
+] as const;
+
+export type LegalUnitId = (typeof units)[number]["id"];</code></pre>
+<p>Stroną jest artykuł, nie ustęp. Ustępy to kotwice na stronie artykułu (<code>#ust-3</code>), a krawędź mapowania może wskazywać jedno albo drugie. Ludzie cytują artykuły, a osobna strona na każdy ustęp pocięłaby dwuzdaniowe artykuły na strzępy.</p>
+
+<h2 id="format">5. Format treści</h2>
+<p>Jeden plik Markdown na ustawę: <code>content/prawo/&lt;ustawa&gt;.md</code>. We frontmatterze jest to, czego potrzebują strony i oś czasu. W treści są nasze streszczenia, jedna sekcja <code>##</code> na artykuł, z jego oznaczeniem w nagłówku. Ten sam parser, te same linki do słownika i ta sama plakietka szkicu co przy kryteriach.</p>
+<pre><code>---
+status: szkic
+short: Ustawa o dostępności cyfrowej
+binds: [podmiot-publiczny]              # who the act binds, feeds /mapowanie
+summary: Strony i aplikacje podmiotów publicznych muszą spełniać kryteria z załącznika.
+deadlines:
+  - date: 2021-06-23
+    what: Aplikacje mobilne muszą spełniać wymagania.
+    unit: art-27                         # which article the date comes from
+    situations: [aplikacja-publiczna]
+    start: true
+---
+
+## Art. 5
+
+Podmiot publiczny ma zapewnić, żeby jego strona i aplikacja spełniały kryteria
+z [załącznika](prawo:ustawa-2019-848/zal). Ust. 3: kto spełnia punkty 9–11
+normy EN 301 549, ten spełnia załącznik.</code></pre>
+<p>Nagłówek sekcji, który nie jest artykułem tej ustawy, zatrzymuje parser. Artykuł bez sekcji pokazuje sam tekst dosłowny z informacją, że streszczenia jeszcze nie ma. Nowy schemat linków <code>prawo:&lt;jednostka&gt;</code> działa jak <code>slownik:</code>, a test sprawdza go względem <code>LegalUnitId</code>.</p>
+
+<h2 id="mapping">6. Mapowanie</h2>
+<p>Krawędzie są w TypeScripcie, w <code>src/content/legal-map.ts</code>. Oba końce to unie (<code>LegalUnitId</code>, <code>CriterionId</code>), więc martwe odwołanie powinno wywrócić <code>tsc</code>.</p>
+<pre><code>export const edges = [
+  // Every annex row is a direct edge; seven do not bind mobile apps.
+  ...annex.map(({ id, mobile }) =&gt; ({
+    legal: "ustawa-2019-848/zal", criterion: id, strength: "wprost",
+    applies: mobile ? ["strona-publiczna", "aplikacja-publiczna"] : ["strona-publiczna"],
+  })),
+  { legal: "ustawa-2024-731/art-20", criterion: "1.4.3", strength: "posrednio",
+    applies: ["produkt-ue"], note: "Przez normy zharmonizowane." },
+] as const satisfies readonly MappingEdge[];</code></pre>
+<ul>
+  <li><strong>Trzy rodzaje powiązania,</strong> jak w planie głównym: <code>wprost</code>, <code>posrednio</code>, <code>powiazane</code>. Wszędzie, gdzie widać krawędź, widać też słownie jej rodzaj.</li>
+  <li><strong>Trzy sytuacje:</strong> <code>strona-publiczna</code>, <code>aplikacja-publiczna</code>, <code>produkt-ue</code>. To stała lista, a pole <code>applies</code> ma typ oparty na niej. „Nie wiem” na <code>/mapowanie</code> to krótka podpowiedź, jak wybrać, a nie czwarta sytuacja.</li>
+  <li><strong>Punktu 9 EN 301 549 nie przechowujemy.</strong> Punkt 9.x.y.z to kryterium x.y.z, więc wyliczamy go z numeru kryterium. Punkty 10 i 11 dostają po zdaniu na stronie normy.</li>
+  <li><strong>Indeks odwrotny</strong> (kryterium → krawędzie) powstaje raz, przy buildzie, dla strony kryterium i wyszukiwarki.</li>
+</ul>
+
+<h2 id="pages">7. Strony</h2>
+<p>Układy według wariantu A każdego ekranu z makiet, patrz sekcja 11.</p>
+<ul>
+  <li><strong><code>/prawo</code>:</strong> trzy ustawy i EN 301 549, przy każdej kogo wiąże i od kiedy, a pod nimi oś czasu: wszystkie terminy po kolei, każdy z linkiem do artykułu, z którego pochodzi. Zastępuje zaślepkę.</li>
+  <li><strong><code>/prawo/$act</code>:</strong> streszczenie, kogo wiąże, terminy, źródło (tekst jednolity, data pobrania, link do ISAP), notka <code>amendedAfter</code> i spis treści według rozdziałów.</li>
+  <li><strong><code>/prawo/$act/$unit</code>:</strong> najpierw nasze streszczenie, dosłowny tekst po rozwinięciu, kryteria, których artykuł wymaga, z rodzajem powiązania i zakresem, poprzedni i następny artykuł. Strona załącznika to pełna lista 49 kryteriów według zasad, z wyjątkiem dla aplikacji mobilnych opisanym tekstem.</li>
+  <li><strong><code>/prawo/en-301-549</code>:</strong> jedna strona, w zakresie opisanym wyżej.</li>
+  <li><strong><code>/mapowanie</code>:</strong> sytuację wybiera się w natywnej grupie przycisków radiowych, a wybór trafia do URL (<code>?sytuacja=produkt-ue</code>). Odpowiedź to obowiązki z datami i kryteria pod każdym. Pełna tabela jest za rozwinięciem. Liczba wyników jest ogłaszana tak jak na <code>/kryteria</code>.</li>
+  <li><strong>Strona kryterium, sekcja „Prawo”:</strong> zastępuje zaślepkę. Dla każdej sytuacji: czy prawo wymaga tego kryterium i w jaki sposób, z linkiem do przepisu. Przy kryteriach, których nie wymaga żadna ustawa, piszemy to wprost: wszystkie AAA, 1.2.4 i dziewięć nowych w 2.2. Przy 4.1.1 dopisujemy, że załącznik wciąż je wymienia.</li>
+  <li><strong>Wyszukiwarka:</strong> artykuły trafiają do indeksu z oznaczeniem, streszczeniem i tekstem dosłownym, jako czwarta grupa „Prawo”. Zapytanie „deklaracja dostępności” znajduje art. 10.</li>
+  <li><strong>Słownik:</strong> podmiot publiczny, deklaracja dostępności, koordynator do spraw dostępności, norma zharmonizowana, domniemanie zgodności, tekst jednolity.</li>
+  <li><strong>Zastrzeżenie:</strong> jedna linijka na końcu każdej strony prawnej: materiał edukacyjny, nie porada prawna, wiążące jest brzmienie z Dziennika Ustaw. Obok data weryfikacji strony.</li>
+</ul>
+
+<h2 id="tests">8. Testy</h2>
+<ul>
+  <li><strong>Importer (Vitest):</strong> parser drzewa jednostek na małym zapisanym fragmencie HTML: zagnieżdżenie, usuwanie przypisów, zaślepki. Testy nie korzystają z sieci.</li>
+  <li><strong>Treść (Vitest):</strong> każdy plik ustawy się parsuje, każdy nagłówek sekcji jest artykułem swojej ustawy, każdy termin wskazuje istniejący artykuł, każdy link <code>prawo:</code> się rozwiązuje, zweryfikowane ustawy mają najwyżej 12 miesięcy.</li>
+  <li><strong>Mapowanie (Vitest):</strong> załącznik to WCAG 2.1 A i AA bez 1.2.4. Żadna krawędź <code>wprost</code> ani <code>posrednio</code> nie wskazuje kryterium AAA ani nowego w 2.2. Krawędzie się nie powtarzają.</li>
+  <li><strong>End to end (Playwright):</strong> <code>/kryteria/1.4.3</code> → załącznik → powrót do 1.4.3. Na <code>/mapowanie</code> wybór sytuacji z klawiatury zmienia listę i URL, a liczba wyników jest ogłaszana.</li>
+  <li><strong>Axe:</strong> <code>/prawo</code>, jedna strona ustawy, <code>art-5</code>, załącznik, <code>/mapowanie</code>.</li>
+</ul>
+
+<h2 id="commits">9. Commity i pull request</h2>
+<p>Jeden pull request, gałąź <code>feat/legal-module</code>:</p>
+<ol>
+  <li><code>docs(design): add phase 4 plan and legal mocks</code>: ten plan i makiety.</li>
+  <li><code>feat(legal): add the legal text importer</code>: skrypt i testy parsera.</li>
+  <li><code>chore(content): generate legal texts</code>: tylko <code>legal.gen.ts</code>.</li>
+  <li><code>feat(legal): add act content format and parser</code>: z testami i linkami <code>prawo:</code>.</li>
+  <li><code>feat(legal): add act and provision pages</code>: <code>/prawo</code> z osią czasu, trasy ustawy i artykułu.</li>
+  <li><code>docs(legal): summarise the digital accessibility act</code>: ustawa 2019/848 i załącznik.</li>
+  <li><code>docs(legal): summarise the special needs and products acts</code>: wybrane części ustaw 1696 i 731.</li>
+  <li><code>feat(legal): map provisions to criteria</code>: załącznik, krawędzie, strona EN 301 549, testy mapowania.</li>
+  <li><code>feat(criteria): show provisions on criterion pages</code>.</li>
+  <li><code>feat(mapping): add the obligations screen</code>.</li>
+  <li><code>feat(search): index provisions</code>.</li>
+  <li><code>docs(glossary): add legal terms</code>.</li>
+  <li><code>docs: update README for phase 4</code>: ze zrzutami ekranu.</li>
+</ol>
+
+<h2 id="risks">10. Ryzyka</h2>
+<table>
+  <thead><tr><th>Ryzyko</th><th>Co robimy</th></tr></thead>
+  <tbody>
+    <tr><td>Prawo zmienia się po imporcie</td><td><code>amendedAfter</code> z API widoczne na stronie, daty pobrania i weryfikacji na każdej stronie, ponowny import przed każdym wydaniem</td></tr>
+    <tr><td>Streszczenie wzięte za przepis</td><td>Streszczenie i tekst dosłowny wyraźnie rozdzielone, streszczenie podpisane jako nasze, zastrzeżenie na każdej stronie</td></tr>
+    <tr><td>Mapowanie zawyża obowiązek</td><td>Rodzaj powiązania zawsze słownie, test przeciw krawędziom do AAA i 2.2, krawędzie ustawy z 2024 r. osłabione do <code>powiazane</code>, jeśli nie ma normy zharmonizowanej</td></tr>
+    <tr><td>Błąd przy przepisywaniu załącznika</td><td>Test względem WCAG 2.1 A i AA; flagi dla aplikacji mobilnych sprawdzone ręcznie z PDF przy przeglądzie</td></tr>
+    <tr><td>API Sejmu zmienia format</td><td>Dotyczy to tylko następnego importu. Wygenerowany plik jest w gicie, a aplikacja nie zależy od API</td></tr>
+  </tbody>
+</table>
+
+<h2 id="decisions">11. Decyzje</h2>
+<ul>
+  <li><strong>Ile tekstu ustaw: ustalone.</strong> Ustawa 2019/848 w całości, z ustaw 1696 i 731 części, z których wynikają obowiązki cyfrowe, jak w sekcji 2.</li>
+  <li><strong>EN 301 549: ustalone.</strong> Numery punktów, tytuły i nasze streszczenia, bez tekstu normy.</li>
+  <li><strong>Źródło: ustalone.</strong> Teksty jednolite z ISAP z datą pobrania, pobierane przez API ELI Sejmu, bo strony ISAP pokazują CAPTCHA.</li>
+  <li><strong>Układ: ustalone.</strong> Wariant A na wszystkich trzech ekranach z <a href="../2026-09-28-legal-mocks/legal-mocks.html">legal-mocks.html</a>. Strona artykułu: tekst równoległy, każdy ustęp obok swojego streszczenia, więc każdy artykuł ma własną stronę. <code>/mapowanie</code>: oś czasu, wszystkie terminy na jednej linii z zaznaczonym dniem dzisiejszym. Sekcja „Prawo”: tabela według sytuacji.</li>
+  <li><strong>Rodzaj krawędzi ustawy z 2024 r.: ustalone.</strong> <code>powiazane</code>, dopóki norma zharmonizowana do EAA nie zostanie wskazana, patrz „Zmiany po rozpoczęciu prac”.</li>
+</ul>
+
+</main>
+</body>
+</html>
