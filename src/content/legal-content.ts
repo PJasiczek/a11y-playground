@@ -1,8 +1,10 @@
 import { type } from "arktype";
-import { type ActSlug, findAct, findUnit, type LegalUnitId, type SituationId, situationIds } from "./legal";
+import { type ActSlug, findAct, findUnit, type LegalUnitId, type SituationId, situationIds, situations } from "./legal";
+import { edgesFor, type Strength, whyNotRequired } from "./legal-map";
 import { type LegalLine, legalTexts } from "./legal-text.gen";
 import { type Fail, IsoDate, readVerification, splitFrontmatter, Status, type Verification } from "./markdown";
 import { createRenderer } from "./render";
+import type { CriterionId } from "./wcag";
 
 /**
  * Our summaries of the acts, one file per act in content/prawo/<act>.md. Server-only, like
@@ -167,3 +169,34 @@ export function isStub(lines: readonly LegalLine[]) {
 export const deadlines: readonly Deadline[] = [...actContent.values()]
   .flatMap((content) => content.deadlines)
   .toSorted((a, b) => a.date.localeCompare(b.date));
+
+export type LawRow = {
+  situation: SituationId;
+  label: string;
+  strength: Strength | null;
+  provision: { id: LegalUnitId; label: string; actShort: string } | null;
+  note: string;
+  since: string | null;
+};
+
+/**
+ * The "Prawo" section of a criterion page (variant A: a table by situation). One row per
+ * situation: how the law reaches the criterion, through which provision and since when, or
+ * why it does not.
+ */
+export function lawRowsFor(id: CriterionId): LawRow[] {
+  const found = edgesFor(id);
+  return situations.map(({ id: situation, label }) => {
+    const edge = found.find((e) => e.applies.includes(situation));
+    const unit = edge ? findUnit(edge.legal) : undefined;
+    const since = deadlines.filter((d) => d.start && d.situations.includes(situation)).at(-1)?.date ?? null;
+    return {
+      situation,
+      label,
+      strength: edge?.strength ?? null,
+      provision: unit ? { id: unit.id, label: unit.label, actShort: actContent.get(unit.act)?.short ?? "" } : null,
+      note: edge ? (edge.note ?? "") : whyNotRequired(id, situation),
+      since: edge ? since : null,
+    };
+  });
+}

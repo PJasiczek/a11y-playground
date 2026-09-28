@@ -3,6 +3,7 @@ import { type } from "arktype";
 import { type CriterionContent, criterionContent } from "./criterion-content";
 import { examples } from "./examples";
 import { glossary } from "./glossary";
+import { lawRowsFor } from "./legal-content";
 import { criteria, type CriterionId } from "./wcag";
 import { criterionTexts } from "./wcag-text.gen";
 
@@ -14,8 +15,8 @@ const CriterionIdInput = type.enumerated(...criteria.map((c) => c.id));
 /**
  * Everything the criterion page shows beyond the structure: the editorial content (null until
  * written), the normative Polish text (null where no authorized translation exists), the short
- * definitions of the glossary terms the content marks, for the preview bubbles, and the examples
- * that show the criterion.
+ * definitions of the glossary terms the content marks, for the preview bubbles, the examples
+ * that show the criterion, and which provisions require it.
  */
 export const getCriterionPage = createServerFn({ method: "GET" })
   .validator(CriterionIdInput)
@@ -29,7 +30,7 @@ export const getCriterionPage = createServerFn({ method: "GET" })
     const relatedExamples = [...examples.values()]
       .filter((example) => example.criteria.includes(data))
       .map(({ slug, title, summary }) => ({ slug, title, summary }));
-    return { content, normative: criterionTexts[data] ?? null, terms, examples: relatedExamples };
+    return { content, normative: criterionTexts[data] ?? null, terms, examples: relatedExamples, law: lawRowsFor(data) };
   });
 
 /** The whole glossary for /slownik, in Polish alphabetical order, with the criteria that use each term. */
