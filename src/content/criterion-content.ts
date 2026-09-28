@@ -1,7 +1,6 @@
 import { type } from "arktype";
-import { Marked, type Tokens } from "marked";
-import { glossary } from "./glossary";
 import { type Fail, IsoDate, readVerification, splitFrontmatter, Status, type Verification } from "./markdown";
+import { createRenderer } from "./render";
 import { contentSections, type Role, roles, type SectionKey } from "./sections";
 import { type CriterionId, isCriterionId } from "./wcag";
 
@@ -32,35 +31,6 @@ export type CriterionContent = Verification & {
   /** Rendered HTML per section. Sections the author has not written yet are absent. */
   sections: Partial<Record<SectionKey, string>>;
 };
-
-const termPrefix = "slownik:";
-
-/**
- * A Markdown renderer for one file. `[nazwę](slownik:nazwa)` marks a glossary term: its first
- * use on the page becomes a link to the glossary plus a preview button (hidden until the page
- * is interactive), later uses stay plain text. Unknown slugs fail the file.
- */
-function createRenderer(fail: Fail) {
-  const terms: string[] = [];
-  const renderer = new Marked({
-    renderer: {
-      link(token: Tokens.Link) {
-        if (!token.href.startsWith(termPrefix)) return false;
-        const slug = token.href.slice(termPrefix.length);
-        const entry = glossary.get(slug);
-        if (!entry) throw fail(`unknown glossary term "${slug}"`);
-        const text = this.parser.parseInline(token.tokens);
-        if (terms.includes(slug)) return text;
-        terms.push(slug);
-        return (
-          `<span class="term"><a href="/slownik#${slug}">${text}</a>` +
-          `<button type="button" class="term-tip" data-term="${slug}" aria-expanded="false" aria-label="Definicja: ${entry.term}" hidden>?</button></span>`
-        );
-      },
-    },
-  });
-  return { terms, render: (markdown: string) => renderer.parse(markdown, { async: false }) };
-}
 
 /**
  * Parses one content file. Throws with the file name and the reason, so a bad file fails
