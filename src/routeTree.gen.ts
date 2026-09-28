@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as PraktykaRouteImport } from './routes/praktyka'
 import { Route as PrawoRouteImport } from './routes/prawo'
 import { Route as SciezkiRouteImport } from './routes/sciezki'
 import { Route as SearchIndexDotjsonRouteImport } from './routes/search-index[.]json'
@@ -18,15 +17,11 @@ import { Route as SlownikRouteImport } from './routes/slownik'
 import { Route as SzukajRouteImport } from './routes/szukaj'
 import { Route as KryteriaIndexRouteImport } from './routes/kryteria/index'
 import { Route as KryteriaCriterionIdRouteImport } from './routes/kryteria/$criterionId'
+import { Route as PraktykaIndexRouteImport } from './routes/praktyka/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PraktykaRoute = PraktykaRouteImport.update({
-  id: '/praktyka',
-  path: '/praktyka',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrawoRoute = PrawoRouteImport.update({
@@ -64,10 +59,14 @@ const KryteriaCriterionIdRoute = KryteriaCriterionIdRouteImport.update({
   path: '/kryteria/$criterionId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PraktykaIndexRoute = PraktykaIndexRouteImport.update({
+  id: '/praktyka/',
+  path: '/praktyka/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/praktyka': typeof PraktykaRoute
   '/prawo': typeof PrawoRoute
   '/sciezki': typeof SciezkiRoute
   '/search-index.json': typeof SearchIndexDotjsonRoute
@@ -75,10 +74,10 @@ export interface FileRoutesByFullPath {
   '/szukaj': typeof SzukajRoute
   '/kryteria/$criterionId': typeof KryteriaCriterionIdRoute
   '/kryteria/': typeof KryteriaIndexRoute
+  '/praktyka/': typeof PraktykaIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/praktyka': typeof PraktykaRoute
   '/prawo': typeof PrawoRoute
   '/sciezki': typeof SciezkiRoute
   '/search-index.json': typeof SearchIndexDotjsonRoute
@@ -86,11 +85,11 @@ export interface FileRoutesByTo {
   '/szukaj': typeof SzukajRoute
   '/kryteria/$criterionId': typeof KryteriaCriterionIdRoute
   '/kryteria': typeof KryteriaIndexRoute
+  '/praktyka': typeof PraktykaIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/praktyka': typeof PraktykaRoute
   '/prawo': typeof PrawoRoute
   '/sciezki': typeof SciezkiRoute
   '/search-index.json': typeof SearchIndexDotjsonRoute
@@ -98,12 +97,12 @@ export interface FileRoutesById {
   '/szukaj': typeof SzukajRoute
   '/kryteria/$criterionId': typeof KryteriaCriterionIdRoute
   '/kryteria/': typeof KryteriaIndexRoute
+  '/praktyka/': typeof PraktykaIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/praktyka'
     | '/prawo'
     | '/sciezki'
     | '/search-index.json'
@@ -111,10 +110,10 @@ export interface FileRouteTypes {
     | '/szukaj'
     | '/kryteria/$criterionId'
     | '/kryteria/'
+    | '/praktyka/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/praktyka'
     | '/prawo'
     | '/sciezki'
     | '/search-index.json'
@@ -122,10 +121,10 @@ export interface FileRouteTypes {
     | '/szukaj'
     | '/kryteria/$criterionId'
     | '/kryteria'
+    | '/praktyka'
   id:
     | '__root__'
     | '/'
-    | '/praktyka'
     | '/prawo'
     | '/sciezki'
     | '/search-index.json'
@@ -133,11 +132,11 @@ export interface FileRouteTypes {
     | '/szukaj'
     | '/kryteria/$criterionId'
     | '/kryteria/'
+    | '/praktyka/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  PraktykaRoute: typeof PraktykaRoute
   PrawoRoute: typeof PrawoRoute
   SciezkiRoute: typeof SciezkiRoute
   SearchIndexDotjsonRoute: typeof SearchIndexDotjsonRoute
@@ -145,6 +144,7 @@ export interface RootRouteChildren {
   SzukajRoute: typeof SzukajRoute
   KryteriaCriterionIdRoute: typeof KryteriaCriterionIdRoute
   KryteriaIndexRoute: typeof KryteriaIndexRoute
+  PraktykaIndexRoute: typeof PraktykaIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -154,13 +154,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/praktyka': {
-      id: '/praktyka'
-      path: '/praktyka'
-      fullPath: '/praktyka'
-      preLoaderRoute: typeof PraktykaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/prawo': {
@@ -212,12 +205,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof KryteriaCriterionIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/praktyka/': {
+      id: '/praktyka/'
+      path: '/praktyka'
+      fullPath: '/praktyka/'
+      preLoaderRoute: typeof PraktykaIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  PraktykaRoute: PraktykaRoute,
   PrawoRoute: PrawoRoute,
   SciezkiRoute: SciezkiRoute,
   SearchIndexDotjsonRoute: SearchIndexDotjsonRoute,
@@ -225,6 +224,7 @@ const rootRouteChildren: RootRouteChildren = {
   SzukajRoute: SzukajRoute,
   KryteriaCriterionIdRoute: KryteriaCriterionIdRoute,
   KryteriaIndexRoute: KryteriaIndexRoute,
+  PraktykaIndexRoute: PraktykaIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
