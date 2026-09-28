@@ -1,6 +1,6 @@
 import { type } from "arktype";
 import { type ActSlug, findAct, findUnit, type LegalUnitId, type SituationId, situationIds } from "./legal";
-import { legalTexts } from "./legal-text.gen";
+import { type LegalLine, legalTexts } from "./legal-text.gen";
 import { type Fail, IsoDate, readVerification, splitFrontmatter, Status, type Verification } from "./markdown";
 import { createRenderer } from "./render";
 
@@ -157,6 +157,11 @@ export const actContent: ReadonlyMap<ActSlug, ActContent> = new Map(
     return [act.slug, parseActMarkdown(path, act.slug, source)];
   }),
 );
+
+/** A repealed or omitted article: listed so numbering stays continuous, but it has no content. */
+export function isStub(lines: readonly LegalLine[]) {
+  return lines.length > 0 && lines.every((line) => /^\((uchylony|pominięty|pominięte)\)$/.test(line.text));
+}
 
 /** Every deadline of every act, oldest first. */
 export const deadlines: readonly Deadline[] = [...actContent.values()]

@@ -3,7 +3,24 @@ import { expect, test } from "@playwright/test";
 import { brokenExamples, tags } from "./axe";
 
 // Routes scanned by axe. Grows with the app; representative pages, not every criterion page.
-const routes = ["/", "/kryteria", "/kryteria/1.4.3", "/kryteria/2.4.11", "/kryteria/4.1.1", "/prawo", "/praktyka", "/praktyka/ikona-jako-przycisk", "/sciezki", "/slownik", "/szukaj"];
+const routes = [
+  "/",
+  "/kryteria",
+  "/kryteria/1.4.3",
+  "/kryteria/2.4.11",
+  "/kryteria/4.1.1",
+  "/prawo",
+  "/prawo/ustawa-2019-848",
+  "/prawo/ustawa-2019-848/art-5",
+  "/prawo/ustawa-2019-848/zal",
+  "/prawo/ustawa-2024-731/art-20",
+  "/prawo/en-301-549",
+  "/praktyka",
+  "/praktyka/ikona-jako-przycisk",
+  "/sciezki",
+  "/slownik",
+  "/szukaj",
+];
 
 for (const route of routes) {
   for (const colorScheme of ["light", "dark"] as const) {

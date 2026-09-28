@@ -4,6 +4,7 @@ import viteReact from "@vitejs/plugin-react";
 import { nitro } from "nitro/vite";
 import { readdirSync } from "node:fs";
 import { defineConfig } from "vite";
+import { acts, legalUnits } from "./src/content/legal.gen.ts";
 import { criteria } from "./src/content/wcag.gen.ts";
 
 // One folder per example; each has a page and two demo documents for its iframes.
@@ -16,8 +17,9 @@ export default defineConfig({
     tailwindcss(),
     tanstackStart({
       // Content is static, so every page is rendered to HTML at build time. Crawling finds the
-      // linked pages; criterion pages are listed explicitly because some (4.1.1) are only linked
-      // from filtered views, and the search index because nothing links to it.
+      // linked pages; criterion and law pages are listed explicitly because some (4.1.1, repealed
+      // articles) are only linked from filtered views or not at all, and the search index
+      // because nothing links to it.
       prerender: {
         enabled: true,
         crawlLinks: true,
@@ -28,6 +30,8 @@ export default defineConfig({
       },
       pages: [
         ...criteria.map((c) => ({ path: `/kryteria/${c.id}` })),
+        ...acts.map((act) => ({ path: `/prawo/${act.slug}` })),
+        ...legalUnits.map((unit) => ({ path: `/prawo/${unit.id}` })),
         ...exampleSlugs.flatMap((slug) => [
           { path: `/praktyka/${slug}` },
           { path: `/demo/${slug}/bad` },
