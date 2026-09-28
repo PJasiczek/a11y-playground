@@ -35,7 +35,7 @@ function HomePage() {
         {/* A plain GET form: it reaches /szukaj?q= even before the page is interactive. */}
         <form role="search" action="/szukaj" method="get" className="mt-7 max-w-136">
           <label htmlFor="home-q" className="mb-1.5 block font-semibold">
-            Szukaj w kryteriach, przykładach i słowniku
+            Szukaj w kryteriach, przykładach, przepisach i słowniku
           </label>
           <div className="flex rounded border-2 border-ink bg-surface">
             <input

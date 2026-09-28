@@ -1,10 +1,10 @@
 import type { Options } from "minisearch";
 
-/** One searchable thing: a criterion, a glossary term or an example. */
+/** One searchable thing: a criterion, a glossary term, an example or an article of an act. */
 export type SearchDoc = {
   id: string;
-  kind: "kryterium" | "pojecie" | "przyklad";
-  /** Criterion number, glossary slug or example slug, used to build the link. */
+  kind: "kryterium" | "pojecie" | "przyklad" | "przepis";
+  /** Criterion number, glossary slug, example slug or "act/article", used to build the link. */
   ref: string;
   title: string;
   summary: string;
