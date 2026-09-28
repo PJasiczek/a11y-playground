@@ -1,0 +1,19 @@
+<form id="form" novalidate>
+  <input id="email" type="text" placeholder="E-mail">
+  <button type="submit">Zapisz się</button>
+</form>
+
+<script>
+  document.getElementById("form").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const field = document.getElementById("email");
+    field.classList.toggle("error", !field.value.includes("@"));
+  });
+</script>
+
+<style>
+  form { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  input { min-height: 44px; padding: 0 0.75rem; border: 1px solid #857f72; border-radius: 4px; font: inherit; }
+  input.error { border: 2px solid #d33; }
+  button { min-height: 44px; padding: 0 1rem; border: 2px solid #14171a; border-radius: 4px; background: #fff; font: inherit; }
+</style>

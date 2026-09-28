@@ -1,0 +1,44 @@
+<ol id="list"></ol>
+<p id="status" role="status" class="status"></p>
+
+<script>
+  const tasks = ["Zadanie 1: raport", "Zadanie 2: faktury", "Zadanie 3: spotkanie"];
+  const list = document.getElementById("list");
+  const status = document.getElementById("status");
+  function render(focus) {
+    list.innerHTML = "";
+    tasks.forEach((task, index) => {
+      const item = document.createElement("li");
+      const label = document.createElement("span");
+      label.textContent = task;
+      item.append(label);
+      for (const [direction, step] of [["w górę", -1], ["w dół", 1]]) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = direction === "w górę" ? "↑" : "↓";
+        button.setAttribute("aria-label", "Przenieś " + task + " " + direction);
+        button.disabled = index + step < 0 || index + step >= tasks.length;
+        button.addEventListener("click", () => {
+          const [moved] = tasks.splice(index, 1);
+          tasks.splice(index + step, 0, moved);
+          status.textContent = moved + " jest teraz na pozycji " + (index + step + 1) + " z " + tasks.length;
+          render(moved + direction);
+        });
+        button.dataset.key = task + direction;
+        item.append(button);
+      }
+      list.append(item);
+    });
+    if (focus) list.querySelector('[data-key="' + focus + '"]:not([disabled])')?.focus();
+  }
+  render();
+</script>
+
+<style>
+  ol { margin: 0; padding-left: 1.5rem; }
+  li { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin: 0.25rem 0; padding: 0.4rem 0.75rem; border: 1px solid #857f72; border-radius: 4px; background: #fff; }
+  li span { flex: 1; }
+  button { width: 44px; height: 44px; border: 1px solid #14171a; border-radius: 4px; background: #fff; font: inherit; cursor: pointer; }
+  button:disabled { opacity: 0.5; cursor: default; }
+  .status { min-height: 1.5em; margin: 0.5rem 0 0; font-size: 0.9375rem; }
+</style>

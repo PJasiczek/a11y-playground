@@ -1,0 +1,28 @@
+<div class="stage">
+  <button type="button" id="open">Usuń konto</button>
+  <p>Inne ustawienia konta: <a href="#">zmień hasło</a>.</p>
+  <div class="overlay" id="overlay" hidden>
+    <div class="box">
+      <p class="title">Usunąć konto?</p>
+      <p>Tej operacji nie da się cofnąć.</p>
+      <span class="btn" onclick="document.getElementById('overlay').hidden = true">Anuluj</span>
+      <span class="btn danger" onclick="document.getElementById('overlay').hidden = true">Usuń</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById("open").addEventListener("click", () => {
+    document.getElementById("overlay").hidden = false;
+  });
+</script>
+
+<style>
+  .stage { position: relative; min-height: 13rem; }
+  button, .btn { display: inline-block; min-height: 44px; padding: 0.6rem 1rem; border: 2px solid #14171a; border-radius: 4px; background: #fff; font: inherit; cursor: pointer; }
+  .overlay { position: absolute; inset: 0; display: grid; place-items: center; background: rgb(20 23 26 / 0.5); }
+  .overlay[hidden] { display: none; }
+  .box { width: min(18rem, 90%); padding: 1rem; border-radius: 4px; background: #fff; }
+  .box .title { margin: 0; font-weight: 700; }
+  .danger { background: #9a1b1b; color: #fff; border-color: #9a1b1b; }
+</style>

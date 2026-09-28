@@ -1,0 +1,14 @@
+<div class="notice">
+  <p>Zapisano zmiany w profilu.</p>
+  <button type="button" class="close" aria-label="Zamknij komunikat" onclick="this.parentElement.hidden = true">
+    <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 16 16">
+      <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="2" />
+    </svg>
+  </button>
+</div>
+
+<style>
+  .notice { position: relative; padding: 1rem 3.5rem 1rem 1rem; border: 1px solid #857f72; border-radius: 4px; background: #fff; }
+  .notice p { margin: 0; }
+  .close { position: absolute; top: 0.25rem; right: 0.25rem; display: grid; place-items: center; width: 44px; height: 44px; border: 0; background: none; color: #14171a; cursor: pointer; }
+</style>

@@ -1,0 +1,35 @@
+<section class="carousel" aria-label="Ogłoszenia">
+  <button type="button" id="toggle">Wstrzymaj</button>
+  <p class="slide" id="slide">Promocja: bilety do Krakowa od 129 zł.</p>
+  <p class="count" id="count">Ogłoszenie 1 z 3</p>
+</section>
+
+<script>
+  const slides = ["Promocja: bilety do Krakowa od 129 zł.", "Nowa trasa: Gdańsk od 19 maja.", "Zapisz się na newsletter i odbierz rabat."];
+  const carousel = document.querySelector(".carousel");
+  const toggle = document.getElementById("toggle");
+  let current = 0;
+  let paused = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let hovered = false;
+  const render = () => {
+    document.getElementById("slide").textContent = slides[current];
+    document.getElementById("count").textContent = "Ogłoszenie " + (current + 1) + " z " + slides.length;
+    toggle.textContent = paused ? "Wznów" : "Wstrzymaj";
+  };
+  toggle.addEventListener("click", () => { paused = !paused; render(); });
+  carousel.addEventListener("mouseenter", () => { hovered = true; });
+  carousel.addEventListener("mouseleave", () => { hovered = false; });
+  setInterval(() => {
+    if (paused || hovered || carousel.contains(document.activeElement)) return;
+    current = (current + 1) % slides.length;
+    render();
+  }, 5000);
+  render();
+</script>
+
+<style>
+  .carousel { padding: 1rem; border: 1px solid #857f72; border-radius: 4px; background: #fff; }
+  button { min-height: 44px; padding: 0 1rem; border: 2px solid #14171a; border-radius: 4px; background: #fff; font: inherit; }
+  .slide { margin: 0.75rem 0 0.25rem; font-size: 1.125rem; }
+  .count { margin: 0; color: #484d52; font-size: 0.875rem; }
+</style>

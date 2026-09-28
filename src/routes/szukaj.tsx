@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import MiniSearch, { type SearchResult } from "minisearch";
 import { type ReactNode, type SubmitEvent, useEffect, useState } from "react";
 import { type SearchDoc, searchOptions } from "~/search/options";
+import { countOf } from "~/lib/plural";
 
 export const Route = createFileRoute("/szukaj")({
   validateSearch: (search: Record<string, unknown>) => (typeof search.q === "string" && search.q.trim() ? { q: search.q } : {}),
@@ -15,7 +16,7 @@ type Hit = SearchResult & Pick<SearchDoc, "kind" | "ref" | "title" | "summary">;
 function isHit(result: SearchResult): result is Hit {
   const { kind, ref, title, summary } = result;
   return (
-    (kind === "kryterium" || kind === "pojecie") &&
+    (kind === "kryterium" || kind === "pojecie" || kind === "przyklad") &&
     typeof ref === "string" &&
     typeof title === "string" &&
     typeof summary === "string"
@@ -29,15 +30,6 @@ function loadIndex() {
     .then((response) => response.text())
     .then((json) => MiniSearch.loadJSON<SearchDoc>(json, searchOptions));
   return indexPromise;
-}
-
-/** Polish count noun for results: 1 wynik, 2–4 wyniki, 5+ wyników (12–14 take the last form). */
-function resultCount(n: number) {
-  const tens = n % 100;
-  const ones = n % 10;
-  if (n === 1) return "1 wynik";
-  if (ones >= 2 && ones <= 4 && (tens < 12 || tens > 14)) return `${String(n)} wyniki`;
-  return `${String(n)} wyników`;
 }
 
 /**
@@ -71,7 +63,8 @@ function SearchPage() {
 
   const criteria = hits?.filter((hit) => hit.kind === "kryterium") ?? [];
   const terms = hits?.filter((hit) => hit.kind === "pojecie") ?? [];
-  const status = !q ? "" : hits ? `${resultCount(hits.length)} dla „${q}”` : "Szukam…";
+  const practice = hits?.filter((hit) => hit.kind === "przyklad") ?? [];
+  const status = !q ? "" : hits ? `${countOf(hits.length, ["wynik", "wyniki", "wyników"])} dla „${q}”` : "Szukam…";
 
   return (
     <>
@@ -79,7 +72,7 @@ function SearchPage() {
       {/* Keyed by the query so the field shows the current query after back and forward. */}
       <form key={q} role="search" action="/szukaj" method="get" onSubmit={onSubmit} className="max-w-152">
         <label htmlFor="q" className="mb-1.5 block font-semibold">
-          Szukaj w kryteriach i słowniku
+          Szukaj w kryteriach, przykładach i słowniku
         </label>
         <p id="q-hint" className="mb-2 text-[0.9375rem] text-ink-2">
           Wpisz numer, nazwę albo problem, na przykład 1.4.3, kontrast, modal, placeholder.
@@ -133,6 +126,26 @@ function SearchPage() {
                 <span className="text-[1.0625rem] font-semibold">
                   {hit.title}
                   {hit.summary ? <span className="mt-1 block text-[0.9375rem] font-normal text-ink-2">{hit.summary}</span> : null}
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ResultGroup>
+      ) : null}
+
+      {practice.length > 0 ? (
+        <ResultGroup title="Przykłady">
+          {practice.map((hit) => (
+            <li key={hit.ref} className="border-t border-rule last:border-b">
+              <Link
+                to="/praktyka/$slug"
+                params={{ slug: hit.ref }}
+                className="grid grid-cols-[5.5rem_1fr] gap-x-4 gap-y-1 px-1 py-3.5 hover:bg-surface max-sm:grid-cols-1"
+              >
+                <span className="font-mono text-[0.8125rem] font-semibold text-ink-2">przykład</span>
+                <span className="text-[1.0625rem] font-semibold">
+                  {hit.title}
+                  <span className="mt-1 block text-[0.9375rem] font-normal text-ink-2">{hit.summary}</span>
                 </span>
               </Link>
             </li>

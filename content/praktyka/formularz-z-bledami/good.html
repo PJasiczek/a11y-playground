@@ -1,0 +1,33 @@
+<form id="form" novalidate>
+  <label for="email">Adres e-mail</label>
+  <p id="email-hint" class="hint">Na przykład jan@przyklad.pl</p>
+  <div class="row">
+    <input id="email" type="email" autocomplete="email" aria-describedby="email-hint email-error">
+    <button type="submit">Zapisz się</button>
+  </div>
+  <p id="email-error" class="error" hidden></p>
+</form>
+
+<script>
+  document.getElementById("form").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const field = document.getElementById("email");
+    const error = document.getElementById("email-error");
+    const valid = field.value.includes("@");
+    field.setAttribute("aria-invalid", String(!valid));
+    error.hidden = valid;
+    error.textContent = valid ? "" : "Błąd: podaj adres z małpą, na przykład jan@przyklad.pl";
+    if (!valid) field.focus();
+  });
+</script>
+
+<style>
+  label { display: block; font-weight: 600; }
+  .hint { margin: 0.25rem 0 0.5rem; color: #484d52; font-size: 0.9375rem; }
+  .row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  input { min-height: 44px; padding: 0 0.75rem; border: 1px solid #857f72; border-radius: 4px; font: inherit; }
+  input[aria-invalid="true"] { border: 2px solid #9a1b1b; }
+  button { min-height: 44px; padding: 0 1rem; border: 2px solid #14171a; border-radius: 4px; background: #fff; font: inherit; }
+  .error { margin: 0.5rem 0 0; color: #9a1b1b; font-weight: 600; }
+  .error::before { content: "⚠ " / ""; }
+</style>

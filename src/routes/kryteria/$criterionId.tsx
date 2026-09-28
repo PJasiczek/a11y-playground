@@ -10,8 +10,8 @@ export const Route = createFileRoute("/kryteria/$criterionId")({
   loader: async ({ params }) => {
     const criterion = findCriterion(params.criterionId);
     if (!criterion) throw notFound();
-    const { content, normative, terms } = await getCriterionPage({ data: criterion.id });
-    return { criterion, content, normative, terms };
+    const { content, normative, terms, examples } = await getCriterionPage({ data: criterion.id });
+    return { criterion, content, normative, terms, examples };
   },
   head: ({ loaderData }) => ({
     meta: [{ title: loaderData ? `${loaderData.criterion.id} ${loaderData.criterion.name} · a11y playground` : "a11y playground" }],
@@ -28,7 +28,7 @@ const pageSections = [
   { id: "tresc-normy", title: "Treść normy" },
   { id: "jak-spelnic", title: "Jak to spełnić", content: "jak-spelnic" },
   { id: "typowe-bledy", title: "Typowe błędy", content: "typowe-bledy" },
-  { id: "przyklad", title: "Przykład", pending: "Wersja zepsuta i poprawna pojawią się razem z działem Praktyka." },
+  { id: "przyklad", title: "Przykład" },
   { id: "jak-sprawdzic", title: "Jak sprawdzić", content: "jak-sprawdzic" },
   { id: "prawo", title: "Prawo", pending: "Przepisy, które wymagają tego kryterium, pojawią się razem z działem Prawo." },
   { id: "powiazane", title: "Powiązane" },
@@ -37,7 +37,7 @@ const pageSections = [
 const emptyNote = <p className="text-ink-2">Ta sekcja nie ma jeszcze treści.</p>;
 
 function CriterionPage() {
-  const { criterion, content, normative, terms } = Route.useLoaderData();
+  const { criterion, content, normative, terms, examples } = Route.useLoaderData();
   const principle = principleOf(criterion);
   const guideline = guidelineOf(criterion);
 
@@ -79,7 +79,25 @@ function CriterionPage() {
     ),
     "jak-spelnic": html("jak-spelnic") ?? emptyNote,
     "typowe-bledy": html("typowe-bledy") ?? emptyNote,
-    przyklad: null,
+    przyklad:
+      examples.length > 0 ? (
+        <ul className="border-t border-rule">
+          {examples.map((example) => (
+            <li key={example.slug} className="border-b border-rule">
+              <Link
+                to="/praktyka/$slug"
+                params={{ slug: example.slug }}
+                className="block px-1 py-3 hover:bg-surface"
+              >
+                <span className="font-semibold">{example.title}</span>
+                <span className="mt-0.5 block text-[0.9375rem] text-ink-2">{example.summary}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-ink-2">Do tego kryterium nie ma jeszcze przykładu.</p>
+      ),
     "jak-sprawdzic": html("jak-sprawdzic") ?? emptyNote,
     prawo: null,
     powiazane: (

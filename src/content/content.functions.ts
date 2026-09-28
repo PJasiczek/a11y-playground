@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { type } from "arktype";
 import { type CriterionContent, criterionContent } from "./criterion-content";
+import { examples } from "./examples";
 import { glossary } from "./glossary";
 import { criteria, type CriterionId } from "./wcag";
 import { criterionTexts } from "./wcag-text.gen";
@@ -12,8 +13,9 @@ const CriterionIdInput = type.enumerated(...criteria.map((c) => c.id));
 
 /**
  * Everything the criterion page shows beyond the structure: the editorial content (null until
- * written), the normative Polish text (null where no authorized translation exists), and the
- * short definitions of the glossary terms the content marks, for the preview bubbles.
+ * written), the normative Polish text (null where no authorized translation exists), the short
+ * definitions of the glossary terms the content marks, for the preview bubbles, and the examples
+ * that show the criterion.
  */
 export const getCriterionPage = createServerFn({ method: "GET" })
   .validator(CriterionIdInput)
@@ -24,7 +26,10 @@ export const getCriterionPage = createServerFn({ method: "GET" })
       const entry = glossary.get(slug);
       if (entry) terms[slug] = { term: entry.term, html: entry.html };
     }
-    return { content, normative: criterionTexts[data] ?? null, terms };
+    const relatedExamples = [...examples.values()]
+      .filter((example) => example.criteria.includes(data))
+      .map(({ slug, title, summary }) => ({ slug, title, summary }));
+    return { content, normative: criterionTexts[data] ?? null, terms, examples: relatedExamples };
   });
 
 /** The whole glossary for /slownik, in Polish alphabetical order, with the criteria that use each term. */
@@ -46,3 +51,31 @@ export const getCriteriaOverview = createServerFn({ method: "GET" }).handler(() 
   for (const [id, { summary, status, roles }] of criterionContent) overview[id] = { summary, status, roles };
   return overview;
 });
+
+/** One example with both fragments, or null for an unknown slug. */
+export const getExample = createServerFn({ method: "GET" })
+  .validator(type("string"))
+  .handler(({ data }) => {
+    const example = examples.get(data);
+    if (!example) return null;
+    const terms: Record<string, { term: string; html: string }> = {};
+    for (const slug of example.terms) {
+      const entry = glossary.get(slug);
+      if (entry) terms[slug] = { term: entry.term, html: entry.html };
+    }
+    return { example, terms };
+  });
+
+/** Every example as a catalogue card, cheapest fix first. */
+export const getExampleCards = createServerFn({ method: "GET" }).handler(() =>
+  [...examples.values()].map(({ slug, title, summary, criteria, effort, gain, preview, status }) => ({
+    slug,
+    title,
+    summary,
+    criteria,
+    effort,
+    gain,
+    preview,
+    status,
+  })),
+);

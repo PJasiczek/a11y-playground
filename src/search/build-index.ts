@@ -1,5 +1,6 @@
 import MiniSearch from "minisearch";
 import { criterionContent } from "~/content/criterion-content";
+import { examples } from "~/content/examples";
 import { glossary } from "~/content/glossary";
 import { criteria } from "~/content/wcag";
 import { type SearchDoc, searchOptions } from "./options";
@@ -9,7 +10,7 @@ import { type SearchDoc, searchOptions } from "./options";
 
 const text = (html: string) => html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 
-/** Every criterion (with or without written content) and every glossary term, as search documents. */
+/** Every criterion (with or without written content), glossary term and example, as search documents. */
 export function buildSearchDocs(): SearchDoc[] {
   const criterionDocs = criteria.map((c): SearchDoc => {
     const content = criterionContent.get(c.id);
@@ -34,7 +35,18 @@ export function buildSearchDocs(): SearchDoc[] {
       body: text(entry.html),
     }),
   );
-  return [...criterionDocs, ...termDocs];
+  const exampleDocs = [...examples.values()].map(
+    (example): SearchDoc => ({
+      id: `przyklad:${example.slug}`,
+      kind: "przyklad",
+      ref: example.slug,
+      title: example.title,
+      summary: example.summary,
+      keywords: example.criteria.join(" "),
+      body: [text(example.introHtml), example.bad.why, example.good.why].join(" "),
+    }),
+  );
+  return [...criterionDocs, ...termDocs, ...exampleDocs];
 }
 
 export function buildSearchIndex() {

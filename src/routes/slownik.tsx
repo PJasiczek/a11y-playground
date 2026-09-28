@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { DraftBadge } from "~/components/level-badge";
 import { getGlossary } from "~/content/content.functions";
+import { countOf } from "~/lib/plural";
 
 // Letters shown in the index. Letters with no term stay as plain text, not dead links.
 const alphabet = "A Ą B C Ć D E Ę F G H I J K L Ł M N Ń O Ó P R S Ś T U W Y Z Ź Ż".split(" ");
@@ -10,15 +11,6 @@ export const Route = createFileRoute("/slownik")({
   head: () => ({ meta: [{ title: "Słownik · a11y playground" }] }),
   component: GlossaryPage,
 });
-
-/** Polish count noun: 1 pojęcie, 2–4 pojęcia, 5+ pojęć (with 12–14 taking the last form). */
-function termCount(n: number) {
-  const tens = n % 100;
-  const ones = n % 10;
-  if (n === 1) return "1 pojęcie";
-  if (ones >= 2 && ones <= 4 && (tens < 12 || tens > 14)) return `${String(n)} pojęcia`;
-  return `${String(n)} pojęć`;
-}
 
 /** The glossary as one alphabetical page (variant D of the glossary mocks). */
 function GlossaryPage() {
@@ -35,7 +27,7 @@ function GlossaryPage() {
     <>
       <div className="flex flex-wrap items-baseline gap-x-5 gap-y-2 pt-8 pb-4">
         <h1 className="text-[1.875rem] font-bold tracking-tight">Słownik</h1>
-        <p className="font-mono text-sm text-ink-2">{termCount(entries.length)}</p>
+        <p className="font-mono text-sm text-ink-2">{countOf(entries.length, ["pojęcie", "pojęcia", "pojęć"])}</p>
       </div>
       <p className="max-w-[60ch] text-ink-2">
         Pojęcia, na których najczęściej potyka się ktoś, kto czyta WCAG pierwszy raz. Przy każdym najpierw wyjaśnienie

@@ -2,8 +2,12 @@ import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { nitro } from "nitro/vite";
+import { readdirSync } from "node:fs";
 import { defineConfig } from "vite";
 import { criteria } from "./src/content/wcag.gen.ts";
+
+// One folder per example; each has a page and two demo documents for its iframes.
+const exampleSlugs = readdirSync("content/praktyka");
 
 export default defineConfig({
   resolve: { tsconfigPaths: true },
@@ -24,6 +28,11 @@ export default defineConfig({
       },
       pages: [
         ...criteria.map((c) => ({ path: `/kryteria/${c.id}` })),
+        ...exampleSlugs.flatMap((slug) => [
+          { path: `/praktyka/${slug}` },
+          { path: `/demo/${slug}/bad` },
+          { path: `/demo/${slug}/good` },
+        ]),
         // Written as a plain file, not /search-index.json/index.html.
         { path: "/search-index.json", prerender: { autoSubfolderIndex: false } },
       ],
