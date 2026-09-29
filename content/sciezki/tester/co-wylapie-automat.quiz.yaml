@@ -1,0 +1,33 @@
+- id: zero-bledow
+  prompt: Axe nie zgłasza żadnych błędów. Co to znaczy?
+  options:
+    - text: Tylko tyle, że reguły automatyczne niczego nie znalazły
+      correct: true
+      why: Duża część kryteriów wymaga oceny człowieka, więc trzeba jeszcze testu ręcznego.
+    - text: Strona spełnia WCAG na poziomie AA
+      why: Automat nie sprawdzi na przykład sensu opisów ani obsługi klawiatury.
+    - text: Można pominąć test klawiaturą
+      why: Pułapki na klawiaturę i złą kolejność fokusu znajdzie tylko człowiek.
+- id: co-znajdzie
+  prompt: Co axe znajdzie sam?
+  options:
+    - text: Obrazek bez atrybutu alt
+      correct: true
+      why: Brak atrybutu da się sprawdzić w kodzie.
+    - text: Pole formularza bez etykiety
+      correct: true
+      why: Brak powiązanej etykiety też widać w kodzie.
+    - text: Opis obrazka, który nie pasuje do treści
+      why: Do tego trzeba rozumieć, co jest na obrazku i po co.
+    - text: Okno modalne, z którego fokus ucieka na stronę
+      why: To wymaga sprawdzenia zachowania, a nie samego kodu.
+- id: nie-znajdzie
+  prompt: Czego automat nie sprawdzi?
+  options:
+    - text: Czy kolejność fokusu ma sens
+      correct: true
+      why: Automat widzi kolejność, ale nie wie, czy jest logiczna.
+    - text: Czy strona ma ustawiony język
+      why: Brak atrybutu lang jest regułą automatyczną.
+    - text: Czy przycisk ma nazwę
+      why: Brak nazwy da się wykryć w drzewie dostępności.

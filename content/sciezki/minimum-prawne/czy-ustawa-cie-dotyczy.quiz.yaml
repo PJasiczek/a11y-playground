@@ -1,0 +1,31 @@
+- id: kto
+  prompt: Które organizacje są podmiotami publicznymi w rozumieniu ustawy?
+  options:
+    - text: Szkoła podstawowa prowadzona przez gminę
+      correct: true
+      why: Należy do sektora finansów publicznych.
+    - text: Spółka miejska prowadząca komunikację
+      correct: true
+      why: Ustawa obejmuje spółki kontrolowane przez samorząd.
+    - text: Prywatny sklep internetowy
+      why: Sklep nie jest podmiotem publicznym. Jego dotyczy ustawa z 2024 r. o produktach i usługach.
+- id: nadawca
+  prompt: Kogo art. 3 wyłącza z ustawy w całości?
+  options:
+    - text: Nadawców radiowych i telewizyjnych
+      correct: true
+      why: Ich strony i aplikacje ustawa wyłącza w całości.
+    - text: Małe gminy
+      why: Wielkość gminy nie ma znaczenia.
+    - text: Szpitale
+      why: Szpitale publiczne są podmiotami publicznymi i ustawa je obejmuje.
+- id: mapa
+  prompt: Na stronie urzędu jest mapa dojazdu. Co z resztą strony?
+  options:
+    - text: Reszta strony musi spełniać wymagania, a wyłączenie mapy opisuje się w deklaracji
+      correct: true
+      why: Wyłączenia dotyczą elementów, nie całej strony.
+    - text: Cała strona jest wyłączona, bo zawiera mapę
+      why: Jeden wyłączony element nie zwalnia reszty.
+    - text: Mapę trzeba usunąć
+      why: Ustawa niczego nie każe usuwać. Mapa po prostu nie musi spełniać wymagań.

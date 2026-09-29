@@ -1,0 +1,31 @@
+- id: odtwarzacz
+  prompt: Tab wchodzi do osadzonego odtwarzacza wideo i już z niego nie wychodzi. Które kryterium to łamie?
+  options:
+    - criterion: "2.1.2"
+      correct: true
+      why: Fokus utknął w komponencie, więc to pułapka na klawiaturę.
+    - criterion: "2.1.1"
+      why: Odtwarzacz może działać z klawiatury. Problem w tym, że nie da się z niego wyjść.
+    - criterion: "2.4.3"
+      why: Kolejność do momentu wejścia jest dobra. Tu fokus po prostu nie idzie dalej.
+- id: znikajacy-fokus
+  prompt: Po kilku Tabach fokus znika, a potem pojawia się dalej na stronie. Co najpewniej się dzieje?
+  options:
+    - text: Fokus trafia na elementy ukryte wizualnie, ale wciąż osiągalne
+      correct: true
+      why: Na przykład zamknięte menu, które schowano przez przesunięcie poza ekran zamiast display none.
+    - text: Przeglądarka ma błąd
+      why: To niemal zawsze błąd strony, nie przeglądarki.
+    - text: Tak ma być, to optymalizacja
+      why: Fokus na niewidocznym elemencie dezorientuje i łamie 2.4.7.
+- id: klawisze
+  prompt: Które klawisze powinny działać na przycisku?
+  options:
+    - text: Enter
+      correct: true
+      why: Enter uruchamia przyciski i linki.
+    - text: Spacja
+      correct: true
+      why: Spacja też uruchamia przyciski. Na linkach przewija stronę.
+    - text: Strzałki
+      why: Strzałki służą do poruszania się w grupach, na przykład w liście albo zakładkach, a nie do uruchamiania przycisku.

@@ -1,0 +1,31 @@
+- id: ile-kryteriow
+  prompt: Ile kryteriów WCAG musi spełniać strona internetowa podmiotu publicznego?
+  options:
+    - text: 49, wszystkie A i AA z WCAG 2.1 poza 1.2.4
+      correct: true
+      why: Tyle wymienia załącznik do ustawy.
+    - text: 86, wszystkie z WCAG 2.2
+      why: Ustawa nie obejmuje poziomu AAA ani kryteriów nowych w 2.2.
+    - text: "42"
+      why: Tyle musi spełnić aplikacja mobilna, bo siedem kryteriów jej nie dotyczy.
+- id: aaa
+  prompt: Czy ustawa wymaga kryterium 1.4.6 Kontrast (wzmocniony) z poziomu AAA?
+  options:
+    - text: Nie, poziom AAA nie jest wymagany
+      correct: true
+      why: Załącznik obejmuje tylko poziomy A i AA.
+    - text: Tak, dla stron urzędów
+      why: Żadna grupa podmiotów nie ma obowiązku AAA.
+    - text: Tylko w aplikacjach mobilnych
+      why: Aplikacje mają mniej wymagań, nie więcej.
+- id: umowa
+  prompt: Zamawiasz nową stronę urzędu. Co wpisać w umowie?
+  options:
+    - text: Zgodność z WCAG 2.1 na poziomie AA
+      correct: true
+      why: To pokrywa załącznik, a nawet trochę więcej, bo obejmuje 1.2.4.
+    - text: Zgodność z normą EN 301 549 w zakresie punktów 9, 10 i 11
+      correct: true
+      why: Ustawa daje domniemanie zgodności z załącznikiem dla tej normy.
+    - text: „Strona ma być dostępna”
+      why: Bez wskazania standardu nie da się sprawdzić, czy wykonawca się wywiązał.

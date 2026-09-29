@@ -1,0 +1,30 @@
+- id: termin-zadania
+  prompt: Ktoś żąda dostępnej wersji dokumentu na stronie. Ile masz czasu?
+  options:
+    - text: 7 dni, a z uzasadnieniem najwyżej dwa miesiące od żądania
+      correct: true
+      why: Tak mówi art. 18.
+    - text: 30 dni
+      why: To termin z innych procedur, nie z art. 18.
+    - text: Nie ma terminu
+      why: Ustawa podaje konkretne terminy.
+- id: kto-moze
+  prompt: Kto może złożyć żądanie zapewnienia dostępności?
+  options:
+    - text: Każdy, bez podawania powodu
+      correct: true
+      why: Nie trzeba wykazywać niepełnosprawności ani interesu.
+    - text: Tylko osoba z orzeczeniem o niepełnosprawności
+      why: Ustawa nie stawia takiego warunku.
+    - text: Tylko mieszkaniec gminy
+      why: Miejsce zamieszkania nie ma znaczenia.
+- id: po-odmowie
+  prompt: Podmiot odmówił zapewnienia dostępności. Co może zrobić osoba, która złożyła żądanie?
+  options:
+    - text: Złożyć skargę do tego podmiotu
+      correct: true
+      why: Skarga przysługuje po odmowie i jest rozpatrywana według Kodeksu postępowania administracyjnego.
+    - text: Nic, odmowa jest ostateczna
+      why: Ustawa przewiduje skargę.
+    - text: Zażądać kary od ministra
+      why: Kary nakłada minister w ramach nadzoru, nie na wniosek pojedynczej osoby.
