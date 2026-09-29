@@ -1,0 +1,30 @@
+- id: dodano-do-koszyka
+  prompt: Po kliknięciu „Dodaj do koszyka” pojawia się napis „Dodano”. Jak przekazać go czytnikowi?
+  options:
+    - text: Wpisać tekst do istniejącego elementu z role="status"
+      correct: true
+      why: Czytnik ogłosi zmianę, a fokus zostanie na przycisku.
+    - text: Przenieść fokus na napis
+      why: Kryterium 4.1.3 chce komunikatu bez przenoszenia fokusu. Osoba traci miejsce na stronie.
+    - text: Wyświetlić napis na zielono
+      why: Kolor nie dociera do czytnika w ogóle.
+- id: lista-jezykow
+  prompt: Wybór opcji z listy języków od razu przeładowuje stronę. Które kryterium to łamie?
+  options:
+    - criterion: "3.2.2"
+      correct: true
+      why: Wybór wartości w polu nie może sam zmieniać kontekstu bez uprzedzenia.
+    - criterion: "3.2.1"
+      why: To kryterium dotyczy samego fokusu. Tu zmiana następuje po wyborze wartości.
+    - criterion: "4.1.3"
+      why: Przeładowanie strony nie jest komunikatem o stanie.
+- id: region-w-dom
+  prompt: Kiedy region na żywo najpewniej zadziała?
+  options:
+    - text: Gdy jest w DOM od początku, a zmienia się tylko jego treść
+      correct: true
+      why: Czytnik obserwuje zmiany w regionie, który już zna.
+    - text: Gdy wstawiasz go do DOM razem z tekstem
+      why: Wiele czytników przegapi komunikat, bo region pojawił się od razu z treścią.
+    - text: Gdy ma display none aż do chwili komunikatu
+      why: Ukryty region nie istnieje dla czytnika, a jego odkrycie działa jak wstawienie nowego.

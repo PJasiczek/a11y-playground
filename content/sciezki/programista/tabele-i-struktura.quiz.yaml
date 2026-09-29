@@ -1,0 +1,30 @@
+- id: tabela-bez-th
+  prompt: Tabela cen ma pogrubiony pierwszy wiersz, ale wszystkie komórki to td. Które kryterium to łamie?
+  options:
+    - criterion: "1.3.1"
+      correct: true
+      why: Relacja między nagłówkiem a komórką jest widoczna, ale nie ma jej w kodzie.
+    - criterion: "1.3.2"
+      why: Kolejność komórek jest dobra. Brakuje informacji, który wiersz jest nagłówkiem.
+    - criterion: "2.4.6"
+      why: Treść nagłówków może być dobra. Problem w tym, że dla czytnika to nie są nagłówki.
+- id: poziomy-naglowkow
+  prompt: Który układ nagłówków jest poprawny?
+  options:
+    - text: h1, h2, h3, h2, h3
+      correct: true
+      why: Każdy poziom schodzi o jeden, a nowa sekcja wraca do h2.
+    - text: h1, h3, h4, h2
+      why: Skok z h1 do h3 sugeruje, że czegoś brakuje w strukturze.
+    - text: h2, h2, h2 bez h1
+      why: Strona bez h1 nie ma nagłówka, który mówi, o czym jest.
+- id: css-order
+  prompt: Przycisk „Dalej” stoi w HTML przed polem formularza, a CSS pokazuje go po polu. Co się stanie?
+  options:
+    - text: Czytnik i Tab trafią na przycisk przed polem
+      correct: true
+      why: Obie drogi idą za kolejnością w HTML, nie za wyglądem.
+    - text: Czytnik przeczyta w kolejności wizualnej
+      why: CSS nie zmienia kolejności w drzewie dostępności.
+    - text: Nic, bo order działa także dla klawiatury
+      why: Order zmienia tylko rozmieszczenie na ekranie. Fokus idzie za HTML.

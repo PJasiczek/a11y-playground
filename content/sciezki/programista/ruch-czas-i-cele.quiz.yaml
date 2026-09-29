@@ -1,0 +1,31 @@
+- id: karuzela
+  prompt: Karuzela zmienia slajd co 4 sekundy i nie da się jej zatrzymać. Które kryterium to łamie?
+  options:
+    - criterion: "2.2.2"
+      correct: true
+      why: Ruch trwa dłużej niż 5 sekund i nie ma pauzy.
+    - criterion: "2.5.7"
+      why: Nikt tu niczego nie przeciąga.
+    - criterion: "2.5.8"
+      why: Rozmiar celów nie ma związku z tym, że karuzela się rusza.
+- id: sortowanie
+  prompt: Listę zadań da się porządkować tylko przeciąganiem, a z klawiatury spacją i strzałkami. Czy to spełnia 2.5.7?
+  options:
+    - text: Nie, brakuje drogi pojedynczym kliknięciem
+      correct: true
+      why: Kryterium dotyczy osób ze wskaźnikiem, które nie utrzymają wciśniętego przycisku. Klawiatura im nie pomoże.
+    - text: Tak, bo działa z klawiatury
+      why: Klawiatura to wymóg 2.1.1. Kryterium 2.5.7 chce alternatywy dla wskaźnika.
+    - text: Tak, bo przeciąganie jest krótkie
+      why: Długość ruchu nie ma znaczenia. Liczy się to, że trzeba go wykonać z wciśniętym przyciskiem.
+- id: male-ikony
+  prompt: Pasek ma pięć ikon po 16 na 16 pikseli, tuż obok siebie. Co naprawia problem z 2.5.8?
+  options:
+    - text: Powiększenie klikalnego obszaru do 24 na 24 pikseli
+      correct: true
+      why: Ikona może zostać mała. Ważny jest obszar, który reaguje na kliknięcie.
+    - text: Odstęp, dzięki któremu okręgi 24 pikseli wokół ikon się nie nakładają
+      correct: true
+      why: Kryterium dopuszcza mniejszy cel, jeśli ma wokół siebie dość miejsca.
+    - text: Podpowiedź title przy każdej ikonie
+      why: Podpowiedź nie zmienia rozmiaru celu.

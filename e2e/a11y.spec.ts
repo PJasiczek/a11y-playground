@@ -19,6 +19,8 @@ const routes = [
   "/praktyka",
   "/praktyka/ikona-jako-przycisk",
   "/sciezki",
+  "/sciezki/programista",
+  "/sciezki/programista/klawiatura-i-fokus",
   "/slownik",
   "/szukaj",
 ];

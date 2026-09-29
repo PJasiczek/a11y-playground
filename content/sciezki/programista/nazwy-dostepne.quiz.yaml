@@ -1,0 +1,32 @@
+- id: przycisk-z-ikona
+  prompt: Co usłyszy czytnik ekranu na tym przycisku?
+  code: |
+    <button><svg viewBox="0 0 16 16">…</svg></button>
+  options:
+    - text: Samo „przycisk”
+      correct: true
+      why: SVG bez tytułu i bez tekstu nie daje nazwy, więc zostaje sama rola.
+    - text: „Zamknij, przycisk”
+      why: Skąd czytnik miałby wziąć słowo Zamknij? Nie ma go nigdzie w kodzie.
+    - text: Nic, przycisk zostanie pominięty
+      why: Przycisk jest w drzewie dostępności i dostaje fokus. Brakuje mu tylko nazwy.
+- id: etykieta-w-nazwie
+  prompt: Na przycisku widać „Szukaj”, a w kodzie jest aria-label="Uruchom wyszukiwarkę". Które kryterium to łamie?
+  options:
+    - criterion: "2.5.3"
+      correct: true
+      why: Widoczny tekst nie jest częścią nazwy, więc polecenie głosowe „kliknij Szukaj” nie zadziała.
+    - criterion: "1.1.1"
+      why: Przycisk ma tekst, więc nie chodzi o treść nietekstową.
+    - criterion: "2.4.6"
+      why: To kryterium dotyczy tego, czy nagłówki i etykiety opisują temat. Tu opis jest, tylko nie zgadza się z nazwą.
+- id: obrazek-w-linku
+  prompt: Link do strony głównej zawiera tylko logo. Jaki alt dać obrazkowi?
+  options:
+    - text: alt="Strona główna"
+      correct: true
+      why: Obrazek jest jedyną treścią linku, więc jego alt mówi, dokąd link prowadzi.
+    - text: alt="Logo firmy w kolorze niebieskim"
+      why: Opis wyglądu nie mówi, co się stanie po kliknięciu.
+    - text: alt=""
+      why: Pusty alt w linku bez innej treści zostawia link bez nazwy.
