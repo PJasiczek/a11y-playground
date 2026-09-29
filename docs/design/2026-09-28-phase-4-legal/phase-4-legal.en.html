@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan: phase 4, the legal module</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1.25rem 6rem;
+    background: #000; color: #fff;
+    font: 16px/1.65 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  main { max-width: 82ch; margin: 0 auto; }
+  h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 .5rem; letter-spacing: -.02em; }
+  h2 { font-size: 1.2rem; margin: 3rem 0 .75rem; padding-top: 1rem; border-top: 1px solid #262626; letter-spacing: -.01em; }
+  h3 { font-size: 1rem; margin: 1.75rem 0 .5rem; }
+  p, li, dd { color: #e5e5e5; }
+  a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  ul, ol { padding-left: 1.3rem; }
+  li { margin: .3rem 0; }
+  code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .875em; background: #141414; border: 1px solid #262626; border-radius: 3px; padding: .08em .3em; }
+  pre { background: #0b0b0b; border: 1px solid #262626; border-radius: 4px; padding: .9rem 1rem; overflow-x: auto; }
+  pre code { background: none; border: 0; padding: 0; font-size: .82rem; line-height: 1.55; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; display: block; overflow-x: auto; }
+  th, td { border: 1px solid #262626; padding: .45rem .6rem; text-align: left; vertical-align: top; }
+  th { background: #101010; font-weight: 600; }
+  .meta { color: #a3a3a3; font-size: .85rem; margin: 0 0 1.5rem; }
+  .meta a { color: #fff; }
+  .flag { border-left: 2px solid #737373; padding: .1rem 0 .1rem .85rem; margin: 1rem 0; color: #d4d4d4; font-size: .93rem; }
+  .toc { border: 1px solid #262626; padding: 1rem 1rem 1rem 2.4rem; margin: 1.5rem 0 0; }
+  .toc li { margin: .15rem 0; }
+  @media (max-width: 40rem) { body { padding: 1.25rem .9rem 4rem; } h1 { font-size: 1.45rem; } }
+</style>
+</head>
+<body>
+<main>
+
+<p class="meta"><a href="phase-4-legal.pl.html" hreflang="pl">Wersja polska</a></p>
+
+<h1>Plan: phase 4, the legal module</h1>
+<p class="meta">Detailed plan for phase 4 of the <a href="../2026-09-27-wcag-learning-app/wcag-learning-app.en.html">main plan</a>. Mocks of the act page, the obligations screen and the "Prawo" section: <a href="../2026-09-28-legal-mocks/legal-mocks.html">legal-mocks.html</a>. Plan version: 2026-09-28, updated 2026-09-28.</p>
+
+<h2 id="changes">Changes after work started</h2>
+<p>Decisions made while building phase 4. Where they conflict with the sections below, these win.</p>
+<ul>
+  <li><strong>The 2024 act edges are <code>powiazane</code>.</strong> EN 301 549 V4.1.1 (September 2026, WCAG 2.2) is the first version written for the EAA, but the Official Journal does not cite it yet, so art. 20 gives no presumption of conformity today. The edges cover the WCAG 2.2 A and AA criteria, as context, with that note.</li>
+  <li><strong>Drafts have no <code>lastVerified</code>.</strong> Act files follow the same rule as criteria: a draft shows its draft badge, a verified file carries the date. The example in section 5 is corrected.</li>
+  <li><strong>Summaries per ustęp.</strong> The parallel view (variant A) needs a summary per row, so an article section may hold <code>### ust. 3</code> subsections. The article title is ours: <code>## Art. 5. Wymagania</code>.</li>
+  <li><strong>Glossary before the summaries.</strong> The summaries link the new legal terms, so <code>docs(glossary): add legal terms</code> moves ahead of them in the commit series.</li>
+  <li><strong>"Stan prawny na", not "dziś".</strong> Pages are prerendered, so the timeline marks the date the text was downloaded instead of the reader's today.</li>
+</ul>
+
+<ol class="toc">
+  <li><a href="#goal">Goal and definition of done</a></li>
+  <li><a href="#scope">Scope</a></li>
+  <li><a href="#findings">What the sources say</a></li>
+  <li><a href="#import">Importing the text</a></li>
+  <li><a href="#format">Content format</a></li>
+  <li><a href="#mapping">Mapping</a></li>
+  <li><a href="#pages">Pages</a></li>
+  <li><a href="#tests">Tests</a></li>
+  <li><a href="#commits">Commits and the pull request</a></li>
+  <li><a href="#risks">Risks</a></li>
+  <li><a href="#decisions">Decisions</a></li>
+</ol>
+
+<h2 id="goal">1. Goal and definition of done</h2>
+<p>After phase 4 a reader can answer the second question from the main plan: "I am a public body, or I sell a product in the EU. What do I have to do, and by when?" They can also go from a criterion to the provision that requires it and back, and read that provision in the words of the statute.</p>
+<p>Done when:</p>
+<ul>
+  <li>The three acts are in the app as a tree of provisions, imported by a script from the Sejm ELI API, each with the consolidated text it comes from and the retrieval date.</li>
+  <li>Every provision in scope has our plain-language summary, shown first, with the literal text behind a disclosure.</li>
+  <li>An end-to-end test goes from <code>/kryteria/1.4.3</code> to the provision that requires it and back.</li>
+  <li><code>/mapowanie</code> answers "what applies to me" for three situations, with dated obligations and the criteria under each.</li>
+  <li>No page implies that an act requires AAA criteria or the nine criteria new in 2.2. A test checks this against the mapping.</li>
+</ul>
+
+<h2 id="scope">2. Scope</h2>
+<table>
+  <thead><tr><th>In</th><th>Out, and where it goes</th></tr></thead>
+  <tbody>
+    <tr><td>Act of 4 April 2019 on digital accessibility (Dz.U. 2019 poz. 848): every article and the annex</td><td>The acts' implementing regulations: later, if a lesson needs them</td></tr>
+    <tr><td>Act of 19 July 2019 on persons with special needs (Dz.U. 2019 poz. 1696): chapter 1, art. 14 (the coordinator), chapter 4 (complaints and requests for accessibility)</td><td>Its chapters on certification, the Accessibility Fund and amendments</td></tr>
+    <tr><td>Act of 26 April 2024 on products and services (Dz.U. 2024 poz. 731): chapters 1 to 4, 6 (penalties) and 8 (transitional provisions)</td><td>Chapter 5 (market surveillance procedure) and chapter 7 (amendments to other acts)</td></tr>
+    <tr><td>EN 301 549: what it is, the version the 2019 act cites, clause 9 as the mirror of WCAG, the other chapters as one table of titles in our words</td><td>The text of the standard: never stored, as agreed</td></tr>
+    <tr><td>Directives 2016/2102 and 2019/882: one paragraph each on the act's page, as its source</td><td>Separate directive pages</td></tr>
+    <tr><td><code>/prawo</code>, act pages, provision pages, <code>/mapowanie</code>, the timeline, the "Prawo" section on criterion pages, provisions in search, legal terms in the glossary</td><td><code>/o-projekcie</code>: the disclaimer goes on every legal page instead</td></tr>
+  </tbody>
+</table>
+
+<h2 id="findings">3. What the sources say</h2>
+<p>Checked against the Sejm ELI API on 2026-09-28. These findings shape the design, so they are in the plan. Everything else is verified again when the content is written.</p>
+<ul>
+  <li><strong>ISAP pages ask for a CAPTCHA.</strong> The CAPTCHA page points to <code>api.sejm.gov.pl/eli</code>, which serves the same acts as JSON metadata, HTML text and PDF without it. The importer uses the API.</li>
+  <li><strong>The HTML is already a tree.</strong> Articles, ustępy, punkty and litery come as nested elements with stable ids (<code>arti_5</code>, <code>pass_3</code>, <code>pint_1</code>). The importer maps them rather than parsing prose.</li>
+  <li><strong>The latest consolidated texts:</strong> 2019/848 in Dz.U. 2023 poz. 1440. 2019/1696 in Dz.U. 2024 poz. 1411. The 2024 act has none yet and is imported from its original text.</li>
+  <li><strong>The 1696 consolidated text is older than an amendment.</strong> The 2024 act changes 2019/1696 from 28 June 2025, after the 2024 consolidated text was published. The act page has to say so and name the amending act. We do not merge amendments ourselves.</li>
+  <li><strong>The annex to the 2019 act is missing from the HTML.</strong> It exists only as a table in the PDF. It lists 49 criteria: every A and AA criterion of WCAG 2.1 except 1.2.4 (live captions). Seven do not apply to mobile apps: 2.4.1, 2.4.2, 2.4.5, 3.1.2, 3.2.3, 3.2.4, 4.1.3. 4.1.1 is still listed, although 2.2 removed it.</li>
+  <li><strong>Art. 5 ust. 3 of the 2019 act</strong> presumes conformity for anyone who meets clauses 9, 10 and 11 of the Polish Standard adopting EN 301 549 V3.2.1:2021. That is the link to the standard.</li>
+  <li><strong>The 2024 act does not name WCAG.</strong> Art. 8 and 12 set functional requirements. Art. 20 presumes conformity with harmonised standards. Whether a harmonised standard under the EAA has been published in the Official Journal has to be checked when the edges are written. The answer decides whether those edges are <code>posrednio</code> or <code>powiazane</code>. Checked: not yet, see "Changes after work started".</li>
+  <li><strong>Dates from the text:</strong> the 2019 act binds websites first published on or after 23 September 2018 from 23 September 2019, older websites from 23 September 2020, and mobile apps from 23 June 2021 (art. 27). The 2024 act applies from 28 June 2025 (art. 88). Existing contracts and products used for services have until 28 June 2030 (art. 85). Some web content published before 28 June 2025 is excluded (art. 86). Declarations under the 2019 act are reviewed by 31 March each year (art. 11).</li>
+</ul>
+
+<h2 id="import">4. Importing the text</h2>
+<p><code>scripts/import-legal.ts</code>, run by hand like <code>import:wcag</code>, with its output reviewed in the pull request. The app fetches nothing at runtime.</p>
+<ul>
+  <li>Input: a list of acts, each with its ELI id, the consolidated text to read and the units in scope (all, or a list of chapters and articles).</li>
+  <li>For each act: metadata from the API (title, dates, status, amending acts), the HTML text, a walk over the unit tree.</li>
+  <li>Cleanup: drop footnote markers such as "W brzmieniu ustalonym przez…", keep <code>(uchylony)</code> and <code>(pominięty)</code> as empty stubs, so numbering stays continuous.</li>
+  <li>A warning, not a failure, when an act has amending acts in force after its consolidated text. The warning lands in the generated file as <code>amendedAfter</code> and the page shows it.</li>
+  <li>Output: <code>src/content/legal.gen.ts</code>, the same pattern as <code>wcag.gen.ts</code>. Unit ids are a union type.</li>
+</ul>
+<p>The annex is transcribed once by hand into <code>src/content/annex-2019-848.ts</code> (49 ids plus the mobile flag), with a comment pointing at pages 11 and 12 of Dz.U. 2023 poz. 1440. That is cheaper than a PDF parser for one table that changes by statute. A test pins it to "WCAG 2.1 A and AA without 1.2.4", so a typo fails.</p>
+<pre><code>// src/content/legal.gen.ts (generated)
+export const acts = {
+  "ustawa-2019-848": {
+    title: "Ustawa z dnia 4 kwietnia 2019 r. o dostępności cyfrowej…",
+    eli: "DU/2019/848",
+    consolidated: { eli: "DU/2023/1440", label: "Dz.U. 2023 poz. 1440" },
+    retrieved: "2026-09-28",
+    amendedAfter: [],
+  },
+  // …
+} as const;
+
+export const units = [
+  { id: "ustawa-2019-848/art-5", act: "ustawa-2019-848", label: "Art. 5",
+    chapter: null, text: [{ label: "1.", text: "Podmiot publiczny zapewnia…" }, /* ust. 2, 3 */] },
+  // …
+] as const;
+
+export type LegalUnitId = (typeof units)[number]["id"];</code></pre>
+<p>A page is an article, not an ustęp. Ustępy are anchors on it (<code>#ust-3</code>), and a mapping edge may point at either. Articles are what people cite, and a page per ustęp would split two-sentence articles into fragments.</p>
+
+<h2 id="format">5. Content format</h2>
+<p>One Markdown file per act, <code>content/prawo/&lt;act&gt;.md</code>. The frontmatter holds what the pages and the timeline need. The body holds our summaries, one <code>##</code> section per article, headed by its label. Same parser, same glossary links, same draft badge as criteria.</p>
+<pre><code>---
+status: szkic
+short: Ustawa o dostępności cyfrowej
+binds: [podmiot-publiczny]              # who the act binds, feeds /mapowanie
+summary: Strony i aplikacje podmiotów publicznych muszą spełniać kryteria z załącznika.
+deadlines:
+  - date: 2021-06-23
+    what: Aplikacje mobilne muszą spełniać wymagania.
+    unit: art-27                         # which article the date comes from
+    situations: [aplikacja-publiczna]
+    start: true
+---
+
+## Art. 5
+
+Podmiot publiczny ma zapewnić, żeby jego strona i aplikacja spełniały kryteria
+z [załącznika](prawo:ustawa-2019-848/zal). Ust. 3: kto spełnia punkty 9–11
+normy EN 301 549, ten spełnia załącznik.</code></pre>
+<p>A section heading that is not an article of the act fails the parser. An article with no section shows its literal text alone, with a note that there is no summary yet. The new link scheme <code>prawo:&lt;unit&gt;</code> works like <code>slownik:</code> and is checked against <code>LegalUnitId</code> by a test.</p>
+
+<h2 id="mapping">6. Mapping</h2>
+<p>The edges live in TypeScript, in <code>src/content/legal-map.ts</code>, because both ends are unions (<code>LegalUnitId</code>, <code>CriterionId</code>) and a dead reference should fail <code>tsc</code>.</p>
+<pre><code>export const edges = [
+  // Every annex row is a direct edge; seven do not bind mobile apps.
+  ...annex.map(({ id, mobile }) =&gt; ({
+    legal: "ustawa-2019-848/zal", criterion: id, strength: "wprost",
+    applies: mobile ? ["strona-publiczna", "aplikacja-publiczna"] : ["strona-publiczna"],
+  })),
+  { legal: "ustawa-2024-731/art-20", criterion: "1.4.3", strength: "posrednio",
+    applies: ["produkt-ue"], note: "Przez normy zharmonizowane." },
+] as const satisfies readonly MappingEdge[];</code></pre>
+<ul>
+  <li><strong>Three strengths,</strong> as in the main plan: <code>wprost</code>, <code>posrednio</code>, <code>powiazane</code>. Every place that shows an edge shows its strength in words.</li>
+  <li><strong>Three situations:</strong> <code>strona-publiczna</code>, <code>aplikacja-publiczna</code>, <code>produkt-ue</code>. They are a constant list, and <code>applies</code> is typed against it. "Nie wiem" on <code>/mapowanie</code> is a short guide to picking one, not a fourth situation.</li>
+  <li><strong>EN 301 549 clause 9 is not stored.</strong> Clause 9.x.y.z is criterion x.y.z, so it is computed from the criterion id. Clauses 10 and 11 get one sentence each on the standard's page.</li>
+  <li><strong>Reverse index</strong> (criterion → edges) is built once at build time for the criterion page and search.</li>
+</ul>
+
+<h2 id="pages">7. Pages</h2>
+<p>Layouts follow variant A of each screen in the mocks, see section 11.</p>
+<ul>
+  <li><strong><code>/prawo</code>:</strong> the three acts and EN 301 549, each with who it binds and when it applies, then the timeline: all deadlines in date order, each linking to the article it comes from. Replaces the placeholder.</li>
+  <li><strong><code>/prawo/$act</code>:</strong> summary, who it binds, deadlines, the source (consolidated text, retrieval date, link to ISAP), the <code>amendedAfter</code> note, and the table of contents by chapter.</li>
+  <li><strong><code>/prawo/$act/$unit</code>:</strong> our summary first, the literal text in a disclosure, the criteria the article requires with strength and scope, previous and next article. The annex page is the full list of 49 criteria grouped by principle, with the mobile exception marked in text.</li>
+  <li><strong><code>/prawo/en-301-549</code>:</strong> one page, as scoped above.</li>
+  <li><strong><code>/mapowanie</code>:</strong> the situation is a native radio group, stored in the URL (<code>?sytuacja=produkt-ue</code>). The answer is the obligations with dates and the criteria under each. The full table sits behind a disclosure. The result count is announced as on <code>/kryteria</code>.</li>
+  <li><strong>Criterion page, section "Prawo":</strong> replaces the placeholder. For each situation, whether and how the law requires the criterion, with the provision as a link. Criteria no act requires say so plainly: all AAA criteria, 1.2.4, and the nine new in 2.2. 4.1.1 notes that the annex still lists it.</li>
+  <li><strong>Search:</strong> articles join the index with label, summary and literal text, as a fourth group, "Prawo". "deklaracja dostępności" finds art. 10.</li>
+  <li><strong>Glossary:</strong> podmiot publiczny, deklaracja dostępności, koordynator do spraw dostępności, norma zharmonizowana, domniemanie zgodności, tekst jednolity.</li>
+  <li><strong>Disclaimer:</strong> one line at the end of every legal page: educational material, not legal advice, the binding wording is in the Dziennik Ustaw. Next to it, the page's verification date.</li>
+</ul>
+
+<h2 id="tests">8. Tests</h2>
+<ul>
+  <li><strong>Importer (Vitest):</strong> the unit-tree parser on a small saved HTML fixture: nesting, footnote removal, stubs. No network in tests.</li>
+  <li><strong>Content (Vitest):</strong> every act file parses, every section heading is an article of its act, every deadline points at an existing article, every <code>prawo:</code> link resolves, verified acts are at most 12 months old.</li>
+  <li><strong>Mapping (Vitest):</strong> the annex equals WCAG 2.1 A and AA without 1.2.4. No <code>wprost</code> or <code>posrednio</code> edge points at an AAA criterion or one new in 2.2. Edges are unique.</li>
+  <li><strong>End to end (Playwright):</strong> <code>/kryteria/1.4.3</code> → the annex → back to 1.4.3. On <code>/mapowanie</code>, picking a situation from the keyboard changes the list and the URL, and the count is announced.</li>
+  <li><strong>Axe:</strong> <code>/prawo</code>, one act page, <code>art-5</code>, the annex, <code>/mapowanie</code>.</li>
+</ul>
+
+<h2 id="commits">9. Commits and the pull request</h2>
+<p>One pull request, branch <code>feat/legal-module</code>:</p>
+<ol>
+  <li><code>docs(design): add phase 4 plan and legal mocks</code>, this plan and the mocks.</li>
+  <li><code>feat(legal): add the legal text importer</code>, the script and parser tests.</li>
+  <li><code>chore(content): generate legal texts</code>, <code>legal.gen.ts</code> and nothing else.</li>
+  <li><code>feat(legal): add act content format and parser</code>, with tests and the <code>prawo:</code> links.</li>
+  <li><code>feat(legal): add act and provision pages</code>, <code>/prawo</code> with the timeline, the act and article routes.</li>
+  <li><code>docs(legal): summarise the digital accessibility act</code>, 2019/848 and the annex.</li>
+  <li><code>docs(legal): summarise the special needs and products acts</code>, the selected parts of 1696 and 731.</li>
+  <li><code>feat(legal): map provisions to criteria</code>, the annex, the edges, the EN 301 549 page, the mapping tests.</li>
+  <li><code>feat(criteria): show provisions on criterion pages</code>.</li>
+  <li><code>feat(mapping): add the obligations screen</code>.</li>
+  <li><code>feat(search): index provisions</code>.</li>
+  <li><code>docs(glossary): add legal terms</code>.</li>
+  <li><code>docs: update README for phase 4</code>, with screenshots.</li>
+</ol>
+
+<h2 id="risks">10. Risks</h2>
+<table>
+  <thead><tr><th>Risk</th><th>What we do</th></tr></thead>
+  <tbody>
+    <tr><td>The law changes after we import it</td><td><code>amendedAfter</code> from the API shown on the page, retrieval and verification dates on every page, the importer rerun before each release</td></tr>
+    <tr><td>A summary read as the law</td><td>Summary and literal text visually separate, the summary labelled as ours, the disclaimer on every page</td></tr>
+    <tr><td>The mapping overstates the obligation</td><td>Strength in words everywhere, the test against AAA and 2.2 edges, the 2024 act edges weakened to <code>powiazane</code> if there is no harmonised standard</td></tr>
+    <tr><td>The annex transcribed wrong</td><td>The test against WCAG 2.1 A and AA; the mobile flags checked by hand against the PDF in review</td></tr>
+    <tr><td>The Sejm API changes shape</td><td>It only affects the next import. The generated file is in git and the app does not depend on the API</td></tr>
+  </tbody>
+</table>
+
+<h2 id="decisions">11. Decisions</h2>
+<ul>
+  <li><strong>How much statute text: decided.</strong> 2019/848 in full, the parts of 1696 and 731 that create digital obligations, as in section 2.</li>
+  <li><strong>EN 301 549: decided.</strong> Clause numbers, titles and our summaries, no text of the standard.</li>
+  <li><strong>Source: decided.</strong> Consolidated texts from ISAP with the retrieval date, fetched through the Sejm ELI API because ISAP pages ask for a CAPTCHA.</li>
+  <li><strong>Layout: decided.</strong> Variant A on all three screens in <a href="../2026-09-28-legal-mocks/legal-mocks.html">legal-mocks.html</a>. Article page: parallel text, each ustęp next to its summary, so every article keeps its own page. <code>/mapowanie</code>: the timetable, every deadline on one line with today marked. "Prawo" section: the table by situation.</li>
+  <li><strong>Strength of the 2024 act edges: decided.</strong> <code>powiazane</code> until a harmonised standard under the EAA is cited, see "Changes after work started".</li>
+</ul>
+
+</main>
+</body>
+</html>

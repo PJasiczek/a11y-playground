@@ -1,8 +1,11 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import type { ReactNode } from "react";
+import { ProvisionLink, StrengthLabel } from "~/components/legal";
 import { DraftBadge, LevelBadge, NewBadge } from "~/components/level-badge";
 import { TermTips } from "~/components/term-tips";
 import { getCriterionPage } from "~/content/content.functions";
+import { formatDate } from "~/content/legal";
+import { enClause } from "~/content/legal-map";
 import type { SectionKey } from "~/content/sections";
 import { findCriterion, guidelineOf, isNewIn22, isObsolete, principleOf } from "~/content/wcag";
 
@@ -10,8 +13,8 @@ export const Route = createFileRoute("/kryteria/$criterionId")({
   loader: async ({ params }) => {
     const criterion = findCriterion(params.criterionId);
     if (!criterion) throw notFound();
-    const { content, normative, terms, examples } = await getCriterionPage({ data: criterion.id });
-    return { criterion, content, normative, terms, examples };
+    const { content, normative, terms, examples, law } = await getCriterionPage({ data: criterion.id });
+    return { criterion, content, normative, terms, examples, law };
   },
   head: ({ loaderData }) => ({
     meta: [{ title: loaderData ? `${loaderData.criterion.id} ${loaderData.criterion.name} · a11y playground` : "a11y playground" }],
@@ -21,7 +24,7 @@ export const Route = createFileRoute("/kryteria/$criterionId")({
 
 /**
  * Fixed order, so the page can be read by habit. Sections with a `content` key come from the
- * Markdown file; the rest are filled by later phases (normative text, examples, law).
+ * Markdown file; the rest come from the normative text, the examples and the legal mapping.
  */
 const pageSections = [
   { id: "kogo-dotyczy", title: "Kogo to dotyczy", content: "kogo-dotyczy" },
@@ -30,14 +33,15 @@ const pageSections = [
   { id: "typowe-bledy", title: "Typowe błędy", content: "typowe-bledy" },
   { id: "przyklad", title: "Przykład" },
   { id: "jak-sprawdzic", title: "Jak sprawdzić", content: "jak-sprawdzic" },
-  { id: "prawo", title: "Prawo", pending: "Przepisy, które wymagają tego kryterium, pojawią się razem z działem Prawo." },
+  { id: "prawo", title: "Prawo" },
   { id: "powiazane", title: "Powiązane" },
-] as const satisfies readonly { id: string; title: string; content?: SectionKey; pending?: string }[];
+] as const satisfies readonly { id: string; title: string; content?: SectionKey }[];
 
 const emptyNote = <p className="text-ink-2">Ta sekcja nie ma jeszcze treści.</p>;
 
 function CriterionPage() {
-  const { criterion, content, normative, terms, examples } = Route.useLoaderData();
+  const { criterion, content, normative, terms, examples, law } = Route.useLoaderData();
+  const clause = enClause(criterion);
   const principle = principleOf(criterion);
   const guideline = guidelineOf(criterion);
 
@@ -99,7 +103,62 @@ function CriterionPage() {
         <p className="text-ink-2">Do tego kryterium nie ma jeszcze przykładu.</p>
       ),
     "jak-sprawdzic": html("jak-sprawdzic") ?? emptyNote,
-    prawo: null,
+    // Variant A of the legal mocks: one row per situation, the reason in words when nothing applies.
+    prawo: (
+      <>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse text-[0.9375rem]">
+            <caption className="sr-only">Kto musi spełnić kryterium {criterion.id}</caption>
+            <thead>
+              <tr className="border-b border-ink text-left font-mono text-xs tracking-wide text-ink-2 uppercase">
+                <th scope="col" className="py-2 pr-3 font-semibold">
+                  Sytuacja
+                </th>
+                <th scope="col" className="py-2 pr-3 font-semibold">
+                  Wymagane
+                </th>
+                <th scope="col" className="py-2 pr-3 font-semibold">
+                  Przepis
+                </th>
+                <th scope="col" className="py-2 font-semibold">
+                  Od
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {law.map((row) => (
+                <tr key={row.situation} className="border-b border-rule align-top">
+                  <th scope="row" className="py-3 pr-3 text-left font-semibold">
+                    {row.label}
+                  </th>
+                  <td className="py-3 pr-3">
+                    <StrengthLabel strength={row.strength} />
+                  </td>
+                  <td className="py-3 pr-3">
+                    {row.provision ? (
+                      <>
+                        <ProvisionLink id={row.provision.id} className="inline-flex min-h-11 items-center text-accent underline underline-offset-3">
+                          {row.provision.label === "Załącznik" ? "Załącznik do ustawy" : row.provision.label}
+                        </ProvisionLink>{" "}
+                        <span className="text-ink-2">· {row.provision.actShort}</span>
+                      </>
+                    ) : null}
+                    {row.note ? <span className="mt-0.5 block text-ink-2">{row.note}</span> : null}
+                  </td>
+                  <td className="py-3 font-mono whitespace-nowrap">{row.since ? formatDate(row.since) : "—"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 text-[0.9375rem]">
+          {clause ? <span className="font-mono text-[0.8125rem] text-ink-2">Technicznie: EN 301 549, punkt {clause}</span> : null}
+          <Link to="/mapowanie" className="inline-flex min-h-11 items-center text-accent underline underline-offset-3">
+            Co obowiązuje twój produkt
+          </Link>
+        </p>
+      </>
+    ),
     powiazane: (
       <>
         {content && content.related.length > 0 ? (
@@ -191,7 +250,7 @@ function CriterionPage() {
               <h2 id={`${section.id}-title`} className="mb-3 border-t-2 border-ink pt-5 text-xl font-bold tracking-tight">
                 {section.title}
               </h2>
-              {"pending" in section ? <p className="text-ink-2">{section.pending}</p> : body[section.id]}
+              {body[section.id]}
             </section>
           ))}
 </TermTips>

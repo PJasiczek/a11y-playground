@@ -270,4 +270,14 @@
     content: "✕" / "";
     color: var(--bad);
   }
+
+  /*
+   * Bold in a summary of a statute marks what matters to the reader, so it gets the marker,
+   * which keeps one meaning across the app. Bold stays bold, so the emphasis is not colour alone.
+   */
+  .legal-summary strong {
+    background: var(--color-marker);
+    color: var(--color-on-marker);
+    padding: 0 0.15em;
+  }
 }

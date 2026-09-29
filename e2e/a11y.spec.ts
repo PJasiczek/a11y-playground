@@ -3,7 +3,25 @@ import { expect, test } from "@playwright/test";
 import { brokenExamples, tags } from "./axe";
 
 // Routes scanned by axe. Grows with the app; representative pages, not every criterion page.
-const routes = ["/", "/kryteria", "/kryteria/1.4.3", "/kryteria/2.4.11", "/kryteria/4.1.1", "/prawo", "/praktyka", "/praktyka/ikona-jako-przycisk", "/sciezki", "/slownik", "/szukaj"];
+const routes = [
+  "/",
+  "/kryteria",
+  "/kryteria/1.4.3",
+  "/kryteria/2.4.11",
+  "/kryteria/4.1.1",
+  "/prawo",
+  "/prawo/ustawa-2019-848",
+  "/prawo/ustawa-2019-848/art-5",
+  "/prawo/ustawa-2019-848/zal",
+  "/prawo/ustawa-2024-731/art-20",
+  "/prawo/en-301-549",
+  "/mapowanie",
+  "/praktyka",
+  "/praktyka/ikona-jako-przycisk",
+  "/sciezki",
+  "/slownik",
+  "/szukaj",
+];
 
 for (const route of routes) {
   for (const colorScheme of ["light", "dark"] as const) {
@@ -26,9 +44,10 @@ for (const route of routes) {
         elements
           .filter((el) => !el.closest("p") && !el.matches(".sr-only") && el.getClientRects().length > 0)
           .map((el) => {
-            // A link stretched with an absolute ::after is as big as its positioned card.
+            // A link stretched with an absolute ::after is as big as its positioned card, and a
+            // radio or checkbox is as big as the label that wraps it: both activate the control.
             const stretched = getComputedStyle(el, "::after").position === "absolute";
-            const target = stretched && el instanceof HTMLElement ? (el.offsetParent ?? el) : el;
+            const target = stretched && el instanceof HTMLElement ? (el.offsetParent ?? el) : (el.closest("label") ?? el);
             const { width, height } = target.getBoundingClientRect();
             return { text: el.textContent.trim(), width, height };
           })

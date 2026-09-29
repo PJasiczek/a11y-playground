@@ -10,7 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as PrawoRouteImport } from './routes/prawo'
+import { Route as MapowanieRouteImport } from './routes/mapowanie'
 import { Route as SciezkiRouteImport } from './routes/sciezki'
 import { Route as SearchIndexDotjsonRouteImport } from './routes/search-index[.]json'
 import { Route as SlownikRouteImport } from './routes/slownik'
@@ -19,16 +19,20 @@ import { Route as KryteriaIndexRouteImport } from './routes/kryteria/index'
 import { Route as KryteriaCriterionIdRouteImport } from './routes/kryteria/$criterionId'
 import { Route as PraktykaIndexRouteImport } from './routes/praktyka/index'
 import { Route as PraktykaSlugRouteImport } from './routes/praktyka/$slug'
+import { Route as PrawoIndexRouteImport } from './routes/prawo/index'
+import { Route as PrawoEn301549RouteImport } from './routes/prawo/en-301-549'
 import { Route as DemoSlugVariantRouteImport } from './routes/demo/$slug.$variant'
+import { Route as PrawoActIndexRouteImport } from './routes/prawo/$act/index'
+import { Route as PrawoActUnitRouteImport } from './routes/prawo/$act/$unit'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PrawoRoute = PrawoRouteImport.update({
-  id: '/prawo',
-  path: '/prawo',
+const MapowanieRoute = MapowanieRouteImport.update({
+  id: '/mapowanie',
+  path: '/mapowanie',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SciezkiRoute = SciezkiRouteImport.update({
@@ -71,106 +75,154 @@ const PraktykaSlugRoute = PraktykaSlugRouteImport.update({
   path: '/praktyka/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrawoIndexRoute = PrawoIndexRouteImport.update({
+  id: '/prawo/',
+  path: '/prawo/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrawoEn301549Route = PrawoEn301549RouteImport.update({
+  id: '/prawo/en-301-549',
+  path: '/prawo/en-301-549',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DemoSlugVariantRoute = DemoSlugVariantRouteImport.update({
   id: '/demo/$slug/$variant',
   path: '/demo/$slug/$variant',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrawoActIndexRoute = PrawoActIndexRouteImport.update({
+  id: '/prawo/$act/',
+  path: '/prawo/$act/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrawoActUnitRoute = PrawoActUnitRouteImport.update({
+  id: '/prawo/$act/$unit',
+  path: '/prawo/$act/$unit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/prawo': typeof PrawoRoute
+  '/mapowanie': typeof MapowanieRoute
   '/sciezki': typeof SciezkiRoute
   '/search-index.json': typeof SearchIndexDotjsonRoute
   '/slownik': typeof SlownikRoute
   '/szukaj': typeof SzukajRoute
   '/kryteria/$criterionId': typeof KryteriaCriterionIdRoute
   '/praktyka/$slug': typeof PraktykaSlugRoute
+  '/prawo/en-301-549': typeof PrawoEn301549Route
   '/kryteria/': typeof KryteriaIndexRoute
   '/praktyka/': typeof PraktykaIndexRoute
+  '/prawo/': typeof PrawoIndexRoute
   '/demo/$slug/$variant': typeof DemoSlugVariantRoute
+  '/prawo/$act/$unit': typeof PrawoActUnitRoute
+  '/prawo/$act/': typeof PrawoActIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/prawo': typeof PrawoRoute
+  '/mapowanie': typeof MapowanieRoute
   '/sciezki': typeof SciezkiRoute
   '/search-index.json': typeof SearchIndexDotjsonRoute
   '/slownik': typeof SlownikRoute
   '/szukaj': typeof SzukajRoute
   '/kryteria/$criterionId': typeof KryteriaCriterionIdRoute
   '/praktyka/$slug': typeof PraktykaSlugRoute
+  '/prawo/en-301-549': typeof PrawoEn301549Route
   '/kryteria': typeof KryteriaIndexRoute
   '/praktyka': typeof PraktykaIndexRoute
+  '/prawo': typeof PrawoIndexRoute
   '/demo/$slug/$variant': typeof DemoSlugVariantRoute
+  '/prawo/$act/$unit': typeof PrawoActUnitRoute
+  '/prawo/$act': typeof PrawoActIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/prawo': typeof PrawoRoute
+  '/mapowanie': typeof MapowanieRoute
   '/sciezki': typeof SciezkiRoute
   '/search-index.json': typeof SearchIndexDotjsonRoute
   '/slownik': typeof SlownikRoute
   '/szukaj': typeof SzukajRoute
   '/kryteria/$criterionId': typeof KryteriaCriterionIdRoute
   '/praktyka/$slug': typeof PraktykaSlugRoute
+  '/prawo/en-301-549': typeof PrawoEn301549Route
   '/kryteria/': typeof KryteriaIndexRoute
   '/praktyka/': typeof PraktykaIndexRoute
+  '/prawo/': typeof PrawoIndexRoute
   '/demo/$slug/$variant': typeof DemoSlugVariantRoute
+  '/prawo/$act/$unit': typeof PrawoActUnitRoute
+  '/prawo/$act/': typeof PrawoActIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/prawo'
+    | '/mapowanie'
     | '/sciezki'
     | '/search-index.json'
     | '/slownik'
     | '/szukaj'
     | '/kryteria/$criterionId'
     | '/praktyka/$slug'
+    | '/prawo/en-301-549'
     | '/kryteria/'
     | '/praktyka/'
+    | '/prawo/'
     | '/demo/$slug/$variant'
+    | '/prawo/$act/$unit'
+    | '/prawo/$act/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/prawo'
+    | '/mapowanie'
     | '/sciezki'
     | '/search-index.json'
     | '/slownik'
     | '/szukaj'
     | '/kryteria/$criterionId'
     | '/praktyka/$slug'
+    | '/prawo/en-301-549'
     | '/kryteria'
     | '/praktyka'
+    | '/prawo'
     | '/demo/$slug/$variant'
+    | '/prawo/$act/$unit'
+    | '/prawo/$act'
   id:
     | '__root__'
     | '/'
-    | '/prawo'
+    | '/mapowanie'
     | '/sciezki'
     | '/search-index.json'
     | '/slownik'
     | '/szukaj'
     | '/kryteria/$criterionId'
     | '/praktyka/$slug'
+    | '/prawo/en-301-549'
     | '/kryteria/'
     | '/praktyka/'
+    | '/prawo/'
     | '/demo/$slug/$variant'
+    | '/prawo/$act/$unit'
+    | '/prawo/$act/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  PrawoRoute: typeof PrawoRoute
+  MapowanieRoute: typeof MapowanieRoute
   SciezkiRoute: typeof SciezkiRoute
   SearchIndexDotjsonRoute: typeof SearchIndexDotjsonRoute
   SlownikRoute: typeof SlownikRoute
   SzukajRoute: typeof SzukajRoute
   KryteriaCriterionIdRoute: typeof KryteriaCriterionIdRoute
   PraktykaSlugRoute: typeof PraktykaSlugRoute
+  PrawoEn301549Route: typeof PrawoEn301549Route
   KryteriaIndexRoute: typeof KryteriaIndexRoute
   PraktykaIndexRoute: typeof PraktykaIndexRoute
+  PrawoIndexRoute: typeof PrawoIndexRoute
   DemoSlugVariantRoute: typeof DemoSlugVariantRoute
+  PrawoActUnitRoute: typeof PrawoActUnitRoute
+  PrawoActIndexRoute: typeof PrawoActIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -182,11 +234,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/prawo': {
-      id: '/prawo'
-      path: '/prawo'
-      fullPath: '/prawo'
-      preLoaderRoute: typeof PrawoRouteImport
+    '/mapowanie': {
+      id: '/mapowanie'
+      path: '/mapowanie'
+      fullPath: '/mapowanie'
+      preLoaderRoute: typeof MapowanieRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sciezki': {
@@ -245,6 +297,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PraktykaSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/prawo/': {
+      id: '/prawo/'
+      path: '/prawo'
+      fullPath: '/prawo/'
+      preLoaderRoute: typeof PrawoIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/prawo/en-301-549': {
+      id: '/prawo/en-301-549'
+      path: '/prawo/en-301-549'
+      fullPath: '/prawo/en-301-549'
+      preLoaderRoute: typeof PrawoEn301549RouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/demo/$slug/$variant': {
       id: '/demo/$slug/$variant'
       path: '/demo/$slug/$variant'
@@ -252,21 +318,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoSlugVariantRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/prawo/$act/': {
+      id: '/prawo/$act/'
+      path: '/prawo/$act'
+      fullPath: '/prawo/$act/'
+      preLoaderRoute: typeof PrawoActIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/prawo/$act/$unit': {
+      id: '/prawo/$act/$unit'
+      path: '/prawo/$act/$unit'
+      fullPath: '/prawo/$act/$unit'
+      preLoaderRoute: typeof PrawoActUnitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  PrawoRoute: PrawoRoute,
+  MapowanieRoute: MapowanieRoute,
   SciezkiRoute: SciezkiRoute,
   SearchIndexDotjsonRoute: SearchIndexDotjsonRoute,
   SlownikRoute: SlownikRoute,
   SzukajRoute: SzukajRoute,
   KryteriaCriterionIdRoute: KryteriaCriterionIdRoute,
   PraktykaSlugRoute: PraktykaSlugRoute,
+  PrawoEn301549Route: PrawoEn301549Route,
   KryteriaIndexRoute: KryteriaIndexRoute,
   PraktykaIndexRoute: PraktykaIndexRoute,
+  PrawoIndexRoute: PrawoIndexRoute,
   DemoSlugVariantRoute: DemoSlugVariantRoute,
+  PrawoActUnitRoute: PrawoActUnitRoute,
+  PrawoActIndexRoute: PrawoActIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

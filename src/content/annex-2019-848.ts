@@ -1,0 +1,61 @@
+import type { CriterionId } from "./wcag";
+
+/**
+ * The annex to the act of 4 April 2019 on digital accessibility: the WCAG 2.1 criteria a public
+ * body must meet. Transcribed by hand from the table on pages 11–12 of the consolidated text,
+ * Dz.U. 2023 poz. 1440, because the ELI API serves the annex only as PDF.
+ *
+ * `mobile: false` marks the seven criteria footnote 1) of the annex excludes for mobile apps
+ * ("Nie stosuje się do aplikacji mobilnych"). 1.2.4 Napisy (na żywo) is not in the annex.
+ */
+export const annex2019 = [
+  { id: "1.1.1", mobile: true },
+  { id: "1.2.1", mobile: true },
+  { id: "1.2.2", mobile: true },
+  { id: "1.2.3", mobile: true },
+  { id: "1.2.5", mobile: true },
+  { id: "1.3.1", mobile: true },
+  { id: "1.3.2", mobile: true },
+  { id: "1.3.3", mobile: true },
+  { id: "1.3.4", mobile: true },
+  { id: "1.3.5", mobile: true },
+  { id: "1.4.1", mobile: true },
+  { id: "1.4.2", mobile: true },
+  { id: "1.4.3", mobile: true },
+  { id: "1.4.4", mobile: true },
+  { id: "1.4.5", mobile: true },
+  { id: "1.4.10", mobile: true },
+  { id: "1.4.11", mobile: true },
+  { id: "1.4.12", mobile: true },
+  { id: "1.4.13", mobile: true },
+  { id: "2.1.1", mobile: true },
+  { id: "2.1.2", mobile: true },
+  { id: "2.1.4", mobile: true },
+  { id: "2.2.1", mobile: true },
+  { id: "2.2.2", mobile: true },
+  { id: "2.3.1", mobile: true },
+  { id: "2.4.1", mobile: false },
+  { id: "2.4.2", mobile: false },
+  { id: "2.4.3", mobile: true },
+  { id: "2.4.4", mobile: true },
+  { id: "2.4.5", mobile: false },
+  { id: "2.4.6", mobile: true },
+  { id: "2.4.7", mobile: true },
+  { id: "2.5.1", mobile: true },
+  { id: "2.5.2", mobile: true },
+  { id: "2.5.3", mobile: true },
+  { id: "2.5.4", mobile: true },
+  { id: "3.1.1", mobile: true },
+  { id: "3.1.2", mobile: false },
+  { id: "3.2.1", mobile: true },
+  { id: "3.2.2", mobile: true },
+  { id: "3.2.3", mobile: false },
+  { id: "3.2.4", mobile: false },
+  { id: "3.3.1", mobile: true },
+  { id: "3.3.2", mobile: true },
+  { id: "3.3.3", mobile: true },
+  { id: "3.3.4", mobile: true },
+  { id: "4.1.1", mobile: true },
+  { id: "4.1.2", mobile: true },
+  { id: "4.1.3", mobile: false },
+] as const satisfies readonly { id: CriterionId; mobile: boolean }[];

@@ -19,6 +19,9 @@ describe("search", () => {
     ["dostepna nazwa", "pojecie:nazwa"],
     ["showModal", "przyklad:okno-modalne-i-fokus"],
     ["karuzela", "przyklad:karuzela-automatyczna"],
+    ["deklaracja dostepnosci", "przepis:ustawa-2019-848/art-10"],
+    ["kary", "przepis:ustawa-2019-848/art-19"],
+    ["domniemanie zgodnosci", "przepis:ustawa-2024-731/art-20"],
   ])("%s finds %s", (query, id) => {
     const top = index
       .search(query)
