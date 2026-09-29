@@ -45,6 +45,15 @@
 
 <p class="flag">Faza 5 (konta i postęp w Convex) jest odłożona. Faza 6 idzie bez kont, więc postęp zostaje w przeglądarce. Sekcja 3 opisuje, jak to działa i jak faza 5 może go później przejąć.</p>
 
+<h2 id="changes">Zmiany po rozpoczęciu prac</h2>
+<p>Decyzje podjęte przy budowie fazy 6. Tam, gdzie kolidują z sekcjami poniżej, obowiązują te.</p>
+<ul>
+  <li><strong>Fokus przechodzi też na podsumowanie.</strong> Po ostatnim pytaniu jego miejsce zajmuje wynik, więc fokus przechodzi na nagłówek wyniku („Wynik: 3 z 4”). Inaczej zginąłby razem z przyciskiem, który zniknął.</li>
+  <li><strong>Testy punktacji idą z quizem.</strong> Sprawdzają <code>src/lib/quiz.ts</code>, który dodaje commit z quizem, więc przeszły tam z commita o postępie.</li>
+  <li><strong>Jeszcze jeden commit mechaniczny.</strong> <code>refactor(routes): move paths route into a folder</code> idzie przed stronami, jak w fazach 3 i 4.</li>
+  <li><strong>Nagłówki w lekcji to <code>##</code>.</strong> Treść lekcji stoi zaraz pod <code>h1</code>, więc jej nagłówki to <code>h2</code>, ostylowane w <code>.prose</code>.</li>
+</ul>
+
 <ol class="toc">
   <li><a href="#goal">Cel i warunek ukończenia</a></li>
   <li><a href="#scope">Zakres</a></li>

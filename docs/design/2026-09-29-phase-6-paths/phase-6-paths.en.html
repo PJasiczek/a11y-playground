@@ -45,6 +45,15 @@
 
 <p class="flag">Phase 5 (accounts and progress in Convex) is postponed. Phase 6 goes ahead without accounts, so progress lives in the browser. Section 3 explains how, and how phase 5 can take it over later.</p>
 
+<h2 id="changes">Changes after work started</h2>
+<p>Decisions made while building phase 6. Where they conflict with the sections below, these win.</p>
+<ul>
+  <li><strong>Focus also moves to the summary.</strong> After the last question the question is replaced by the score, so focus moves to the score heading ("Wynik: 3 z 4"). Otherwise it would be lost with the button that disappeared.</li>
+  <li><strong>Scoring tests ship with the quiz.</strong> They test <code>src/lib/quiz.ts</code>, which the quiz commit adds, so they moved there from the progress commit.</li>
+  <li><strong>One more mechanical commit.</strong> <code>refactor(routes): move paths route into a folder</code> goes before the pages, as in phases 3 and 4.</li>
+  <li><strong>Lesson headings are <code>##</code>.</strong> The lesson body sits right under the <code>h1</code>, so its headings are <code>h2</code>, styled in <code>.prose</code>.</li>
+</ul>
+
 <ol class="toc">
   <li><a href="#goal">Goal and definition of done</a></li>
   <li><a href="#scope">Scope</a></li>
