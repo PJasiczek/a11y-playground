@@ -1,0 +1,31 @@
+- id: pogrubienie
+  prompt: Sekcje artykułu zaczynają się od pogrubionego akapitu zamiast nagłówka. Które kryterium to łamie?
+  options:
+    - criterion: "1.3.1"
+      correct: true
+      why: Struktura jest widoczna, ale nie ma jej w kodzie, więc czytnik jej nie zna.
+    - criterion: "2.4.6"
+      why: Treść może dobrze opisywać sekcje. Problem jest w tym, że to nie są nagłówki.
+    - criterion: "1.4.3"
+      why: Pogrubienie nie ma nic wspólnego z kontrastem.
+- id: dobre-naglowki
+  prompt: Które nagłówki dobrze opisują sekcje na stronie urzędu?
+  options:
+    - text: Godziny otwarcia
+      correct: true
+      why: Mówi dokładnie, co jest w sekcji.
+    - text: Jak złożyć wniosek o dowód osobisty
+      correct: true
+      why: Opisuje cel sekcji.
+    - text: Więcej
+      why: Na liście nagłówków nie wiadomo, czego więcej.
+- id: poziom-po-wygladzie
+  prompt: Nowa sekcja wygląda lepiej jako Nagłówek 4, choć powinna być Nagłówkiem 2. Co robisz?
+  options:
+    - text: Używam Nagłówka 2 i zgłaszam potrzebę zmiany stylu
+      correct: true
+      why: Poziom mówi o strukturze, a wygląd to sprawa stylów.
+    - text: Używam Nagłówka 4, bo lepiej wygląda
+      why: Struktura przestaje odpowiadać treści.
+    - text: Piszę pogrubionym tekstem w rozmiarze nagłówka
+      why: To w ogóle nie jest nagłówek.

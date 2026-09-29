@@ -1,0 +1,31 @@
+- id: mapa
+  prompt: Mapę da się przybliżyć tylko rozsunięciem dwóch palców. Które kryterium to łamie?
+  options:
+    - criterion: "2.5.1"
+      correct: true
+      why: Gest wielopunktowy potrzebuje odpowiednika jednym punktem, na przykład przycisków plus i minus.
+    - criterion: "2.5.8"
+      why: Tu nie chodzi o rozmiar celu, tylko o rodzaj gestu.
+    - criterion: "2.1.1"
+      why: Klawiatura to osobna sprawa. Kryterium 2.5.1 dotyczy wskaźnika.
+- id: maly-cel
+  prompt: Ikona ma 16 na 16 pikseli. Kiedy spełnia 2.5.8?
+  options:
+    - text: Gdy jej klikalny obszar ma co najmniej 24 na 24 piksele
+      correct: true
+      why: Liczy się obszar, który reaguje na dotknięcie, a nie rysunek ikony.
+    - text: Gdy wokół jest tyle miejsca, że okrąg 24 pikseli nie nachodzi na sąsiadów
+      correct: true
+      why: To wyjątek dotyczący odstępu.
+    - text: Gdy ma kontrast 3 do 1
+      why: Kontrast to inne kryterium. Nie zmienia rozmiaru celu.
+- id: suwak
+  prompt: Cenę filtruje się suwakiem. Jaka alternatywa spełni 2.5.7?
+  options:
+    - text: Pola do wpisania ceny od i do
+      correct: true
+      why: Wartość da się ustawić bez przeciągania.
+    - text: Obsługa suwaka strzałkami na klawiaturze
+      why: To pomaga osobom z klawiaturą, ale nie osobom ze wskaźnikiem, które nie utrzymają przeciągnięcia.
+    - text: Większy uchwyt suwaka
+      why: Łatwiej go złapać, ale nadal trzeba przeciągnąć.

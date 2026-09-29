@@ -1,0 +1,31 @@
+- id: poziome-przewijanie
+  prompt: Przy szerokości 320 pikseli akapity trzeba przewijać w poziomie. Które kryterium to łamie?
+  options:
+    - criterion: "1.4.10"
+      correct: true
+      why: Treść ma się przelewać w jedną kolumnę bez przewijania w dwóch kierunkach.
+    - criterion: "1.4.4"
+      why: Tekst może się powiększać poprawnie. Problem jest w układzie.
+    - criterion: "1.4.12"
+      why: Chodzi o szerokość ekranu, nie o odstępy w tekście.
+- id: wyjatki
+  prompt: Co może wymagać przewijania w dwóch kierunkach przy 320 pikselach?
+  options:
+    - text: Duża tabela danych
+      correct: true
+      why: Tabela potrzebuje dwóch wymiarów, żeby zachować sens.
+    - text: Mapa
+      correct: true
+      why: Mapa z natury jest dwuwymiarowa.
+    - text: Artykuł z długimi akapitami
+      why: Tekst da się przełamać w jedną kolumnę, więc wyjątek go nie obejmuje.
+- id: stala-wysokosc
+  prompt: Karta produktu ma stałą wysokość 120 pikseli. Co się stanie przy powiększeniu tekstu do 200 procent?
+  options:
+    - text: Część opisu może zostać ucięta
+      correct: true
+      why: Tekst rośnie, a kontener nie. To łamie kryterium 1.4.4.
+    - text: Nic, przeglądarka powiększy też kartę
+      why: Przy powiększaniu samego tekstu stała wysokość zostaje stała.
+    - text: Karta przejdzie do nowej kolumny
+      why: Stała wysokość nie ma wpływu na liczbę kolumn.

@@ -1,0 +1,31 @@
+- id: czerwona-ramka
+  prompt: Błędne pole ma tylko czerwoną ramkę, bez tekstu. Które kryterium to łamie?
+  options:
+    - criterion: "1.4.1"
+      correct: true
+      why: Informacja o błędzie jest przekazana wyłącznie kolorem.
+    - criterion: "1.4.3"
+      why: Kontrast może być dobry. Problem w tym, że sam kolor niczego nie mówi.
+    - criterion: "2.4.7"
+      why: Chodzi o oznaczenie błędu, nie o fokus.
+- id: statusy
+  prompt: Tabela zamówień pokazuje status jako zieloną albo czerwoną kropkę. Co naprawia problem?
+  options:
+    - text: Słowo „opłacone” albo „nieopłacone” obok kropki
+      correct: true
+      why: Tekst niesie informację niezależnie od koloru.
+    - text: Różne kształty, na przykład kółko i trójkąt, z legendą
+      correct: true
+      why: Kształt też jest sygnałem innym niż kolor.
+    - text: Ciemniejsza zieleń i jaśniejsza czerwień
+      why: Różnica jasności pomaga trochę, ale to nadal sam kolor.
+- id: linki-w-tekscie
+  prompt: Linki w akapicie nie mają podkreślenia. Kiedy to może przejść?
+  options:
+    - text: Gdy mają kontrast 3 do 1 wobec tekstu i dodatkowy sygnał przy najechaniu i fokusie
+      correct: true
+      why: Tak wynika z technik do kryterium 1.4.1. Podkreślenie jest jednak prostsze i pewniejsze.
+    - text: Gdy są niebieskie
+      why: Niebieski kolor to wciąż tylko kolor.
+    - text: Nigdy, podkreślenie jest wymagane
+      why: Kryterium nie wymaga podkreślenia wprost, tylko sygnału innego niż sam kolor.

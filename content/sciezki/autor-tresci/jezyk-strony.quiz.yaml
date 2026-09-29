@@ -1,0 +1,30 @@
+- id: angielski-cytat
+  prompt: Polski artykuł ma cytat po angielsku bez oznaczenia języka. Które kryterium to łamie?
+  options:
+    - criterion: "3.1.2"
+      correct: true
+      why: Fragment w innym języku potrzebuje własnego oznaczenia języka.
+    - criterion: "3.1.1"
+      why: Język strony jest ustawiony dobrze. Problem dotyczy fragmentu.
+    - criterion: "1.3.1"
+      why: Chodzi o język, a nie o strukturę treści.
+- id: co-oznaczyc
+  prompt: Co w polskim tekście oznaczyć innym językiem?
+  options:
+    - text: Akapit instrukcji po ukraińsku
+      correct: true
+      why: To dłuższy fragment w innym języku, który czytnik powinien przeczytać ukraińską wymową.
+    - text: Słowo „weekend”
+      why: Weszło do polszczyzny, więc zostaje bez oznaczenia.
+    - text: Nazwę firmy „Microsoft”
+      why: Nazw własnych się nie oznacza.
+- id: po-co
+  prompt: Po co w ogóle oznaczać język?
+  options:
+    - text: Żeby czytnik wybrał właściwy głos i wymowę
+      correct: true
+      why: Tekst przeczytany cudzą wymową jest trudny do zrozumienia.
+    - text: Żeby przeglądarka przetłumaczyła tekst
+      why: Oznaczenie może pomóc tłumaczowi, ale nie po to istnieje kryterium.
+    - text: Żeby tekst lepiej wypadał w wyszukiwarkach
+      why: To nie jest cel kryteriów dostępności.
