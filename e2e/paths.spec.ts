@@ -78,3 +78,9 @@ async function answerQuizFrom(page: Page, quiz: ReturnType<Page["locator"]>) {
   }
   await expect(quiz.getByRole("heading", { name: /^Wynik:/ })).toBeVisible();
 }
+
+test("a criterion page links to the lessons that teach it", async ({ page }) => {
+  await page.goto("/kryteria/2.1.1");
+  await page.getByRole("link", { name: "Programista: Klawiatura i fokus" }).click();
+  await expect(page).toHaveURL("/sciezki/programista/klawiatura-i-fokus");
+});

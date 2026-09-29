@@ -203,6 +203,15 @@ export function parsePath(
   };
 }
 
+/** Lessons that list a criterion, in path order, for the "W ścieżkach" line on criterion pages. */
+export function lessonsCovering(id: CriterionId) {
+  return [...learningPaths.values()].flatMap((path) =>
+    path.lessons
+      .filter((lesson) => lesson.criteria.includes(id))
+      .map((lesson) => ({ path: path.slug, pathTitle: path.title, lesson: lesson.slug, title: lesson.title })),
+  );
+}
+
 const markdownFiles = import.meta.glob<string>("/content/sciezki/*/*.md", { query: "?raw", import: "default", eager: true });
 const quizFiles = import.meta.glob<string>("/content/sciezki/*/*.quiz.yaml", { query: "?raw", import: "default", eager: true });
 
