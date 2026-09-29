@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ProvisionLink } from "~/components/legal";
 import { DraftBadge } from "~/components/level-badge";
+import { Quiz } from "~/components/quiz";
 import { TermTips } from "~/components/term-tips";
 import { getLessonPage } from "~/content/paths.functions";
 import { type LessonKey, progressStore, useProgress } from "~/progress/store";
@@ -141,6 +142,8 @@ function LessonPage() {
           </dl>
         </section>
       ) : null}
+
+      <Quiz key={key} lessonKey={key} questions={lesson.quiz} />
 
       <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-rule pt-5">
         <button
