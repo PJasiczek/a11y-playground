@@ -1,0 +1,31 @@
+- id: wyniki-wyszukiwania
+  prompt: Po wpisaniu frazy lista wyników się odświeża, a czytnik nic nie mówi. Które kryterium to łamie?
+  options:
+    - criterion: "4.1.3"
+      correct: true
+      why: Liczba wyników to komunikat o stanie, który czytnik powinien ogłosić.
+    - criterion: "3.3.1"
+      why: To nie jest błąd w danych.
+    - criterion: "3.2.2"
+      why: Kontekst się nie zmienia, zmienia się treść listy.
+- id: blad-daty
+  prompt: Po wpisaniu daty 2026/09/29 pojawia się tylko „Nieprawidłowa wartość”. Które kryterium łamie ten komunikat?
+  options:
+    - criterion: "3.3.3"
+      correct: true
+      why: Wiadomo, jaki format jest oczekiwany, więc komunikat powinien go podać.
+    - criterion: "3.3.1"
+      why: Błąd jest opisany tekstem. Brakuje podpowiedzi, jak go poprawić.
+    - criterion: "1.3.5"
+      why: To kryterium dotyczy określenia celu pola w kodzie, a nie treści komunikatu o błędzie.
+- id: kroki
+  prompt: Co sprawdzasz po wysłaniu formularza z błędami?
+  options:
+    - text: Czy błędy są opisane tekstem przy polach
+      correct: true
+      why: To wymóg 3.3.1.
+    - text: Gdzie jest fokus
+      correct: true
+      why: Najlepiej w pierwszym błędnym polu albo na liście błędów, żeby było wiadomo, co poprawić.
+    - text: Czy pola zmieniły kolor na czerwony
+      why: Sam kolor nie wystarczy, więc nie jest tym, co trzeba sprawdzić w pierwszej kolejności.

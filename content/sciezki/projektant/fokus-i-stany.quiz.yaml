@@ -1,0 +1,34 @@
+- id: przyklejony-naglowek
+  prompt: Przy przechodzeniu Tabem w dół strony przyklejony nagłówek całkiem zasłania element z fokusem. Które kryterium to łamie?
+  options:
+    - criterion: "2.4.11"
+      correct: true
+      why: Element z fokusem nie może być całkowicie zasłonięty przez treść autora strony.
+    - criterion: "2.4.7"
+      why: Wskaźnik może być dobrze zaprojektowany. Problem w tym, że leży pod nagłówkiem.
+    - criterion: "2.4.3"
+      why: Kolejność jest poprawna, tylko nie widać, gdzie jest fokus.
+- id: dobry-wskaznik
+  prompt: Który wskaźnik fokusu najpewniej spełni wymagania?
+  options:
+    - text: Obrys 3 piksele z odstępem, 3 do 1 wobec tła
+      correct: true
+      why: Jest wyraźny, odsunięty od elementu i ma kontrast wymagany dla elementów nietekstowych.
+    - text: Jasnoszare tło przycisku zamiast białego
+      why: Różnica jasności jest zwykle za mała, żeby wskaźnik był dobrze widoczny.
+    - text: Kursor myszy w kształcie dłoni
+      why: Kursor dotyczy myszy. Osoba z klawiaturą go nie przesuwa.
+- id: stany
+  prompt: Które stany projekt przekazuje programistom?
+  options:
+    - text: Fokus
+      correct: true
+      why: Bez niego programista zostawi domyślny obrys albo go usunie.
+    - text: Błąd
+      correct: true
+      why: Stan błędu też potrzebuje kontrastu i sygnału innego niż kolor.
+    - text: Najechanie myszą
+      correct: true
+      why: Ten zwykle już jest, ale należy do kompletu.
+    - text: Tylko domyślny, reszta wynika z kodu
+      why: Kod nie wymyśli dobrego wskaźnika za projektanta.

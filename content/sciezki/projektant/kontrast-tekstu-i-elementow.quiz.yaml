@@ -1,0 +1,33 @@
+- id: szary-tekst
+  prompt: Tekst pomocniczy 14 pikseli ma kontrast 3,2 do 1. Które kryterium to łamie?
+  options:
+    - criterion: "1.4.3"
+      correct: true
+      why: Zwykły tekst potrzebuje co najmniej 4,5 do 1.
+    - criterion: "1.4.11"
+      why: To kryterium dotyczy elementów nietekstowych. Tekst ma swoje, ostrzejsze wymaganie.
+    - criterion: "1.4.1"
+      why: Nic tu nie jest przekazane samym kolorem. Problem jest w jasności.
+- id: duzy-tekst
+  prompt: Jaki kontrast wystarczy dla nagłówka 28 pikseli?
+  options:
+    - text: 3 do 1
+      correct: true
+      why: Od 24 pikseli tekst liczy się jako duży i wystarczy mu 3 do 1.
+    - text: 4,5 do 1
+      why: Tyle potrzebuje zwykły tekst. Duży ma niższy próg.
+    - text: 7 do 1
+      why: To próg z kryterium 1.4.6 na poziomie AAA.
+- id: ramka-pola
+  prompt: Co musi mieć co najmniej 3 do 1 wobec tła?
+  options:
+    - text: Obramowanie pola tekstowego, jeśli to jedyny znak, gdzie jest pole
+      correct: true
+      why: Bez niego nie widać, gdzie kliknąć, więc kryterium 1.4.11 wymaga kontrastu.
+    - text: Wskaźnik fokusu
+      correct: true
+      why: To też element interfejsu, który trzeba zobaczyć.
+    - text: Ozdobna linia oddzielająca sekcje
+      why: Elementy czysto ozdobne są zwolnione.
+    - text: Tekst na przycisku wyłączonym
+      why: Nieaktywne kontrolki są zwolnione z wymagań kontrastu.

@@ -1,0 +1,31 @@
+- id: podcast
+  prompt: Publikujesz odcinek podcastu. Czego wymaga WCAG na poziomie A?
+  options:
+    - criterion: "1.2.1"
+      correct: true
+      why: Nagranie tylko audio potrzebuje alternatywy tekstowej, czyli transkrypcji.
+    - criterion: "1.2.2"
+      why: Napisy dotyczą wideo z dźwiękiem.
+    - criterion: "1.2.5"
+      why: Audiodeskrypcja dotyczy obrazu, a podcast go nie ma.
+- id: napisy
+  prompt: Co powinny zawierać napisy rozszerzone do filmu instruktażowego?
+  options:
+    - text: Wypowiedzi osób w filmie
+      correct: true
+      why: To podstawowa treść napisów.
+    - text: Ważne dźwięki, na przykład sygnał alarmu
+      correct: true
+      why: Napisy rozszerzone oddają też dźwięki, od których zależy sens.
+    - text: Opis kolorów w kadrze
+      why: To zadanie audiodeskrypcji, a nie napisów.
+- id: autonapisy
+  prompt: Platforma wygenerowała napisy automatycznie. Co dalej?
+  options:
+    - text: Poprawić je, zanim film zostanie opublikowany
+      correct: true
+      why: Automatyczne napisy mylą nazwy, liczby i przecinki. Dopiero poprawione spełniają wymaganie.
+    - text: Opublikować bez zmian, bo napisy są
+      why: Błędne napisy nie przekazują tej samej treści co dźwięk.
+    - text: Wyłączyć je, bo mają błędy
+      why: Brak napisów jest gorszy od napisów do poprawy.

@@ -1,0 +1,31 @@
+- id: zdjecie-dyrektora
+  prompt: Artykuł o nowej dyrektorce szpitala ma jej zdjęcie. Jaki opis wybierasz?
+  options:
+    - text: Anna Kowalska, dyrektor szpitala
+      correct: true
+      why: Mówi, kogo widać i czemu zdjęcie jest w tym miejscu.
+    - text: Obrazek przedstawiający kobietę
+      why: Czytnik sam powie, że to grafika, a opis nie mówi, kim jest ta osoba.
+    - text: IMG_2045.jpg
+      why: Nazwa pliku nic nie mówi czytelnikowi.
+- id: ozdobnik
+  prompt: Nad nagłówkiem sekcji jest ozdobna fala w kolorach marki. Co z opisem?
+  options:
+    - text: Pusty opis, oznaczony jako obraz ozdobny
+      correct: true
+      why: Ozdobnik nie niesie informacji, więc czytnik powinien go pominąć.
+    - text: „Fala w kolorach marki”
+      why: To szum. Czytelnik z czytnikiem nic nie zyskuje.
+    - text: Brak atrybutu alt w ogóle
+      why: Bez atrybutu czytnik może przeczytać nazwę pliku.
+- id: wykres
+  prompt: Pod wykresem sprzedaży jest tylko obrazek. Co trzeba dodać?
+  options:
+    - text: Krótki opis wniosku, na przykład „sprzedaż wzrosła o 20 procent w drugim kwartale”
+      correct: true
+      why: Opis przekazuje to, po co jest wykres.
+    - text: Dane z wykresu w tabeli albo w tekście obok
+      correct: true
+      why: Kto potrzebuje liczb, dostaje je bez patrzenia na obrazek.
+    - text: Opis kolorów słupków
+      why: Kolory nie są informacją, tylko sposobem jej pokazania.

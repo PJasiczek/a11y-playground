@@ -1,0 +1,31 @@
+- id: lupa
+  prompt: Ikona lupy w nagłówku otwiera wyszukiwarkę, a na liście produktów filtr. Które kryterium to łamie?
+  options:
+    - criterion: "3.2.4"
+      correct: true
+      why: Ten sam element oznacza dwie różne funkcje, więc identyfikacja nie jest spójna.
+    - criterion: "3.2.3"
+      why: To kryterium dotyczy kolejności nawigacji, a nie znaczenia ikon.
+    - criterion: "1.1.1"
+      why: Ikona może mieć poprawną nazwę. Problem w tym, że na różnych stronach robi różne rzeczy.
+- id: pomoc
+  prompt: Link „Kontakt” jest w stopce na stronie głównej i w nagłówku na stronie koszyka. Które kryterium to łamie?
+  options:
+    - criterion: "3.2.6"
+      correct: true
+      why: Pomoc ma być w tym samym miejscu względem reszty treści na kolejnych stronach.
+    - criterion: "3.2.3"
+      why: Kontakt nie musi być częścią nawigacji. Dla pomocy jest osobne kryterium.
+    - criterion: "2.4.4"
+      why: Nazwa linku jest jasna. Problem jest w jego położeniu.
+- id: kolejnosc-menu
+  prompt: Co spełnia 3.2.3?
+  options:
+    - text: Menu z tymi samymi pozycjami w tej samej kolejności na każdej stronie
+      correct: true
+      why: To dokładnie to, czego wymaga kryterium.
+    - text: Menu, którego kolejność zmienia się według popularności pozycji
+      why: Zmienna kolejność zaskakuje osoby, które zapamiętały układ.
+    - text: Menu dodające na niektórych stronach nową pozycję na końcu
+      correct: true
+      why: Dodanie pozycji jest w porządku, jeśli względna kolejność reszty się nie zmienia.

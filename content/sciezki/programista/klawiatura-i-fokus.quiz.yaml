@@ -1,0 +1,46 @@
+- id: div-jako-przycisk
+  prompt: Które kryterium łamie ten kod?
+  code: |
+    <div class="btn" onclick="zapisz()">Zapisz</div>
+  options:
+    - criterion: "2.1.1"
+      correct: true
+      why: Div nie dostaje fokusu i nie reaguje na Enter ani spację, więc bez myszy nie da się zapisać.
+    - criterion: "1.4.3"
+      why: W kodzie nie ma kolorów, więc nie wiemy nic o kontraście.
+    - criterion: "2.4.2"
+      why: To kryterium dotyczy elementu title strony, nie przycisków.
+- id: okno-modalne
+  prompt: Okno modalne jest otwarte. Co powinno działać?
+  options:
+    - text: Fokus przechodzi do okna
+      correct: true
+      why: Inaczej klawiatura i czytnik zostają na stronie pod spodem.
+    - text: Esc zamyka okno
+      correct: true
+      why: To oczekiwane zachowanie okna, a element dialog daje je za darmo.
+    - text: Tab może wyjść na stronę pod oknem
+      why: Strona pod modalnym oknem jest nieaktywna, fokus krąży w oknie.
+    - text: Po zamknięciu fokus wraca na przycisk, który otworzył okno
+      correct: true
+      why: Bez tego fokus ląduje na początku strony i trzeba szukać miejsca od nowa.
+- id: obrys-fokusu
+  prompt: Projekt usuwa obrys fokusu, bo „brzydko wygląda”. Co to narusza?
+  options:
+    - criterion: "2.4.7"
+      correct: true
+      why: Bez obrysu osoba z klawiaturą nie wie, gdzie jest.
+    - criterion: "2.4.3"
+      why: Kolejność fokusu się nie zmienia, tylko przestaje być widoczna.
+    - criterion: "2.1.2"
+      why: Pułapka to sytuacja, z której nie da się wyjść klawiaturą. Tu da się, tylko nie widać gdzie.
+- id: tabindex
+  prompt: Który tabindex psuje kolejność fokusu?
+  options:
+    - text: tabindex="3"
+      correct: true
+      why: Dodatnia wartość wyciąga element przed resztę strony, niezależnie od jego miejsca w HTML.
+    - text: tabindex="0"
+      why: Zero dodaje element do kolejności w miejscu, w którym stoi w HTML.
+    - text: tabindex="-1"
+      why: Minus jeden pozwala przenieść fokus skryptem, ale nie dodaje elementu do kolejności Tab.

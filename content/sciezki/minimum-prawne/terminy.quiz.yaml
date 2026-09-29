@@ -1,0 +1,30 @@
+- id: stara-strona
+  prompt: Strona gminy powstała w 2015 r. i nie była od tego czasu zmieniana. Czy dziś musi spełniać wymagania?
+  options:
+    - text: Tak, od 23 września 2020 r. ustawa obejmuje także starsze strony
+      correct: true
+      why: Starsze strony dostały tylko dłuższy okres przejściowy.
+    - text: Nie, bo powstała przed ustawą
+      why: Data powstania decydowała tylko o terminie, a nie o obowiązku.
+    - text: Tylko jeśli ktoś złoży skargę
+      why: Obowiązek istnieje niezależnie od skarg.
+- id: deklaracja-termin
+  prompt: Do kiedy trzeba co roku przejrzeć deklarację dostępności?
+  options:
+    - text: Do 31 marca
+      correct: true
+      why: Tak mówi art. 11.
+    - text: Do 23 września
+      why: To data z przepisów przejściowych o wejściu ustawy w życie.
+    - text: Do końca roku
+      why: Ustawa podaje konkretną datę, 31 marca.
+- id: aplikacja
+  prompt: Od kiedy ustawa obejmuje aplikacje mobilne podmiotów publicznych?
+  options:
+    - text: Od 23 czerwca 2021 r.
+      correct: true
+      why: Aplikacje dostały najdłuższy okres przejściowy.
+    - text: Od 23 września 2019 r.
+      why: Od tej daty obowiązywały wymagania dla nowszych stron.
+    - text: Od 28 czerwca 2025 r.
+      why: To data z ustawy z 2024 r. o produktach i usługach, dotyczącej firm.

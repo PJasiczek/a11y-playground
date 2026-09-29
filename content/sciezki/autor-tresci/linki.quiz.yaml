@@ -1,0 +1,31 @@
+- id: kliknij-tutaj
+  prompt: Który tekst linku najlepiej spełnia 2.4.4?
+  options:
+    - text: Pobierz formularz wniosku o dofinansowanie
+      correct: true
+      why: Mówi, co się stanie, nawet wyrwany ze zdania.
+    - text: Kliknij tutaj
+      why: Na liście linków nie wiadomo, dokąd prowadzi.
+    - text: Więcej
+      why: Więcej czego? Sam tekst nie mówi.
+- id: plik
+  prompt: Co dodać do linku prowadzącego do regulaminu w PDF?
+  options:
+    - text: Format pliku
+      correct: true
+      why: Czytelnik wie, że otworzy się dokument, a nie strona.
+    - text: Rozmiar pliku
+      correct: true
+      why: Pomaga osobom na słabym łączu zdecydować, czy pobrać teraz.
+    - text: Ikonę PDF bez tekstu
+      why: Ikona bez opisu nie powie czytnikowi, że to PDF.
+- id: adres
+  prompt: Na stronie jest link o tekście https://www.przyklad.gov.pl/sprawy/wnioski/2026/formularz-a1. Co z nim zrobić?
+  options:
+    - text: Zamienić tekst na nazwę strony, na przykład „Formularz A1”
+      correct: true
+      why: Czytnik nie będzie literował adresu, a tekst mówi, dokąd prowadzi link.
+    - text: Zostawić, bo adres dokładnie mówi, dokąd prowadzi
+      why: Czytnik przeczyta go znak po znaku, a nazwa strony nie wynika z adresu jasno.
+    - text: Skrócić adres skracaczem linków
+      why: Krótszy adres nadal nic nie mówi o celu.

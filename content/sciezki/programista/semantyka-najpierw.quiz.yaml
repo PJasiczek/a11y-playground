@@ -1,0 +1,36 @@
+- id: div-z-onclick
+  prompt: Czego brakuje temu przyciskowi w drzewie dostępności?
+  code: |
+    <div class="btn" onclick="zapisz()">Zapisz</div>
+  options:
+    - criterion: "4.1.2"
+      correct: true
+      why: Div nie ma roli przycisku, więc czytnik nie powie, że da się go nacisnąć.
+    - criterion: "1.4.3"
+      why: W kodzie nie ma kolorów, więc nie wiadomo nic o kontraście.
+    - criterion: "2.4.2"
+      why: To kryterium dotyczy tytułu strony w elemencie title, nie przycisków.
+- id: pierwsza-zasada-aria
+  prompt: Potrzebujesz pola do zaznaczenia zgody. Co wybierasz?
+  options:
+    - text: input type="checkbox" z etykietą
+      correct: true
+      why: Natywne pole daje rolę, stan zaznaczenia i obsługę spacji bez jednej linijki skryptu.
+    - text: div z role="checkbox" i aria-checked
+      why: Zadziała tylko wtedy, gdy sam dopiszesz fokus, spację i zmianę aria-checked. To trzy miejsca na błąd.
+    - text: span z ikoną ptaszka zmienianą w CSS
+      why: Czytnik nie dowie się ani o polu, ani o jego stanie.
+- id: co-daje-drzewo
+  prompt: Co czytnik ekranu odczytuje z drzewa dostępności?
+  options:
+    - text: Rolę elementu
+      correct: true
+      why: Rola mówi, czym element jest i co można z nim zrobić.
+    - text: Nazwę elementu
+      correct: true
+      why: Nazwa odróżnia jeden przycisk od drugiego.
+    - text: Stan, na przykład zaznaczone albo rozwinięte
+      correct: true
+      why: Bez stanu czytnik nie powie, czy przełącznik jest włączony.
+    - text: Kolor tła elementu
+      why: Kolory nie trafiają do drzewa dostępności.

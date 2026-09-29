@@ -22,6 +22,8 @@ describe("search", () => {
     ["deklaracja dostepnosci", "przepis:ustawa-2019-848/art-10"],
     ["kary", "przepis:ustawa-2019-848/art-19"],
     ["domniemanie zgodnosci", "przepis:ustawa-2024-731/art-20"],
+    ["semantyka", "lekcja:programista/semantyka-najpierw"],
+    ["jak opisac blad", "lekcja:tester/jak-opisac-blad"],
   ])("%s finds %s", (query, id) => {
     const top = index
       .search(query)

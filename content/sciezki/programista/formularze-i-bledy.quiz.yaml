@@ -1,0 +1,34 @@
+- id: placeholder
+  prompt: Pole ma tylko placeholder „Adres e-mail” i nie ma etykiety. Które kryterium to łamie?
+  options:
+    - criterion: "3.3.2"
+      correct: true
+      why: Placeholder znika przy pisaniu, więc nie działa jako etykieta ani instrukcja.
+    - criterion: "3.3.1"
+      why: Na razie nie ma żadnego błędu do opisania.
+    - criterion: "2.4.7"
+      why: Fokus może być dobrze widoczny. Problem jest w tym, czego pole dotyczy.
+- id: dobry-blad
+  prompt: Co powinien mieć komunikat o błędzie przy polu z kodem pocztowym?
+  options:
+    - text: Tekst, który mówi, co jest nie tak
+      correct: true
+      why: Kryterium 3.3.1 wymaga opisu błędu tekstem.
+    - text: Podpowiedź formatu, na przykład 00-950
+      correct: true
+      why: Jeśli wiesz, jak poprawić błąd, kryterium 3.3.3 każe to powiedzieć.
+    - text: Powiązanie z polem przez aria-describedby
+      correct: true
+      why: Dzięki temu czytnik przeczyta błąd razem z etykietą pola.
+    - text: Czerwona ramka jako jedyny sygnał
+      why: Sam kolor nie dociera do osób, które go nie widzą albo nie rozróżniają.
+- id: autocomplete
+  prompt: Po co atrybut autocomplete="email" na polu adresu?
+  options:
+    - text: Żeby przeglądarka mogła wypełnić pole sama
+      correct: true
+      why: Kryterium 1.3.5 chce, żeby cel pola był określony w kodzie. Autouzupełnianie oszczędza pisania.
+    - text: Żeby sprawdzić poprawność adresu
+      why: Do tego służy type="email" albo walidacja. Autocomplete mówi tylko, jakie dane są w polu.
+    - text: Żeby czytnik przeczytał etykietę
+      why: Etykietę czytnik bierze z elementu label. Autocomplete jej nie zastępuje.

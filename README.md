@@ -19,7 +19,7 @@ a11y playground is a learning app for people who build digital products in Polan
 The interface is in Polish. This README is in English.
 
 > [!NOTE]
-> The project is in phase 4 (legal module). Every A and AA criterion of WCAG 2.2 has a plain-language explanation, ten common faults have a broken and a fixed example side by side, and three Polish acts are in the app with the statute text and our summaries. All content is marked as a draft until a person has checked it. Ścieżki is a placeholder until a later phase.
+> The project is in phase 6 (paths and quizzes). Every A and AA criterion of WCAG 2.2 has a plain-language explanation, ten common faults have a broken and a fixed example side by side, three Polish acts are in the app with the statute text and our summaries, and five learning paths walk through them lesson by lesson. All content is marked as a draft until a person has checked it. Phase 5 (accounts) is postponed, so progress is kept in the browser.
 
 ### What works today
 
@@ -32,11 +32,14 @@ The interface is in Polish. This README is in English.
 - **Explanations** for all 55 A and AA criteria: who it affects, how to meet it by role, typical errors, how to test it, common confusions. Drafts carry a visible "szkic, czeka na weryfikację" badge.
 - **Normative text** in Polish from the authorized W3C translation of WCAG 2.1, collapsed on each criterion page. The criteria new in 2.2 link to their sources until a licensed Polish text is available.
 - **Glossary** (`/slownik`) of about 30 terms, alphabetical, each with a plain explanation and, where WCAG defines the term, its normative wording. The first use of a term in a criterion links to it, with a small button that opens a short definition.
-- **Search** (`/szukaj`, also on the home page) over criteria, examples, provisions and the glossary. It finds criteria by number, name or symptom ("modal", "placeholder"), articles by topic ("deklaracja dostępności"), and ignores Polish diacritics.
+- **Search** (`/szukaj`, also on the home page) over criteria, examples, provisions, lessons and the glossary. It finds criteria by number, name or symptom ("modal", "placeholder"), articles by topic ("deklaracja dostępności"), and ignores Polish diacritics.
 - **Practice** (`/praktyka`): ten examples as cards ordered by the cost of the fix, each with what the user gains. An example page (`/praktyka/ikona-jako-przycisk`) shows the broken and the fixed variant side by side, each running in a sandboxed iframe, with its code and what a screen reader says. Examples that move start only when the reader asks. Criterion pages link to their examples.
 - **Law** (`/prawo`): the 2019 digital accessibility act in full, the parts of the 2019 special needs act and the 2024 products and services act (the Polish EAA) that create digital obligations, and a page on EN 301 549. An article page (`/prawo/ustawa-2019-848/art-5`) shows each ustęp next to our summary. Every act says which consolidated text it comes from, when it was downloaded, and whether it was amended after that text.
 - **What applies to me** (`/mapowanie`): pick a website or app of a public body, or a product or service of a company, and every deadline appears on one timeline, with the ones for your situation highlighted and the criteria behind them in a table.
 - **Law on criterion pages:** the "Prawo" section says, for each situation, whether a provision requires the criterion, which one, and since when, or why nothing does (AAA, new in 2.2, excluded for apps).
+- **Paths** (`/sciezki`): five ordered sets of lessons, for the developer, the designer, the content author, the tester, and the legal minimum for a public body. 29 lessons, each with a "Zapamiętaj" box, links to the criteria, examples and provisions it covers, and a quiz at the end. Paths are ungated: the quiz never blocks the next lesson. Criterion pages link to the lessons that teach them.
+- **Quizzes** show one question at a time. "Sprawdź" explains every option, right or wrong, and announces the verdict to screen readers without moving focus; "Następne pytanie" moves focus to the next question. The score shows at the end.
+- **Progress** (lessons marked done, the last quiz score) is stored in `localStorage` under one key, in the shape planned for the Convex tables, so accounts can import it later. `/sciezki` says so and offers "Wyczyść postęp". With storage blocked, progress lasts until the tab closes.
 
 | Light | Dark | Mobile |
 | --- | --- | --- |
@@ -53,6 +56,10 @@ The interface is in Polish. This README is in English.
 | Article page | What applies to me | Law on a criterion page |
 | --- | --- | --- |
 | ![Article 5 of the digital accessibility act, each ustęp next to its summary](docs/screenshots/law-article.png) | ![Deadlines on one timeline with the app of a public body picked](docs/screenshots/obligations.png) | ![The Prawo section of 1.4.3 as a table by situation](docs/screenshots/criterion-law.png) |
+
+| Paths | Path page | Lesson quiz |
+| --- | --- | --- |
+| ![Five paths with progress on the developer and designer paths](docs/screenshots/paths.png) | ![Developer path syllabus with three lessons done and quiz scores](docs/screenshots/path.png) | ![A checked quiz question with an explanation under every option](docs/screenshots/lesson-quiz.png) |
 
 | Glossary preview | Glossary | Search |
 | --- | --- | --- |
@@ -207,6 +214,50 @@ Strona i aplikacja muszą spełniać **wymagania z załącznika**.
 
 Which provision requires which criterion lives in `src/content/legal-map.ts`, typed against both the criterion and the article ids. A test checks that no act requires an AAA criterion or one new in 2.2.
 
+### Paths and quizzes
+
+One folder per path in `content/sciezki/<path>/`:
+
+```text
+content/sciezki/programista/
+  index.md                       the path: frontmatter and introduction
+  klawiatura-i-fokus.md          a lesson
+  klawiatura-i-fokus.quiz.yaml   its quiz
+```
+
+```markdown
+---
+title: Programista
+role: programista
+summary: Jak pisać kod, który działa z klawiaturą i czytnikiem ekranu.
+lessons: [semantyka-najpierw, nazwy-dostepne, klawiatura-i-fokus]
+status: szkic
+---
+Wstęp do ścieżki.
+```
+
+- `lessons` sets the reading order and must name every lesson file in the folder exactly once. `role` is one of the four roles and is left out on the legal minimum path.
+- A lesson has `title`, `summary`, `keep` (two to four lines for the "Zapamiętaj" box), `status`, and optional `criteria`, `examples` and `law` (article ids such as `ustawa-2019-848/art-10`). The body is Markdown with `##` headings and the same `slownik:` and `prawo:` links as elsewhere.
+
+```yaml
+- id: div-jako-przycisk
+  prompt: Które kryterium łamie ten kod?
+  code: |
+    <div class="btn" onclick="zapisz()">Zapisz</div>
+  options:
+    - criterion: "2.1.1"
+      correct: true
+      why: Div nie dostaje fokusu i nie reaguje na Enter ani spację.
+    - text: Żadne, to tylko styl
+      why: Bez myszy nie da się zapisać.
+```
+
+- A quiz has three to five questions. An option is either `text` or a `criterion`, whose number and Polish name come from the registry. Every option needs `why`, shown after checking.
+- One correct option makes a single-choice question with radio buttons, more than one makes a "select all that apply" question with checkboxes. There is no type field to keep in sync.
+- Quote option text that YAML would read as a number or contains `: `, for example `text: "42"`.
+
+Unknown criteria, examples or articles, a lesson missing from `lessons`, a missing quiz, or a question without a correct answer fail `pnpm test` and the build.
+
 ### Where the statute text comes from
 
 `pnpm import:legal` regenerates `src/content/legal.gen.ts` (acts and the article index) and `src/content/legal-text.gen.ts` (the text, server only) from the [Sejm ELI API](https://api.sejm.gov.pl/eli), the data behind ISAP. `scripts/import-legal.ts` pins the consolidated text each act is read from. When an act was amended after that text, the import warns and the act page says so. The annex to the 2019 act exists only as a PDF table, so it is transcribed by hand in `src/content/annex-2019-848.ts` and pinned by a test.
@@ -269,16 +320,18 @@ content/
   slownik/       one Markdown file per glossary term
   praktyka/      one folder per example: index.md, bad.html, good.html
   prawo/         one Markdown file per act: summaries and deadlines
+  sciezki/       one folder per learning path: lessons and their quizzes
 scripts/
   import-wcag.ts   generates src/content/wcag.gen.ts and wcag-text.gen.ts
   import-legal.ts  generates src/content/legal.gen.ts and legal-text.gen.ts
 src/
   content/       WCAG structure, acts and the legal mapping, Markdown parsing and validation, server functions
   search/        search options, index builder and relevance tests
+  progress/      reading progress and quiz scores in localStorage
   routes/        file-based routes (__root.tsx holds the layout)
-  components/    header, theme toggle, route announcer, badges, glossary previews, example frames and cards
+  components/    header, theme toggle, route announcer, badges, glossary previews, example frames and cards, the quiz
   styles.css     Tailwind setup, colour tokens, styles for rendered Markdown
-e2e/             Playwright tests: axe, target size, keyboard, example isolation
+e2e/             Playwright tests: axe, target size, keyboard, example isolation, a whole path from the keyboard
 docs/
   accessibility.md   the accessibility checklist
   design/            dated plans and mocks
@@ -294,7 +347,7 @@ The full plan, with content scope, architecture and risks, is in [`docs/design/2
 - [x] **2. Explanations.** Plain-language drafts for every A and AA criterion, normative text, glossary, search, role filter. Detailed plan: [`docs/design/2026-09-27-phase-2-content`](docs/design/2026-09-27-phase-2-content/phase-2-content.en.html).
 - [x] **3. Examples.** Ten bad and good examples in sandboxed iframes, the practice catalogue, and the home page built from it. Detailed plan: [`docs/design/2026-09-27-phase-3-examples`](docs/design/2026-09-27-phase-3-examples/phase-3-examples.en.html).
 - [x] **4. Legal module.** Three Polish acts with the statute text and summaries, EN 301 549, the law-to-criterion mapping, the obligations timeline. Detailed plan: [`docs/design/2026-09-28-phase-4-legal`](docs/design/2026-09-28-phase-4-legal/phase-4-legal.en.html).
-- [ ] **5. Accounts.** Optional progress, notes and bookmarks with Convex.
-- [ ] **6. Paths and quizzes.**
+- [ ] **5. Accounts.** Optional progress, notes and bookmarks with Convex. Postponed; phase 6 went first with progress in the browser.
+- [x] **6. Paths and quizzes.** Five learning paths, 29 lessons with quizzes, progress in `localStorage`. Detailed plan: [`docs/design/2026-09-29-phase-6-paths`](docs/design/2026-09-29-phase-6-paths/phase-6-paths.en.html).
 - [ ] **7. Impairment simulators.**
 - [ ] **8. AAA criteria and WCAG 3.0 tracking.**

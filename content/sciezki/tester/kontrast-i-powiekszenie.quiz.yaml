@@ -1,0 +1,31 @@
+- id: tekst-na-zdjeciu
+  prompt: Nagłówek leży na zdjęciu. Jak sprawdzić jego kontrast?
+  options:
+    - text: Pipetą, w najjaśniejszym miejscu zdjęcia pod tekstem
+      correct: true
+      why: Tło się zmienia, więc liczy się najgorszy przypadek.
+    - text: Axe sprawdzi to automatycznie
+      why: Automat nie zmierzy tekstu na zdjęciu i zwykle zgłasza go do ręcznej weryfikacji.
+    - text: Nie trzeba, nagłówki są zwolnione
+      why: Nagłówki to tekst i podlegają 1.4.3.
+- id: powiekszenie-400
+  prompt: Jak sprawdzić kryterium 1.4.10?
+  options:
+    - text: Okno 1280 pikseli i powiększenie 400 procent
+      correct: true
+      why: Daje szerokość 320 pikseli CSS, dla której opisano kryterium.
+    - text: Okno zawężone do 320 pikseli
+      correct: true
+      why: Efekt jest ten sam.
+    - text: Powiększenie samego tekstu do 200 procent
+      why: To test kryterium 1.4.4, a nie przepływu treści.
+- id: ramka-pola
+  prompt: Pole formularza ma jasnoszarą ramkę 1,6 do 1 wobec tła. Które kryterium to łamie?
+  options:
+    - criterion: "1.4.11"
+      correct: true
+      why: Granica, po której rozpoznaje się pole, potrzebuje 3 do 1.
+    - criterion: "1.4.3"
+      why: Ramka nie jest tekstem.
+    - criterion: "1.4.10"
+      why: To kryterium dotyczy przepływu przy małej szerokości.

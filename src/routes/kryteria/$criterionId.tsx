@@ -13,8 +13,8 @@ export const Route = createFileRoute("/kryteria/$criterionId")({
   loader: async ({ params }) => {
     const criterion = findCriterion(params.criterionId);
     if (!criterion) throw notFound();
-    const { content, normative, terms, examples, law } = await getCriterionPage({ data: criterion.id });
-    return { criterion, content, normative, terms, examples, law };
+    const { content, normative, terms, examples, lessons, law } = await getCriterionPage({ data: criterion.id });
+    return { criterion, content, normative, terms, examples, lessons, law };
   },
   head: ({ loaderData }) => ({
     meta: [{ title: loaderData ? `${loaderData.criterion.id} ${loaderData.criterion.name} · a11y playground` : "a11y playground" }],
@@ -40,7 +40,7 @@ const pageSections = [
 const emptyNote = <p className="text-ink-2">Ta sekcja nie ma jeszcze treści.</p>;
 
 function CriterionPage() {
-  const { criterion, content, normative, terms, examples, law } = Route.useLoaderData();
+  const { criterion, content, normative, terms, examples, lessons, law } = Route.useLoaderData();
   const clause = enClause(criterion);
   const principle = principleOf(criterion);
   const guideline = guidelineOf(criterion);
@@ -83,25 +83,46 @@ function CriterionPage() {
     ),
     "jak-spelnic": html("jak-spelnic") ?? emptyNote,
     "typowe-bledy": html("typowe-bledy") ?? emptyNote,
-    przyklad:
-      examples.length > 0 ? (
-        <ul className="border-t border-rule">
-          {examples.map((example) => (
-            <li key={example.slug} className="border-b border-rule">
-              <Link
-                to="/praktyka/$slug"
-                params={{ slug: example.slug }}
-                className="block px-1 py-3 hover:bg-surface"
-              >
-                <span className="font-semibold">{example.title}</span>
-                <span className="mt-0.5 block text-[0.9375rem] text-ink-2">{example.summary}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="text-ink-2">Do tego kryterium nie ma jeszcze przykładu.</p>
-      ),
+    przyklad: (
+      <>
+        {examples.length > 0 ? (
+          <ul className="border-t border-rule">
+            {examples.map((example) => (
+              <li key={example.slug} className="border-b border-rule">
+                <Link
+                  to="/praktyka/$slug"
+                  params={{ slug: example.slug }}
+                  className="block px-1 py-3 hover:bg-surface"
+                >
+                  <span className="font-semibold">{example.title}</span>
+                  <span className="mt-0.5 block text-[0.9375rem] text-ink-2">{example.summary}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-ink-2">Do tego kryterium nie ma jeszcze przykładu.</p>
+        )}
+        {lessons.length > 0 ? (
+          <>
+            <h3 className="mt-5 font-mono text-xs font-semibold tracking-widest text-ink-2 uppercase">W ścieżkach</h3>
+            <ul className="mt-2 flex flex-wrap gap-2">
+              {lessons.map((lesson) => (
+                <li key={`${lesson.path}/${lesson.lesson}`}>
+                  <Link
+                    to="/sciezki/$path/$lesson"
+                    params={{ path: lesson.path, lesson: lesson.lesson }}
+                    className="inline-flex min-h-11 items-center gap-2 rounded border border-control bg-surface px-3 text-[0.9375rem] hover:border-ink"
+                  >
+                    <span className="text-ink-2">{lesson.pathTitle}:</span> {lesson.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </>
+        ) : null}
+      </>
+    ),
     "jak-sprawdzic": html("jak-sprawdzic") ?? emptyNote,
     // Variant A of the legal mocks: one row per situation, the reason in words when nothing applies.
     prawo: (

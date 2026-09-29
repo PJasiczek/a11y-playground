@@ -1,0 +1,34 @@
+- id: dobry-tytul
+  prompt: Który tytuł zgłoszenia jest najlepszy?
+  options:
+    - text: Przycisk zamykania okna logowania nie ma nazwy
+      correct: true
+      why: Mówi, co i gdzie, więc od razu wiadomo, co naprawić.
+    - text: Strona niedostępna dla niewidomych
+      why: Za ogólne. Nie wiadomo, od czego zacząć.
+    - text: Błąd WCAG
+      why: Nie mówi ani o problemie, ani o miejscu.
+- id: elementy
+  prompt: Co powinno znaleźć się w zgłoszeniu?
+  options:
+    - text: Numer kryterium
+      correct: true
+      why: Pozwala ocenić wagę i znaleźć wymagania.
+    - text: Kroki do odtworzenia
+      correct: true
+      why: Programista musi zobaczyć błąd, żeby go naprawić.
+    - text: Oczekiwane i faktyczne zachowanie
+      correct: true
+      why: Różnica między nimi to opis błędu.
+    - text: Kilka niezwiązanych problemów w jednym zgłoszeniu
+      why: Jedno zgłoszenie to jeden problem, inaczej część zginie.
+- id: waga
+  prompt: Który błąd zgłosić z najwyższą wagą?
+  options:
+    - text: Przycisku „Zapłać” nie da się uruchomić klawiaturą
+      correct: true
+      why: Blokuje główną ścieżkę użytkownika. Bez niego nie da się kupić.
+    - text: Ozdobna ikona w stopce ma zbędny opis
+      why: To szum, ale niczego nie blokuje.
+    - text: Nagłówek w artykule ma poziom 3 zamiast 2
+      why: Warto poprawić, ale nie blokuje załatwienia sprawy.

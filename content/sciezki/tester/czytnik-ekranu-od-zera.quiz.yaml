@@ -1,0 +1,31 @@
+- id: przelacznik
+  prompt: Czytnik mówi na przełączniku tylko „Powiadomienia”, bez roli i stanu. Które kryterium to łamie?
+  options:
+    - criterion: "4.1.2"
+      correct: true
+      why: Kontrolka potrzebuje nazwy, roli i stanu dostępnych dla technologii wspomagających.
+    - criterion: "1.4.1"
+      why: Chodzi o to, co mówi czytnik, a nie o kolor.
+    - criterion: "2.5.3"
+      why: Nazwa zgadza się z widocznym tekstem. Brakuje roli i stanu.
+- id: pary
+  prompt: Na jakich parach czytnik i przeglądarka warto testować?
+  options:
+    - text: NVDA z Firefoksem albo Chrome
+      correct: true
+      why: To częste połączenie na Windows.
+    - text: VoiceOver z Safari
+      correct: true
+      why: VoiceOver działa najlepiej z Safari na komputerach i telefonach Apple.
+    - text: VoiceOver z Firefoksem na Windows
+      why: VoiceOver jest tylko na urządzeniach Apple.
+- id: lista-naglowkow
+  prompt: Po co otwierać listę nagłówków w czytniku?
+  options:
+    - text: Żeby sprawdzić, czy struktura strony jest w kodzie i czy nagłówki opisują treść
+      correct: true
+      why: Osoby z czytnikiem często nawigują właśnie po tej liście.
+    - text: Żeby sprawdzić kontrast nagłówków
+      why: Czytnik nie mówi nic o kolorach.
+    - text: Żeby policzyć linki
+      why: Do tego jest lista linków, a liczba linków nie jest kryterium.

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan: phase 6, paths and quizzes</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1.25rem 6rem;
+    background: #000; color: #fff;
+    font: 16px/1.65 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  main { max-width: 82ch; margin: 0 auto; }
+  h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 .5rem; letter-spacing: -.02em; }
+  h2 { font-size: 1.2rem; margin: 3rem 0 .75rem; padding-top: 1rem; border-top: 1px solid #262626; letter-spacing: -.01em; }
+  h3 { font-size: 1rem; margin: 1.75rem 0 .5rem; }
+  p, li, dd { color: #e5e5e5; }
+  a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  ul, ol { padding-left: 1.3rem; }
+  li { margin: .3rem 0; }
+  code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .875em; background: #141414; border: 1px solid #262626; border-radius: 3px; padding: .08em .3em; }
+  pre { background: #0b0b0b; border: 1px solid #262626; border-radius: 4px; padding: .9rem 1rem; overflow-x: auto; }
+  pre code { background: none; border: 0; padding: 0; font-size: .82rem; line-height: 1.55; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; display: block; overflow-x: auto; }
+  th, td { border: 1px solid #262626; padding: .45rem .6rem; text-align: left; vertical-align: top; }
+  th { background: #101010; font-weight: 600; }
+  .meta { color: #a3a3a3; font-size: .85rem; margin: 0 0 1.5rem; }
+  .meta a { color: #fff; }
+  .flag { border-left: 2px solid #737373; padding: .1rem 0 .1rem .85rem; margin: 1rem 0; color: #d4d4d4; font-size: .93rem; }
+  .toc { border: 1px solid #262626; padding: 1rem 1rem 1rem 2.4rem; margin: 1.5rem 0 0; }
+  .toc li { margin: .15rem 0; }
+  @media (max-width: 40rem) { body { padding: 1.25rem .9rem 4rem; } h1 { font-size: 1.45rem; } }
+</style>
+</head>
+<body>
+<main>
+
+<p class="meta"><a href="phase-6-paths.pl.html" hreflang="pl">Wersja polska</a></p>
+
+<h1>Plan: phase 6, paths and quizzes</h1>
+<p class="meta">Detailed plan for phase 6 of the <a href="../2026-09-27-wcag-learning-app/wcag-learning-app.en.html">main plan</a>. Mocks of the paths list, a path, a lesson and the quiz: <a href="../2026-09-29-paths-mocks/paths-mocks.html">paths-mocks.html</a>. Plan version: 2026-09-29.</p>
+
+<p class="flag">Phase 5 (accounts and progress in Convex) is postponed. Phase 6 goes ahead without accounts, so progress lives in the browser. Section 3 explains how, and how phase 5 can take it over later.</p>
+
+<h2 id="changes">Changes after work started</h2>
+<p>Decisions made while building phase 6. Where they conflict with the sections below, these win.</p>
+<ul>
+  <li><strong>Focus also moves to the summary.</strong> After the last question the question is replaced by the score, so focus moves to the score heading ("Wynik: 3 z 4"). Otherwise it would be lost with the button that disappeared.</li>
+  <li><strong>Scoring tests ship with the quiz.</strong> They test <code>src/lib/quiz.ts</code>, which the quiz commit adds, so they moved there from the progress commit.</li>
+  <li><strong>One more mechanical commit.</strong> <code>refactor(routes): move paths route into a folder</code> goes before the pages, as in phases 3 and 4.</li>
+  <li><strong>Lesson headings are <code>##</code>.</strong> The lesson body sits right under the <code>h1</code>, so its headings are <code>h2</code>, styled in <code>.prose</code>.</li>
+</ul>
+
+<ol class="toc">
+  <li><a href="#goal">Goal and definition of done</a></li>
+  <li><a href="#scope">Scope</a></li>
+  <li><a href="#progress">Progress without accounts</a></li>
+  <li><a href="#format">Content format</a></li>
+  <li><a href="#paths">The five paths</a></li>
+  <li><a href="#quiz">Quiz behaviour</a></li>
+  <li><a href="#pages">Pages</a></li>
+  <li><a href="#tests">Tests</a></li>
+  <li><a href="#commits">Commits and the pull request</a></li>
+  <li><a href="#risks">Risks</a></li>
+  <li><a href="#decisions">Decisions</a></li>
+</ol>
+
+<h2 id="goal">1. Goal and definition of done</h2>
+<p>After phase 6 a person who knows their role but not WCAG has a place to start: an ordered set of lessons that walks them through the criteria that matter for their work, with a short quiz after each lesson to check they got it. It is the "by learning path" entry point from section 4 of the main plan.</p>
+<p>Done when:</p>
+<ul>
+  <li>Five paths are in the app: developer, designer, content author, tester, and the legal minimum for a public body. Every lesson has a quiz.</li>
+  <li>A path can be completed end to end from the keyboard: open it, go through every lesson with "next", answer each quiz, mark each lesson done, and see the path as complete. A Playwright test does exactly this.</li>
+  <li>Progress survives a reload and is visible on <code>/sciezki</code> and on the path page. With storage blocked, everything still works for the length of the visit.</li>
+  <li>Every lesson, quiz and link between them is checked by the content tests, the same way criteria, examples and provisions are.</li>
+</ul>
+
+<h2 id="scope">2. Scope</h2>
+<table>
+  <thead><tr><th>In</th><th>Out, and where it goes</th></tr></thead>
+  <tbody>
+    <tr><td>Five paths, 29 lessons, one quiz per lesson, as outlined in section 5, written by me as drafts for your edit</td><td>Lessons shared between paths: each path writes its own, from its role's point of view</td></tr>
+    <tr><td>Progress and the last quiz attempt in <code>localStorage</code>, with a "clear progress" button</td><td>Accounts, sync between devices, notes, bookmarks: phase 5</td></tr>
+    <tr><td><code>/sciezki</code>, <code>/sciezki/$path</code>, <code>/sciezki/$path/$lesson</code> with the quiz at the end of the lesson</td><td>A separate <code>/quiz/$quizId</code> route from the main plan: a quiz belongs to one lesson, so it lives on its page</td></tr>
+    <tr><td>Question types from section 8.4 of the main plan: single answer, several answers, "which criterion does this code break", "point out the fault"</td><td>Free-text answers, timers, scores across paths, badges: out, as the main plan says</td></tr>
+    <tr><td>Lessons in search, "W ścieżkach" on criterion pages</td><td>"Continue learning" on the home page: a small follow-up once the paths exist</td></tr>
+  </tbody>
+</table>
+
+<h2 id="progress">3. Progress without accounts</h2>
+<p>One <code>localStorage</code> key, <code>a11y-playground/postep</code>, holding a versioned JSON object. Its shape copies the <code>progress</code> and <code>quizAttempts</code> tables from section 9 of the main plan, minus <code>userId</code>, so phase 5 can import it on first sign-in without a translation layer.</p>
+<pre><code>// src/progress/store.ts
+const Progress = type({
+  v: "1",
+  lessons: { "[string]": { status: "'ukonczona'", updatedAt: IsoDateTime } },
+  quizzes: { "[string]": { answers: "Record&lt;string, string[]&gt;", score: "number", total: "number", completedAt: IsoDateTime } },
+});
+// keys are LessonKey: `${PathSlug}/${LessonSlug}`, e.g. "programista/klawiatura-i-fokus"</code></pre>
+<ul>
+  <li><strong>One lesson state.</strong> A lesson is done or not. The reader marks it with a toggle button. Finishing the quiz does not mark the lesson, and an unanswered quiz does not block it: paths are ungated, as the main plan says.</li>
+  <li><strong>Last attempt only.</strong> A new attempt replaces the old one. History is phase 5's problem if anyone asks for it.</li>
+  <li><strong>Read through <code>useSyncExternalStore</code>.</strong> The server snapshot is empty progress, so prerendered HTML never claims anything and hydration does not mismatch. Subscribing to the <code>storage</code> event keeps two open tabs in sync for free.</li>
+  <li><strong>Untrusted input.</strong> What comes out of storage is validated with ArkType. Anything invalid, from an old version or a hand edit, is dropped and replaced with empty progress. Keys that no longer match a lesson are ignored, not deleted, so renaming a lesson loses its state but nothing crashes.</li>
+  <li><strong>Storage blocked.</strong> Reads and writes are wrapped. If storage throws, progress lives in memory for the visit and the line under the list says so.</li>
+  <li><strong>Privacy.</strong> Nothing leaves the browser. <code>/sciezki</code> says "Postęp zapisuje się tylko w tej przeglądarce" next to a "Wyczyść postęp" button. No cookie banner: this is storage the reader asks for, not tracking.</li>
+</ul>
+
+<h2 id="format">4. Content format</h2>
+<p>Same pattern as the examples: one folder per path, Markdown with ArkType-validated frontmatter, parsed server-side at build time.</p>
+<pre><code>content/sciezki/programista/
+  index.md                     # the path
+  klawiatura-i-fokus.md        # a lesson
+  klawiatura-i-fokus.quiz.yaml # its quiz</code></pre>
+<pre><code># index.md
+---
+title: Programista
+role: programista            # a Role from sections.ts; absent on minimum-prawne
+summary: Jak pisać kod, który działa z klawiaturą i czytnikiem ekranu…
+lessons: [semantyka-najpierw, nazwy-dostepne, klawiatura-i-fokus, …]
+status: szkic
+---
+Intro paragraph shown on the path page.</code></pre>
+<pre><code># klawiatura-i-fokus.md
+---
+title: Klawiatura i fokus
+summary: Każda akcja z klawiatury, widoczny fokus i okno modalne…
+criteria: ["2.1.1", "2.1.2", "2.4.3", "2.4.7", "2.4.11"]
+examples: [okno-modalne-i-fokus, kontrast-stanow]
+law: []                      # LegalUnitIds, used by the legal path
+keep:                        # "Zapamiętaj", 2 to 4 lines
+  - Wszystko, co działa myszą, działa klawiaturą.
+  - …
+status: szkic
+---
+Lesson body in Markdown, with slownik: and prawo: links like everywhere else.</code></pre>
+<pre><code># klawiatura-i-fokus.quiz.yaml
+- id: div-jako-przycisk
+  prompt: Które kryterium łamie ten kod?
+  code: '&lt;div class="btn" onclick="zapisz()"&gt;Zapisz&lt;/div&gt;'
+  options:
+    - { criterion: "2.1.1", correct: true, why: Div nie dostaje fokusu… }
+    - { criterion: "1.4.3", why: W kodzie nie ma kolorów… }
+- id: okno-modalne
+  prompt: Okno modalne jest otwarte. Co powinno działać?
+  options:
+    - { text: Fokus przechodzi do okna, correct: true, why: … }
+    - { text: Tab może wyjść na stronę pod oknem, why: … }</code></pre>
+<ul>
+  <li><strong>Two question kinds, derived, not declared.</strong> One correct option renders radios, more than one renders checkboxes with "Zaznacz wszystkie poprawne". Code and "point out the fault" are the same kind with a <code>code</code> field or element names as options. Fewer knobs, same four question types.</li>
+  <li><strong>An option is text or a criterion.</strong> <code>criterion</code> renders the number and Polish name from the registry and links to it after checking, so a quiz cannot name a criterion wrong.</li>
+  <li><strong>Every option has <code>why</code>.</strong> The main plan asks for an explanation on every answer, correct ones included.</li>
+  <li><strong>Types.</strong> Path and lesson slugs come from Markdown, so like criterion content they are strings checked by tests, not a union checked by <code>tsc</code>. <code>criteria</code>, <code>examples</code> and <code>law</code> are narrowed to <code>CriterionId</code>, example slugs and <code>LegalUnitId</code> by the parser, which fails the build on an unknown id.</li>
+</ul>
+
+<h2 id="paths">5. The five paths</h2>
+<p>A first outline for your edit. Lesson numbers are the order. Criteria are the main ones each lesson covers; examples are from the existing set of ten.</p>
+
+<h3>Programista (7)</h3>
+<table>
+  <thead><tr><th>#</th><th>Lesson</th><th>Criteria</th><th>Examples</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>Semantyka najpierw</td><td>1.3.1, 4.1.2</td><td>wlasna-lista-zamiast-select</td></tr>
+    <tr><td>2</td><td>Nazwy dostępne</td><td>1.1.1, 2.5.3, 4.1.2</td><td>ikona-jako-przycisk</td></tr>
+    <tr><td>3</td><td>Klawiatura i fokus</td><td>2.1.1, 2.1.2, 2.4.3, 2.4.7, 2.4.11</td><td>okno-modalne-i-fokus, kontrast-stanow</td></tr>
+    <tr><td>4</td><td>Formularze i błędy</td><td>1.3.5, 3.3.1, 3.3.2, 3.3.3, 3.3.7</td><td>formularz-z-bledami</td></tr>
+    <tr><td>5</td><td>Treści, które się zmieniają</td><td>3.2.1, 3.2.2, 4.1.3</td><td></td></tr>
+    <tr><td>6</td><td>Tabele i struktura</td><td>1.3.1, 1.3.2, 2.4.6</td><td>tabela-z-naglowkami</td></tr>
+    <tr><td>7</td><td>Ruch, czas i cele dotykowe</td><td>2.2.2, 2.5.7, 2.5.8</td><td>karuzela-automatyczna, przeciaganie-z-alternatywa, cel-24-na-24</td></tr>
+  </tbody>
+</table>
+
+<h3>Projektant (6)</h3>
+<table>
+  <thead><tr><th>#</th><th>Lesson</th><th>Criteria</th><th>Examples</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>Kontrast tekstu i elementów</td><td>1.4.3, 1.4.11</td><td>kontrast-stanow</td></tr>
+    <tr><td>2</td><td>Nie tylko kolor</td><td>1.4.1</td><td>formularz-z-bledami</td></tr>
+    <tr><td>3</td><td>Fokus i stany w projekcie</td><td>2.4.7, 2.4.11, 1.4.11</td><td>kontrast-stanow</td></tr>
+    <tr><td>4</td><td>Cele i gesty</td><td>2.5.1, 2.5.7, 2.5.8</td><td>cel-24-na-24, przeciaganie-z-alternatywa</td></tr>
+    <tr><td>5</td><td>Powiększanie i przepływ treści</td><td>1.4.4, 1.4.10, 1.4.12</td><td></td></tr>
+    <tr><td>6</td><td>Spójność i pomoc</td><td>3.2.3, 3.2.4, 3.2.6, 3.3.2</td><td></td></tr>
+  </tbody>
+</table>
+
+<h3>Autor treści (5)</h3>
+<table>
+  <thead><tr><th>#</th><th>Lesson</th><th>Criteria</th><th>Examples</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>Tekst alternatywny</td><td>1.1.1</td><td>obraz-dekoracyjny-i-informacyjny</td></tr>
+    <tr><td>2</td><td>Nagłówki i etykiety</td><td>1.3.1, 2.4.6</td><td></td></tr>
+    <tr><td>3</td><td>Linki, które mówią, dokąd prowadzą</td><td>2.4.4</td><td></td></tr>
+    <tr><td>4</td><td>Język strony i fragmentów</td><td>3.1.1, 3.1.2</td><td></td></tr>
+    <tr><td>5</td><td>Wideo i dźwięk</td><td>1.2.1, 1.2.2, 1.2.3, 1.2.5</td><td></td></tr>
+  </tbody>
+</table>
+
+<h3>Tester (6)</h3>
+<table>
+  <thead><tr><th>#</th><th>Lesson</th><th>Criteria</th><th>Examples</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>Co wyłapie automat, a czego nie</td><td>none, about tools</td><td>every example with <code>axe</code> rules</td></tr>
+    <tr><td>2</td><td>Test klawiaturą</td><td>2.1.1, 2.1.2, 2.4.3, 2.4.7</td><td>okno-modalne-i-fokus</td></tr>
+    <tr><td>3</td><td>Czytnik ekranu od zera</td><td>1.3.1, 4.1.2</td><td>ikona-jako-przycisk, wlasna-lista-zamiast-select</td></tr>
+    <tr><td>4</td><td>Kontrast i powiększenie</td><td>1.4.3, 1.4.4, 1.4.10, 1.4.11</td><td>kontrast-stanow</td></tr>
+    <tr><td>5</td><td>Formularze i komunikaty</td><td>3.3.1, 3.3.3, 4.1.3</td><td>formularz-z-bledami</td></tr>
+    <tr><td>6</td><td>Jak opisać błąd</td><td>none, the report: criterion, steps, expected, actual</td><td></td></tr>
+  </tbody>
+</table>
+
+<h3>Minimum prawne dla podmiotu publicznego (5)</h3>
+<table>
+  <thead><tr><th>#</th><th>Lesson</th><th>Provisions</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>Czy ustawa cię dotyczy</td><td>2019/848 art. 2 and 3</td></tr>
+    <tr><td>2</td><td>Co trzeba spełnić: 49 kryteriów</td><td>2019/848 art. 5, the annex (<code>zal</code>)</td></tr>
+    <tr><td>3</td><td>Terminy</td><td>2019/848 art. 27</td></tr>
+    <tr><td>4</td><td>Deklaracja dostępności</td><td>2019/848 art. 10 and 11</td></tr>
+    <tr><td>5</td><td>Żądania, skargi i koordynator</td><td>2019/848 art. 18, 2019/1696 art. 14</td></tr>
+  </tbody>
+</table>
+<p class="flag">Every provision above exists in <code>legal.gen.ts</code> (checked 2026-09-29). The parser rejects any that do not.</p>
+
+<h2 id="quiz">6. Quiz behaviour</h2>
+<ul>
+  <li><strong>Markup.</strong> One <code>fieldset</code> per question, the prompt as <code>legend</code>, native radios or checkboxes with 44-pixel labels. Code snippets are a focusable, labelled <code>pre</code>, so a long line can be scrolled from the keyboard.</li>
+  <li><strong>Feedback.</strong> After checking, every option shows "Poprawna", "Niepoprawna" or "Pominięta, a poprawna" with a glyph and its <code>why</code>. Colour only repeats what the word says. Once checked, a question's inputs are disabled; "Rozwiąż jeszcze raz" in the summary starts the whole quiz over.</li>
+  <li><strong>Announcement.</strong> The verdict of each checked question goes to a polite live region; focus stays on the button the reader pressed.</li>
+  <li><strong>Scoring.</strong> A question counts as right only when the selection matches exactly. The score is "2 z 3", nothing more.</li>
+  <li><strong>One question at a time (variant 4C).</strong> The quiz shows one question, with "Pytanie 2 z 3" in its legend and a decorative step bar. "Sprawdź" shows the feedback and turns into "Następne pytanie". That button moves focus to the next question's legend (<code>tabindex="-1"</code>), the one place the quiz moves focus. There is no going back or skipping ahead. After the last question comes a summary: the score, one line per question with its verdict, "Rozwiąż jeszcze raz". The attempt is stored when the summary appears.</li>
+  <li><strong>Without JavaScript.</strong> The prerendered page shows the first question without the check button. The lesson itself is fully readable; the quiz needs JS, like the filters on <code>/kryteria</code>.</li>
+</ul>
+
+<h2 id="pages">7. Pages</h2>
+<ul>
+  <li><strong><code>/sciezki</code>:</strong> the five paths, lesson counts, progress where there is some, "continue" to the first unfinished lesson, the storage note and "Wyczyść postęp". Replaces the placeholder. Screen 1 in the mocks.</li>
+  <li><strong><code>/sciezki/$path</code>:</strong> intro, the lessons in order with status and quiz score, "continue". Screen 2.</li>
+  <li><strong><code>/sciezki/$path/$lesson</code>:</strong> the lesson, "Zapamiętaj", the material it points at (criteria, examples, provisions), the quiz, the done toggle, previous and next. Screen 3. Route changes already announce the new heading, so moving between lessons needs nothing new.</li>
+  <li><strong>Criterion page:</strong> a "W ścieżkach" line next to the examples, linking to the lessons that list the criterion.</li>
+  <li><strong>Search:</strong> lessons join the index with title, summary and body, as a fifth group, "Ścieżki".</li>
+  <li><strong>Prerendering:</strong> every path and lesson page is prerendered. Progress and the quiz hydrate on top.</li>
+</ul>
+
+<h2 id="tests">8. Tests</h2>
+<ul>
+  <li><strong>Content (Vitest):</strong> every path parses; its <code>lessons</code> list and the lesson files match one to one; every criterion, example and provision id resolves; every lesson has a quiz with 3 to 5 questions; every question has at least one correct option and every option a <code>why</code>; question ids are unique within a quiz; drafts carry no <code>lastVerified</code>, verified files are at most 12 months old.</li>
+  <li><strong>Progress (Vitest):</strong> the store round-trips, rejects a malformed or older-version value without throwing, and falls back to memory when storage throws. Scoring on a handful of single and multiple choice cases.</li>
+  <li><strong>End to end (Playwright):</strong> the definition of done, keyboard only: <code>/sciezki</code> → the developer path → every lesson through "next", one quiz answered question by question to its summary, each lesson marked done → the path shows 7 of 7. Reload, and the state is still there.</li>
+  <li><strong>Axe:</strong> <code>/sciezki</code>, one path page, one lesson with its quiz on the first question, after checking it, and on the summary.</li>
+</ul>
+
+<h2 id="commits">9. Commits and the pull request</h2>
+<p>One pull request, branch <code>feat/paths-and-quizzes</code>:</p>
+<ol>
+  <li><code>docs(design): add phase 6 plan and paths mocks</code>, this plan, the mocks, and the note in the main plan that phase 5 is postponed.</li>
+  <li><code>feat(paths): add path, lesson and quiz format and parser</code>, with the content tests and one small fixture path.</li>
+  <li><code>feat(paths): store progress in the browser</code>, the store and its tests.</li>
+  <li><code>feat(paths): add path and lesson pages</code>, the three routes and the done toggle.</li>
+  <li><code>feat(paths): add the lesson quiz</code>.</li>
+  <li><code>docs(paths): write the developer path</code>, with the keyboard end-to-end test, which needs a whole path.</li>
+  <li><code>docs(paths): write the designer and content author paths</code>.</li>
+  <li><code>docs(paths): write the tester and legal minimum paths</code>.</li>
+  <li><code>feat(criteria): link lessons from criterion pages</code>.</li>
+  <li><code>feat(search): index lessons</code>.</li>
+  <li><code>docs: update README for phase 6</code>, with screenshots.</li>
+</ol>
+
+<h2 id="risks">10. Risks</h2>
+<table>
+  <thead><tr><th>Risk</th><th>What we do</th></tr></thead>
+  <tbody>
+    <tr><td>29 lessons and around 100 questions is a lot of text to review</td><td>Drafts with the <code>szkic</code> badge, the paths in three content commits you can review separately, lessons short (under ten minutes each) and pointing at criterion pages instead of repeating them</td></tr>
+    <tr><td>Lessons drift from the criterion pages they summarise</td><td>Lessons explain the role's view and link out; the criterion page stays the reference</td></tr>
+    <tr><td>A quiz answer that is arguably right is marked wrong</td><td>Every option has a <code>why</code>, reviewed with the lesson; "arguably" questions get rewritten, not defended</td></tr>
+    <tr><td>Progress lost when the reader clears the browser or switches devices</td><td>Said plainly on <code>/sciezki</code>; fixed properly in phase 5, which can import the stored object as is</td></tr>
+    <tr><td>Hydration flicker as progress appears after load</td><td>Status cells keep their size whether empty or filled, so nothing moves</td></tr>
+  </tbody>
+</table>
+
+<h2 id="decisions">11. Decisions</h2>
+<ul>
+  <li><strong>Progress without phase 5: decided.</strong> <code>localStorage</code>, shaped like the Convex tables.</li>
+  <li><strong>Scope: decided.</strong> All five paths in this phase, drafted by me for your edit.</li>
+  <li><strong>Layout: decided.</strong> In <a href="../2026-09-29-paths-mocks/paths-mocks.html">paths-mocks.html</a>: 1A five rows on <code>/sciezki</code>, 2A the syllabus on the path page, 3A one column for the lesson, 4C one question at a time for the quiz, see section 6.</li>
+  <li><strong>The lesson outline in section 5: open.</strong> Add, cut or reorder before I write.</li>
+</ul>
+
+</main>
+</body>
+</html>
