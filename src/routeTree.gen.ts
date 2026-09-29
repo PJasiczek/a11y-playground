@@ -24,6 +24,8 @@ import { Route as SciezkiIndexRouteImport } from './routes/sciezki/index'
 import { Route as DemoSlugVariantRouteImport } from './routes/demo/$slug.$variant'
 import { Route as PrawoActIndexRouteImport } from './routes/prawo/$act/index'
 import { Route as PrawoActUnitRouteImport } from './routes/prawo/$act/$unit'
+import { Route as SciezkiPathIndexRouteImport } from './routes/sciezki/$path/index'
+import { Route as SciezkiPathLessonRouteImport } from './routes/sciezki/$path/$lesson'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -100,6 +102,16 @@ const PrawoActUnitRoute = PrawoActUnitRouteImport.update({
   path: '/prawo/$act/$unit',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SciezkiPathIndexRoute = SciezkiPathIndexRouteImport.update({
+  id: '/sciezki/$path/',
+  path: '/sciezki/$path/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SciezkiPathLessonRoute = SciezkiPathLessonRouteImport.update({
+  id: '/sciezki/$path/$lesson',
+  path: '/sciezki/$path/$lesson',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -116,7 +128,9 @@ export interface FileRoutesByFullPath {
   '/sciezki/': typeof SciezkiIndexRoute
   '/demo/$slug/$variant': typeof DemoSlugVariantRoute
   '/prawo/$act/$unit': typeof PrawoActUnitRoute
+  '/sciezki/$path/$lesson': typeof SciezkiPathLessonRoute
   '/prawo/$act/': typeof PrawoActIndexRoute
+  '/sciezki/$path/': typeof SciezkiPathIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -133,7 +147,9 @@ export interface FileRoutesByTo {
   '/sciezki': typeof SciezkiIndexRoute
   '/demo/$slug/$variant': typeof DemoSlugVariantRoute
   '/prawo/$act/$unit': typeof PrawoActUnitRoute
+  '/sciezki/$path/$lesson': typeof SciezkiPathLessonRoute
   '/prawo/$act': typeof PrawoActIndexRoute
+  '/sciezki/$path': typeof SciezkiPathIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -151,7 +167,9 @@ export interface FileRoutesById {
   '/sciezki/': typeof SciezkiIndexRoute
   '/demo/$slug/$variant': typeof DemoSlugVariantRoute
   '/prawo/$act/$unit': typeof PrawoActUnitRoute
+  '/sciezki/$path/$lesson': typeof SciezkiPathLessonRoute
   '/prawo/$act/': typeof PrawoActIndexRoute
+  '/sciezki/$path/': typeof SciezkiPathIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -170,7 +188,9 @@ export interface FileRouteTypes {
     | '/sciezki/'
     | '/demo/$slug/$variant'
     | '/prawo/$act/$unit'
+    | '/sciezki/$path/$lesson'
     | '/prawo/$act/'
+    | '/sciezki/$path/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -187,7 +207,9 @@ export interface FileRouteTypes {
     | '/sciezki'
     | '/demo/$slug/$variant'
     | '/prawo/$act/$unit'
+    | '/sciezki/$path/$lesson'
     | '/prawo/$act'
+    | '/sciezki/$path'
   id:
     | '__root__'
     | '/'
@@ -204,7 +226,9 @@ export interface FileRouteTypes {
     | '/sciezki/'
     | '/demo/$slug/$variant'
     | '/prawo/$act/$unit'
+    | '/sciezki/$path/$lesson'
     | '/prawo/$act/'
+    | '/sciezki/$path/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -222,7 +246,9 @@ export interface RootRouteChildren {
   SciezkiIndexRoute: typeof SciezkiIndexRoute
   DemoSlugVariantRoute: typeof DemoSlugVariantRoute
   PrawoActUnitRoute: typeof PrawoActUnitRoute
+  SciezkiPathLessonRoute: typeof SciezkiPathLessonRoute
   PrawoActIndexRoute: typeof PrawoActIndexRoute
+  SciezkiPathIndexRoute: typeof SciezkiPathIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -332,6 +358,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrawoActUnitRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sciezki/$path/': {
+      id: '/sciezki/$path/'
+      path: '/sciezki/$path'
+      fullPath: '/sciezki/$path/'
+      preLoaderRoute: typeof SciezkiPathIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sciezki/$path/$lesson': {
+      id: '/sciezki/$path/$lesson'
+      path: '/sciezki/$path/$lesson'
+      fullPath: '/sciezki/$path/$lesson'
+      preLoaderRoute: typeof SciezkiPathLessonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -350,7 +390,9 @@ const rootRouteChildren: RootRouteChildren = {
   SciezkiIndexRoute: SciezkiIndexRoute,
   DemoSlugVariantRoute: DemoSlugVariantRoute,
   PrawoActUnitRoute: PrawoActUnitRoute,
+  SciezkiPathLessonRoute: SciezkiPathLessonRoute,
   PrawoActIndexRoute: PrawoActIndexRoute,
+  SciezkiPathIndexRoute: SciezkiPathIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
