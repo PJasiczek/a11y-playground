@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan: faza 6, ścieżki i quizy</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1.25rem 6rem;
+    background: #000; color: #fff;
+    font: 16px/1.65 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  main { max-width: 82ch; margin: 0 auto; }
+  h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 .5rem; letter-spacing: -.02em; }
+  h2 { font-size: 1.2rem; margin: 3rem 0 .75rem; padding-top: 1rem; border-top: 1px solid #262626; letter-spacing: -.01em; }
+  h3 { font-size: 1rem; margin: 1.75rem 0 .5rem; }
+  p, li, dd { color: #e5e5e5; }
+  a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  ul, ol { padding-left: 1.3rem; }
+  li { margin: .3rem 0; }
+  code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .875em; background: #141414; border: 1px solid #262626; border-radius: 3px; padding: .08em .3em; }
+  pre { background: #0b0b0b; border: 1px solid #262626; border-radius: 4px; padding: .9rem 1rem; overflow-x: auto; }
+  pre code { background: none; border: 0; padding: 0; font-size: .82rem; line-height: 1.55; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; display: block; overflow-x: auto; }
+  th, td { border: 1px solid #262626; padding: .45rem .6rem; text-align: left; vertical-align: top; }
+  th { background: #101010; font-weight: 600; }
+  .meta { color: #a3a3a3; font-size: .85rem; margin: 0 0 1.5rem; }
+  .meta a { color: #fff; }
+  .flag { border-left: 2px solid #737373; padding: .1rem 0 .1rem .85rem; margin: 1rem 0; color: #d4d4d4; font-size: .93rem; }
+  .toc { border: 1px solid #262626; padding: 1rem 1rem 1rem 2.4rem; margin: 1.5rem 0 0; }
+  .toc li { margin: .15rem 0; }
+  @media (max-width: 40rem) { body { padding: 1.25rem .9rem 4rem; } h1 { font-size: 1.45rem; } }
+</style>
+</head>
+<body>
+<main>
+
+<p class="meta"><a href="phase-6-paths.en.html" hreflang="en">English version</a></p>
+
+<h1>Plan: faza 6, ścieżki i quizy</h1>
+<p class="meta">Szczegółowy plan fazy 6 z <a href="../2026-09-27-wcag-learning-app/wcag-learning-app.pl.html">planu głównego</a>. Makiety listy ścieżek, ścieżki, lekcji i quizu: <a href="../2026-09-29-paths-mocks/paths-mocks.html">paths-mocks.html</a>. Wersja planu: 2026-09-29.</p>
+
+<p class="flag">Faza 5 (konta i postęp w Convex) jest odłożona. Faza 6 idzie bez kont, więc postęp zostaje w przeglądarce. Sekcja 3 opisuje, jak to działa i jak faza 5 może go później przejąć.</p>
+
+<ol class="toc">
+  <li><a href="#goal">Cel i warunek ukończenia</a></li>
+  <li><a href="#scope">Zakres</a></li>
+  <li><a href="#progress">Postęp bez kont</a></li>
+  <li><a href="#format">Format treści</a></li>
+  <li><a href="#paths">Pięć ścieżek</a></li>
+  <li><a href="#quiz">Jak działa quiz</a></li>
+  <li><a href="#pages">Strony</a></li>
+  <li><a href="#tests">Testy</a></li>
+  <li><a href="#commits">Commity i pull request</a></li>
+  <li><a href="#risks">Ryzyka</a></li>
+  <li><a href="#decisions">Decyzje</a></li>
+</ol>
+
+<h2 id="goal">1. Cel i warunek ukończenia</h2>
+<p>Po fazie 6 ktoś, kto zna swoją rolę, ale nie zna WCAG, ma od czego zacząć: uporządkowany zestaw lekcji, który prowadzi przez kryteria ważne w jego pracy, z krótkim quizem po każdej lekcji. To wejście „przez ścieżkę nauki” z sekcji 4 planu głównego.</p>
+<p>Gotowe, gdy:</p>
+<ul>
+  <li>W aplikacji jest pięć ścieżek: programista, projektant, autor treści, tester i minimum prawne dla podmiotu publicznego. Każda lekcja ma quiz.</li>
+  <li>Ścieżkę da się przejść od początku do końca samą klawiaturą: otworzyć, przejść wszystkie lekcje przyciskiem „dalej”, odpowiedzieć na każdy quiz, oznaczyć każdą lekcję jako ukończoną i zobaczyć ścieżkę jako ukończoną. Dokładnie to robi test w Playwright.</li>
+  <li>Postęp przetrwa przeładowanie strony i widać go na <code>/sciezki</code> i na stronie ścieżki. Gdy zapis w przeglądarce jest zablokowany, wszystko działa do końca wizyty.</li>
+  <li>Każdą lekcję, quiz i powiązanie między nimi sprawdzają testy treści, tak jak kryteria, przykłady i przepisy.</li>
+</ul>
+
+<h2 id="scope">2. Zakres</h2>
+<table>
+  <thead><tr><th>W zakresie</th><th>Poza zakresem i dokąd trafia</th></tr></thead>
+  <tbody>
+    <tr><td>Pięć ścieżek, 29 lekcji, quiz przy każdej lekcji, według sekcji 5. Piszę je jako szkice do Twojej redakcji</td><td>Lekcje wspólne dla kilku ścieżek: każda ścieżka ma własne, pisane z perspektywy swojej roli</td></tr>
+    <tr><td>Postęp i ostatnie podejście do quizu w <code>localStorage</code>, z przyciskiem „Wyczyść postęp”</td><td>Konta, synchronizacja między urządzeniami, notatki, zakładki: faza 5</td></tr>
+    <tr><td><code>/sciezki</code>, <code>/sciezki/$path</code>, <code>/sciezki/$path/$lesson</code>, quiz na końcu lekcji</td><td>Osobna trasa <code>/quiz/$quizId</code> z planu głównego: quiz należy do jednej lekcji, więc mieszka na jej stronie</td></tr>
+    <tr><td>Typy pytań z sekcji 8.4 planu głównego: jedna odpowiedź, kilka odpowiedzi, „które kryterium łamie ten kod”, „wskaż błąd w interfejsie”</td><td>Odpowiedzi tekstowe, limity czasu, punkty między ścieżkami, odznaki: poza, jak mówi plan główny</td></tr>
+    <tr><td>Lekcje w wyszukiwarce, „W ścieżkach” na stronach kryteriów</td><td>„Kontynuuj naukę” na stronie głównej: mała poprawka, kiedy ścieżki już będą</td></tr>
+  </tbody>
+</table>
+
+<h2 id="progress">3. Postęp bez kont</h2>
+<p>Jeden klucz w <code>localStorage</code>, <code>a11y-playground/postep</code>, z wersjonowanym obiektem JSON. Jego kształt powtarza tabele <code>progress</code> i <code>quizAttempts</code> z sekcji 9 planu głównego, tylko bez <code>userId</code>. Faza 5 może go więc zaimportować przy pierwszym logowaniu bez warstwy tłumaczącej.</p>
+<pre><code>// src/progress/store.ts
+const Progress = type({
+  v: "1",
+  lessons: { "[string]": { status: "'ukonczona'", updatedAt: IsoDateTime } },
+  quizzes: { "[string]": { answers: "Record&lt;string, string[]&gt;", score: "number", total: "number", completedAt: IsoDateTime } },
+});
+// klucze to LessonKey: `${PathSlug}/${LessonSlug}`, np. "programista/klawiatura-i-fokus"</code></pre>
+<ul>
+  <li><strong>Jeden stan lekcji.</strong> Lekcja jest ukończona albo nie. Czytelnik oznacza ją przełącznikiem. Rozwiązanie quizu nie oznacza lekcji, a nierozwiązany quiz jej nie blokuje: ścieżki są otwarte, jak mówi plan główny.</li>
+  <li><strong>Tylko ostatnie podejście.</strong> Nowe podejście zastępuje stare. Historia to sprawa fazy 5, jeśli ktoś o nią poprosi.</li>
+  <li><strong>Odczyt przez <code>useSyncExternalStore</code>.</strong> Migawka po stronie serwera to pusty postęp, więc prerenderowany HTML niczego nie twierdzi, a hydracja się nie rozjeżdża. Nasłuch zdarzenia <code>storage</code> za darmo synchronizuje dwie otwarte karty.</li>
+  <li><strong>Dane z zewnątrz.</strong> To, co wychodzi z pamięci przeglądarki, sprawdza ArkType. Coś nieprawidłowego, ze starej wersji albo edytowane ręcznie, jest odrzucane i zastępowane pustym postępem. Klucze, które nie pasują już do żadnej lekcji, są pomijane, nie kasowane. Zmiana nazwy lekcji gubi jej stan, ale nic się nie wywraca.</li>
+  <li><strong>Zablokowany zapis.</strong> Odczyt i zapis są opakowane. Jeśli przeglądarka rzuci wyjątkiem, postęp żyje w pamięci do końca wizyty, a linijka pod listą o tym mówi.</li>
+  <li><strong>Prywatność.</strong> Nic nie wychodzi z przeglądarki. Na <code>/sciezki</code> jest zdanie „Postęp zapisuje się tylko w tej przeglądarce” i przycisk „Wyczyść postęp”. Bez banera cookies: to zapis, o który prosi czytelnik, nie śledzenie.</li>
+</ul>
+
+<h2 id="format">4. Format treści</h2>
+<p>Ten sam wzorzec co przy przykładach: folder na ścieżkę, Markdown z frontmatterem sprawdzanym przez ArkType, parsowany po stronie serwera w czasie budowania.</p>
+<pre><code>content/sciezki/programista/
+  index.md                     # ścieżka
+  klawiatura-i-fokus.md        # lekcja
+  klawiatura-i-fokus.quiz.yaml # jej quiz</code></pre>
+<pre><code># index.md
+---
+title: Programista
+role: programista            # Role z sections.ts; brak w minimum-prawne
+summary: Jak pisać kod, który działa z klawiaturą i czytnikiem ekranu…
+lessons: [semantyka-najpierw, nazwy-dostepne, klawiatura-i-fokus, …]
+status: szkic
+---
+Akapit wstępu na stronie ścieżki.</code></pre>
+<pre><code># klawiatura-i-fokus.md
+---
+title: Klawiatura i fokus
+summary: Każda akcja z klawiatury, widoczny fokus i okno modalne…
+criteria: ["2.1.1", "2.1.2", "2.4.3", "2.4.7", "2.4.11"]
+examples: [okno-modalne-i-fokus, kontrast-stanow]
+law: []                      # LegalUnitId, używane w ścieżce prawnej
+keep:                        # „Zapamiętaj”, od 2 do 4 linijek
+  - Wszystko, co działa myszą, działa klawiaturą.
+  - …
+status: szkic
+---
+Treść lekcji w Markdownie, z linkami slownik: i prawo: jak wszędzie.</code></pre>
+<pre><code># klawiatura-i-fokus.quiz.yaml
+- id: div-jako-przycisk
+  prompt: Które kryterium łamie ten kod?
+  code: '&lt;div class="btn" onclick="zapisz()"&gt;Zapisz&lt;/div&gt;'
+  options:
+    - { criterion: "2.1.1", correct: true, why: Div nie dostaje fokusu… }
+    - { criterion: "1.4.3", why: W kodzie nie ma kolorów… }
+- id: okno-modalne
+  prompt: Okno modalne jest otwarte. Co powinno działać?
+  options:
+    - { text: Fokus przechodzi do okna, correct: true, why: … }
+    - { text: Tab może wyjść na stronę pod oknem, why: … }</code></pre>
+<ul>
+  <li><strong>Dwa rodzaje pytań, wyliczane, nie deklarowane.</strong> Jedna poprawna opcja daje pola radio, więcej niż jedna daje pola wyboru i dopisek „Zaznacz wszystkie poprawne”. Pytania z kodem i „wskaż błąd” to ten sam rodzaj, z polem <code>code</code> albo nazwami elementów jako opcjami. Mniej przełączników, te same cztery typy pytań.</li>
+  <li><strong>Opcja to tekst albo kryterium.</strong> <code>criterion</code> wyświetla numer i polską nazwę z rejestru, a po sprawdzeniu linkuje do kryterium. Quiz nie może więc przekręcić nazwy.</li>
+  <li><strong>Każda opcja ma <code>why</code>.</strong> Plan główny wymaga wyjaśnienia przy każdej odpowiedzi, także poprawnej.</li>
+  <li><strong>Typy.</strong> Identyfikatory ścieżek i lekcji pochodzą z Markdownu, więc jak treść kryteriów są napisami sprawdzanymi w testach, nie unią sprawdzaną przez <code>tsc</code>. <code>criteria</code>, <code>examples</code> i <code>law</code> parser zawęża do <code>CriterionId</code>, identyfikatorów przykładów i <code>LegalUnitId</code>, a nieznany identyfikator przerywa budowanie.</li>
+</ul>
+
+<h2 id="paths">5. Pięć ścieżek</h2>
+<p>Pierwszy konspekt do Twojej redakcji. Numer lekcji to jej kolejność. Kryteria to te główne, które lekcja omawia. Przykłady pochodzą z istniejącej dziesiątki.</p>
+
+<h3>Programista (7)</h3>
+<table>
+  <thead><tr><th>Nr</th><th>Lekcja</th><th>Kryteria</th><th>Przykłady</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>Semantyka najpierw</td><td>1.3.1, 4.1.2</td><td>wlasna-lista-zamiast-select</td></tr>
+    <tr><td>2</td><td>Nazwy dostępne</td><td>1.1.1, 2.5.3, 4.1.2</td><td>ikona-jako-przycisk</td></tr>
+    <tr><td>3</td><td>Klawiatura i fokus</td><td>2.1.1, 2.1.2, 2.4.3, 2.4.7, 2.4.11</td><td>okno-modalne-i-fokus, kontrast-stanow</td></tr>
+    <tr><td>4</td><td>Formularze i błędy</td><td>1.3.5, 3.3.1, 3.3.2, 3.3.3, 3.3.7</td><td>formularz-z-bledami</td></tr>
+    <tr><td>5</td><td>Treści, które się zmieniają</td><td>3.2.1, 3.2.2, 4.1.3</td><td></td></tr>
+    <tr><td>6</td><td>Tabele i struktura</td><td>1.3.1, 1.3.2, 2.4.6</td><td>tabela-z-naglowkami</td></tr>
+    <tr><td>7</td><td>Ruch, czas i cele dotykowe</td><td>2.2.2, 2.5.7, 2.5.8</td><td>karuzela-automatyczna, przeciaganie-z-alternatywa, cel-24-na-24</td></tr>
+  </tbody>
+</table>
+
+<h3>Projektant (6)</h3>
+<table>
+  <thead><tr><th>Nr</th><th>Lekcja</th><th>Kryteria</th><th>Przykłady</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>Kontrast tekstu i elementów</td><td>1.4.3, 1.4.11</td><td>kontrast-stanow</td></tr>
+    <tr><td>2</td><td>Nie tylko kolor</td><td>1.4.1</td><td>formularz-z-bledami</td></tr>
+    <tr><td>3</td><td>Fokus i stany w projekcie</td><td>2.4.7, 2.4.11, 1.4.11</td><td>kontrast-stanow</td></tr>
+    <tr><td>4</td><td>Cele i gesty</td><td>2.5.1, 2.5.7, 2.5.8</td><td>cel-24-na-24, przeciaganie-z-alternatywa</td></tr>
+    <tr><td>5</td><td>Powiększanie i przepływ treści</td><td>1.4.4, 1.4.10, 1.4.12</td><td></td></tr>
+    <tr><td>6</td><td>Spójność i pomoc</td><td>3.2.3, 3.2.4, 3.2.6, 3.3.2</td><td></td></tr>
+  </tbody>
+</table>
+
+<h3>Autor treści (5)</h3>
+<table>
+  <thead><tr><th>Nr</th><th>Lekcja</th><th>Kryteria</th><th>Przykłady</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>Tekst alternatywny</td><td>1.1.1</td><td>obraz-dekoracyjny-i-informacyjny</td></tr>
+    <tr><td>2</td><td>Nagłówki i etykiety</td><td>1.3.1, 2.4.6</td><td></td></tr>
+    <tr><td>3</td><td>Linki, które mówią, dokąd prowadzą</td><td>2.4.4</td><td></td></tr>
+    <tr><td>4</td><td>Język strony i fragmentów</td><td>3.1.1, 3.1.2</td><td></td></tr>
+    <tr><td>5</td><td>Wideo i dźwięk</td><td>1.2.1, 1.2.2, 1.2.3, 1.2.5</td><td></td></tr>
+  </tbody>
+</table>
+
+<h3>Tester (6)</h3>
+<table>
+  <thead><tr><th>Nr</th><th>Lekcja</th><th>Kryteria</th><th>Przykłady</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>Co wyłapie automat, a czego nie</td><td>brak, lekcja o narzędziach</td><td>każdy przykład z regułami <code>axe</code></td></tr>
+    <tr><td>2</td><td>Test klawiaturą</td><td>2.1.1, 2.1.2, 2.4.3, 2.4.7</td><td>okno-modalne-i-fokus</td></tr>
+    <tr><td>3</td><td>Czytnik ekranu od zera</td><td>1.3.1, 4.1.2</td><td>ikona-jako-przycisk, wlasna-lista-zamiast-select</td></tr>
+    <tr><td>4</td><td>Kontrast i powiększenie</td><td>1.4.3, 1.4.4, 1.4.10, 1.4.11</td><td>kontrast-stanow</td></tr>
+    <tr><td>5</td><td>Formularze i komunikaty</td><td>3.3.1, 3.3.3, 4.1.3</td><td>formularz-z-bledami</td></tr>
+    <tr><td>6</td><td>Jak opisać błąd</td><td>brak, lekcja o raporcie: kryterium, kroki, oczekiwane, faktyczne</td><td></td></tr>
+  </tbody>
+</table>
+
+<h3>Minimum prawne dla podmiotu publicznego (5)</h3>
+<table>
+  <thead><tr><th>Nr</th><th>Lekcja</th><th>Przepisy</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>Czy ustawa cię dotyczy</td><td>2019/848 art. 2 i 3</td></tr>
+    <tr><td>2</td><td>Co trzeba spełnić: 49 kryteriów</td><td>2019/848 art. 5, załącznik (<code>zal</code>)</td></tr>
+    <tr><td>3</td><td>Terminy</td><td>2019/848 art. 27</td></tr>
+    <tr><td>4</td><td>Deklaracja dostępności</td><td>2019/848 art. 10 i 11</td></tr>
+    <tr><td>5</td><td>Żądania, skargi i koordynator</td><td>2019/848 art. 18, 2019/1696 art. 14</td></tr>
+  </tbody>
+</table>
+<p class="flag">Każdy przepis z tabeli istnieje w <code>legal.gen.ts</code> (sprawdzone 2026-09-29). Parser odrzuca te, których nie ma.</p>
+
+<h2 id="quiz">6. Jak działa quiz</h2>
+<ul>
+  <li><strong>Znaczniki.</strong> Jeden <code>fieldset</code> na pytanie, treść pytania w <code>legend</code>, natywne pola radio albo pola wyboru z etykietami wysokimi na 44 piksele. Fragment kodu to opisany <code>pre</code>, który przyjmuje fokus, więc długą linijkę da się przewinąć klawiaturą.</li>
+  <li><strong>Informacja zwrotna.</strong> Po sprawdzeniu każda opcja pokazuje „Poprawna”, „Niepoprawna” albo „Pominięta, a poprawna”, ze znakiem i swoim <code>why</code>. Kolor tylko powtarza to, co mówi słowo. Po sprawdzeniu pola pytania są zablokowane; „Rozwiąż jeszcze raz” w podsumowaniu zaczyna cały quiz od nowa.</li>
+  <li><strong>Komunikat.</strong> Ocena każdego sprawdzonego pytania trafia do grzecznego regionu na żywo (<code>aria-live="polite"</code>). Fokus zostaje na przycisku, który czytelnik nacisnął.</li>
+  <li><strong>Punktacja.</strong> Pytanie liczy się jako dobre tylko przy dokładnie pasującym zaznaczeniu. Wynik to „2 z 3” i nic więcej.</li>
+  <li><strong>Jedno pytanie naraz (wariant 4C).</strong> Quiz pokazuje jedno pytanie, z „Pytanie 2 z 3” w <code>legend</code> i ozdobnym paskiem kroków. „Sprawdź” pokazuje informację zwrotną i zmienia się w „Następne pytanie”. Ten przycisk przenosi fokus na <code>legend</code> kolejnego pytania (<code>tabindex="-1"</code>) i to jedyne miejsce, w którym quiz przenosi fokus. Nie da się wrócić ani przeskoczyć dalej. Po ostatnim pytaniu jest podsumowanie: wynik, po linijce na pytanie z oceną, „Rozwiąż jeszcze raz”. Podejście zapisuje się, gdy pojawia się podsumowanie.</li>
+  <li><strong>Bez JavaScriptu.</strong> Prerenderowana strona pokazuje pierwsze pytanie bez przycisku sprawdzania. Samą lekcję da się przeczytać w całości; quiz wymaga JS, jak filtry na <code>/kryteria</code>.</li>
+</ul>
+
+<h2 id="pages">7. Strony</h2>
+<ul>
+  <li><strong><code>/sciezki</code>:</strong> pięć ścieżek, liczba lekcji, postęp tam, gdzie jest, „dalej” do pierwszej nieukończonej lekcji, zdanie o zapisie i „Wyczyść postęp”. Zastępuje zaślepkę. Ekran 1 w makietach.</li>
+  <li><strong><code>/sciezki/$path</code>:</strong> wstęp, lekcje po kolei ze stanem i wynikiem quizu, „dalej”. Ekran 2.</li>
+  <li><strong><code>/sciezki/$path/$lesson</code>:</strong> lekcja, „Zapamiętaj”, materiały, do których prowadzi (kryteria, przykłady, przepisy), quiz, przełącznik ukończenia, poprzednia i następna. Ekran 3. Zmiana trasy już ogłasza nowy nagłówek, więc przejście między lekcjami nie wymaga niczego nowego.</li>
+  <li><strong>Strona kryterium:</strong> linijka „W ścieżkach” obok przykładów, z linkami do lekcji, które wymieniają kryterium.</li>
+  <li><strong>Wyszukiwarka:</strong> lekcje trafiają do indeksu z tytułem, podsumowaniem i treścią, jako piąta grupa, „Ścieżki”.</li>
+  <li><strong>Prerenderowanie:</strong> każda strona ścieżki i lekcji jest prerenderowana. Postęp i quiz dochodzą po hydracji.</li>
+</ul>
+
+<h2 id="tests">8. Testy</h2>
+<ul>
+  <li><strong>Treść (Vitest):</strong> każda ścieżka się parsuje; lista <code>lessons</code> i pliki lekcji zgadzają się jeden do jednego; każde kryterium, przykład i przepis istnieje; każda lekcja ma quiz z 3 do 5 pytaniami; każde pytanie ma co najmniej jedną poprawną opcję, a każda opcja <code>why</code>; identyfikatory pytań w quizie się nie powtarzają; szkice nie mają <code>lastVerified</code>, zweryfikowane pliki mają najwyżej 12 miesięcy.</li>
+  <li><strong>Postęp (Vitest):</strong> zapis i odczyt dają to samo, wartość zepsuta albo ze starszej wersji jest odrzucana bez wyjątku, a gdy przeglądarka rzuca wyjątkiem przy zapisie, działa pamięć. Punktacja na kilku przypadkach jednej i kilku odpowiedzi.</li>
+  <li><strong>End to end (Playwright):</strong> warunek ukończenia, samą klawiaturą: <code>/sciezki</code> → ścieżka programisty → każda lekcja przez „dalej”, jeden quiz rozwiązany pytanie po pytaniu aż do podsumowania, każda lekcja oznaczona → ścieżka pokazuje 7 z 7. Po przeładowaniu stan zostaje.</li>
+  <li><strong>Axe:</strong> <code>/sciezki</code>, jedna strona ścieżki, jedna lekcja z quizem na pierwszym pytaniu, po jego sprawdzeniu i na podsumowaniu.</li>
+</ul>
+
+<h2 id="commits">9. Commity i pull request</h2>
+<p>Jeden pull request, gałąź <code>feat/paths-and-quizzes</code>:</p>
+<ol>
+  <li><code>docs(design): add phase 6 plan and paths mocks</code>, ten plan, makiety i notatka w planie głównym, że faza 5 jest odłożona.</li>
+  <li><code>feat(paths): add path, lesson and quiz format and parser</code>, z testami treści i jedną małą ścieżką testową.</li>
+  <li><code>feat(paths): store progress in the browser</code>, magazyn i jego testy.</li>
+  <li><code>feat(paths): add path and lesson pages</code>, trzy trasy i przełącznik ukończenia.</li>
+  <li><code>feat(paths): add the lesson quiz</code>.</li>
+  <li><code>docs(paths): write the developer path</code>, z testem klawiaturowym end to end, który potrzebuje całej ścieżki.</li>
+  <li><code>docs(paths): write the designer and content author paths</code>.</li>
+  <li><code>docs(paths): write the tester and legal minimum paths</code>.</li>
+  <li><code>feat(criteria): link lessons from criterion pages</code>.</li>
+  <li><code>feat(search): index lessons</code>.</li>
+  <li><code>docs: update README for phase 6</code>, ze zrzutami ekranu.</li>
+</ol>
+
+<h2 id="risks">10. Ryzyka</h2>
+<table>
+  <thead><tr><th>Ryzyko</th><th>Co robimy</th></tr></thead>
+  <tbody>
+    <tr><td>29 lekcji i około 100 pytań to dużo tekstu do przejrzenia</td><td>Szkice z plakietką <code>szkic</code>, ścieżki w trzech osobnych commitach z treścią do przejrzenia po kolei, krótkie lekcje (poniżej dziesięciu minut) odsyłające do stron kryteriów zamiast je powtarzać</td></tr>
+    <tr><td>Lekcje rozjeżdżają się ze stronami kryteriów, które streszczają</td><td>Lekcja tłumaczy perspektywę roli i linkuje dalej; źródłem pozostaje strona kryterium</td></tr>
+    <tr><td>Odpowiedź, którą da się obronić, jest oznaczona jako zła</td><td>Każda opcja ma <code>why</code>, przeglądane razem z lekcją; pytania „do obrony” przepisujemy, a nie bronimy</td></tr>
+    <tr><td>Postęp znika po wyczyszczeniu przeglądarki albo na innym urządzeniu</td><td>Mówimy to wprost na <code>/sciezki</code>; porządnie naprawia to faza 5, która może zaimportować zapisany obiekt bez zmian</td></tr>
+    <tr><td>Mignięcie przy hydracji, gdy postęp pojawia się po załadowaniu</td><td>Komórki stanu mają ten sam rozmiar pełne i puste, więc nic się nie przesuwa</td></tr>
+  </tbody>
+</table>
+
+<h2 id="decisions">11. Decyzje</h2>
+<ul>
+  <li><strong>Postęp bez fazy 5: postanowione.</strong> <code>localStorage</code> w kształcie tabel z Convex.</li>
+  <li><strong>Zakres: postanowione.</strong> Wszystkie pięć ścieżek w tej fazie, jako moje szkice do Twojej redakcji.</li>
+  <li><strong>Układ: postanowione.</strong> W <a href="../2026-09-29-paths-mocks/paths-mocks.html">paths-mocks.html</a>: 1A, pięć wierszy na <code>/sciezki</code>; 2A, konspekt na stronie ścieżki; 3A, jedna kolumna w lekcji; 4C, jedno pytanie naraz w quizie, zob. sekcja 6.</li>
+  <li><strong>Konspekt lekcji z sekcji 5: otwarte.</strong> Dodaj, wytnij albo przestaw, zanim zacznę pisać.</li>
+</ul>
+
+</main>
+</body>
+</html>

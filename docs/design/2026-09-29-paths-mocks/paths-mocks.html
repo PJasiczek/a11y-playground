@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paths mocks: the paths list, a path, a lesson, a quiz</title>
+<style>
+  :root {
+    --paper: #FBFAF7; --paper-2: #F1EFE8; --surface: #FFFFFF;
+    --ink: #14171A; --ink-2: #484D52; --rule: #DFDBD1; --control: #857F72;
+    --accent: #2C36A8; --marker: #F4E75B; --good: #145537; --bad: #9A1B1B;
+    --sans: "Inter var", Inter, "Segoe UI", -apple-system, system-ui, sans-serif;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, "SF Mono", monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 2.5rem 1rem 6rem; background: #000; color: #fff; font: 16px/1.6 var(--sans); }
+  .page { max-width: 1180px; margin: 0 auto; }
+  .page > h1 { font-size: 1.4rem; margin: 0 0 .35rem; letter-spacing: -.02em; }
+  .page > p, .note { color: #B8BDC2; font-size: .9rem; margin: 0 0 1rem; max-width: 76ch; }
+  .page > h2 { font: 600 .8rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; margin: 4rem 0 .6rem; }
+  .page > h2 + p { margin-bottom: 1.5rem; }
+  .page code { font-family: var(--mono); font-size: .9em; }
+  .variant { margin: 0 0 2.5rem; }
+  .variant > h3 { font-size: 1.05rem; margin: 0 0 .25rem; }
+  .variant > h3 b { font-family: var(--mono); display: inline-block; min-width: 1.6rem; }
+  .frame { border: 1px solid #2A2D31; border-radius: 6px; overflow: hidden; }
+
+  /* --- product surface, app tokens --- */
+  .s { background: var(--paper); color: var(--ink); padding: 1.75rem 1.75rem 2.25rem; }
+  .s a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+  .s :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .s code, .s .m { font-family: var(--mono); }
+  .s h4, .s h5 { margin: 0; }
+  .s p { max-width: 68ch; }
+  .crumb { font-size: .875rem; color: var(--ink-2); margin: 0 0 1rem; }
+  .crumb a { color: var(--ink-2); }
+  .t1 { font-size: 1.875rem; line-height: 1.15; letter-spacing: -.03em; margin: 0 0 .4rem; }
+  .lead { color: var(--ink-2); margin: 0 0 1.5rem; font-size: 1.0625rem; }
+  .kick { font: 600 .75rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 .35rem; }
+  .draft { display: inline-block; font: 600 .75rem/1 var(--mono); border: 1px dashed var(--ink); border-radius: 2px; padding: .3rem .45rem; white-space: nowrap; vertical-align: middle; }
+  .draft::before { content: "✎ " / ""; }
+  .sc { display: inline-flex; align-items: center; min-height: 44px; padding: 0 .55rem; font: 600 .8125rem var(--mono); border: 1px solid var(--control); border-radius: 2px; background: var(--surface); color: var(--ink) !important; text-decoration: none !important; }
+  .sc small { font: 400 .8125rem var(--sans); margin-left: .45rem; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: .45rem; min-height: 44px; padding: 0 1rem; border: 1px solid var(--control); border-radius: 2px; color: var(--ink) !important; text-decoration: none !important; background: var(--surface); font: 600 .9375rem var(--sans); cursor: pointer; }
+  .btn.primary { background: var(--ink); color: var(--paper) !important; border-color: var(--ink); }
+  .btnrow { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+  .done { font: 600 .8125rem var(--mono); white-space: nowrap; }
+  .done::before { content: "✓ " / ""; }
+  .todo { font: .8125rem var(--mono); color: var(--ink-2); white-space: nowrap; }
+  .todo::before { content: "○ " / ""; }
+  .count2 { font: .8125rem var(--mono); color: var(--ink-2); white-space: nowrap; }
+  .here { font: 600 .8125rem var(--mono); white-space: nowrap; }
+  .here::before { content: "→ " / ""; }
+  .local { font-size: .875rem; color: var(--ink-2); margin: 1.5rem 0 0; }
+  .local button { font: inherit; color: var(--accent); background: none; border: 0; padding: 0 .2rem; min-height: 44px; text-decoration: underline; cursor: pointer; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  pre.code { font: .875rem/1.55 var(--mono); background: var(--paper-2); border: 1px solid var(--rule); border-left: 3px solid var(--control); padding: .8rem 1rem; margin: .6rem 0 .9rem; overflow-x: auto; }
+
+  /* 1A: rows */
+  .rows { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--ink); }
+  .rows > li { display: grid; grid-template-columns: 1fr auto; gap: .3rem 2rem; padding: 1.15rem 0; border-bottom: 1px solid var(--rule); align-items: center; }
+  .rows h4 { font-size: 1.25rem; letter-spacing: -.01em; }
+  .rows h4 a { color: var(--ink); text-decoration: none; }
+  .rows h4 a:hover { text-decoration: underline; }
+  .rows p { margin: .2rem 0 0; color: var(--ink-2); }
+  .rows .side { text-align: right; display: grid; gap: .25rem; justify-items: end; }
+  .rows .count { font: .8125rem var(--mono); color: var(--ink-2); }
+  .bar { width: 9rem; height: 6px; background: var(--paper-2); border: 1px solid var(--control); }
+  .bar i { display: block; height: 100%; background: var(--ink); }
+  @media (max-width: 640px) { .rows > li { grid-template-columns: 1fr; } .rows .side { text-align: left; justify-items: start; } }
+
+  /* 1B: picker */
+  fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+  legend { font-weight: 700; font-size: 1.0625rem; margin-bottom: .6rem; padding: 0; }
+  .pick { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .pick label { display: inline-flex; align-items: center; gap: .55rem; min-height: 44px; padding: .4rem .9rem .4rem .7rem; border: 1px solid var(--control); border-radius: 2px; background: var(--surface); cursor: pointer; font-size: .9375rem; }
+  .pick input { width: 20px; height: 20px; margin: 0; accent-color: var(--ink); }
+  .pick label:has(input:checked) { border: 2px solid var(--ink); font-weight: 700; padding: calc(.4rem - 1px) calc(.9rem - 1px) calc(.4rem - 1px) calc(.7rem - 1px); }
+  .preview { margin-top: 1.5rem; background: var(--surface); border: 1px solid var(--rule); border-top: 4px solid var(--ink); padding: 1.25rem 1.4rem 1.4rem; }
+  .preview h4 { font-size: 1.375rem; letter-spacing: -.02em; margin-bottom: .3rem; }
+  .preview ol { margin: 1rem 0 1.2rem; padding-left: 1.6rem; columns: 2 18rem; column-gap: 2.5rem; }
+  .preview ol li { padding: .2rem 0; break-inside: avoid; }
+
+  /* 2A: syllabus */
+  .syl { list-style: none; margin: 0; padding: 0; counter-reset: l; border-top: 2px solid var(--ink); }
+  .syl > li { counter-increment: l; display: grid; grid-template-columns: 3rem 1fr auto; gap: .2rem 1.25rem; padding: 1.1rem 0; border-bottom: 1px solid var(--rule); }
+  .syl > li::before { content: counter(l, decimal-leading-zero); font: 700 1.125rem var(--mono); padding-top: .1rem; }
+  .syl h5 { font-size: 1.125rem; letter-spacing: -.01em; }
+  .syl p { margin: .25rem 0 .5rem; color: var(--ink-2); }
+  .syl .crit { display: flex; flex-wrap: wrap; gap: .35rem; }
+  .syl .crit span { font: .75rem var(--mono); border: 1px solid var(--rule); padding: .1rem .35rem; color: var(--ink-2); }
+  .syl .st { text-align: right; display: grid; gap: .2rem; align-content: start; justify-items: end; }
+  .syl li.now { background: var(--surface); box-shadow: inset 3px 0 0 var(--ink); }
+  .syl li.now::before { padding-left: .6rem; }
+  @media (max-width: 640px) { .syl > li { grid-template-columns: 2.4rem 1fr; } .syl .st { grid-column: 2; justify-items: start; text-align: left; } }
+  .cont { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; align-items: center; margin: 0 0 1.5rem; padding: .9rem 1rem; background: var(--surface); border: 1px solid var(--rule); }
+
+  /* 2B: table */
+  table.lt { width: 100%; border-collapse: collapse; font-size: .9375rem; }
+  .lt th, .lt td { text-align: left; padding: .7rem .6rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  .lt thead th { font: 600 .75rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); border-bottom: 2px solid var(--ink); }
+  .lt td.n { font: 700 .9375rem var(--mono); width: 3rem; }
+  .lt td a { font-weight: 600; }
+  .lt td.c { font: .8125rem var(--mono); color: var(--ink-2); }
+  .tw { overflow-x: auto; }
+  .facts { display: flex; flex-wrap: wrap; gap: .4rem 2rem; margin: 0 0 1.5rem; padding: 0; list-style: none; font-size: .9375rem; }
+  .facts b { font-family: var(--mono); font-size: 1.125rem; }
+
+  /* 3: lesson */
+  .lesson-body p { font-size: 1.0625rem; line-height: 1.65; margin: 0 0 1rem; }
+  .lesson-body h4 { font-size: 1.25rem; letter-spacing: -.01em; margin: 1.8rem 0 .5rem; }
+  .lesson-body ul { padding-left: 1.3rem; max-width: 66ch; }
+  .lesson-body li { margin: .3rem 0; }
+  .keep { background: var(--surface); border: 1px solid var(--rule); border-left: 4px solid var(--marker); padding: .9rem 1.1rem; margin: 1.2rem 0; }
+  .keep ul { margin: .3rem 0 0; }
+  .mat { border-top: 2px solid var(--ink); margin-top: 2rem; padding-top: .9rem; }
+  .mat h4 { font-size: 1.125rem; margin: 0 0 .7rem; }
+  .mat dl { display: grid; grid-template-columns: 9rem 1fr; gap: .6rem 1rem; margin: 0; }
+  .mat dt { font: 600 .75rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); padding-top: .8rem; }
+  .mat dd { margin: 0; display: flex; flex-wrap: wrap; gap: .4rem; }
+  @media (max-width: 640px) { .mat dl { grid-template-columns: 1fr; } .mat dt { padding-top: .3rem; } }
+  .endbar { border-top: 1px solid var(--rule); margin-top: 2rem; padding-top: 1.1rem; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; align-items: center; }
+  .pn { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .pn a { display: inline-flex; flex-direction: column; justify-content: center; min-height: 52px; padding: .3rem .9rem; border: 1px solid var(--control); border-radius: 2px; background: var(--surface); text-decoration: none !important; color: var(--ink) !important; }
+  .pn a small { font: .75rem var(--mono); color: var(--ink-2); }
+  .pn a span { font-weight: 600; }
+  .toggle { display: inline-flex; align-items: center; gap: .55rem; min-height: 44px; padding: 0 1rem 0 .8rem; border: 2px solid var(--ink); border-radius: 2px; background: var(--surface); font: 600 .9375rem var(--sans); cursor: pointer; color: var(--ink); }
+  .toggle .box { width: 18px; height: 18px; border: 2px solid var(--ink); display: inline-grid; place-items: center; font-size: .75rem; line-height: 1; }
+  .toggle[aria-pressed="true"] .box { background: var(--ink); color: var(--paper); }
+
+  /* 3B: sidebar */
+  .two { display: grid; grid-template-columns: 16rem 1fr; gap: 2.25rem; }
+  .side-nav h4 { font: 600 .75rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 .5rem .5rem; }
+  .side-nav ol { list-style: none; margin: 0; padding: 0; font-size: .9375rem; }
+  .side-nav li a { display: grid; grid-template-columns: 1.4rem 1fr; gap: .5rem; align-items: center; min-height: 44px; padding: .35rem .5rem; color: var(--ink); text-decoration: none; border-left: 3px solid transparent; }
+  .side-nav li a .g { font-family: var(--mono); font-size: .875rem; color: var(--ink-2); }
+  .side-nav li a[aria-current="page"] { border-left-color: var(--ink); background: var(--surface); font-weight: 700; }
+  .side-nav .sum { font: .8125rem var(--mono); color: var(--ink-2); margin: .8rem .5rem 0; }
+  @media (max-width: 800px) { .two { grid-template-columns: 1fr; } .side-nav { order: 2; } }
+
+  /* 4: quiz */
+  .quiz { border-top: 2px solid var(--ink); margin-top: 2rem; padding-top: 1rem; }
+  .quiz > h4 { font-size: 1.25rem; letter-spacing: -.01em; margin: 0 0 .25rem; }
+  .quiz > p { color: var(--ink-2); margin: 0 0 1rem; }
+  .qq { padding: 1.1rem 0 1.25rem; border-bottom: 1px solid var(--rule); }
+  .qq legend { font-size: 1.0625rem; max-width: 66ch; }
+  .qq legend .m { font-size: .8125rem; color: var(--ink-2); font-weight: 600; display: block; margin-bottom: .2rem; }
+  .qq .hint { font-size: .875rem; color: var(--ink-2); margin: -.3rem 0 .5rem; }
+  .opts { display: grid; gap: .4rem; margin: .2rem 0 .8rem; }
+  .opt { display: grid; grid-template-columns: auto 1fr; gap: .6rem; align-items: start; }
+  .opt label { display: flex; align-items: center; gap: .65rem; min-height: 44px; padding: .45rem .8rem; border: 1px solid var(--control); border-radius: 2px; background: var(--surface); cursor: pointer; grid-column: 1 / -1; }
+  .opt input { width: 20px; height: 20px; margin: 0; flex: none; accent-color: var(--ink); }
+  .opt label:has(input:checked) { border: 2px solid var(--ink); padding: calc(.45rem - 1px) calc(.8rem - 1px); }
+  .opt .fb { grid-column: 1 / -1; margin: 0 0 .3rem 2.45rem; font-size: .9375rem; max-width: 62ch; }
+  .opt .fb b { font: 700 .8125rem var(--mono); margin-right: .35rem; }
+  .opt.ok label { border-color: var(--good); }
+  .opt.ok .fb b { color: var(--good); }
+  .opt.ok .fb b::before { content: "✓ " / ""; }
+  .opt.no label { border-color: var(--bad); border-style: dashed; }
+  .opt.no .fb b { color: var(--bad); }
+  .opt.no .fb b::before { content: "✗ " / ""; }
+  .opt.miss .fb b { color: var(--good); }
+  .opt.miss .fb b::before { content: "! " / ""; }
+  .opt input:disabled + span { color: var(--ink); }
+  .verdict { font-weight: 700; margin: 0 0 .5rem; }
+  .score { margin-top: 1.25rem; padding: 1rem 1.1rem; background: var(--surface); border: 1px solid var(--rule); border-top: 4px solid var(--ink); display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1.5rem; }
+  .score .big { font: 700 1.75rem/1 var(--mono); letter-spacing: -.02em; }
+  .score p { margin: 0; }
+  .steps { display: flex; gap: .35rem; list-style: none; padding: 0; margin: 0 0 1rem; }
+  .steps li { flex: 1; height: 6px; border: 1px solid var(--control); background: var(--paper-2); }
+  .steps li.d { background: var(--ink); border-color: var(--ink); }
+  .steps li.c { background: var(--surface); border: 2px solid var(--ink); }
+  .live { font-size: .875rem; color: var(--ink-2); font-family: var(--mono); }
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>Phase 6 mocks: paths and quizzes</h1>
+<p>Static mocks for the <a href="../2026-09-29-phase-6-paths/phase-6-paths.en.html" style="color:#fff">phase 6 plan</a>. Four screens, each in two or three variants. Everything shows the app in light mode with its real tokens. Progress is what localStorage holds after three lessons of the developer path. Picked on 2026-09-29: <strong>1A, 2A, 3A, 4C</strong>.</p>
+
+<!-- ============ 1. /sciezki ============ -->
+<h2 id="s1">1. <code>/sciezki</code>, the list of paths</h2>
+<p>Replaces the placeholder. Five paths: four roles and the legal minimum.</p>
+
+<section class="variant" aria-labelledby="v1a">
+<h3 id="v1a"><b>1A</b> Five rows</h3>
+<p class="note">One row per path: who it is for, lesson count, progress as text and a bar. The bar is decorative, the text carries the number. Rows without progress show only the count.</p>
+<div class="frame"><div class="s">
+  <h4 class="t1">Ścieżki</h4>
+  <p class="lead">Lekcje ułożone po kolei dla jednej roli. Czytasz w dowolnej kolejności, quiz nie blokuje kolejnej lekcji.</p>
+  <ul class="rows">
+    <li>
+      <div><h4><a href="#v1a">Programista</a></h4><p>Semantyka, nazwy dostępne, klawiatura i fokus, formularze, treści dynamiczne.</p></div>
+      <div class="side"><span class="count">3 z 7 ukończone</span><span class="bar" aria-hidden="true"><i style="width:43%"></i></span><a href="#v1a">Dalej: Formularze i błędy</a></div>
+    </li>
+    <li>
+      <div><h4><a href="#v1a">Projektant</a></h4><p>Kontrast, kolor, widoczny fokus, cele dotykowe, powiększanie.</p></div>
+      <div class="side"><span class="count">6 lekcji</span></div>
+    </li>
+    <li>
+      <div><h4><a href="#v1a">Autor treści</a></h4><p>Tekst alternatywny, nagłówki, linki, język, napisy.</p></div>
+      <div class="side"><span class="count">5 lekcji</span></div>
+    </li>
+    <li>
+      <div><h4><a href="#v1a">Tester</a></h4><p>Test klawiaturą, czytnik ekranu, kontrast i powiększenie, raport z błędu.</p></div>
+      <div class="side"><span class="count">6 lekcji</span></div>
+    </li>
+    <li>
+      <div><h4><a href="#v1a">Minimum prawne dla podmiotu publicznego</a></h4><p>Czy ustawa cię dotyczy, 49 kryteriów z załącznika, terminy, deklaracja dostępności, żądania i skargi.</p></div>
+      <div class="side"><span class="count">5 lekcji</span></div>
+    </li>
+  </ul>
+  <p class="local">Postęp zapisuje się tylko w tej przeglądarce.<button type="button">Wyczyść postęp</button></p>
+</div></div>
+</section>
+
+<section class="variant" aria-labelledby="v1b">
+<h3 id="v1b"><b>1B</b> "Kim jesteś?"</h3>
+<p class="note">A native radio group picks the role, stored in the URL (<code>?rola=programista</code>), same pattern as <code>/mapowanie</code>. The chosen path is shown with its lessons. Without JS the radios are links.</p>
+<div class="frame"><div class="s">
+  <h4 class="t1">Ścieżki</h4>
+  <p class="lead">Lekcje ułożone po kolei dla jednej roli.</p>
+  <fieldset>
+    <legend>Kim jesteś?</legend>
+    <div class="pick">
+      <label><input type="radio" name="r1b" checked> Programista</label>
+      <label><input type="radio" name="r1b"> Projektant</label>
+      <label><input type="radio" name="r1b"> Autor treści</label>
+      <label><input type="radio" name="r1b"> Tester</label>
+      <label><input type="radio" name="r1b"> Podmiot publiczny</label>
+    </div>
+  </fieldset>
+  <div class="preview">
+    <p class="kick">Ścieżka · 7 lekcji · 3 ukończone</p>
+    <h4>Programista</h4>
+    <p>Jak pisać kod, który działa z klawiaturą i czytnikiem ekranu, bez dokładania ARIA tam, gdzie wystarczy HTML.</p>
+    <ol>
+      <li>Semantyka najpierw <span class="done">ukończona</span></li>
+      <li>Nazwy dostępne <span class="done">ukończona</span></li>
+      <li>Klawiatura i fokus <span class="done">ukończona</span></li>
+      <li>Formularze i błędy</li>
+      <li>Treści, które się zmieniają</li>
+      <li>Tabele i struktura</li>
+      <li>Ruch, czas i cele dotykowe</li>
+    </ol>
+    <div class="btnrow"><a class="btn primary" href="#v1b">Dalej: Formularze i błędy</a><a class="btn" href="#v1b">Cała ścieżka</a></div>
+  </div>
+  <p class="local">Postęp zapisuje się tylko w tej przeglądarce.<button type="button">Wyczyść postęp</button></p>
+</div></div>
+</section>
+
+<!-- ============ 2. /sciezki/$path ============ -->
+<h2 id="s2">2. <code>/sciezki/programista</code>, one path</h2>
+<p>The syllabus. Lesson status and quiz score come from localStorage after hydration. The prerendered HTML shows the path without progress.</p>
+
+<section class="variant" aria-labelledby="v2a">
+<h3 id="v2a"><b>2A</b> Syllabus</h3>
+<p class="note">Numbered lessons with a one-line summary and the criteria they cover. Status in words on the right. A "continue" strip at the top points at the first unfinished lesson.</p>
+<div class="frame"><div class="s">
+  <p class="crumb"><a href="#v2a">Ścieżki</a> / Programista</p>
+  <h4 class="t1">Programista</h4>
+  <p class="lead">Jak pisać kod, który działa z klawiaturą i czytnikiem ekranu, bez dokładania ARIA tam, gdzie wystarczy HTML. 7 lekcji, około 70 minut.</p>
+  <div class="cont"><span>3 z 7 lekcji ukończone.</span><a class="btn primary" href="#v2a">Dalej: 04 Formularze i błędy</a></div>
+  <ol class="syl">
+    <li>
+      <div><h5><a href="#v2a">Semantyka najpierw</a></h5><p>Natywny element daje rolę, stan i klawiaturę za darmo. Div nie daje nic.</p><div class="crit"><span>1.3.1</span><span>4.1.2</span></div></div>
+      <div class="st"><span class="done">ukończona</span><span class="count2">quiz 3 z 3</span></div>
+    </li>
+    <li>
+      <div><h5><a href="#v2a">Nazwy dostępne</a></h5><p>Skąd przycisk, pole i link biorą nazwę, i czemu ikona to za mało.</p><div class="crit"><span>1.1.1</span><span>2.5.3</span><span>4.1.2</span></div></div>
+      <div class="st"><span class="done">ukończona</span><span class="count2">quiz 2 z 4</span></div>
+    </li>
+    <li>
+      <div><h5><a href="#v2a">Klawiatura i fokus</a></h5><p>Każda akcja z klawiatury, widoczny fokus, okno modalne, które trzyma fokus u siebie.</p><div class="crit"><span>2.1.1</span><span>2.1.2</span><span>2.4.3</span><span>2.4.7</span><span>2.4.11</span></div></div>
+      <div class="st"><span class="done">ukończona</span><span class="count2">quiz nierozwiązany</span></div>
+    </li>
+    <li class="now">
+      <div><h5><a href="#v2a">Formularze i błędy</a></h5><p>Etykiety, instrukcje, komunikat o błędzie, który mówi, co poprawić.</p><div class="crit"><span>1.3.5</span><span>3.3.1</span><span>3.3.2</span><span>3.3.3</span><span>3.3.7</span></div></div>
+      <div class="st"><span class="here">następna</span></div>
+    </li>
+    <li>
+      <div><h5><a href="#v2a">Treści, które się zmieniają</a></h5><p>Komunikaty o stanie i zmiany kontekstu, których czytnik nie przegapi.</p><div class="crit"><span>3.2.1</span><span>3.2.2</span><span>4.1.3</span></div></div>
+      <div class="st"><span class="todo">nieukończona</span></div>
+    </li>
+  </ol>
+  <p class="note" style="color:var(--ink-2);margin-top:.8rem">…lekcje 06 i 07 dalej na liście.</p>
+</div></div>
+</section>
+
+<section class="variant" aria-labelledby="v2b">
+<h3 id="v2b"><b>2B</b> Table</h3>
+<p class="note">A real table: number, lesson, criteria, quiz, status. Denser, reads well with table navigation in a screen reader, and scrolls sideways on a phone instead of reflowing.</p>
+<div class="frame"><div class="s">
+  <p class="crumb"><a href="#v2b">Ścieżki</a> / Programista</p>
+  <h4 class="t1">Programista</h4>
+  <p class="lead">Jak pisać kod, który działa z klawiaturą i czytnikiem ekranu.</p>
+  <ul class="facts"><li><b>7</b> lekcji</li><li><b>3</b> ukończone</li><li><b>19</b> kryteriów</li><li><b>8</b> przykładów</li></ul>
+  <div class="tw" role="region" aria-label="Lekcje ścieżki" tabindex="0">
+  <table class="lt">
+    <caption class="sr">Lekcje ścieżki Programista</caption>
+    <thead><tr><th scope="col">Nr</th><th scope="col">Lekcja</th><th scope="col">Kryteria</th><th scope="col">Quiz</th><th scope="col">Stan</th></tr></thead>
+    <tbody>
+      <tr><td class="n">01</td><th scope="row" style="font-weight:400"><a href="#v2b">Semantyka najpierw</a></th><td class="c">1.3.1, 4.1.2</td><td>3 z 3</td><td><span class="done">ukończona</span></td></tr>
+      <tr><td class="n">02</td><th scope="row" style="font-weight:400"><a href="#v2b">Nazwy dostępne</a></th><td class="c">1.1.1, 2.5.3, 4.1.2</td><td>2 z 4</td><td><span class="done">ukończona</span></td></tr>
+      <tr><td class="n">03</td><th scope="row" style="font-weight:400"><a href="#v2b">Klawiatura i fokus</a></th><td class="c">2.1.1, 2.1.2, 2.4.3, 2.4.7, 2.4.11</td><td>nie</td><td><span class="done">ukończona</span></td></tr>
+      <tr><td class="n">04</td><th scope="row" style="font-weight:400"><a href="#v2b">Formularze i błędy</a></th><td class="c">1.3.5, 3.3.1, 3.3.2, 3.3.3, 3.3.7</td><td>nie</td><td><span class="here">następna</span></td></tr>
+      <tr><td class="n">05</td><th scope="row" style="font-weight:400"><a href="#v2b">Treści, które się zmieniają</a></th><td class="c">3.2.1, 3.2.2, 4.1.3</td><td>nie</td><td><span class="todo">nie</span></td></tr>
+      <tr><td class="n">06</td><th scope="row" style="font-weight:400"><a href="#v2b">Tabele i struktura</a></th><td class="c">1.3.1, 1.3.2, 2.4.6</td><td>nie</td><td><span class="todo">nie</span></td></tr>
+      <tr><td class="n">07</td><th scope="row" style="font-weight:400"><a href="#v2b">Ruch, czas i cele dotykowe</a></th><td class="c">2.2.2, 2.5.7, 2.5.8</td><td>nie</td><td><span class="todo">nie</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+</div></div>
+</section>
+
+<!-- ============ 3. lesson ============ -->
+<h2 id="s3">3. <code>/sciezki/programista/klawiatura-i-fokus</code>, a lesson</h2>
+<p>Our prose first, then the material it points at (criteria, examples, provisions), the quiz, and the controls to mark it done and move on. The quiz itself is screen 4, shown collapsed here.</p>
+
+<section class="variant" aria-labelledby="v3a">
+<h3 id="v3a"><b>3A</b> One column</h3>
+<p class="note">Reads top to bottom like a criterion page. "Lesson 3 of 7" sits in the kicker, previous and next at the end, next to the "done" toggle. The toggle is a button with <code>aria-pressed</code>.</p>
+<div class="frame"><div class="s">
+  <p class="crumb"><a href="#v3a">Ścieżki</a> / <a href="#v3a">Programista</a> / Lekcja 3 z 7</p>
+  <h4 class="t1">Klawiatura i fokus <span class="draft">szkic</span></h4>
+  <p class="lead">Każda akcja z klawiatury, widoczny fokus i okno modalne, które trzyma fokus u siebie.</p>
+  <div class="lesson-body">
+    <p>Część ludzi nie używa myszy wcale: bo nie może, bo czytnik ekranu prowadzi ich klawiaturą, bo tak jest szybciej. Dla nich strona to kolejność elementów, po których skacze Tab, i jeden element naraz, który ma fokus.</p>
+    <h4>Najpierw natywne elementy</h4>
+    <p>Przycisk z elementu <code>button</code> dostaje fokus, reaguje na Enter i spację i ma rolę. <code>div</code> z <code>onclick</code> nie ma żadnej z tych rzeczy. Dopisanie <code>tabindex</code>, obsługi klawiszy i roli to trzy miejsca na błąd zamiast zera.</p>
+    <div class="keep"><strong>Zapamiętaj</strong>
+      <ul><li>Wszystko, co działa myszą, działa klawiaturą.</li><li>Fokus zawsze widać. Nie usuwaj obrysu bez zamiennika.</li><li>Okno modalne przejmuje fokus i oddaje go po zamknięciu.</li></ul>
+    </div>
+  </div>
+  <section class="mat" aria-labelledby="mat3a">
+    <h4 id="mat3a">Materiały do lekcji</h4>
+    <dl>
+      <dt>Kryteria</dt><dd><a class="sc" href="#v3a">2.1.1<small>Klawiatura</small></a><a class="sc" href="#v3a">2.1.2<small>Brak pułapki</small></a><a class="sc" href="#v3a">2.4.3<small>Kolejność fokusu</small></a><a class="sc" href="#v3a">2.4.7<small>Widoczny fokus</small></a></dd>
+      <dt>Przykłady</dt><dd><a class="btn" href="#v3a">Okno modalne i fokus</a><a class="btn" href="#v3a">Kontrast stanów</a></dd>
+    </dl>
+  </section>
+  <section class="quiz" aria-labelledby="q3a"><h4 id="q3a">Sprawdź się</h4><p>3 pytania. Wynik zapisuje się w tej przeglądarce. Ekran 4 pokazuje quiz.</p></section>
+  <div class="endbar">
+    <button type="button" class="toggle" aria-pressed="true"><span class="box" aria-hidden="true">✓</span>Lekcja ukończona</button>
+    <nav class="pn" aria-label="Lekcje ścieżki">
+      <a href="#v3a"><small>← Poprzednia</small><span>Nazwy dostępne</span></a>
+      <a href="#v3a"><small>Następna →</small><span>Formularze i błędy</span></a>
+    </nav>
+  </div>
+</div></div>
+</section>
+
+<section class="variant" aria-labelledby="v3b">
+<h3 id="v3b"><b>3B</b> Path outline beside the lesson</h3>
+<p class="note">The path's lessons in a side list with their status, the current one marked with <code>aria-current="page"</code>. Below 800px the list moves under the lesson. More orientation, less width for code samples.</p>
+<div class="frame"><div class="s">
+  <p class="crumb"><a href="#v3b">Ścieżki</a> / <a href="#v3b">Programista</a></p>
+  <div class="two">
+    <nav class="side-nav" aria-labelledby="sn3b">
+      <h4 id="sn3b">Programista · 3 z 7</h4>
+      <ol>
+        <li><a href="#v3b"><span class="g" aria-hidden="true">✓</span><span>Semantyka najpierw<span class="sr">, ukończona</span></span></a></li>
+        <li><a href="#v3b"><span class="g" aria-hidden="true">✓</span><span>Nazwy dostępne<span class="sr">, ukończona</span></span></a></li>
+        <li><a href="#v3b" aria-current="page"><span class="g" aria-hidden="true">✓</span><span>Klawiatura i fokus<span class="sr">, ukończona</span></span></a></li>
+        <li><a href="#v3b"><span class="g" aria-hidden="true">04</span><span>Formularze i błędy</span></a></li>
+        <li><a href="#v3b"><span class="g" aria-hidden="true">05</span><span>Treści, które się zmieniają</span></a></li>
+        <li><a href="#v3b"><span class="g" aria-hidden="true">06</span><span>Tabele i struktura</span></a></li>
+        <li><a href="#v3b"><span class="g" aria-hidden="true">07</span><span>Ruch, czas i cele dotykowe</span></a></li>
+      </ol>
+    </nav>
+    <div>
+      <p class="kick">Lekcja 3</p>
+      <h4 class="t1">Klawiatura i fokus <span class="draft">szkic</span></h4>
+      <p class="lead">Każda akcja z klawiatury, widoczny fokus i okno modalne, które trzyma fokus u siebie.</p>
+      <div class="lesson-body">
+        <p>Część ludzi nie używa myszy wcale: bo nie może, bo czytnik ekranu prowadzi ich klawiaturą, bo tak jest szybciej. Dla nich strona to kolejność elementów, po których skacze Tab.</p>
+        <div class="keep"><strong>Zapamiętaj</strong>
+          <ul><li>Wszystko, co działa myszą, działa klawiaturą.</li><li>Fokus zawsze widać.</li><li>Okno modalne przejmuje fokus i oddaje go po zamknięciu.</li></ul>
+        </div>
+      </div>
+      <section class="mat" aria-labelledby="mat3b">
+        <h4 id="mat3b">Materiały do lekcji</h4>
+        <dl>
+          <dt>Kryteria</dt><dd><a class="sc" href="#v3b">2.1.1</a><a class="sc" href="#v3b">2.1.2</a><a class="sc" href="#v3b">2.4.3</a><a class="sc" href="#v3b">2.4.7</a></dd>
+          <dt>Przykłady</dt><dd><a class="btn" href="#v3b">Okno modalne i fokus</a></dd>
+        </dl>
+      </section>
+      <div class="endbar">
+        <button type="button" class="toggle" aria-pressed="false"><span class="box" aria-hidden="true"></span>Oznacz jako ukończoną</button>
+        <a class="btn primary" href="#v3b">Następna: Formularze i błędy →</a>
+      </div>
+    </div>
+  </div>
+</div></div>
+</section>
+
+<!-- ============ 4. quiz ============ -->
+<h2 id="s4">4. The quiz at the end of a lesson</h2>
+<p>Same three questions in every variant: one "which criterion does this code break", one with several right answers, one single choice. Native radios and checkboxes in a fieldset per question. Feedback pairs colour with a glyph and a word. Every option, right or wrong, gets its explanation. The result goes to a polite live region; focus does not move.</p>
+
+<section class="variant" aria-labelledby="v4a">
+<h3 id="v4a"><b>4A</b> Check each question</h3>
+<p class="note">A "Sprawdź" button under every question. Shown after the first two were checked. The score line appears once all three are answered. Fastest feedback, most buttons.</p>
+<div class="frame"><div class="s">
+  <section class="quiz" aria-labelledby="q4a" style="margin-top:0">
+    <h4 id="q4a">Sprawdź się</h4>
+    <p>3 pytania. Możesz odpowiadać w dowolnej kolejności.</p>
+
+    <fieldset class="qq">
+      <legend><span class="m">Pytanie 1 · jedna odpowiedź</span>Które kryterium łamie ten kod?</legend>
+      <pre class="code" tabindex="0" aria-label="Kod do pytania 1">&lt;div class="btn" onclick="zapisz()"&gt;Zapisz&lt;/div&gt;</pre>
+      <p class="verdict">✓ Dobrze.</p>
+      <div class="opts">
+        <div class="opt ok"><label><input type="radio" name="a1" checked disabled><span><span class="m">2.1.1</span> Klawiatura</span></label><p class="fb"><b>Poprawna.</b>Div nie dostaje fokusu i nie reaguje na Enter ani spację, więc bez myszy nie da się zapisać.</p></div>
+        <div class="opt"><label><input type="radio" name="a1" disabled><span><span class="m">1.4.3</span> Kontrast (minimum)</span></label><p class="fb"><b>Niepoprawna.</b>W kodzie nie ma kolorów, więc nie wiemy nic o kontraście.</p></div>
+        <div class="opt"><label><input type="radio" name="a1" disabled><span><span class="m">2.4.2</span> Tytuł strony</span></label><p class="fb"><b>Niepoprawna.</b>To kryterium dotyczy elementu <code>title</code> strony, nie przycisków.</p></div>
+      </div>
+      <button type="button" class="btn">Spróbuj jeszcze raz</button>
+    </fieldset>
+
+    <fieldset class="qq">
+      <legend><span class="m">Pytanie 2 · kilka odpowiedzi</span>Okno modalne jest otwarte. Co powinno działać?</legend>
+      <p class="hint">Zaznacz wszystkie poprawne.</p>
+      <p class="verdict">✗ Prawie. Jedna poprawna odpowiedź nie jest zaznaczona.</p>
+      <div class="opts">
+        <div class="opt ok"><label><input type="checkbox" checked disabled><span>Fokus przechodzi do okna</span></label><p class="fb"><b>Poprawna.</b>Inaczej klawiatura i czytnik zostają na stronie pod spodem. <a href="#v4a">2.4.3</a></p></div>
+        <div class="opt ok"><label><input type="checkbox" checked disabled><span>Esc zamyka okno</span></label><p class="fb"><b>Poprawna.</b>To oczekiwane zachowanie okna, a element <code>dialog</code> daje je za darmo.</p></div>
+        <div class="opt"><label><input type="checkbox" disabled><span>Tab może wyjść na stronę pod oknem</span></label><p class="fb"><b>Niepoprawna.</b>Strona pod modalnym oknem jest nieaktywna, fokus krąży w oknie.</p></div>
+        <div class="opt miss"><label><input type="checkbox" disabled><span>Po zamknięciu fokus wraca na przycisk, który otworzył okno</span></label><p class="fb"><b>Pominięta, a poprawna.</b>Bez tego fokus ląduje na początku strony i trzeba szukać miejsca od nowa.</p></div>
+      </div>
+      <button type="button" class="btn">Spróbuj jeszcze raz</button>
+    </fieldset>
+
+    <fieldset class="qq" style="border-bottom:0">
+      <legend><span class="m">Pytanie 3 · jedna odpowiedź</span>Projekt usuwa obrys fokusu, bo „brzydko wygląda”. Co to narusza?</legend>
+      <div class="opts">
+        <div class="opt"><label><input type="radio" name="a3"><span><span class="m">2.4.7</span> Widoczny fokus</span></label></div>
+        <div class="opt"><label><input type="radio" name="a3"><span><span class="m">2.4.3</span> Kolejność fokusu</span></label></div>
+        <div class="opt"><label><input type="radio" name="a3"><span><span class="m">2.1.2</span> Brak pułapki na klawiaturę</span></label></div>
+      </div>
+      <button type="button" class="btn primary">Sprawdź</button>
+    </fieldset>
+    <p class="live">live region: „Pytanie 2: prawie. Jedna poprawna odpowiedź nie jest zaznaczona.”</p>
+  </section>
+</div></div>
+</section>
+
+<section class="variant" aria-labelledby="v4b">
+<h3 id="v4b"><b>4B</b> One check at the end</h3>
+<p class="note">Answer everything, then one "Sprawdź odpowiedzi". The score block comes first, with a link to each question that missed. Shown after checking. Closest to a test; fewer interruptions.</p>
+<div class="frame"><div class="s">
+  <section class="quiz" aria-labelledby="q4b" style="margin-top:0">
+    <h4 id="q4b">Sprawdź się</h4>
+    <div class="score">
+      <span class="big">2 z 3</span>
+      <p>Pytanie 2 do poprawki: <a href="#v4b">zobacz wyjaśnienie</a>.</p>
+      <button type="button" class="btn">Rozwiąż jeszcze raz</button>
+    </div>
+    <fieldset class="qq">
+      <legend><span class="m">Pytanie 1 · jedna odpowiedź · dobrze</span>Które kryterium łamie ten kod?</legend>
+      <pre class="code" tabindex="0" aria-label="Kod do pytania 1">&lt;div class="btn" onclick="zapisz()"&gt;Zapisz&lt;/div&gt;</pre>
+      <div class="opts">
+        <div class="opt ok"><label><input type="radio" name="b1" checked disabled><span><span class="m">2.1.1</span> Klawiatura</span></label><p class="fb"><b>Poprawna.</b>Div nie dostaje fokusu i nie reaguje na Enter ani spację.</p></div>
+        <div class="opt"><label><input type="radio" name="b1" disabled><span><span class="m">1.4.3</span> Kontrast (minimum)</span></label><p class="fb"><b>Niepoprawna.</b>W kodzie nie ma kolorów.</p></div>
+      </div>
+    </fieldset>
+    <fieldset class="qq" style="border-bottom:0">
+      <legend><span class="m">Pytanie 2 · kilka odpowiedzi · do poprawki</span>Okno modalne jest otwarte. Co powinno działać?</legend>
+      <div class="opts">
+        <div class="opt ok"><label><input type="checkbox" checked disabled><span>Fokus przechodzi do okna</span></label><p class="fb"><b>Poprawna.</b>Inaczej klawiatura zostaje na stronie pod spodem.</p></div>
+        <div class="opt no"><label><input type="checkbox" checked disabled><span>Tab może wyjść na stronę pod oknem</span></label><p class="fb"><b>Niepoprawna.</b>Strona pod modalnym oknem jest nieaktywna.</p></div>
+        <div class="opt miss"><label><input type="checkbox" disabled><span>Po zamknięciu fokus wraca na przycisk</span></label><p class="fb"><b>Pominięta, a poprawna.</b>Bez tego trzeba szukać miejsca od nowa.</p></div>
+      </div>
+    </fieldset>
+    <p class="note" style="color:var(--ink-2)">…pytanie 3 niżej.</p>
+    <p class="live">live region: „Wynik: 2 z 3. Pytanie 2 do poprawki.”</p>
+  </section>
+</div></div>
+</section>
+
+<section class="variant" aria-labelledby="v4c">
+<h3 id="v4c"><b>4C</b> One question at a time</h3>
+<p class="note">A stepper: one question on screen, "Sprawdź" then "Następne pytanie". Focus moves to the next question's legend, which is the one place in the quiz where it moves. Least visual load, but the reader cannot see the whole quiz or skip around.</p>
+<div class="frame"><div class="s">
+  <section class="quiz" aria-labelledby="q4c" style="margin-top:0">
+    <h4 id="q4c">Sprawdź się</h4>
+    <ol class="steps" aria-hidden="true"><li class="d"></li><li class="c"></li><li></li></ol>
+    <fieldset class="qq" style="border-bottom:0">
+      <legend><span class="m">Pytanie 2 z 3 · kilka odpowiedzi</span>Okno modalne jest otwarte. Co powinno działać?</legend>
+      <p class="hint">Zaznacz wszystkie poprawne.</p>
+      <div class="opts">
+        <div class="opt"><label><input type="checkbox" checked><span>Fokus przechodzi do okna</span></label></div>
+        <div class="opt"><label><input type="checkbox" checked><span>Esc zamyka okno</span></label></div>
+        <div class="opt"><label><input type="checkbox"><span>Tab może wyjść na stronę pod oknem</span></label></div>
+        <div class="opt"><label><input type="checkbox" checked><span>Po zamknięciu fokus wraca na przycisk, który otworzył okno</span></label></div>
+      </div>
+      <div class="btnrow"><button type="button" class="btn primary">Sprawdź</button><span class="todo" style="margin-left:.5rem">Pytanie 1: dobrze</span></div>
+    </fieldset>
+  </section>
+</div></div>
+</section>
+
+</div>
+</body>
+</html>
