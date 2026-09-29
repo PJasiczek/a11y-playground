@@ -5,6 +5,7 @@ import { glossary } from "~/content/glossary";
 import { legalUnits } from "~/content/legal";
 import { actContent, isStub } from "~/content/legal-content";
 import { legalTexts } from "~/content/legal-text.gen";
+import { learningPaths } from "~/content/paths";
 import { criteria } from "~/content/wcag";
 import { type SearchDoc, searchOptions } from "./options";
 
@@ -13,7 +14,7 @@ import { type SearchDoc, searchOptions } from "./options";
 
 const text = (html: string) => html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 
-/** Every criterion (with or without written content), glossary term, example and article, as search documents. */
+/** Every criterion (with or without written content), glossary term, example, article and lesson, as search documents. */
 export function buildSearchDocs(): SearchDoc[] {
   const criterionDocs = criteria.map((c): SearchDoc => {
     const content = criterionContent.get(c.id);
@@ -68,7 +69,20 @@ export function buildSearchDocs(): SearchDoc[] {
       },
     ];
   });
-  return [...criterionDocs, ...termDocs, ...exampleDocs, ...provisionDocs];
+  const lessonDocs = [...learningPaths.values()].flatMap((path) =>
+    path.lessons.map(
+      (lesson): SearchDoc => ({
+        id: `lekcja:${path.slug}/${lesson.slug}`,
+        kind: "lekcja",
+        ref: `${path.slug}/${lesson.slug}`,
+        title: lesson.title,
+        summary: `${path.title}: ${lesson.summary}`,
+        keywords: lesson.criteria.join(" "),
+        body: [text(lesson.html), ...lesson.keep].join(" "),
+      }),
+    ),
+  );
+  return [...criterionDocs, ...termDocs, ...exampleDocs, ...provisionDocs, ...lessonDocs];
 }
 
 export function buildSearchIndex() {
