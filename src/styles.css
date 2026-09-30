@@ -225,6 +225,7 @@
   .preview {
     font-size: 0.9375rem;
     & .p-x,
+    & .p-clip,
     & .p-img,
     & .p-select,
     & .p-table,
@@ -262,6 +263,12 @@
       font-family: var(--font-mono);
       letter-spacing: 0.3em;
       color: #6f6f6a;
+    }
+    & .p-clip {
+      display: block;
+      max-width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
     }
     & .p-faint {
       color: #c4c4bf;

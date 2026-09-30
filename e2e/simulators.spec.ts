@@ -82,8 +82,9 @@ test.describe("the picker on an example page", () => {
     await expect(page.getByRole("table", { name: "Kolejność Tab" }).getByRole("row", { name: /^1 \(różni się\)/ })).toContainText("nic");
   });
 
-  test("at 320 pixels a fitting example says so", async ({ page }) => {
-    await page.goto("/praktyka/ikona-jako-przycisk?symulacja=320px");
+  test("at 320 pixels the fixed width example overflows and its fix fits", async ({ page }) => {
+    await page.goto("/praktyka/sztywna-szerokosc?symulacja=320px");
+    await expect(page.getByRole("region", { name: "Zepsute" }).getByText("Nie mieści się.")).toBeVisible();
     await expect(page.getByRole("region", { name: "Poprawne" }).getByText("Mieści się.")).toBeVisible();
   });
 });

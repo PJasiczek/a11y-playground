@@ -2,7 +2,7 @@
 title: Wąski ekran
 summary: Przykład w ramce szerokiej na 320 pikseli albo z tekstem powiększonym do 200%.
 criteria: ["1.4.4", "1.4.10"]
-examples: []
+examples: [sztywna-szerokosc]
 limits: Nie pokazuje powiększenia całego systemu, lupy ekranowej ani zmiany odstępów w tekście. Tekst 200% powiększa tylko tekst ustawiony w jednostkach względnych, jak ustawienie rozmiaru czcionki w przeglądarce.
 status: szkic
 ---
