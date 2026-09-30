@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-ro
 import { useState } from "react";
 import { ExampleFrame } from "~/components/example-frame";
 import { DraftBadge } from "~/components/level-badge";
+import { ReadingTables } from "~/components/reading-table";
 import { SimulationPicker } from "~/components/simulation-picker";
 import { TermTips } from "~/components/term-tips";
 import { getExample } from "~/content/content.functions";
@@ -36,7 +37,7 @@ const panes = [
  * the simulator rail beside them (variant 1C of the simulator mocks).
  */
 function ExamplePage() {
-  const { example, terms, simulators } = Route.useLoaderData();
+  const { example, terms, simulators, reading, tab } = Route.useLoaderData();
   const { symulacja } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
   const simulator = symulacja ? simulators.find((s) => s.kind === simulations[symulacja].kind) : undefined;
@@ -112,36 +113,39 @@ function ExamplePage() {
           ) : null}
         </div>
 
-        <div className="grid gap-px overflow-hidden rounded border border-rule bg-rule">
-          {panes.map(({ variant, heading, glyph, tone }) => {
-            const data = example[variant];
-            return (
-              <section key={variant} aria-labelledby={`${variant}-title`} className="min-w-0 bg-surface px-5 pt-4 pb-6">
-                <h2 id={`${variant}-title`} className={`font-mono text-[0.8125rem] font-bold tracking-wider uppercase ${tone}`}>
-                  <span aria-hidden="true">{glyph} </span>
-                  {heading}
-                </h2>
-                <p className="mt-2 mb-4 text-[0.9375rem] text-ink-2">{data.why}</p>
-                <ExampleFrame
-                  src={`/demo/${example.slug}/${variant}`}
-                  title={`Przykład ${variantLabels[variant]}: ${example.title}`}
-                  variant={variant}
-                  motion={example.motion}
-                  simulation={symulacja}
-                />
-                <details className="disclosure mt-4 rounded border border-control">
-                  <summary className="flex min-h-11 cursor-pointer items-center px-3.5 font-semibold">Kod</summary>
-                  <pre className="overflow-x-auto rounded-b bg-[#101314] px-4 py-3 text-[#e8e6e1]">
-                    <code className="font-mono text-[0.8125rem] leading-relaxed">{data.source}</code>
-                  </pre>
-                </details>
-                <div className="mt-4 border-t border-rule pt-3">
-                  <h3 className="font-mono text-xs font-semibold tracking-widest text-ink-2 uppercase">Czytnik ekranu powie</h3>
-                  <p className="mt-1 text-[0.9375rem]">{data.announces}</p>
-                </div>
-              </section>
-            );
-          })}
+        <div className="min-w-0">
+          <div className="grid gap-px overflow-hidden rounded border border-rule bg-rule">
+            {panes.map(({ variant, heading, glyph, tone }) => {
+              const data = example[variant];
+              return (
+                <section key={variant} aria-labelledby={`${variant}-title`} className="min-w-0 bg-surface px-5 pt-4 pb-6">
+                  <h2 id={`${variant}-title`} className={`font-mono text-[0.8125rem] font-bold tracking-wider uppercase ${tone}`}>
+                    <span aria-hidden="true">{glyph} </span>
+                    {heading}
+                  </h2>
+                  <p className="mt-2 mb-4 text-[0.9375rem] text-ink-2">{data.why}</p>
+                  <ExampleFrame
+                    src={`/demo/${example.slug}/${variant}`}
+                    title={`Przykład ${variantLabels[variant]}: ${example.title}`}
+                    variant={variant}
+                    motion={example.motion}
+                    simulation={symulacja}
+                  />
+                  <details className="disclosure mt-4 rounded border border-control">
+                    <summary className="flex min-h-11 cursor-pointer items-center px-3.5 font-semibold">Kod</summary>
+                    <pre className="overflow-x-auto rounded-b bg-[#101314] px-4 py-3 text-[#e8e6e1]">
+                      <code className="font-mono text-[0.8125rem] leading-relaxed">{data.source}</code>
+                    </pre>
+                  </details>
+                  <div className="mt-4 border-t border-rule pt-3">
+                    <h3 className="font-mono text-xs font-semibold tracking-widest text-ink-2 uppercase">Czytnik ekranu powie</h3>
+                    <p className="mt-1 text-[0.9375rem]">{data.announces}</p>
+                  </div>
+                </section>
+              );
+            })}
+          </div>
+          {symulacja === "czytnik" ? <ReadingTables reading={reading} tab={tab} /> : null}
         </div>
       </div>
     </article>

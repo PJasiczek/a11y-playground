@@ -73,13 +73,22 @@ test.describe("the picker on an example page", () => {
     await expect(page.getByRole("region", { name: "Zepsute" }).getByText("Zablokowane kliknięcia: 1")).toBeVisible();
   });
 
+  test("the screen reader table lines up both variants and marks the difference", async ({ page }) => {
+    await page.goto("/praktyka/ikona-jako-przycisk?symulacja=czytnik");
+    const reading = page.getByRole("table", { name: "Czytanie po kolei" });
+    const second = reading.getByRole("row", { name: /^2 \(różni się\)/ });
+    await expect(second).toContainText("tekst, nie przycisk");
+    await expect(second).toContainText("Zamknij komunikat, przycisk");
+    await expect(page.getByRole("table", { name: "Kolejność Tab" }).getByRole("row", { name: /^1 \(różni się\)/ })).toContainText("nic");
+  });
+
   test("at 320 pixels a fitting example says so", async ({ page }) => {
     await page.goto("/praktyka/ikona-jako-przycisk?symulacja=320px");
     await expect(page.getByRole("region", { name: "Poprawne" }).getByText("Mieści się.")).toBeVisible();
   });
 });
 
-for (const simulation of ["deuteranopia", "slabe-widzenie", "klawiatura", "320px", "tekst-200"]) {
+for (const simulation of ["deuteranopia", "slabe-widzenie", "klawiatura", "czytnik", "320px", "tekst-200"]) {
   test(`an example page with ${simulation} has no axe violations`, async ({ page }) => {
     await page.goto(`/praktyka/formularz-z-bledami?symulacja=${simulation}`);
     await expect(page.frameLocator('iframe[data-variant="good"]').locator("html")).toHaveAttribute("data-symulacja", simulation);
