@@ -1,4 +1,6 @@
+import AxeBuilder from "@axe-core/playwright";
 import { expect, type Page, test } from "@playwright/test";
+import { brokenExamples, tags } from "./axe";
 
 /**
  * Sends the message the example page sends to its frames. A demo opened on its own is its own
@@ -42,3 +44,46 @@ test.describe("demo documents", () => {
     await expect(page.getByText("Zapisano zmiany w profilu.")).toBeHidden();
   });
 });
+
+test.describe("the picker on an example page", () => {
+  test("works from the keyboard, lands in the URL and survives a reload", async ({ page }) => {
+    await page.goto("/praktyka/formularz-z-bledami");
+    await page.getByRole("radio", { name: /^Bez symulacji/ }).focus();
+    await page.keyboard.press("ArrowDown");
+    await expect(page).toHaveURL(/\?symulacja=deuteranopia$/);
+    await expect(page.getByRole("heading", { name: "Co pokazuje ta symulacja" })).toBeVisible();
+    await expect(page.frameLocator('iframe[data-variant="bad"]').locator("html")).toHaveAttribute("data-symulacja", "deuteranopia");
+    await expect(page.frameLocator('iframe[data-variant="good"]').locator("html")).toHaveAttribute("data-symulacja", "deuteranopia");
+    await page.reload();
+    await expect(page.getByRole("radio", { name: /^Deuteranopia/ })).toBeChecked();
+    await expect(page.frameLocator('iframe[data-variant="bad"]').locator("html")).toHaveAttribute("data-symulacja", "deuteranopia");
+  });
+
+  test("keyboard mode lists focus stops and counts blocked clicks", async ({ page }) => {
+    await page.goto("/praktyka/ikona-jako-przycisk?symulacja=klawiatura");
+    const good = page.frameLocator('iframe[data-variant="good"]');
+    await expect(good.locator("html")).toHaveAttribute("data-symulacja", "klawiatura");
+    await good.getByRole("button", { name: "Zamknij komunikat" }).focus();
+    const goodPane = page.getByRole("region", { name: "Poprawne" });
+    await expect(goodPane.getByRole("listitem")).toHaveText(["Zamknij komunikat (przycisk)"]);
+
+    const bad = page.frameLocator('iframe[data-variant="bad"]');
+    await expect(bad.locator("html")).toHaveAttribute("data-symulacja", "klawiatura");
+    await bad.getByText("×").click();
+    await expect(page.getByRole("region", { name: "Zepsute" }).getByText("Zablokowane kliknięcia: 1")).toBeVisible();
+  });
+
+  test("at 320 pixels a fitting example says so", async ({ page }) => {
+    await page.goto("/praktyka/ikona-jako-przycisk?symulacja=320px");
+    await expect(page.getByRole("region", { name: "Poprawne" }).getByText("Mieści się.")).toBeVisible();
+  });
+});
+
+for (const simulation of ["deuteranopia", "slabe-widzenie", "klawiatura", "320px", "tekst-200"]) {
+  test(`an example page with ${simulation} has no axe violations`, async ({ page }) => {
+    await page.goto(`/praktyka/formularz-z-bledami?symulacja=${simulation}`);
+    await expect(page.frameLocator('iframe[data-variant="good"]').locator("html")).toHaveAttribute("data-symulacja", simulation);
+    const { violations } = await new AxeBuilder({ page }).withTags(tags).exclude(brokenExamples).analyze();
+    expect(violations).toEqual([]);
+  });
+}
