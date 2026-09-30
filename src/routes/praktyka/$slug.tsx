@@ -98,6 +98,11 @@ function ExamplePage() {
           <p aria-live="polite" aria-atomic="true" className="sr-only">
             {announcement}
           </p>
+          <p className="mt-2 text-[0.9375rem]">
+            <Link to="/symulatory" className="inline-flex min-h-11 items-center text-accent underline underline-offset-3">
+              Jak działają symulatory
+            </Link>
+          </p>
           {symulacja && simulator ? (
             <section aria-labelledby="simulation-title" className="mt-4 border border-l-4 border-rule border-l-ink bg-surface px-4 py-3">
               <h2 id="simulation-title" className="font-bold">

@@ -18,6 +18,7 @@ const routes = [
   "/mapowanie",
   "/praktyka",
   "/praktyka/ikona-jako-przycisk",
+  "/symulatory",
   "/sciezki",
   "/sciezki/programista",
   "/sciezki/programista/klawiatura-i-fokus",

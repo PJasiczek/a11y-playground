@@ -6,6 +6,7 @@ const navItems = [
   { to: "/kryteria", label: "Kryteria" },
   { to: "/prawo", label: "Prawo" },
   { to: "/praktyka", label: "Praktyka" },
+  { to: "/symulatory", label: "Symulatory" },
   { to: "/sciezki", label: "Ścieżki" },
   { to: "/slownik", label: "Słownik" },
 ] as const;

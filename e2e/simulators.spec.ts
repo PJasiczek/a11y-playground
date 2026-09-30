@@ -45,6 +45,15 @@ test.describe("demo documents", () => {
   });
 });
 
+test("a card on /symulatory leads to its section, and the section into an example", async ({ page }) => {
+  await page.goto("/symulatory");
+  await page.getByRole("link", { name: "Tylko klawiatura" }).click();
+  await expect(page).toHaveURL(/#klawiatura$/);
+  await page.getByRole("region", { name: "Tylko klawiatura" }).getByRole("link", { name: "Okno modalne i fokus" }).click();
+  await expect(page).toHaveURL(/\/praktyka\/okno-modalne-i-fokus\?symulacja=klawiatura$/);
+  await expect(page.getByRole("radio", { name: /^Tylko klawiatura/ })).toBeChecked();
+});
+
 test.describe("the picker on an example page", () => {
   test("works from the keyboard, lands in the URL and survives a reload", async ({ page }) => {
     await page.goto("/praktyka/formularz-z-bledami");

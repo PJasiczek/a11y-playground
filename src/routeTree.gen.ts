@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as MapowanieRouteImport } from './routes/mapowanie'
 import { Route as SearchIndexDotjsonRouteImport } from './routes/search-index[.]json'
 import { Route as SlownikRouteImport } from './routes/slownik'
+import { Route as SymulatoryRouteImport } from './routes/symulatory'
 import { Route as SzukajRouteImport } from './routes/szukaj'
 import { Route as KryteriaIndexRouteImport } from './routes/kryteria/index'
 import { Route as KryteriaCriterionIdRouteImport } from './routes/kryteria/$criterionId'
@@ -45,6 +46,11 @@ const SearchIndexDotjsonRoute = SearchIndexDotjsonRouteImport.update({
 const SlownikRoute = SlownikRouteImport.update({
   id: '/slownik',
   path: '/slownik',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SymulatoryRoute = SymulatoryRouteImport.update({
+  id: '/symulatory',
+  path: '/symulatory',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SzukajRoute = SzukajRouteImport.update({
@@ -118,6 +124,7 @@ export interface FileRoutesByFullPath {
   '/mapowanie': typeof MapowanieRoute
   '/search-index.json': typeof SearchIndexDotjsonRoute
   '/slownik': typeof SlownikRoute
+  '/symulatory': typeof SymulatoryRoute
   '/szukaj': typeof SzukajRoute
   '/kryteria/$criterionId': typeof KryteriaCriterionIdRoute
   '/praktyka/$slug': typeof PraktykaSlugRoute
@@ -137,6 +144,7 @@ export interface FileRoutesByTo {
   '/mapowanie': typeof MapowanieRoute
   '/search-index.json': typeof SearchIndexDotjsonRoute
   '/slownik': typeof SlownikRoute
+  '/symulatory': typeof SymulatoryRoute
   '/szukaj': typeof SzukajRoute
   '/kryteria/$criterionId': typeof KryteriaCriterionIdRoute
   '/praktyka/$slug': typeof PraktykaSlugRoute
@@ -157,6 +165,7 @@ export interface FileRoutesById {
   '/mapowanie': typeof MapowanieRoute
   '/search-index.json': typeof SearchIndexDotjsonRoute
   '/slownik': typeof SlownikRoute
+  '/symulatory': typeof SymulatoryRoute
   '/szukaj': typeof SzukajRoute
   '/kryteria/$criterionId': typeof KryteriaCriterionIdRoute
   '/praktyka/$slug': typeof PraktykaSlugRoute
@@ -178,6 +187,7 @@ export interface FileRouteTypes {
     | '/mapowanie'
     | '/search-index.json'
     | '/slownik'
+    | '/symulatory'
     | '/szukaj'
     | '/kryteria/$criterionId'
     | '/praktyka/$slug'
@@ -197,6 +207,7 @@ export interface FileRouteTypes {
     | '/mapowanie'
     | '/search-index.json'
     | '/slownik'
+    | '/symulatory'
     | '/szukaj'
     | '/kryteria/$criterionId'
     | '/praktyka/$slug'
@@ -216,6 +227,7 @@ export interface FileRouteTypes {
     | '/mapowanie'
     | '/search-index.json'
     | '/slownik'
+    | '/symulatory'
     | '/szukaj'
     | '/kryteria/$criterionId'
     | '/praktyka/$slug'
@@ -236,6 +248,7 @@ export interface RootRouteChildren {
   MapowanieRoute: typeof MapowanieRoute
   SearchIndexDotjsonRoute: typeof SearchIndexDotjsonRoute
   SlownikRoute: typeof SlownikRoute
+  SymulatoryRoute: typeof SymulatoryRoute
   SzukajRoute: typeof SzukajRoute
   KryteriaCriterionIdRoute: typeof KryteriaCriterionIdRoute
   PraktykaSlugRoute: typeof PraktykaSlugRoute
@@ -279,6 +292,13 @@ declare module '@tanstack/react-router' {
       path: '/slownik'
       fullPath: '/slownik'
       preLoaderRoute: typeof SlownikRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/symulatory': {
+      id: '/symulatory'
+      path: '/symulatory'
+      fullPath: '/symulatory'
+      preLoaderRoute: typeof SymulatoryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/szukaj': {
@@ -380,6 +400,7 @@ const rootRouteChildren: RootRouteChildren = {
   MapowanieRoute: MapowanieRoute,
   SearchIndexDotjsonRoute: SearchIndexDotjsonRoute,
   SlownikRoute: SlownikRoute,
+  SymulatoryRoute: SymulatoryRoute,
   SzukajRoute: SzukajRoute,
   KryteriaCriterionIdRoute: KryteriaCriterionIdRoute,
   PraktykaSlugRoute: PraktykaSlugRoute,

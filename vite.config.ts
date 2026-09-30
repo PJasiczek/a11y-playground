@@ -26,9 +26,10 @@ export default defineConfig({
         enabled: true,
         crawlLinks: true,
         failOnError: true,
-        // A link like /slownik#nazwa points at the same page as /slownik. Crawling each anchor
-        // separately writes the same file in parallel, which can leave it empty.
-        filter: ({ path }) => !path.includes("#"),
+        // A link like /slownik#nazwa or /praktyka/x?symulacja=czytnik points at the same page as
+        // /slownik or /praktyka/x. Crawling each variant separately writes the same file in
+        // parallel, which can leave it empty.
+        filter: ({ path }) => !path.includes("#") && !path.includes("?"),
       },
       pages: [
         ...criteria.map((c) => ({ path: `/kryteria/${c.id}` })),
