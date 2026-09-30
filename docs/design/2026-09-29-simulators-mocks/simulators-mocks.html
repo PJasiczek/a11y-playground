@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simulator mocks: the picker on an example page, /symulatory, screen reader, keyboard, narrow screen</title>
+<style>
+  :root {
+    --paper: #FBFAF7; --paper-2: #F1EFE8; --surface: #FFFFFF;
+    --ink: #14171A; --ink-2: #484D52; --rule: #DFDBD1; --control: #857F72;
+    --accent: #2C36A8; --marker: #F4E75B; --good: #145537; --bad: #9A1B1B;
+    --sans: "Inter var", Inter, "Segoe UI", -apple-system, system-ui, sans-serif;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, "SF Mono", monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 2.5rem 1rem 6rem; background: #000; color: #fff; font: 16px/1.6 var(--sans); }
+  .page { max-width: 1180px; margin: 0 auto; }
+  .page > h1 { font-size: 1.4rem; margin: 0 0 .35rem; letter-spacing: -.02em; }
+  .page > p, .note { color: #B8BDC2; font-size: .9rem; margin: 0 0 1rem; max-width: 76ch; }
+  .page > h2 { font: 600 .8rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; margin: 4rem 0 .6rem; }
+  .page > h2 + p { margin-bottom: 1.5rem; }
+  .page code { font-family: var(--mono); font-size: .9em; }
+  .page a { color: #fff; }
+  .variant { margin: 0 0 2.5rem; }
+  .variant > h3 { font-size: 1.05rem; margin: 0 0 .25rem; }
+  .variant > h3 b { font-family: var(--mono); display: inline-block; min-width: 1.6rem; }
+  .frame { border: 1px solid #2A2D31; border-radius: 6px; overflow: hidden; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+  /* --- product surface, app tokens --- */
+  .s { background: var(--paper); color: var(--ink); padding: 1.75rem 1.75rem 2.25rem; }
+  .s a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+  .s :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .s h4, .s h5 { margin: 0; }
+  .s p { max-width: 68ch; }
+  .crumb { font: .8125rem var(--mono); color: var(--ink-2); margin: 0 0 .75rem; }
+  .crumb a { color: var(--ink-2); }
+  .t1 { font-size: 1.875rem; font-weight: 700; line-height: 1.15; letter-spacing: -.03em; margin: 0 0 .4rem; }
+  .lead { color: var(--ink-2); margin: 0 0 1rem; }
+  .kick { font: 600 .75rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 .35rem; }
+  .chips { display: flex; flex-wrap: wrap; gap: .5rem; list-style: none; margin: 0 0 1.25rem; padding: 0; }
+  .sc { display: inline-flex; align-items: center; min-height: 44px; padding: 0 .75rem; font: 600 .875rem var(--mono); border: 1px solid var(--control); border-radius: 2px; background: var(--surface); color: var(--ink) !important; text-decoration: none !important; }
+  .draft { display: inline-flex; align-items: center; min-height: 44px; font: 600 .75rem/1 var(--mono); border: 1px dashed var(--ink); border-radius: 2px; padding: 0 .5rem; }
+  .draft::before { content: "✎ " / ""; }
+
+  /* radios styled as chips, the same pattern as the criteria filters */
+  fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+  legend { font-weight: 700; padding: 0; margin-bottom: .5rem; }
+  .pick { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .pick label { display: inline-flex; align-items: center; gap: .55rem; min-height: 44px; padding: .4rem .9rem .4rem .7rem; border: 1px solid var(--control); border-radius: 2px; background: var(--surface); cursor: pointer; font-size: .9375rem; }
+  .pick input { width: 20px; height: 20px; margin: 0; accent-color: var(--ink); }
+  .pick label:has(input:checked) { border: 2px solid var(--ink); font-weight: 700; padding: calc(.4rem - 1px) calc(.9rem - 1px) calc(.4rem - 1px) calc(.7rem - 1px); }
+  .pick label:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .sub { margin-top: .9rem; padding-left: 1rem; border-left: 3px solid var(--ink); }
+  .sub legend { font-weight: 600; font-size: .9375rem; }
+
+  /* "Co pokazuje ta symulacja": the text alternative, always next to the frames */
+  .said { margin: 1.25rem 0 0; background: var(--surface); border: 1px solid var(--rule); border-left: 4px solid var(--ink); padding: 1rem 1.25rem; }
+  .said h4 { font-size: 1rem; margin-bottom: .35rem; }
+  .said p { margin: .35rem 0 0; }
+  .said .lim { color: var(--ink-2); font-size: .9375rem; }
+  .said .lim b { color: var(--ink); }
+
+  .panes { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin-top: 1.25rem; }
+  .pane { background: var(--surface); padding: 1rem 1.25rem 1.4rem; min-width: 0; }
+  .pane h5 { font: 700 .8125rem var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+  .pane h5.bad { color: var(--bad); } .pane h5.good { color: var(--good); }
+  .pane .why { color: var(--ink-2); font-size: .9375rem; margin: .4rem 0 .8rem; }
+  .pane .head { display: flex; flex-wrap: wrap; gap: .5rem 1rem; justify-content: space-between; align-items: center; }
+  @media (max-width: 760px) { .panes { grid-template-columns: 1fr; } }
+
+  /* stand-in for the sandboxed iframe */
+  .demo { position: relative; background: #F1EFE8; border: 2px solid var(--control); border-radius: 2px; padding: 1rem; font: 16px/1.5 "Segoe UI", system-ui, sans-serif; color: #14171A; }
+  .demo .tag { position: absolute; top: -.7rem; right: .6rem; font: 600 .6875rem/1 var(--mono); background: var(--ink); color: var(--paper); padding: .25rem .4rem; letter-spacing: .04em; }
+  .d-row { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .d-in { min-height: 44px; min-width: 12rem; flex: 1; padding: 0 .75rem; border: 1px solid #857f72; border-radius: 4px; background: #fff; display: flex; align-items: center; color: #14171a; }
+  .d-in.err-bad { border: 2px solid #dd3333; }
+  .d-in.err-good { border: 2px solid #9a1b1b; }
+  .d-btn { min-height: 44px; padding: 0 1rem; border: 2px solid #14171a; border-radius: 4px; background: #fff; display: inline-flex; align-items: center; }
+  .d-label { font-weight: 600; }
+  .d-hint { margin: .25rem 0 .5rem; color: #484d52; font-size: .9375rem; }
+  .d-err { margin: .5rem 0 0; color: #9a1b1b; font-weight: 600; }
+  .d-err::before { content: "⚠ " / ""; }
+
+  /* live filters, wired to the subtype radios in 1A */
+  .fA:has(#a-prot:checked) .demo > .fx,
+  .f-prot { filter: url(#prot); }
+  .fA:has(#a-deut:checked) .demo > .fx,
+  .f-deut { filter: url(#deut); }
+  .fA:has(#a-trit:checked) .demo > .fx,
+  .f-trit { filter: url(#trit); }
+  .fA:has(#a-achr:checked) .demo > .fx,
+  .f-achr { filter: grayscale(1); }
+  .f-low { filter: blur(1.6px) contrast(.55); }
+  .fA .said > div { display: none; }
+  .fA:has(#a-prot:checked) .said .t-prot,
+  .fA:has(#a-deut:checked) .said .t-deut,
+  .fA:has(#a-trit:checked) .said .t-trit,
+  .fA:has(#a-achr:checked) .said .t-achr { display: block; }
+
+  /* 1B: a select per pane */
+  .sel { display: inline-flex; align-items: center; gap: .5rem; font-size: .875rem; }
+  .sel select { min-height: 44px; padding: 0 .6rem; font: inherit; border: 1px solid var(--control); border-radius: 2px; background: var(--surface); color: var(--ink); }
+
+  /* 1C: rail */
+  .rail { display: grid; grid-template-columns: 19rem 1fr; gap: 1.5rem; align-items: start; }
+  .rail .opts { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--ink); }
+  .rail .opts li { border-bottom: 1px solid var(--rule); }
+  .rail .opts label { display: grid; grid-template-columns: 20px 1fr; gap: .15rem .65rem; min-height: 44px; padding: .65rem 0; cursor: pointer; }
+  .rail .opts input { width: 20px; height: 20px; margin: .15rem 0 0; accent-color: var(--ink); }
+  .rail .opts small { grid-column: 2; color: var(--ink-2); font-size: .8125rem; }
+  .rail .opts label:has(input:checked) b { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+  .rail .stack { display: grid; gap: 1.25rem; }
+  .rail .said { margin: 1rem 0 0; }
+  @media (max-width: 860px) { .rail { grid-template-columns: 1fr; } }
+
+  /* 2A: rows */
+  .rows { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--ink); }
+  .rows > li { display: grid; grid-template-columns: 1fr 17rem; gap: .5rem 2rem; padding: 1.2rem 0; border-bottom: 1px solid var(--rule); }
+  .rows h4 { font-size: 1.25rem; letter-spacing: -.01em; }
+  .rows p { margin: .25rem 0 0; }
+  .rows .lim { color: var(--ink-2); font-size: .9375rem; }
+  .rows .try { font-size: .9375rem; }
+  .rows .try ul { list-style: none; margin: .3rem 0 0; padding: 0; }
+  .rows .try a { display: inline-flex; min-height: 44px; align-items: center; }
+  .rows .crit { font: .8125rem var(--mono); color: var(--ink-2); margin-top: .5rem; }
+  @media (max-width: 760px) { .rows > li { grid-template-columns: 1fr; } }
+  .warn { border: 1px solid var(--ink); padding: .8rem 1rem; margin: 0 0 1.5rem; max-width: 68ch; }
+  .warn b::before { content: "ⓘ " / ""; }
+
+  /* 2B: cards with a sample */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); gap: 1rem; list-style: none; margin: 0; padding: 0; }
+  .cards > li { background: var(--surface); border: 1px solid var(--rule); display: flex; flex-direction: column; }
+  .cards .sample { height: 7rem; border-bottom: 1px solid var(--rule); display: grid; place-items: center; background: var(--paper-2); overflow: hidden; }
+  .cards .body { padding: .9rem 1rem 1.1rem; display: flex; flex-direction: column; gap: .35rem; flex: 1; }
+  .cards h4 { font-size: 1.0625rem; }
+  .cards h4 a { color: var(--ink); text-decoration: none; }
+  .cards h4 a::after { content: ""; position: absolute; inset: 0; }
+  .cards > li { position: relative; }
+  .cards > li:has(a:focus-visible) { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .cards h4 a:focus-visible { outline: none; }
+  .cards p { margin: 0; font-size: .9375rem; color: var(--ink-2); }
+  .cards .crit { font: .8125rem var(--mono); margin-top: auto; padding-top: .4rem; }
+  .strip { display: flex; }
+  .strip i { width: 2.4rem; height: 2.4rem; }
+  .strip-l { font: .75rem var(--mono); color: var(--ink-2); text-align: center; margin-top: .25rem; }
+  .s-kbd { font: 600 .875rem var(--mono); display: flex; gap: .4rem; align-items: center; }
+  .s-kbd span { border: 2px solid var(--ink); border-radius: 3px; padding: .15rem .45rem; background: var(--surface); }
+  .s-kbd em { font-style: normal; width: 1.5rem; height: 1.5rem; border-radius: 50%; background: var(--ink); color: var(--paper); display: grid; place-items: center; font-size: .75rem; }
+  .s-sr { font: .8125rem/1.5 var(--mono); background: var(--surface); border: 1px solid var(--rule); padding: .4rem .7rem; }
+  .s-narrow { width: 5.5rem; height: 5.5rem; border: 2px solid var(--ink); background: var(--surface); position: relative; font: .75rem var(--mono); display: grid; place-items: center; }
+  .s-narrow::after { content: ""; position: absolute; top: 1.4rem; left: 1rem; width: 7rem; height: 2rem; border: 2px dashed var(--bad); }
+
+  /* 3: screen reader */
+  .srcols { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+  .srcols > div { background: var(--surface); padding: 1rem 1.25rem; }
+  @media (max-width: 760px) { .srcols { grid-template-columns: 1fr; } }
+  ol.said-list { margin: .5rem 0 0; padding: 0; list-style: none; counter-reset: l; }
+  ol.said-list li { counter-increment: l; display: grid; grid-template-columns: 2rem 1fr; padding: .45rem 0; border-bottom: 1px solid var(--rule); }
+  ol.said-list li::before { content: counter(l) / ""; font: .8125rem var(--mono); color: var(--ink-2); padding-top: .1rem; }
+  .role { font: 600 .8125rem var(--mono); }
+  .role.none { color: var(--bad); }
+  .role.none::before { content: "✕ " / ""; }
+  .h6 { font: 600 .75rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin: 1rem 0 0; }
+  .empty { color: var(--ink-2); font-style: italic; margin: .4rem 0 0; }
+  .approx { font-size: .875rem; color: var(--ink-2); margin: 1rem 0 0; }
+  table.cmp { width: 100%; border-collapse: collapse; background: var(--surface); font-size: .9375rem; }
+  table.cmp th, table.cmp td { border: 1px solid var(--rule); padding: .55rem .75rem; text-align: left; vertical-align: top; }
+  table.cmp thead th { font: 700 .8125rem var(--mono); letter-spacing: .06em; text-transform: uppercase; background: var(--paper-2); }
+  table.cmp th[scope=row] { font: .8125rem var(--mono); color: var(--ink-2); width: 5.5rem; }
+  table.cmp tr.diff th[scope=row]::after { content: " ≠"; color: var(--ink); font-weight: 700; }
+  table.cmp tr.diff td { background: #FFFBD6; }
+  table.cmp .bad { color: var(--bad); font-weight: 600; }
+
+  /* 4: keyboard */
+  .blocked { margin-top: .6rem; border: 2px solid var(--ink); background: var(--marker); color: var(--on-marker, #14171a); padding: .5rem .75rem; font-size: .9375rem; }
+  .blocked b::before { content: "✋ " / ""; }
+  .badge { position: absolute; width: 1.6rem; height: 1.6rem; border-radius: 50%; background: #2C36A8; color: #fff; font: 700 .8125rem/1.6rem var(--mono); text-align: center; box-shadow: 0 0 0 2px #fff; }
+  .d-notice { position: relative; padding: 1rem 3.5rem 1rem 1rem; border: 1px solid #857f72; border-radius: 4px; background: #fff; }
+  .d-notice p { margin: 0; }
+  .d-x-bad { position: absolute; top: .5rem; right: .5rem; width: 20px; height: 20px; line-height: 20px; text-align: center; color: #484d52; }
+  .d-x-good { position: absolute; top: .25rem; right: .25rem; width: 44px; height: 44px; display: grid; place-items: center; outline: 3px solid #2c36a8; outline-offset: 2px; }
+  .trace { margin: .75rem 0 0; font-size: .9375rem; }
+  .trace ol { margin: .3rem 0 0; padding-left: 1.4rem; }
+  .count-line { font: .875rem var(--mono); margin: .75rem 0 0; }
+
+  /* 5: narrow */
+  .narrow-wrap { width: 324px; max-width: 100%; overflow-x: auto; border: 2px dashed var(--control); padding: 0; }
+  .narrow-wrap .demo { width: 320px; border: 0; }
+  .d-card { width: 460px; border: 1px solid #857f72; background: #fff; padding: .8rem 1rem; white-space: nowrap; }
+  .d-card-ok { border: 1px solid #857f72; background: #fff; padding: .8rem 1rem; }
+  .ruler { font: .75rem var(--mono); color: var(--ink-2); margin: .3rem 0 0; }
+  .over { margin-top: .75rem; border-left: 4px solid var(--bad); padding: .3rem 0 .3rem .75rem; font-size: .9375rem; }
+  .over b { color: var(--bad); }
+  .over b::before { content: "✕ " / ""; }
+  .fits { margin-top: .75rem; border-left: 4px solid var(--good); padding: .3rem 0 .3rem .75rem; font-size: .9375rem; }
+  .fits b { color: var(--good); }
+  .fits b::before { content: "✓ " / ""; }
+
+  @media (max-width: 640px) { .s { padding: 1.25rem 1rem 1.5rem; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <!-- Machado, Oliveira and Fernandes (2009), severity 1.0 -->
+  <filter id="prot" color-interpolation-filters="linearRGB"><feColorMatrix type="matrix" values="0.152 1.053 -0.205 0 0  0.115 0.786 0.099 0 0  -0.004 -0.048 1.052 0 0  0 0 0 1 0"/></filter>
+  <filter id="deut" color-interpolation-filters="linearRGB"><feColorMatrix type="matrix" values="0.367 0.861 -0.228 0 0  0.280 0.673 0.047 0 0  -0.012 0.043 0.969 0 0  0 0 0 1 0"/></filter>
+  <filter id="trit" color-interpolation-filters="linearRGB"><feColorMatrix type="matrix" values="1.256 -0.077 -0.179 0 0  -0.078 0.931 0.148 0 0  0.005 0.691 0.304 0 0  0 0 0 1 0"/></filter>
+</svg>
+
+<main class="page">
+<h1>Phase 7 mocks: impairment simulators</h1>
+<p>Five screens. Screen 1 is the main decision: where the simulator picker lives. The others show what each simulator puts next to the frames. Grey boxes stand in for the sandboxed iframes. Plan: <code>docs/design/2026-09-29-phase-7-simulators/phase-7-simulators.en.html</code>.</p>
+<p>The filters in 1A are live: pick a colour vision type and both frames and the text under the picker change. No script, just <code>:has()</code>.</p>
+
+<!-- ============ 1 ============ -->
+<h2>1. The picker on an example page</h2>
+<p>Example: <code>/praktyka/formularz-z-bledami</code> after a wrong address was submitted. In the broken variant the red border is the only sign of the error.</p>
+
+<section class="variant" aria-labelledby="v1a">
+  <h3 id="v1a"><b>1A</b> One picker above both frames</h3>
+  <p class="note">One choice applies to both frames, so the broken and the fixed variant are always compared under the same condition. Native radios, state in <code>?symulacja=deuteranopia</code>, so a simulated view can be shared as a link. The second row appears only for types that have subtypes.</p>
+  <div class="frame"><div class="s fA">
+    <p class="crumb"><a href="#v1a">Praktyka</a> / Formularz z błędami</p>
+    <div class="t1">Formularz z błędami</div>
+    <ul class="chips" aria-label="Kryteria WCAG"><li><a class="sc" href="#v1a">3.3.1</a></li><li><a class="sc" href="#v1a">3.3.2</a></li><li><a class="sc" href="#v1a">1.4.1</a></li><li><a class="sc" href="#v1a">1.3.1</a></li><li><span class="draft">szkic</span></li></ul>
+
+    <fieldset>
+      <legend>Symulacja</legend>
+      <div class="pick">
+        <label><input type="radio" name="a-kind"> Bez symulacji</label>
+        <label><input type="radio" name="a-kind" checked> Widzenie barw</label>
+        <label><input type="radio" name="a-kind"> Słabe widzenie</label>
+        <label><input type="radio" name="a-kind"> Tylko klawiatura</label>
+        <label><input type="radio" name="a-kind"> Czytnik ekranu</label>
+        <label><input type="radio" name="a-kind"> Wąski ekran</label>
+      </div>
+      <fieldset class="sub">
+        <legend>Rodzaj</legend>
+        <div class="pick">
+          <label><input type="radio" name="a-cvd" id="a-prot"> Protanopia</label>
+          <label><input type="radio" name="a-cvd" id="a-deut" checked> Deuteranopia</label>
+          <label><input type="radio" name="a-cvd" id="a-trit"> Tritanopia</label>
+          <label><input type="radio" name="a-cvd" id="a-achr"> Achromatopsja</label>
+        </div>
+      </fieldset>
+    </fieldset>
+
+    <section class="said" aria-labelledby="a-said">
+      <h4 id="a-said">Co pokazuje ta symulacja</h4>
+      <div class="t-prot"><p>Protanopia: oko nie odbiera czerwieni. Czerwona ramka pola w wersji zepsutej ciemnieje do brązowej i zlewa się z szarą. Kolor był jedynym znakiem błędu, więc błędu nie widać. W wersji poprawnej zostaje napis „Błąd: …” z ikoną.</p></div>
+      <div class="t-deut"><p>Deuteranopia: oko nie odróżnia zieleni od czerwieni. Czerwona ramka pola w wersji zepsutej wygląda jak oliwkowa i przestaje znaczyć „błąd”. W wersji poprawnej zostaje napis „Błąd: …” z ikoną, więc informacja dociera.</p></div>
+      <div class="t-trit"><p>Tritanopia: oko nie odróżnia niebieskiego od zielonego. Czerwień zostaje czerwona, więc w tym przykładzie różnica jest mała. Tritanopia to rzadki typ, a ten przykład nie uczy o niej wiele.</p></div>
+      <div class="t-achr"><p>Achromatopsja: brak widzenia barw. Ramka błędu w wersji zepsutej różni się od zwykłej tylko grubością. W wersji poprawnej komunikat tekstowy działa bez koloru.</p></div>
+      <p class="lim"><b>Czego to nie pokazuje:</b> symulacja to przybliżenie według modelu Machado (2009). Ekran, jego kalibracja i stopień zaburzenia zmieniają wynik. Osoby z zaburzeniami widzenia barw często uczą się rozpoznawać kolory po kontekście.</p>
+    </section>
+
+    <div class="panes">
+      <section class="pane" aria-labelledby="a-bad">
+        <h5 id="a-bad" class="bad"><span aria-hidden="true">✕ </span>Zepsute</h5>
+        <p class="why">Pole zmienia ramkę na czerwoną i nic więcej.</p>
+        <div class="demo"><span class="tag">Deuteranopia</span><div class="fx">
+          <div class="d-row"><span class="d-in err-bad">jan.przyklad.pl</span><span class="d-btn">Zapisz się</span></div>
+        </div></div>
+      </section>
+      <section class="pane" aria-labelledby="a-good">
+        <h5 id="a-good" class="good"><span aria-hidden="true">✓ </span>Poprawne</h5>
+        <p class="why">Etykieta, podpowiedź i komunikat błędu słowami.</p>
+        <div class="demo"><span class="tag">Deuteranopia</span><div class="fx">
+          <div class="d-label">Adres e-mail</div>
+          <p class="d-hint">Na przykład jan@przyklad.pl</p>
+          <div class="d-row"><span class="d-in err-good">jan.przyklad.pl</span><span class="d-btn">Zapisz się</span></div>
+          <p class="d-err">Błąd: podaj adres z małpą, na przykład jan@przyklad.pl</p>
+        </div></div>
+      </section>
+    </div>
+  </div></div>
+</section>
+
+<section class="variant" aria-labelledby="v1b">
+  <h3 id="v1b"><b>1B</b> A picker in each pane</h3>
+  <p class="note">Each frame gets its own select. Lets you put a simulated view next to a normal one, but comparing broken against fixed under the same condition takes two changes, and the page gets two sets of text alternatives.</p>
+  <div class="frame"><div class="s">
+    <p class="crumb"><a href="#v1b">Praktyka</a> / Formularz z błędami</p>
+    <div class="t1">Formularz z błędami</div>
+    <div class="panes">
+      <section class="pane" aria-labelledby="b-bad">
+        <div class="head">
+          <h5 id="b-bad" class="bad"><span aria-hidden="true">✕ </span>Zepsute</h5>
+          <label class="sel">Symulacja
+            <select><option>Bez symulacji</option><option selected>Deuteranopia</option><option>Protanopia</option><option>Tritanopia</option><option>Achromatopsja</option><option>Słabe widzenie</option><option>Tylko klawiatura</option><option>Czytnik ekranu</option><option>Wąski ekran</option></select>
+          </label>
+        </div>
+        <p class="why">Pole zmienia ramkę na czerwoną i nic więcej.</p>
+        <div class="demo"><span class="tag">Deuteranopia</span><div class="f-deut">
+          <div class="d-row"><span class="d-in err-bad">jan.przyklad.pl</span><span class="d-btn">Zapisz się</span></div>
+        </div></div>
+        <section class="said" aria-labelledby="b-said"><h4 id="b-said">Co pokazuje ta symulacja</h4><p>Czerwona ramka wygląda jak oliwkowa i przestaje znaczyć „błąd”.</p></section>
+      </section>
+      <section class="pane" aria-labelledby="b-good">
+        <div class="head">
+          <h5 id="b-good" class="good"><span aria-hidden="true">✓ </span>Poprawne</h5>
+          <label class="sel">Symulacja
+            <select><option selected>Bez symulacji</option><option>Deuteranopia</option><option>Protanopia</option><option>Tritanopia</option><option>Achromatopsja</option><option>Słabe widzenie</option><option>Tylko klawiatura</option><option>Czytnik ekranu</option><option>Wąski ekran</option></select>
+          </label>
+        </div>
+        <p class="why">Etykieta, podpowiedź i komunikat błędu słowami.</p>
+        <div class="demo">
+          <div class="d-label">Adres e-mail</div>
+          <p class="d-hint">Na przykład jan@przyklad.pl</p>
+          <div class="d-row"><span class="d-in err-good">jan.przyklad.pl</span><span class="d-btn">Zapisz się</span></div>
+          <p class="d-err">Błąd: podaj adres z małpą, na przykład jan@przyklad.pl</p>
+        </div>
+      </section>
+    </div>
+  </div></div>
+</section>
+
+<section class="variant" aria-labelledby="v1c">
+  <h3 id="v1c"><b>1C</b> A rail beside stacked frames</h3>
+  <p class="note">The simulators as a vertical list with a line on what each one does, and the text alternative under the list. The frames stack on the right, so the page loses the side-by-side layout and each frame gets the full width.</p>
+  <div class="frame"><div class="s">
+    <p class="crumb"><a href="#v1c">Praktyka</a> / Formularz z błędami</p>
+    <div class="t1">Formularz z błędami</div>
+    <div class="rail">
+      <div>
+        <fieldset>
+          <legend>Symulacja</legend>
+          <ul class="opts">
+            <li><label><input type="radio" name="c-kind"><b>Bez symulacji</b><small>Tak, jak widzisz ty.</small></label></li>
+            <li><label><input type="radio" name="c-kind" checked><b>Deuteranopia</b><small>Zieleń i czerwień się zlewają.</small></label></li>
+            <li><label><input type="radio" name="c-kind"><b>Protanopia</b><small>Czerwień ciemnieje.</small></label></li>
+            <li><label><input type="radio" name="c-kind"><b>Słabe widzenie</b><small>Rozmycie i niski kontrast.</small></label></li>
+            <li><label><input type="radio" name="c-kind"><b>Tylko klawiatura</b><small>Mysz nie działa.</small></label></li>
+            <li><label><input type="radio" name="c-kind"><b>Czytnik ekranu</b><small>Co zostanie przeczytane.</small></label></li>
+            <li><label><input type="radio" name="c-kind"><b>Wąski ekran</b><small>320 pikseli szerokości.</small></label></li>
+          </ul>
+        </fieldset>
+        <section class="said" aria-labelledby="c-said"><h4 id="c-said">Co pokazuje ta symulacja</h4><p>Czerwona ramka w wersji zepsutej wygląda jak oliwkowa. W poprawnej zostaje napis „Błąd: …”.</p><p class="lim"><b>Czego nie pokazuje:</b> to przybliżenie, ekran zmienia wynik.</p></section>
+      </div>
+      <div class="stack">
+        <section aria-labelledby="c-bad">
+          <h5 id="c-bad" class="bad" style="font:700 .8125rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--bad)"><span aria-hidden="true">✕ </span>Zepsute</h5>
+          <p class="why" style="color:var(--ink-2);font-size:.9375rem;margin:.3rem 0 .7rem">Pole zmienia ramkę na czerwoną i nic więcej.</p>
+          <div class="demo"><span class="tag">Deuteranopia</span><div class="f-deut"><div class="d-row"><span class="d-in err-bad">jan.przyklad.pl</span><span class="d-btn">Zapisz się</span></div></div></div>
+        </section>
+        <section aria-labelledby="c-good">
+          <h5 id="c-good" style="font:700 .8125rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--good)"><span aria-hidden="true">✓ </span>Poprawne</h5>
+          <p class="why" style="color:var(--ink-2);font-size:.9375rem;margin:.3rem 0 .7rem">Etykieta, podpowiedź i komunikat błędu słowami.</p>
+          <div class="demo"><span class="tag">Deuteranopia</span><div class="f-deut">
+            <div class="d-label">Adres e-mail</div><p class="d-hint">Na przykład jan@przyklad.pl</p>
+            <div class="d-row"><span class="d-in err-good">jan.przyklad.pl</span><span class="d-btn">Zapisz się</span></div>
+            <p class="d-err">Błąd: podaj adres z małpą, na przykład jan@przyklad.pl</p>
+          </div></div>
+        </section>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<!-- ============ 2 ============ -->
+<h2>2. /symulatory</h2>
+<p>The index of simulators. It explains what each one shows and what it does not, and links into the examples where it teaches the most, with the simulation already picked.</p>
+
+<section class="variant" aria-labelledby="v2a">
+  <h3 id="v2a"><b>2A</b> Rows, like /sciezki</h3>
+  <p class="note">One row per simulator: what it shows, its limits, the criteria, and two or three examples to try it on. Limits sit in the row, not behind a link.</p>
+  <div class="frame"><div class="s">
+    <div class="t1">Symulatory</div>
+    <p class="lead">Zobacz przykłady z Praktyki oczami, rękami i uszami innych osób.</p>
+    <p class="warn"><b>To przybliżenie, nie doświadczenie.</b> Symulacja pokazuje, gdzie projekt zawodzi. Nie mówi, jak żyje się z niepełnosprawnością. Czytnik ekranu sprawdzaj w NVDA lub VoiceOver.</p>
+    <ul class="rows">
+      <li>
+        <div>
+          <h4>Widzenie barw</h4>
+          <p>Protanopia, deuteranopia, tritanopia i achromatopsja jako filtr na przykładzie. Pokazuje, kiedy kolor jest jedyną informacją.</p>
+          <p class="lim">Nie pokazuje: słabszych odmian zaburzeń ani tego, jak ktoś rozpoznaje kolor po kontekście.</p>
+          <p class="crit">1.4.1 · 1.4.11</p>
+        </div>
+        <div class="try">Wypróbuj na
+          <ul><li><a href="#v2a">Formularz z błędami</a></li><li><a href="#v2a">Kontrast stanów</a></li></ul>
+        </div>
+      </li>
+      <li>
+        <div>
+          <h4>Słabe widzenie</h4>
+          <p>Rozmycie i obniżony kontrast. Pokazuje, który tekst znika pierwszy.</p>
+          <p class="lim">Nie pokazuje: ubytków pola widzenia ani olśnienia.</p>
+          <p class="crit">1.4.3 · 1.4.11</p>
+        </div>
+        <div class="try">Wypróbuj na
+          <ul><li><a href="#v2a">Kontrast stanów</a></li><li><a href="#v2a">Obraz dekoracyjny i informacyjny</a></li></ul>
+        </div>
+      </li>
+      <li>
+        <div>
+          <h4>Tylko klawiatura</h4>
+          <p>Kliknięcia w przykładzie przestają działać. Każde Tab dostaje numer, więc widać kolejność fokusu.</p>
+          <p class="lim">Nie pokazuje: skrótów klawiszowych czytników ani obsługi przełącznikami.</p>
+          <p class="crit">2.1.1 · 2.1.2 · 2.4.3 · 2.4.7 · 2.4.11</p>
+        </div>
+        <div class="try">Wypróbuj na
+          <ul><li><a href="#v2a">Okno modalne i fokus</a></li><li><a href="#v2a">Ikona jako przycisk</a></li><li><a href="#v2a">Własna lista zamiast select</a></li></ul>
+        </div>
+      </li>
+      <li>
+        <div>
+          <h4>Czytnik ekranu</h4>
+          <p>Lista tego, co czytnik przeczyta po kolei, i kolejność Tab, policzone z drzewa dostępności przykładu.</p>
+          <p class="lim">Nie pokazuje: stanu po interakcji, dźwięku, trybów czytania ani różnic między czytnikami.</p>
+          <p class="crit">1.1.1 · 1.3.1 · 4.1.2</p>
+        </div>
+        <div class="try">Wypróbuj na
+          <ul><li><a href="#v2a">Ikona jako przycisk</a></li><li><a href="#v2a">Tabela z nagłówkami</a></li></ul>
+        </div>
+      </li>
+      <li>
+        <div>
+          <h4>Wąski ekran</h4>
+          <p>Przykład w ramce szerokiej na 320 pikseli, tak jak przy powiększeniu 400%. Albo tekst powiększony do 200%.</p>
+          <p class="lim">Nie pokazuje: powiększenia całego systemu ani lupy ekranowej.</p>
+          <p class="crit">1.4.4 · 1.4.10</p>
+        </div>
+        <div class="try">Wypróbuj na
+          <ul><li><a href="#v2a">Sztywna szerokość</a></li></ul>
+        </div>
+      </li>
+    </ul>
+  </div></div>
+</section>
+
+<section class="variant" aria-labelledby="v2b">
+  <h3 id="v2b"><b>2B</b> Cards with a sample</h3>
+  <p class="note">A grid of five cards, each opening its own section below (or a subpage). The sample on each card shows the effect before you pick an example: the app's own colours through the filter, a numbered Tab trace, a line of announced text. Denser, more visual, limits one click away.</p>
+  <div class="frame"><div class="s">
+    <div class="t1">Symulatory</div>
+    <p class="lead">Zobacz przykłady z Praktyki oczami, rękami i uszami innych osób.</p>
+    <p class="warn"><b>To przybliżenie, nie doświadczenie.</b> Symulacja pokazuje, gdzie projekt zawodzi. Nie mówi, jak żyje się z niepełnosprawnością.</p>
+    <ul class="cards">
+      <li>
+        <div class="sample" aria-hidden="true"><div>
+          <div class="strip"><i style="background:#dd3333"></i><i style="background:#2e8b57"></i><i style="background:#2c36a8"></i><i style="background:#f4e75b"></i></div>
+          <div class="strip f-deut"><i style="background:#dd3333"></i><i style="background:#2e8b57"></i><i style="background:#2c36a8"></i><i style="background:#f4e75b"></i></div>
+          <div class="strip-l">zwykle / deuteranopia</div>
+        </div></div>
+        <div class="body"><h4><a href="#v2b">Widzenie barw</a></h4><p>Kiedy kolor jest jedyną informacją.</p><p class="crit">1.4.1 · 1.4.11</p></div>
+      </li>
+      <li>
+        <div class="sample" aria-hidden="true"><div style="text-align:center">
+          <div style="color:#9a9a9a;font-size:.9375rem" class="f-low">Hasło musi mieć 8 znaków</div>
+          <div style="color:#484d52;font-size:.9375rem;margin-top:.4rem" class="f-low">Hasło musi mieć 8 znaków</div>
+        </div></div>
+        <div class="body"><h4><a href="#v2b">Słabe widzenie</a></h4><p>Który tekst znika pierwszy.</p><p class="crit">1.4.3 · 1.4.11</p></div>
+      </li>
+      <li>
+        <div class="sample" aria-hidden="true"><div class="s-kbd"><span>Tab</span><em>1</em><em>2</em><em>3</em></div></div>
+        <div class="body"><h4><a href="#v2b">Tylko klawiatura</a></h4><p>Mysz nie działa, fokus dostaje numery.</p><p class="crit">2.1.1 · 2.4.3 · 2.4.7</p></div>
+      </li>
+      <li>
+        <div class="sample" aria-hidden="true"><div class="s-sr">przycisk, Zamknij komunikat</div></div>
+        <div class="body"><h4><a href="#v2b">Czytnik ekranu</a></h4><p>Co zostanie przeczytane, po kolei.</p><p class="crit">1.1.1 · 1.3.1 · 4.1.2</p></div>
+      </li>
+      <li>
+        <div class="sample" aria-hidden="true"><div class="s-narrow">320</div></div>
+        <div class="body"><h4><a href="#v2b">Wąski ekran</a></h4><p>320 pikseli albo tekst 200%.</p><p class="crit">1.4.4 · 1.4.10</p></div>
+      </li>
+    </ul>
+  </div></div>
+</section>
+
+<!-- ============ 3 ============ -->
+<h2>3. Screen reader</h2>
+<p>Example: <code>/praktyka/ikona-jako-przycisk</code> with "Czytnik ekranu" picked. The lists are computed at build time from each variant's markup, for its first state. The frames stay visible above; these panels sit under them in place of the text alternative.</p>
+
+<section class="variant" aria-labelledby="v3a">
+  <h3 id="v3a"><b>3A</b> Two lists side by side</h3>
+  <p class="note">Each pane gets its reading order and its Tab order. A missing role or name is marked with a word and a glyph, not only colour.</p>
+  <div class="frame"><div class="s">
+    <div class="srcols">
+      <section aria-labelledby="sa-bad">
+        <h5 id="sa-bad" style="font:700 .8125rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--bad)"><span aria-hidden="true">✕ </span>Zepsute</h5>
+        <p class="h6">Czytanie po kolei</p>
+        <ol class="said-list">
+          <li><span>Zapisano zmiany w profilu.</span></li>
+          <li><span>razy <span class="role none">tekst, nie przycisk</span></span></li>
+        </ol>
+        <p class="h6">Kolejność Tab</p>
+        <p class="empty">Nic. Tab omija ten przykład.</p>
+      </section>
+      <section aria-labelledby="sa-good">
+        <h5 id="sa-good" style="font:700 .8125rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--good)"><span aria-hidden="true">✓ </span>Poprawne</h5>
+        <p class="h6">Czytanie po kolei</p>
+        <ol class="said-list">
+          <li><span>Zapisano zmiany w profilu.</span></li>
+          <li><span>Zamknij komunikat, <span class="role">przycisk</span></span></li>
+        </ol>
+        <p class="h6">Kolejność Tab</p>
+        <ol class="said-list"><li><span>Zamknij komunikat, <span class="role">przycisk</span></span></li></ol>
+      </section>
+    </div>
+    <p class="approx">Lista policzona z kodu przykładu, dla stanu po załadowaniu. Prawdziwy czytnik doda dźwięki, skróty i własne sformułowania. Sprawdź w NVDA lub VoiceOver.</p>
+  </div></div>
+</section>
+
+<section class="variant" aria-labelledby="v3b">
+  <h3 id="v3b"><b>3B</b> One aligned table</h3>
+  <p class="note">A single table with a row per announced item, broken and fixed in columns, rows that differ marked "≠" and shaded. Makes the difference jump out, but only works when both variants have the same outline, which is true for most of the ten examples and not for the table example.</p>
+  <div class="frame"><div class="s">
+    <table class="cmp">
+      <caption class="sr">Co przeczyta czytnik ekranu, wersja zepsuta i poprawna</caption>
+      <thead><tr><th scope="col">Krok</th><th scope="col"><span aria-hidden="true">✕ </span>Zepsute</th><th scope="col"><span aria-hidden="true">✓ </span>Poprawne</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">1</th><td>Zapisano zmiany w profilu.</td><td>Zapisano zmiany w profilu.</td></tr>
+        <tr class="diff"><th scope="row">2</th><td>razy <span class="bad">(tekst, nie przycisk)</span></td><td>Zamknij komunikat, przycisk</td></tr>
+        <tr class="diff"><th scope="row">Tab</th><td><span class="bad">nic</span></td><td>1. Zamknij komunikat, przycisk</td></tr>
+      </tbody>
+    </table>
+    <p class="approx">Lista policzona z kodu przykładu, dla stanu po załadowaniu. Sprawdź w NVDA lub VoiceOver.</p>
+  </div></div>
+</section>
+
+<!-- ============ 4 ============ -->
+<h2>4. Keyboard only</h2>
+<p>Same example, "Tylko klawiatura" picked. One variant: the behaviour is fixed by the plan, the only design question is how the trace looks. Each Tab stop gets a numbered badge inside the frame, and the same steps are listed under it as text. A click inside the frame is blocked, and a notice says so.</p>
+
+<section class="variant" aria-labelledby="v4a">
+  <h3 id="v4a"><b>4A</b> Badges in the frame, steps under it</h3>
+  <div class="frame"><div class="s">
+    <div class="panes" style="margin-top:0">
+      <section class="pane" aria-labelledby="k-bad">
+        <h5 id="k-bad" class="bad"><span aria-hidden="true">✕ </span>Zepsute</h5>
+        <div class="demo" style="margin-top:.8rem"><span class="tag">Tylko klawiatura</span>
+          <div class="d-notice"><p>Zapisano zmiany w profilu.</p><span class="d-x-bad">×</span></div>
+          <div class="blocked"><b>Kliknięcie zablokowane.</b> W tym trybie działa tylko klawiatura.</div>
+        </div>
+        <div class="trace"><strong>Kolejność fokusu</strong><p class="empty">Tab nie zatrzymał się w tym przykładzie. Komunikatu nie da się zamknąć bez myszy.</p></div>
+        <p class="count-line">Zablokowane kliknięcia: 1</p>
+      </section>
+      <section class="pane" aria-labelledby="k-good">
+        <h5 id="k-good" class="good"><span aria-hidden="true">✓ </span>Poprawne</h5>
+        <div class="demo" style="margin-top:.8rem"><span class="tag">Tylko klawiatura</span>
+          <div class="d-notice"><p>Zapisano zmiany w profilu.</p><span class="d-x-good">×</span><span class="badge" style="top:-.4rem;right:2.7rem">1</span></div>
+        </div>
+        <div class="trace"><strong>Kolejność fokusu</strong><ol><li>Zamknij komunikat (przycisk)</li></ol></div>
+        <p class="count-line">Zablokowane kliknięcia: 0</p>
+      </section>
+    </div>
+    <section class="said" aria-labelledby="k-said"><h4 id="k-said">Co pokazuje ta symulacja</h4><p>Naciśnij Tab w ramce. Każdy element, który dostaje fokus, dostaje numer. Jeśli czegoś nie da się osiągnąć ani uruchomić klawiaturą, osoba bez myszy tego nie użyje.</p><p class="lim"><b>Czego to nie pokazuje:</b> skrótów czytników ekranu, obsługi przełącznikami i sterowania głosem.</p></section>
+  </div></div>
+</section>
+
+<!-- ============ 5 ============ -->
+<h2>5. Narrow screen</h2>
+<p>A new example, <code>sztywna-szerokosc</code>, because none of the ten existing ones fails 1.4.10. The frame is 320 CSS pixels wide, which is what a 1280-pixel window shows at 400%. The page measures the frame and says whether its content fits.</p>
+
+<section class="variant" aria-labelledby="v5a">
+  <h3 id="v5a"><b>5A</b> Fixed 320-pixel frames with a measured verdict</h3>
+  <div class="frame"><div class="s">
+    <div class="panes" style="margin-top:0">
+      <section class="pane" aria-labelledby="n-bad">
+        <h5 id="n-bad" class="bad"><span aria-hidden="true">✕ </span>Zepsute</h5>
+        <div class="narrow-wrap" style="margin-top:.8rem" tabindex="0" role="region" aria-label="Przykład zepsuty, 320 pikseli, przewijany"><div class="demo"><div class="d-card">Dostawa do 3 dni roboczych, zwrot do 30 dni</div></div></div>
+        <p class="ruler">320 px</p>
+        <p class="over"><b>Nie mieści się.</b> Treść ma 494 piksele szerokości, trzeba przewijać w poziomie.</p>
+      </section>
+      <section class="pane" aria-labelledby="n-good">
+        <h5 id="n-good" class="good"><span aria-hidden="true">✓ </span>Poprawne</h5>
+        <div class="narrow-wrap" style="margin-top:.8rem"><div class="demo"><div class="d-card-ok">Dostawa do 3 dni roboczych, zwrot do 30 dni</div></div></div>
+        <p class="ruler">320 px</p>
+        <p class="fits"><b>Mieści się.</b> Tekst się zawija, nic nie wychodzi poza ramkę.</p>
+      </section>
+    </div>
+  </div></div>
+</section>
+
+</main>
+</body>
+</html>

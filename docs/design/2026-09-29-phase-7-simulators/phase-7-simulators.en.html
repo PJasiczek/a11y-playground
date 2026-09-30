@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan: phase 7, impairment simulators</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1.25rem 6rem;
+    background: #000; color: #fff;
+    font: 16px/1.65 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  main { max-width: 82ch; margin: 0 auto; }
+  h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 .5rem; letter-spacing: -.02em; }
+  h2 { font-size: 1.2rem; margin: 3rem 0 .75rem; padding-top: 1rem; border-top: 1px solid #262626; letter-spacing: -.01em; }
+  h3 { font-size: 1rem; margin: 1.75rem 0 .5rem; }
+  p, li, dd { color: #e5e5e5; }
+  a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  ul, ol { padding-left: 1.3rem; }
+  li { margin: .3rem 0; }
+  code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .875em; background: #141414; border: 1px solid #262626; border-radius: 3px; padding: .08em .3em; }
+  pre { background: #0b0b0b; border: 1px solid #262626; border-radius: 4px; padding: .9rem 1rem; overflow-x: auto; }
+  pre code { background: none; border: 0; padding: 0; font-size: .82rem; line-height: 1.55; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; display: block; overflow-x: auto; }
+  th, td { border: 1px solid #262626; padding: .45rem .6rem; text-align: left; vertical-align: top; }
+  th { background: #101010; font-weight: 600; }
+  .meta { color: #a3a3a3; font-size: .85rem; margin: 0 0 1.5rem; }
+  .meta a { color: #fff; }
+  .flag { border-left: 2px solid #737373; padding: .1rem 0 .1rem .85rem; margin: 1rem 0; color: #d4d4d4; font-size: .93rem; }
+  .toc { border: 1px solid #262626; padding: 1rem 1rem 1rem 2.4rem; margin: 1.5rem 0 0; }
+  .toc li { margin: .15rem 0; }
+  @media (max-width: 40rem) { body { padding: 1.25rem .9rem 4rem; } h1 { font-size: 1.45rem; } }
+</style>
+<body>
+<main>
+
+<p class="meta"><a href="phase-7-simulators.pl.html" hreflang="pl">Wersja polska</a></p>
+
+<h1>Plan: phase 7, impairment simulators</h1>
+<p class="meta">Detailed plan for phase 7 of the <a href="../2026-09-27-wcag-learning-app/wcag-learning-app.en.html">main plan</a>, section 8.2. Mocks of the picker, <code>/symulatory</code> and each simulator's output: <a href="../2026-09-29-simulators-mocks/simulators-mocks.html">simulators-mocks.html</a>. Plan version: 2026-09-29.</p>
+
+<p class="flag">The examples run in iframes with an opaque origin (<code>sandbox="allow-scripts"</code>, no <code>allow-same-origin</code>). The page cannot read or style what is inside. Every simulator below either asks the frame over <code>postMessage</code>, resizes the frame from outside, or is computed at build time. The sandbox stays as it is.</p>
+
+<ol class="toc">
+  <li><a href="#goal">Goal and definition of done</a></li>
+  <li><a href="#scope">Scope</a></li>
+  <li><a href="#sims">The five simulators</a></li>
+  <li><a href="#channel">How the page talks to the frame</a></li>
+  <li><a href="#reader">The screen reader list</a></li>
+  <li><a href="#format">Content format</a></li>
+  <li><a href="#pages">Pages</a></li>
+  <li><a href="#a11y">Accessibility of the simulators</a></li>
+  <li><a href="#tests">Tests</a></li>
+  <li><a href="#commits">Commits and the pull request</a></li>
+  <li><a href="#risks">Risks</a></li>
+  <li><a href="#decisions">Decisions</a></li>
+</ol>
+
+<h2 id="goal">1. Goal and definition of done</h2>
+<p>After phase 7 a reader can look at any example through someone else's constraints: without colour, with blurred sight, without a mouse, through a screen reader, on a narrow screen. The broken and the fixed variant go through the same simulator, so the reader sees why the fix matters, not only that it exists.</p>
+<p>Done when:</p>
+<ul>
+  <li>All five simulators from section 8.2 of the main plan work on every example page.</li>
+  <li>No simulator is the only carrier of information. Each one puts text next to the frames: a description of what changed, a list of Tab stops, a list of announcements, or a measured verdict.</li>
+  <li>No simulator is on by default. The choice lives in <code>?symulacja=</code>, so a simulated view can be shared as a link and survives a reload.</li>
+  <li>The picker and every simulator can be used from the keyboard. A Playwright test does this.</li>
+  <li><code>/symulatory</code> says what each simulator shows and what it does not, and links into the examples where it teaches most.</li>
+</ul>
+
+<h2 id="scope">2. Scope</h2>
+<table>
+  <thead><tr><th>In</th><th>Out, and where it goes</th></tr></thead>
+  <tbody>
+    <tr><td>Five simulators on <code>/praktyka/$slug</code>: colour vision (four types), low vision, keyboard only, screen reader, narrow screen (320 pixels or text at 200%)</td><td>Simulators on arbitrary pages or a URL the reader types in: out, as the main plan says. That is auditing</td></tr>
+    <tr><td>A new page, <code>/symulatory</code>, the route listed in section 4 of the main plan, with an item in the main navigation</td><td>A menu button for the navigation: not needed, the list keeps wrapping onto its own row</td></tr>
+    <tr><td>One new example, <code>sztywna-szerokosc</code> (1.4.4, 1.4.10), because none of the ten existing ones fails reflow</td><td>More examples per simulator: later, on the list of ideas</td></tr>
+    <tr><td>The screen reader list, computed at build time for each variant's state after load</td><td>A live list that follows interactions: rejected, see section 5</td></tr>
+    <tr><td>Optional per-example notes that say what a simulator shows on that example</td><td>Simulators in lessons and in search: a small follow-up once the pages exist</td></tr>
+  </tbody>
+</table>
+
+<h2 id="sims">3. The five simulators</h2>
+<table>
+  <thead><tr><th>Simulator</th><th><code>?symulacja=</code></th><th>How</th><th>Text next to the frames</th><th>Criteria</th></tr></thead>
+  <tbody>
+    <tr><td>Colour vision</td><td><code>protanopia</code>, <code>deuteranopia</code>, <code>tritanopia</code>, <code>achromatopsja</code></td><td>An SVG <code>feColorMatrix</code> filter on the frame's <code>&lt;html&gt;</code>, matrices from Machado, Oliveira and Fernandes (2009) at full severity. Achromatopsia is <code>grayscale(1)</code></td><td>The example's note for that type, or the general description</td><td>1.4.1, 1.4.11</td></tr>
+    <tr><td>Low vision</td><td><code>slabe-widzenie</code></td><td><code>filter: blur(1.5px) contrast(.6)</code> on the frame's <code>&lt;html&gt;</code>. One level, no slider</td><td>Note or general description</td><td>1.4.3, 1.4.11</td></tr>
+    <tr><td>Keyboard only</td><td><code>klawiatura</code></td><td>The frame blocks pointer clicks and numbers every element that gets focus. See section 4</td><td>"Kolejność fokusu": the steps as an ordered list, plus a count of blocked clicks</td><td>2.1.1, 2.1.2, 2.4.3, 2.4.7, 2.4.11</td></tr>
+    <tr><td>Screen reader</td><td><code>czytnik</code></td><td>Nothing changes in the frame. Under it, the reading order and the Tab order, computed at build time</td><td>The two lists are the output</td><td>1.1.1, 1.3.1, 4.1.2</td></tr>
+    <tr><td>Narrow screen</td><td><code>320px</code>, <code>tekst-200</code></td><td><code>320px</code>: the iframe is 320 CSS pixels wide, what a 1280-pixel window shows at 400%. <code>tekst-200</code>: the frame sets <code>:root { font-size: 200% }</code></td><td>A measured verdict: "Mieści się" or "Nie mieści się" with the content width in pixels</td><td>1.4.4, 1.4.10</td></tr>
+  </tbody>
+</table>
+<p>The URL holds one flat id, and the picker is one flat list of radios, "Bez symulacji" first, each with a short line on what it does (mock 1C). The kind groups ids for <code>/symulatory</code> and the descriptions. In code the ids come from one <code>as const</code> object and <code>SimulationId</code> is derived from it:</p>
+<pre><code>// src/content/simulations.ts
+export const simulations = {
+  protanopia: { kind: "barwy", label: "Protanopia" },
+  deuteranopia: { kind: "barwy", label: "Deuteranopia" },
+  tritanopia: { kind: "barwy", label: "Tritanopia" },
+  achromatopsja: { kind: "barwy", label: "Achromatopsja" },
+  "slabe-widzenie": { kind: "slabe-widzenie", label: "Słabe widzenie" },
+  klawiatura: { kind: "klawiatura", label: "Tylko klawiatura" },
+  czytnik: { kind: "czytnik", label: "Czytnik ekranu" },
+  "320px": { kind: "waski-ekran", label: "320 pikseli" },
+  "tekst-200": { kind: "waski-ekran", label: "Tekst 200%" },
+} as const satisfies Record&lt;string, { kind: SimulationKind; label: string }&gt;;
+
+export type SimulationId = keyof typeof simulations;</code></pre>
+<p>The example route validates <code>symulacja</code> against these keys, the way <code>/kryteria</code> validates its filters. An unknown value is dropped, not an error.</p>
+
+<h2 id="channel">4. How the page talks to the frame</h2>
+<p>The demo document already posts its height to the page and answers <code>"a11y-example-measure"</code>. Phase 7 widens that one channel instead of adding a second.</p>
+<ul>
+  <li><strong>Page to frame:</strong> <code>{ a11ySimulation: SimulationId | null }</code>. The frame sets <code>data-symulacja</code> on its <code>&lt;html&gt;</code>, and the filters, the text size and the keyboard mode hang off that attribute in the demo's base styles and script. The page sends the message when the choice changes and again whenever the frame reports in, so a reloaded or late-started frame (the motion examples) picks up the current mode.</li>
+  <li><strong>Frame to page:</strong> the height report gains <code>width</code> (the document's <code>scrollWidth</code>), which gives the 320-pixel verdict for free. Keyboard mode adds <code>{ a11yFocusStep: { n, name, role } }</code> and <code>{ a11yBlockedClick: true }</code>. The page checks every message with ArkType and matches it to its frame by <code>event.source</code>, as it does today.</li>
+  <li><strong>Filters live inside the frame.</strong> The SVG filter definitions go into the demo document, so nothing depends on how a browser applies a parent's <code>url()</code> filter to an iframe.</li>
+  <li><strong>Blocking the mouse, not the keyboard.</strong> In keyboard mode the frame cancels <code>pointerdown</code>, and cancels <code>click</code> only when <code>event.detail &gt; 0</code>. Enter and Space on a button fire a click with <code>detail === 0</code>, so they still work. A blocked click shows a notice inside the frame and tells the page, which updates the count and announces it once in a polite live region.</li>
+  <li><strong>Focus trace.</strong> On every <code>focusin</code> the frame draws a numbered badge next to the element and posts the step. The step's name is a short in-frame approximation: <code>aria-label</code>, then <code>aria-labelledby</code>, then an associated <code>label</code>, then the text. The page renders the steps as an ordered list under the frame. The list is not a live region: announcing every Tab would talk over the reader's own screen reader.</li>
+  <li><strong>Text at 200%.</strong> The demo base styles move from <code>16px</code> to <code>1rem</code>, so the fragment's text scales with the root. Fragments that size text in pixels do not scale. That is what 1.4.4 is about, and the new example relies on it.</li>
+</ul>
+
+<h2 id="reader">5. The screen reader list</h2>
+<p>Decided: computed at build time, not live in the frame. A live list would need an accessible name library bundled into every demo document and a second code path for every example state. The build-time list is simple, deterministic and testable, and its one limit (it shows the state after load) is stated on the page.</p>
+<ul>
+  <li><strong>Where.</strong> A server-only module, <code>src/content/reading-order.ts</code>, loads each variant's fragment into jsdom and walks it with <code>dom-accessibility-api</code> (<code>getRole</code>, <code>computeAccessibleName</code>), the library Testing Library uses. It runs in the loader that already parses the examples, once per build, and the result is prerendered into the page.</li>
+  <li><strong>What it produces.</strong> Two lists per variant. "Czytanie po kolei": text runs and named elements in document order, with the role in Polish (<code>przycisk</code>, <code>łącze</code>, <code>nagłówek, poziom 2</code>, <code>grafika</code>, <code>tabela, 3 kolumny</code>, <code>pole edycji</code>). An element with an <code>onclick</code> and no role is marked "tekst, nie przycisk". "Kolejność Tab": the focusable elements in tab order, with role and name, or "bez nazwy".</li>
+  <li><strong>What it skips.</strong> <code>hidden</code>, <code>aria-hidden="true"</code>, <code>display: none</code> from the fragment's own styles, and images with <code>alt=""</code>.</li>
+  <li><strong>The hand-written line stays.</strong> <code>announces</code> in each example's frontmatter is still the one-sentence summary under the frames. The computed lists add the detail.</li>
+  <li><strong>Shape.</strong> <code>{ reading: Line[]; tab: Line[] }</code>, with <code>Line = { text: string; role?: PolishRole; missing?: "rola" | "nazwa" }</code>. <code>PolishRole</code> is derived from the role map, so a role without a Polish name fails <code>tsc</code>.</li>
+</ul>
+
+<h2 id="format">6. Content format</h2>
+<p>Simulator descriptions follow the rest of <code>content/</code>: one Markdown file per kind, frontmatter validated by ArkType.</p>
+<pre><code>content/symulatory/barwy.md
+---
+title: Widzenie barw
+summary: Kiedy kolor jest jedyną informacją.
+criteria: ["1.4.1", "1.4.11"]
+examples: [formularz-z-bledami, kontrast-stanow]   # "Wypróbuj na", with the simulation preselected
+limits: Nie pokazuje słabszych odmian zaburzeń ani tego, jak ktoś rozpoznaje kolor po kontekście.
+status: szkic
+---
+General description, shown under the picker when an example has no note of its own.</code></pre>
+<p>Per-example notes go into the example's existing frontmatter, keyed by <code>SimulationId</code>:</p>
+<pre><code># content/praktyka/formularz-z-bledami/index.md
+simulations:
+  deuteranopia: Czerwona ramka pola w wersji zepsutej wygląda jak oliwkowa i przestaje znaczyć „błąd”…
+  protanopia: …</code></pre>
+<p>Notes are optional. I write them where a simulator shows something specific to the example: colour on the form, low vision on the contrast example, narrow screen on the new one. About ten notes. The keyboard, screen reader and narrow-screen simulators produce their own text, so they rarely need one.</p>
+<p>The new example, <code>content/praktyka/sztywna-szerokosc/</code>: a delivery info card with a fixed <code>width</code> and <code>white-space: nowrap</code>, and a button with a fixed pixel height and <code>overflow: hidden</code> that clips its label at 200%. The fixed variant uses <code>max-width</code>, wrapping and <code>min-height</code>. Criteria 1.4.10 and 1.4.4, effort "1 token".</p>
+
+<h2 id="pages">7. Pages</h2>
+<ul>
+  <li><strong><code>/praktyka/$slug</code>:</strong> under the header, a rail on the left with the picker and, under it, "Co pokazuje ta symulacja" with the note and the limits; on the right the broken and the fixed variant stacked, each at full width (mock 1C). On narrow screens the rail goes above the frames. For <code>czytnik</code> one table under the frames aligns what each variant announces, row by row, and marks the rows that differ (mock 3B). For <code>klawiatura</code> each pane gets its focus list and blocked-click count (mock 4A). For <code>320px</code> each frame is 320 pixels wide, with the verdict under it (mock 5A). A link, "Jak działają symulatory", points to <code>/symulatory</code>.</li>
+  <li><strong><code>/symulatory</code>:</strong> the approximation warning, then five cards, each with a small static sample of the effect (mock 2B). A card links to its section further down the page: description, limits, criteria and "Wypróbuj na" links. Prerendered.</li>
+  <li><strong><code>/praktyka</code>:</strong> one line under the heading linking to <code>/symulatory</code>.</li>
+  <li><strong>Main navigation:</strong> "Symulatory" after "Praktyka".</li>
+  <li><strong>Criterion pages:</strong> no change. The examples they already link to carry the picker.</li>
+</ul>
+
+<h2 id="a11y">8. Accessibility of the simulators</h2>
+<ul>
+  <li><strong>Picker.</strong> A <code>fieldset</code> with native radios in a list, each label at least 44 pixels high with the name and one line of description. The picked option is marked with a tick and bold text, not colour alone. Changing a radio does not move focus.</li>
+  <li><strong>Announcement.</strong> Picking a simulation announces "Symulacja: deuteranopia" once in a polite live region. The description is on the page, not announced, so the reader decides whether to read it.</li>
+  <li><strong>Not colour alone.</strong> The label on each frame ("Deuteranopia") repeats the choice in text. Verdicts, missing roles and blocked clicks carry a word and a glyph.</li>
+  <li><strong>Frame titles.</strong> The iframe title gains the simulation, for example "Przykład zepsuty: Formularz z błędami, deuteranopia".</li>
+  <li><strong>Narrow frames scroll.</strong> A 320-pixel region that overflows is focusable and labelled, so its horizontal scroll works from the keyboard (2.1.1).</li>
+  <li><strong>Forced colours.</strong> In Windows forced colours mode the filters change little, because the system replaces the colours. The note says so.</li>
+  <li><strong>Motion.</strong> No transitions between modes. The blur is static.</li>
+</ul>
+
+<h2 id="tests">9. Tests</h2>
+<ul>
+  <li><strong>Content (Vitest):</strong> every simulator kind has a file and every file parses; <code>examples</code> in simulator files and <code>simulations</code> keys in example files resolve; drafts carry no <code>lastVerified</code>.</li>
+  <li><strong>Reading order (Vitest):</strong> a button with <code>aria-label</code> gives "Zamknij komunikat, przycisk"; a <code>div</code> with <code>onclick</code> gives text marked "tekst, nie przycisk" and no Tab stop; <code>alt=""</code> and <code>aria-hidden</code> are skipped; a table reports its columns. Every variant of every example computes without throwing and gives a non-empty reading list.</li>
+  <li><strong>Frame channel (Playwright on <code>/demo/...</code>):</strong> after the simulation message the document has <code>data-symulacja</code>; in keyboard mode a mouse click on the broken close control does nothing and shows the notice, while Enter on the fixed button still closes the message.</li>
+  <li><strong>End to end (Playwright):</strong> the definition of done, keyboard only. Open <code>formularz-z-bledami</code>, pick "Widzenie barw" and then "Deuteranopia" with the arrow keys; the URL has <code>?symulacja=deuteranopia</code>, the note is visible, a reload keeps it. On <code>ikona-jako-przycisk</code> in keyboard mode, Tab into the fixed frame lists one step. On <code>sztywna-szerokosc</code> at <code>320px</code> the broken variant says "Nie mieści się" and the fixed one "Mieści się". The existing isolation test runs once more with a simulation on.</li>
+  <li><strong>Axe:</strong> <code>/symulatory</code>, and one example page with each kind picked.</li>
+</ul>
+
+<h2 id="commits">10. Commits and the pull request</h2>
+<p>One pull request, branch <code>feat/impairment-simulators</code>:</p>
+<ol>
+  <li><code>docs(design): add phase 7 plan and simulator mocks</code>, this plan and the mocks.</li>
+  <li><code>feat(simulators): add simulator ids, format and descriptions</code>, <code>simulations.ts</code>, the parser, the five Markdown files and their content tests.</li>
+  <li><code>feat(practice): let demo documents take a simulation</code>, the widened channel in <code>demo-document.ts</code> (filters, text size, keyboard mode, width report), with the Playwright tests on <code>/demo</code>.</li>
+  <li><code>feat(practice): add the simulation picker to example pages</code>, the search param, the picker, the note, the focus list and the verdict, with the end-to-end test.</li>
+  <li><code>chore(deps): add jsdom and dom-accessibility-api</code>.</li>
+  <li><code>feat(practice): list what a screen reader reads</code>, <code>reading-order.ts</code>, its tests and the two lists on the page.</li>
+  <li><code>docs(practice): add the fixed width example</code>, <code>sztywna-szerokosc</code>.</li>
+  <li><code>docs(practice): add simulation notes to examples</code>.</li>
+  <li><code>feat(simulators): add the simulators page</code>, <code>/symulatory</code>, the link from <code>/praktyka</code>, axe.</li>
+  <li><code>docs: update README for phase 7</code>, with screenshots.</li>
+</ol>
+
+<h2 id="risks">11. Risks</h2>
+<table>
+  <thead><tr><th>Risk</th><th>What we do</th></tr></thead>
+  <tbody>
+    <tr><td>Simulators turn disability into a party trick</td><td>The warning at the top of <code>/symulatory</code>, "Czego to nie pokazuje" next to every simulation, and a pointer to NVDA and VoiceOver on the screen reader panel</td></tr>
+    <tr><td>The computed reading list disagrees with a real screen reader</td><td>Labelled as an approximation of the state after load. The hand-written <code>announces</code> line stays as the checked summary. If a list is wrong for an example, fix the walker, not the example</td></tr>
+    <tr><td>jsdom does no layout, so content hidden by position or size is still listed</td><td>The walker trusts only <code>hidden</code>, <code>aria-hidden</code> and <code>display: none</code>. None of the eleven examples hides content another way; the reading order test would show it if one did</td></tr>
+    <tr><td>Keyboard mode blocks a keyboard action, or lets a mouse click through</td><td>The <code>detail</code> rule is tested both ways on <code>/demo</code>. Widgets that act on <code>keydown</code> are untouched, because blocking only covers pointer events and clicks with <code>detail &gt; 0</code></td></tr>
+    <tr><td>SVG filters render differently in Safari</td><td>Checked by hand in Safari before release. If a type fails there, the note still carries the information</td></tr>
+  </tbody>
+</table>
+
+<h2 id="decisions">12. Decisions</h2>
+<ul>
+  <li><strong>Screen reader list: decided.</strong> Computed at build time for the state after load.</li>
+  <li><strong>Sandbox: decided.</strong> Unchanged. Everything goes through <code>postMessage</code> or the build.</li>
+  <li><strong>Layout: decided.</strong> From <code>simulators-mocks.html</code>: 1C the rail beside stacked frames, 2B cards with a sample on <code>/symulatory</code>, 3B one aligned table for the screen reader, 4A, 5A.</li>
+  <li><strong>The new example <code>sztywna-szerokosc</code>: decided.</strong> It goes in.</li>
+  <li><strong>Navigation: decided.</strong> "Symulatory" joins the main navigation.</li>
+</ul>
+
+</main>
+</body>
+</html>

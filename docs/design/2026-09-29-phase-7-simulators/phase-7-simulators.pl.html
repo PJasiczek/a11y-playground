@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan: faza 7, symulatory niepełnosprawności</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1.25rem 6rem;
+    background: #000; color: #fff;
+    font: 16px/1.65 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  main { max-width: 82ch; margin: 0 auto; }
+  h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 .5rem; letter-spacing: -.02em; }
+  h2 { font-size: 1.2rem; margin: 3rem 0 .75rem; padding-top: 1rem; border-top: 1px solid #262626; letter-spacing: -.01em; }
+  h3 { font-size: 1rem; margin: 1.75rem 0 .5rem; }
+  p, li, dd { color: #e5e5e5; }
+  a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  ul, ol { padding-left: 1.3rem; }
+  li { margin: .3rem 0; }
+  code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .875em; background: #141414; border: 1px solid #262626; border-radius: 3px; padding: .08em .3em; }
+  pre { background: #0b0b0b; border: 1px solid #262626; border-radius: 4px; padding: .9rem 1rem; overflow-x: auto; }
+  pre code { background: none; border: 0; padding: 0; font-size: .82rem; line-height: 1.55; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; display: block; overflow-x: auto; }
+  th, td { border: 1px solid #262626; padding: .45rem .6rem; text-align: left; vertical-align: top; }
+  th { background: #101010; font-weight: 600; }
+  .meta { color: #a3a3a3; font-size: .85rem; margin: 0 0 1.5rem; }
+  .meta a { color: #fff; }
+  .flag { border-left: 2px solid #737373; padding: .1rem 0 .1rem .85rem; margin: 1rem 0; color: #d4d4d4; font-size: .93rem; }
+  .toc { border: 1px solid #262626; padding: 1rem 1rem 1rem 2.4rem; margin: 1.5rem 0 0; }
+  .toc li { margin: .15rem 0; }
+  @media (max-width: 40rem) { body { padding: 1.25rem .9rem 4rem; } h1 { font-size: 1.45rem; } }
+</style>
+<body>
+<main>
+
+<p class="meta"><a href="phase-7-simulators.en.html" hreflang="en">English version</a></p>
+
+<h1>Plan: faza 7, symulatory niepełnosprawności</h1>
+<p class="meta">Szczegółowy plan fazy 7 z <a href="../2026-09-27-wcag-learning-app/wcag-learning-app.pl.html">planu głównego</a>, sekcja 8.2. Mocki przełącznika, strony <code>/symulatory</code> i wyniku każdego symulatora: <a href="../2026-09-29-simulators-mocks/simulators-mocks.html">simulators-mocks.html</a>. Wersja planu: 2026-09-29.</p>
+
+<p class="flag">Przykłady działają w ramkach iframe z nieprzezroczystym originem (<code>sandbox="allow-scripts"</code>, bez <code>allow-same-origin</code>). Strona nie może niczego w nich odczytać ani ostylować. Każdy symulator poniżej albo prosi ramkę o zmianę przez <code>postMessage</code>, albo zmienia jej rozmiar z zewnątrz, albo jest liczony przy buildzie. Sandbox zostaje bez zmian.</p>
+
+<ol class="toc">
+  <li><a href="#goal">Cel i warunek ukończenia</a></li>
+  <li><a href="#scope">Zakres</a></li>
+  <li><a href="#sims">Pięć symulatorów</a></li>
+  <li><a href="#channel">Jak strona rozmawia z ramką</a></li>
+  <li><a href="#reader">Lista dla czytnika ekranu</a></li>
+  <li><a href="#format">Format treści</a></li>
+  <li><a href="#pages">Strony</a></li>
+  <li><a href="#a11y">Dostępność samych symulatorów</a></li>
+  <li><a href="#tests">Testy</a></li>
+  <li><a href="#commits">Commity i pull request</a></li>
+  <li><a href="#risks">Ryzyka</a></li>
+  <li><a href="#decisions">Decyzje</a></li>
+</ol>
+
+<h2 id="goal">1. Cel i warunek ukończenia</h2>
+<p>Po fazie 7 czytelnik może obejrzeć każdy przykład z ograniczeniami innej osoby: bez kolorów, z rozmytym wzrokiem, bez myszy, przez czytnik ekranu, na wąskim ekranie. Wersja zepsuta i poprawna przechodzą przez ten sam symulator, więc widać, po co jest poprawka, a nie tylko to, że istnieje.</p>
+<p>Gotowe, kiedy:</p>
+<ul>
+  <li>Wszystkie pięć symulatorów z sekcji 8.2 planu głównego działa na każdej stronie przykładu.</li>
+  <li>Żaden symulator nie jest jedynym nośnikiem informacji. Każdy kładzie obok ramek tekst: opis tego, co się zmieniło, listę przystanków Tab, listę komunikatów albo zmierzony werdykt.</li>
+  <li>Żaden symulator nie jest włączony domyślnie. Wybór siedzi w <code>?symulacja=</code>, więc widokiem z symulacją można się podzielić linkiem i przetrwa przeładowanie.</li>
+  <li>Przełącznik i każdy symulator da się obsłużyć klawiaturą. Sprawdza to test Playwright.</li>
+  <li><code>/symulatory</code> mówi, co każdy symulator pokazuje, a czego nie, i prowadzi do przykładów, na których uczy najwięcej.</li>
+</ul>
+
+<h2 id="scope">2. Zakres</h2>
+<table>
+  <thead><tr><th>W fazie</th><th>Poza fazą i dokąd trafia</th></tr></thead>
+  <tbody>
+    <tr><td>Pięć symulatorów na <code>/praktyka/$slug</code>: widzenie barw (cztery rodzaje), słabe widzenie, tylko klawiatura, czytnik ekranu, wąski ekran (320 pikseli albo tekst 200%)</td><td>Symulatory na dowolnych stronach lub adresie wpisanym przez czytelnika: poza zakresem, jak mówi plan główny. To już audyt</td></tr>
+    <tr><td>Nowa strona <code>/symulatory</code>, trasa z sekcji 4 planu głównego, z pozycją w głównej nawigacji</td><td>Przycisk menu dla nawigacji: niepotrzebny, lista dalej zawija się do osobnego wiersza</td></tr>
+    <tr><td>Jeden nowy przykład, <code>sztywna-szerokosc</code> (1.4.4, 1.4.10), bo żaden z dziesięciu obecnych nie łamie reflow</td><td>Więcej przykładów pod symulatory: później, na liście pomysłów</td></tr>
+    <tr><td>Lista dla czytnika ekranu liczona przy buildzie, dla stanu każdego wariantu po załadowaniu</td><td>Lista na żywo, która śledzi interakcje: odrzucona, patrz sekcja 5</td></tr>
+    <tr><td>Opcjonalne notatki przy przykładach, co symulator pokazuje właśnie na nich</td><td>Symulatory w lekcjach i w wyszukiwarce: mała poprawka, kiedy strony już będą</td></tr>
+  </tbody>
+</table>
+
+<h2 id="sims">3. Pięć symulatorów</h2>
+<table>
+  <thead><tr><th>Symulator</th><th><code>?symulacja=</code></th><th>Jak</th><th>Tekst obok ramek</th><th>Kryteria</th></tr></thead>
+  <tbody>
+    <tr><td>Widzenie barw</td><td><code>protanopia</code>, <code>deuteranopia</code>, <code>tritanopia</code>, <code>achromatopsja</code></td><td>Filtr SVG <code>feColorMatrix</code> na <code>&lt;html&gt;</code> ramki, macierze Machado, Oliveiry i Fernandesa (2009) przy pełnym nasileniu. Achromatopsja to <code>grayscale(1)</code></td><td>Notatka przykładu dla tego rodzaju albo opis ogólny</td><td>1.4.1, 1.4.11</td></tr>
+    <tr><td>Słabe widzenie</td><td><code>slabe-widzenie</code></td><td><code>filter: blur(1.5px) contrast(.6)</code> na <code>&lt;html&gt;</code> ramki. Jeden poziom, bez suwaka</td><td>Notatka albo opis ogólny</td><td>1.4.3, 1.4.11</td></tr>
+    <tr><td>Tylko klawiatura</td><td><code>klawiatura</code></td><td>Ramka blokuje kliknięcia wskaźnikiem i numeruje każdy element, który dostaje fokus. Patrz sekcja 4</td><td>„Kolejność fokusu”: kroki jako lista numerowana i licznik zablokowanych kliknięć</td><td>2.1.1, 2.1.2, 2.4.3, 2.4.7, 2.4.11</td></tr>
+    <tr><td>Czytnik ekranu</td><td><code>czytnik</code></td><td>W ramce nic się nie zmienia. Pod nią kolejność czytania i kolejność Tab, policzone przy buildzie</td><td>Te dwie listy są wynikiem</td><td>1.1.1, 1.3.1, 4.1.2</td></tr>
+    <tr><td>Wąski ekran</td><td><code>320px</code>, <code>tekst-200</code></td><td><code>320px</code>: ramka ma 320 pikseli CSS szerokości, tyle, ile pokazuje okno 1280 pikseli przy 400%. <code>tekst-200</code>: ramka ustawia <code>:root { font-size: 200% }</code></td><td>Zmierzony werdykt: „Mieści się” albo „Nie mieści się” z szerokością treści w pikselach</td><td>1.4.4, 1.4.10</td></tr>
+  </tbody>
+</table>
+<p>W adresie jest jeden płaski identyfikator, a przełącznik to jedna płaska lista radiobuttonów, na początku „Bez symulacji”, każdy z krótką linijką o tym, co robi (mock 1C). Rodzaj grupuje identyfikatory na potrzeby <code>/symulatory</code> i opisów. W kodzie identyfikatory pochodzą z jednego obiektu <code>as const</code>, a <code>SimulationId</code> jest z niego wyprowadzony:</p>
+<pre><code>// src/content/simulations.ts
+export const simulations = {
+  protanopia: { kind: "barwy", label: "Protanopia" },
+  deuteranopia: { kind: "barwy", label: "Deuteranopia" },
+  tritanopia: { kind: "barwy", label: "Tritanopia" },
+  achromatopsja: { kind: "barwy", label: "Achromatopsja" },
+  "slabe-widzenie": { kind: "slabe-widzenie", label: "Słabe widzenie" },
+  klawiatura: { kind: "klawiatura", label: "Tylko klawiatura" },
+  czytnik: { kind: "czytnik", label: "Czytnik ekranu" },
+  "320px": { kind: "waski-ekran", label: "320 pikseli" },
+  "tekst-200": { kind: "waski-ekran", label: "Tekst 200%" },
+} as const satisfies Record&lt;string, { kind: SimulationKind; label: string }&gt;;
+
+export type SimulationId = keyof typeof simulations;</code></pre>
+<p>Trasa przykładu sprawdza <code>symulacja</code> względem tych kluczy, tak jak <code>/kryteria</code> sprawdza swoje filtry. Nieznana wartość jest pomijana, nie zgłasza błędu.</p>
+
+<h2 id="channel">4. Jak strona rozmawia z ramką</h2>
+<p>Dokument demo już wysyła stronie swoją wysokość i odpowiada na <code>"a11y-example-measure"</code>. Faza 7 poszerza ten jeden kanał, zamiast dokładać drugi.</p>
+<ul>
+  <li><strong>Ze strony do ramki:</strong> <code>{ a11ySimulation: SimulationId | null }</code>. Ramka ustawia <code>data-symulacja</code> na swoim <code>&lt;html&gt;</code>, a filtry, rozmiar tekstu i tryb klawiatury zależą od tego atrybutu w bazowych stylach i skrypcie demo. Strona wysyła wiadomość przy zmianie wyboru i jeszcze raz za każdym razem, gdy ramka się zgłosi. Dzięki temu przeładowana albo później uruchomiona ramka (przykłady z ruchem) dostaje bieżący tryb.</li>
+  <li><strong>Z ramki do strony:</strong> raport wysokości dostaje <code>width</code> (<code>scrollWidth</code> dokumentu), a z tego werdykt dla 320 pikseli wynika za darmo. Tryb klawiatury dokłada <code>{ a11yFocusStep: { n, name, role } }</code> i <code>{ a11yBlockedClick: true }</code>. Strona sprawdza każdą wiadomość ArkTypem i dopasowuje ją do ramki po <code>event.source</code>, jak dziś.</li>
+  <li><strong>Filtry mieszkają w ramce.</strong> Definicje filtrów SVG trafiają do dokumentu demo, więc nic nie zależy od tego, jak przeglądarka nakłada filtr <code>url()</code> rodzica na iframe.</li>
+  <li><strong>Blokujemy mysz, nie klawiaturę.</strong> W trybie klawiatury ramka anuluje <code>pointerdown</code>, a <code>click</code> tylko wtedy, gdy <code>event.detail &gt; 0</code>. Enter i spacja na przycisku wywołują kliknięcie z <code>detail === 0</code>, więc dalej działają. Zablokowane kliknięcie pokazuje komunikat w ramce i daje znać stronie, która zwiększa licznik i ogłasza to raz w uprzejmym regionie na żywo.</li>
+  <li><strong>Ślad fokusu.</strong> Przy każdym <code>focusin</code> ramka rysuje przy elemencie numerowany znacznik i wysyła krok. Nazwa kroku to krótkie przybliżenie liczone w ramce: <code>aria-label</code>, potem <code>aria-labelledby</code>, potem powiązany <code>label</code>, potem tekst. Strona pokazuje kroki jako listę numerowaną pod ramką. Lista nie jest regionem na żywo: ogłaszanie każdego Tab zagłuszałoby czytnik, którego używa sam czytelnik.</li>
+  <li><strong>Tekst 200%.</strong> Bazowe style demo przechodzą z <code>16px</code> na <code>1rem</code>, więc tekst fragmentu rośnie razem z korzeniem. Fragmenty, które ustalają tekst w pikselach, nie rosną. O tym właśnie jest 1.4.4 i na tym opiera się nowy przykład.</li>
+</ul>
+
+<h2 id="reader">5. Lista dla czytnika ekranu</h2>
+<p>Zdecydowane: liczona przy buildzie, nie na żywo w ramce. Lista na żywo wymagałaby biblioteki do nazw dostępnych w każdym dokumencie demo i osobnej ścieżki kodu dla każdego stanu przykładu. Lista z buildu jest prosta, deterministyczna i łatwa do testowania, a jej jedyne ograniczenie (pokazuje stan po załadowaniu) jest napisane na stronie.</p>
+<ul>
+  <li><strong>Gdzie.</strong> Moduł tylko po stronie serwera, <code>src/content/reading-order.ts</code>, wczytuje fragment każdego wariantu do jsdom i przechodzi go przez <code>dom-accessibility-api</code> (<code>getRole</code>, <code>computeAccessibleName</code>), tę samą bibliotekę, której używa Testing Library. Działa w loaderze, który już parsuje przykłady, raz na build, a wynik ląduje w prerenderowanej stronie.</li>
+  <li><strong>Co zwraca.</strong> Dwie listy na wariant. „Czytanie po kolei”: fragmenty tekstu i nazwane elementy w kolejności dokumentu, z rolą po polsku (<code>przycisk</code>, <code>łącze</code>, <code>nagłówek, poziom 2</code>, <code>grafika</code>, <code>tabela, 3 kolumny</code>, <code>pole edycji</code>). Element z <code>onclick</code> i bez roli dostaje oznaczenie „tekst, nie przycisk”. „Kolejność Tab”: elementy przyjmujące fokus w kolejności Tab, z rolą i nazwą albo „bez nazwy”.</li>
+  <li><strong>Co pomija.</strong> <code>hidden</code>, <code>aria-hidden="true"</code>, <code>display: none</code> z własnych stylów fragmentu i obrazy z <code>alt=""</code>.</li>
+  <li><strong>Ręcznie pisane zdanie zostaje.</strong> <code>announces</code> we frontmatterze przykładu dalej jest jednozdaniowym podsumowaniem pod ramkami. Policzone listy dokładają szczegóły.</li>
+  <li><strong>Kształt.</strong> <code>{ reading: Line[]; tab: Line[] }</code>, gdzie <code>Line = { text: string; role?: PolishRole; missing?: "rola" | "nazwa" }</code>. <code>PolishRole</code> wynika z mapy ról, więc rola bez polskiej nazwy wywala <code>tsc</code>.</li>
+</ul>
+
+<h2 id="format">6. Format treści</h2>
+<p>Opisy symulatorów idą za resztą <code>content/</code>: jeden plik Markdown na rodzaj, frontmatter sprawdzany ArkTypem.</p>
+<pre><code>content/symulatory/barwy.md
+---
+title: Widzenie barw
+summary: Kiedy kolor jest jedyną informacją.
+criteria: ["1.4.1", "1.4.11"]
+examples: [formularz-z-bledami, kontrast-stanow]   # "Wypróbuj na", z wybraną już symulacją
+limits: Nie pokazuje słabszych odmian zaburzeń ani tego, jak ktoś rozpoznaje kolor po kontekście.
+status: szkic
+---
+Opis ogólny, pokazywany pod przełącznikiem, kiedy przykład nie ma własnej notatki.</code></pre>
+<p>Notatki przy przykładach trafiają do istniejącego frontmattera przykładu, z kluczem <code>SimulationId</code>:</p>
+<pre><code># content/praktyka/formularz-z-bledami/index.md
+simulations:
+  deuteranopia: Czerwona ramka pola w wersji zepsutej wygląda jak oliwkowa i przestaje znaczyć „błąd”…
+  protanopia: …</code></pre>
+<p>Notatki są opcjonalne. Piszę je tam, gdzie symulator pokazuje coś specyficznego dla przykładu: kolor na formularzu, słabe widzenie na przykładzie z kontrastem, wąski ekran na nowym. Około dziesięciu notatek. Symulatory klawiatury, czytnika i wąskiego ekranu same produkują tekst, więc rzadko ich potrzebują.</p>
+<p>Nowy przykład, <code>content/praktyka/sztywna-szerokosc/</code>: karta z informacją o dostawie o stałej <code>width</code> i z <code>white-space: nowrap</code> oraz przycisk o stałej wysokości w pikselach z <code>overflow: hidden</code>, który przy 200% ucina etykietę. Wersja poprawna używa <code>max-width</code>, zawijania i <code>min-height</code>. Kryteria 1.4.10 i 1.4.4, koszt „1 token”.</p>
+
+<h2 id="pages">7. Strony</h2>
+<ul>
+  <li><strong><code>/praktyka/$slug</code>:</strong> pod nagłówkiem po lewej pasek z przełącznikiem, a pod nim „Co pokazuje ta symulacja” z notatką i ograniczeniami; po prawej wersja zepsuta i poprawna jedna pod drugą, każda na pełną szerokość (mock 1C). Na wąskich ekranach pasek idzie nad ramki. Przy <code>czytnik</code> pod ramkami jedna tabela zestawia wiersz po wierszu, co ogłasza każdy wariant, i oznacza wiersze, które się różnią (mock 3B). Przy <code>klawiatura</code> każdy panel dostaje listę fokusu i licznik zablokowanych kliknięć (mock 4A). Przy <code>320px</code> każda ramka ma 320 pikseli szerokości, z werdyktem pod spodem (mock 5A). Link „Jak działają symulatory” prowadzi do <code>/symulatory</code>.</li>
+  <li><strong><code>/symulatory</code>:</strong> ostrzeżenie o przybliżeniu, potem pięć kart, każda z małą statyczną próbką efektu (mock 2B). Karta prowadzi do swojej sekcji niżej na stronie: opis, ograniczenia, kryteria i linki „Wypróbuj na”. Prerenderowana.</li>
+  <li><strong><code>/praktyka</code>:</strong> jedna linijka pod nagłówkiem z linkiem do <code>/symulatory</code>.</li>
+  <li><strong>Główna nawigacja:</strong> „Symulatory” po „Praktyce”.</li>
+  <li><strong>Strony kryteriów:</strong> bez zmian. Przykłady, do których już linkują, mają przełącznik.</li>
+</ul>
+
+<h2 id="a11y">8. Dostępność samych symulatorów</h2>
+<ul>
+  <li><strong>Przełącznik.</strong> <code>fieldset</code> z natywnymi radiobuttonami na liście, każda etykieta ma co najmniej 44 piksele wysokości, nazwę i jedną linijkę opisu. Wybraną opcję oznacza znaczek i pogrubienie, nie sam kolor. Zmiana radiobuttona nie przenosi fokusu.</li>
+  <li><strong>Ogłoszenie.</strong> Wybór symulacji ogłasza raz „Symulacja: deuteranopia” w uprzejmym regionie na żywo. Opis stoi na stronie i nie jest ogłaszany, więc czytelnik sam decyduje, czy go przeczytać.</li>
+  <li><strong>Nie tylko kolor.</strong> Etykieta na każdej ramce („Deuteranopia”) powtarza wybór tekstem. Werdykty, brakujące role i zablokowane kliknięcia mają słowo i znak.</li>
+  <li><strong>Tytuły ramek.</strong> Tytuł iframe dostaje nazwę symulacji, na przykład „Przykład zepsuty: Formularz z błędami, deuteranopia”.</li>
+  <li><strong>Wąskie ramki się przewijają.</strong> Region 320 pikseli, z którego treść wystaje, przyjmuje fokus i ma etykietę, więc przewijanie w poziomie działa z klawiatury (2.1.1).</li>
+  <li><strong>Wymuszone kolory.</strong> W trybie wymuszonych kolorów Windows filtry niewiele zmieniają, bo system podmienia kolory. Notatka o tym mówi.</li>
+  <li><strong>Ruch.</strong> Bez przejść między trybami. Rozmycie jest statyczne.</li>
+</ul>
+
+<h2 id="tests">9. Testy</h2>
+<ul>
+  <li><strong>Treść (Vitest):</strong> każdy rodzaj symulatora ma plik i każdy plik się parsuje; <code>examples</code> w plikach symulatorów i klucze <code>simulations</code> w plikach przykładów wskazują istniejące rzeczy; szkice nie mają <code>lastVerified</code>.</li>
+  <li><strong>Kolejność czytania (Vitest):</strong> przycisk z <code>aria-label</code> daje „Zamknij komunikat, przycisk”; <code>div</code> z <code>onclick</code> daje tekst z oznaczeniem „tekst, nie przycisk” i nie ma przystanku Tab; <code>alt=""</code> i <code>aria-hidden</code> są pomijane; tabela podaje liczbę kolumn. Każdy wariant każdego przykładu liczy się bez wyjątku i daje niepustą listę czytania.</li>
+  <li><strong>Kanał ramki (Playwright na <code>/demo/...</code>):</strong> po wiadomości z symulacją dokument ma <code>data-symulacja</code>; w trybie klawiatury kliknięcie myszą w zepsuty „przycisk” zamknięcia nic nie robi i pokazuje komunikat, a Enter na poprawnym przycisku dalej zamyka wiadomość.</li>
+  <li><strong>End to end (Playwright):</strong> warunek ukończenia, tylko klawiaturą. Otwórz <code>formularz-z-bledami</code>, wybierz strzałkami „Widzenie barw”, potem „Deuteranopia”; adres ma <code>?symulacja=deuteranopia</code>, notatka jest widoczna, przeładowanie ją zachowuje. Na <code>ikona-jako-przycisk</code> w trybie klawiatury Tab do poprawnej ramki daje jeden krok na liście. Na <code>sztywna-szerokosc</code> przy <code>320px</code> wersja zepsuta mówi „Nie mieści się”, a poprawna „Mieści się”. Istniejący test izolacji przechodzi jeszcze raz z włączoną symulacją.</li>
+  <li><strong>Axe:</strong> <code>/symulatory</code> i jedna strona przykładu z każdym rodzajem symulacji.</li>
+</ul>
+
+<h2 id="commits">10. Commity i pull request</h2>
+<p>Jeden pull request, gałąź <code>feat/impairment-simulators</code>:</p>
+<ol>
+  <li><code>docs(design): add phase 7 plan and simulator mocks</code>, ten plan i mocki.</li>
+  <li><code>feat(simulators): add simulator ids, format and descriptions</code>, <code>simulations.ts</code>, parser, pięć plików Markdown i ich testy treści.</li>
+  <li><code>feat(practice): let demo documents take a simulation</code>, poszerzony kanał w <code>demo-document.ts</code> (filtry, rozmiar tekstu, tryb klawiatury, raport szerokości) z testami Playwright na <code>/demo</code>.</li>
+  <li><code>feat(practice): add the simulation picker to example pages</code>, parametr w adresie, przełącznik, notatka, lista fokusu i werdykt, z testem end to end.</li>
+  <li><code>chore(deps): add jsdom and dom-accessibility-api</code>.</li>
+  <li><code>feat(practice): list what a screen reader reads</code>, <code>reading-order.ts</code>, jego testy i dwie listy na stronie.</li>
+  <li><code>docs(practice): add the fixed width example</code>, <code>sztywna-szerokosc</code>.</li>
+  <li><code>docs(practice): add simulation notes to examples</code>.</li>
+  <li><code>feat(simulators): add the simulators page</code>, <code>/symulatory</code>, link z <code>/praktyka</code>, axe.</li>
+  <li><code>docs: update README for phase 7</code>, ze zrzutami ekranu.</li>
+</ol>
+
+<h2 id="risks">11. Ryzyka</h2>
+<table>
+  <thead><tr><th>Ryzyko</th><th>Co robimy</th></tr></thead>
+  <tbody>
+    <tr><td>Symulatory robią z niepełnosprawności ciekawostkę</td><td>Ostrzeżenie na górze <code>/symulatory</code>, „Czego to nie pokazuje” przy każdej symulacji i odesłanie do NVDA i VoiceOver w panelu czytnika</td></tr>
+    <tr><td>Policzona lista nie zgadza się z prawdziwym czytnikiem</td><td>Opisana jako przybliżenie stanu po załadowaniu. Ręcznie pisane <code>announces</code> zostaje jako sprawdzone podsumowanie. Jeśli lista jest błędna dla przykładu, poprawiamy algorytm, nie przykład</td></tr>
+    <tr><td>jsdom nie liczy układu, więc treść ukryta pozycją albo rozmiarem trafi na listę</td><td>Algorytm ufa tylko <code>hidden</code>, <code>aria-hidden</code> i <code>display: none</code>. Żaden z jedenastu przykładów nie ukrywa treści inaczej; test kolejności czytania by to pokazał</td></tr>
+    <tr><td>Tryb klawiatury blokuje akcję z klawiatury albo przepuszcza kliknięcie myszą</td><td>Regułę <code>detail</code> testujemy w obie strony na <code>/demo</code>. Widżety reagujące na <code>keydown</code> są nietknięte, bo blokada obejmuje tylko zdarzenia wskaźnika i kliknięcia z <code>detail &gt; 0</code></td></tr>
+    <tr><td>Filtry SVG wyglądają inaczej w Safari</td><td>Ręczne sprawdzenie w Safari przed wydaniem. Jeśli któryś rodzaj tam nie działa, informację i tak niesie notatka</td></tr>
+  </tbody>
+</table>
+
+<h2 id="decisions">12. Decyzje</h2>
+<ul>
+  <li><strong>Lista dla czytnika: zdecydowane.</strong> Liczona przy buildzie dla stanu po załadowaniu.</li>
+  <li><strong>Sandbox: zdecydowane.</strong> Bez zmian. Wszystko idzie przez <code>postMessage</code> albo przez build.</li>
+  <li><strong>Układ: zdecydowane.</strong> Z <code>simulators-mocks.html</code>: 1C pasek obok ramek jedna pod drugą, 2B karty z próbką na <code>/symulatory</code>, 3B jedna zestawiona tabela dla czytnika, 4A, 5A.</li>
+  <li><strong>Nowy przykład <code>sztywna-szerokosc</code>: zdecydowane.</strong> Wchodzi.</li>
+  <li><strong>Nawigacja: zdecydowane.</strong> „Symulatory” trafiają do głównej nawigacji.</li>
+</ul>
+
+</main>
+</body>
+</html>
