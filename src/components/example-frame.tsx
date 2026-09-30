@@ -16,7 +16,8 @@ type Step = { n: number; name: string; role: string };
 /**
  * One variant of an example in a sandboxed iframe. `allow-scripts` without `allow-same-origin`
  * gives the fragment an opaque origin: it cannot read or change this page, and its markup never
- * joins this page's accessibility tree. The frame grows to the height the demo reports.
+ * joins this page's accessibility tree. `allow-forms` lets a form fire its submit event; without
+ * it the browser drops the submission before any script sees it. The frame grows to the height the demo reports.
  * Examples with motion load only after "Uruchom przykład", so this page still meets 2.2.2.
  *
  * `simulation` is sent to the frame over postMessage, on every change and every load. What the
@@ -111,7 +112,7 @@ export function ExampleFrame({
           ref={frame}
           src={src}
           title={label ? `${title}, ${label.toLowerCase()}` : title}
-          sandbox="allow-scripts"
+          sandbox="allow-scripts allow-forms"
           data-variant={variant}
           onLoad={send}
           // The 2px borders sit outside the 320 pixels the demo gets.

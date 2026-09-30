@@ -51,6 +51,7 @@
   <li><strong>Skrypty fragmentów się wykonują.</strong> jsdom uruchamia skrypt fragmentu przed przejściem po drzewie, więc lista, którą wypełnia skrypt (przykład z przeciąganiem), też jest czytana. Fragmenty to nasza treść, nie dane od użytkownika.</li>
   <li><strong>Nieznana rola wywala test, nie <code>tsc</code> (sekcja 5).</strong> <code>getRole</code> zwraca zwykły napis, więc kompilator nie sprawdzi mapy polskich ról. Test kolejności czytania przechodzi przez wszystkie przykłady i oczekuje, że każda rola ma polską nazwę.</li>
   <li><strong>Wąska ramka przewija się sama (sekcja 8).</strong> Przy 320 pikselach nadmiar jest w dokumencie ramki, więc wokół niej nie ma dodatkowego przewijanego regionu. Informację niesie werdykt pod ramką.</li>
+  <li><strong>Sandbox dostaje <code>allow-forms</code> (sekcja 12).</strong> Bez tego przeglądarka porzuca wysłanie formularza jeszcze przed zdarzeniem submit, więc przykład z formularzem nigdy nie pokazywał błędu, a notatki o kolorach każą go wywołać. Origin zostaje nieprzezroczysty.</li>
   <li><strong>Nowy przykład ma koszt „2 minuty”, nie „1 token” (sekcja 6).</strong> Poprawka zmienia dwie właściwości na element, a nie token projektu.</li>
 </ul>
 
