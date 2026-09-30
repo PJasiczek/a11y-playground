@@ -1,6 +1,7 @@
 import { type } from "arktype";
 import { type Fail, IsoDate, readVerification, splitFrontmatter, Status, type Verification } from "./markdown";
 import { createRenderer } from "./render";
+import { isSimulationId, type SimulationId } from "./simulations";
 import { type CriterionId, isCriterionId } from "./wcag";
 
 /**
@@ -34,6 +35,8 @@ const Frontmatter = type({
   /** Static markup of the fault for the catalogue card. Decorative: rendered inert and hidden. */
   preview: "string > 0",
   "motion?": "boolean",
+  /** What a simulator shows on this example, keyed by the ?symulacja= id. Plain text. */
+  "simulations?": { "[string]": "string > 0" },
   status: Status,
   "lastVerified?": IsoDate,
   bad: BadVariant,
@@ -60,6 +63,8 @@ export type Example = Verification & {
   motion: boolean;
   introHtml: string;
   terms: string[];
+  /** Notes for the simulator rail. A simulation without a note shows its kind's general description. */
+  simulations: Partial<Record<SimulationId, string>>;
   bad: ExampleVariant & { axe: string[] };
   good: ExampleVariant;
 };
@@ -78,6 +83,11 @@ export function parseExample(
   if (unknown.length > 0) throw fail(`criteria lists unknown criteria: ${unknown.join(", ")}`);
   if (files.bad === undefined) throw fail("bad.html is missing");
   if (files.good === undefined) throw fail("good.html is missing");
+  const simulations: Partial<Record<SimulationId, string>> = {};
+  for (const [id, note] of Object.entries(meta.simulations ?? {})) {
+    if (!isSimulationId(id)) throw fail(`simulations has an unknown simulation "${id}"`);
+    simulations[id] = note;
+  }
 
   const { terms, render } = createRenderer(fail);
   return {
@@ -92,6 +102,7 @@ export function parseExample(
     motion: meta.motion ?? false,
     introHtml: render(body.trim()),
     terms,
+    simulations,
     bad: { why: meta.bad.why, announces: meta.bad.announces, axe: meta.bad.axe ?? [], source: files.bad.trim() },
     good: { why: meta.good.why, announces: meta.good.announces, source: files.good.trim() },
   };

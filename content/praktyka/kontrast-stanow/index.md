@@ -5,6 +5,8 @@ criteria: ["1.4.3", "1.4.11"]
 effort: 1 token
 gain: Tekst jest czytelny dla osób słabowidzących, starszych i dla każdego, kto patrzy na ekran w słońcu.
 preview: <span class="p-faint">Hasło musi mieć 8 znaków</span>
+simulations:
+  slabe-widzenie: 'Jasnoszary tekst pomocniczy w wersji zepsutej prawie znika, a obramowanie pola zlewa się z tłem. W wersji poprawnej oba zostają czytelne, bo mają kontrast powyżej progu.'
 status: szkic
 bad:
   why: Tekst pomocniczy ma kontrast 1,9 do 1. Przycisk przy najechaniu zmienia tekst na jasnoszary. Obramowanie pola ma 1,4 do 1.

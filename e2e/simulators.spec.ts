@@ -52,6 +52,8 @@ test.describe("the picker on an example page", () => {
     await page.keyboard.press("ArrowDown");
     await expect(page).toHaveURL(/\?symulacja=deuteranopia$/);
     await expect(page.getByRole("heading", { name: "Co pokazuje ta symulacja" })).toBeVisible();
+    // The example's own note, not the general description of colour vision.
+    await expect(page.getByText(/^Wpisz adres bez małpy i wyślij formularz\. W wersji zepsutej czerwona ramka/)).toBeVisible();
     await expect(page.frameLocator('iframe[data-variant="bad"]').locator("html")).toHaveAttribute("data-symulacja", "deuteranopia");
     await expect(page.frameLocator('iframe[data-variant="good"]').locator("html")).toHaveAttribute("data-symulacja", "deuteranopia");
     await page.reload();

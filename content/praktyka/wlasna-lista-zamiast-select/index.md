@@ -5,6 +5,8 @@ criteria: ["4.1.2", "2.1.1"]
 effort: refaktor
 gain: Lista działa z klawiatury, strzałkami i na telefonie, a czytnik podaje, co jest wybrane.
 preview: <span class="p-select">Wybierz miasto ▾</span>
+simulations:
+  klawiatura: 'W wersji zepsutej lista nie przyjmuje fokusu, więc Tab jej nie zauważa i miasta nie da się wybrać. W wersji poprawnej pole dostaje numer i reaguje na strzałki.'
 status: szkic
 bad:
   why: Div wyglądający jak pole, który rozwija listę po kliknięciu. Nie ma roli, nazwy ani stanu. Tab go pomija, a strzałki nic nie robią.

@@ -103,9 +103,13 @@ function ExamplePage() {
               <h2 id="simulation-title" className="font-bold">
                 Co pokazuje ta symulacja
               </h2>
-              <TermTips terms={terms}>
-                <div className="prose mt-1 text-[0.9375rem]" dangerouslySetInnerHTML={{ __html: simulator.html }} />
-              </TermTips>
+              {example.simulations[symulacja] ? (
+                <p className="mt-1 text-[0.9375rem]">{example.simulations[symulacja]}</p>
+              ) : (
+                <TermTips terms={terms}>
+                  <div className="prose mt-1 text-[0.9375rem]" dangerouslySetInnerHTML={{ __html: simulator.html }} />
+                </TermTips>
+              )}
               <p className="mt-3 text-[0.9375rem] text-ink-2">
                 <strong className="text-ink">Czego to nie pokazuje:</strong> {simulator.limits}
               </p>
