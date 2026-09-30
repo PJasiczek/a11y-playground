@@ -44,6 +44,16 @@
 
 <p class="flag">The examples run in iframes with an opaque origin (<code>sandbox="allow-scripts"</code>, no <code>allow-same-origin</code>). The page cannot read or style what is inside. Every simulator below either asks the frame over <code>postMessage</code>, resizes the frame from outside, or is computed at build time. The sandbox stays as it is.</p>
 
+<h2 id="changes">Changes after work started</h2>
+<p>Decisions made while building phase 7. Where they conflict with the sections below, these win.</p>
+<ul>
+  <li><strong>The screen reader list comes from a Vite plugin (section 5).</strong> jsdom cannot run from the bundled server: it reads its own files next to its code. So <code>src/content/reading-order.vite.ts</code> computes every list in Node while Vite builds and serves the result as <code>virtual:reading-order</code>. jsdom and <code>dom-accessibility-api</code> are dev dependencies and nothing of them ships.</li>
+  <li><strong>Fragment scripts run.</strong> jsdom runs each fragment's own script before the walk, so a list the script fills in (the reorder example) is read. The fragments are our content, not user input.</li>
+  <li><strong>Unknown roles fail a test, not <code>tsc</code> (section 5).</strong> <code>getRole</code> returns a plain string, so the compiler cannot check the Polish role map. The reading order test runs every example and expects no role without a Polish name.</li>
+  <li><strong>The narrow frame scrolls inside itself (section 8).</strong> At 320 pixels the overflow is in the iframe's own document, so there is no extra scrollable region around it. The verdict under the frame carries the information.</li>
+  <li><strong>The new example is "2 minuty", not "1 token" (section 6).</strong> The fix changes two properties per element, not a design token.</li>
+</ul>
+
 <ol class="toc">
   <li><a href="#goal">Goal and definition of done</a></li>
   <li><a href="#scope">Scope</a></li>

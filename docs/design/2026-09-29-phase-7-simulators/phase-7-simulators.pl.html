@@ -44,6 +44,16 @@
 
 <p class="flag">Przykłady działają w ramkach iframe z nieprzezroczystym originem (<code>sandbox="allow-scripts"</code>, bez <code>allow-same-origin</code>). Strona nie może niczego w nich odczytać ani ostylować. Każdy symulator poniżej albo prosi ramkę o zmianę przez <code>postMessage</code>, albo zmienia jej rozmiar z zewnątrz, albo jest liczony przy buildzie. Sandbox zostaje bez zmian.</p>
 
+<h2 id="changes">Zmiany po rozpoczęciu pracy</h2>
+<p>Decyzje podjęte w trakcie budowania fazy 7. Tam, gdzie kłócą się z sekcjami poniżej, obowiązują one.</p>
+<ul>
+  <li><strong>Listę dla czytnika liczy wtyczka Vite (sekcja 5).</strong> jsdom nie działa ze zbundlowanego serwera, bo czyta własne pliki leżące obok jego kodu. Dlatego <code>src/content/reading-order.vite.ts</code> liczy wszystkie listy w Node podczas buildu i podaje wynik jako <code>virtual:reading-order</code>. jsdom i <code>dom-accessibility-api</code> są zależnościami deweloperskimi i nic z nich nie trafia do wydania.</li>
+  <li><strong>Skrypty fragmentów się wykonują.</strong> jsdom uruchamia skrypt fragmentu przed przejściem po drzewie, więc lista, którą wypełnia skrypt (przykład z przeciąganiem), też jest czytana. Fragmenty to nasza treść, nie dane od użytkownika.</li>
+  <li><strong>Nieznana rola wywala test, nie <code>tsc</code> (sekcja 5).</strong> <code>getRole</code> zwraca zwykły napis, więc kompilator nie sprawdzi mapy polskich ról. Test kolejności czytania przechodzi przez wszystkie przykłady i oczekuje, że każda rola ma polską nazwę.</li>
+  <li><strong>Wąska ramka przewija się sama (sekcja 8).</strong> Przy 320 pikselach nadmiar jest w dokumencie ramki, więc wokół niej nie ma dodatkowego przewijanego regionu. Informację niesie werdykt pod ramką.</li>
+  <li><strong>Nowy przykład ma koszt „2 minuty”, nie „1 token” (sekcja 6).</strong> Poprawka zmienia dwie właściwości na element, a nie token projektu.</li>
+</ul>
+
 <ol class="toc">
   <li><a href="#goal">Cel i warunek ukończenia</a></li>
   <li><a href="#scope">Zakres</a></li>
