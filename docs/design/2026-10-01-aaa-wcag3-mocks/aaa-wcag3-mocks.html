@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phase 8 mocks: AAA criterion page, /wcag-3, links from criteria, entry point</title>
+<style>
+  :root {
+    --paper: #FBFAF7; --paper-2: #F1EFE8; --surface: #FFFFFF;
+    --ink: #14171A; --ink-2: #484D52; --rule: #DFDBD1; --control: #857F72;
+    --accent: #2C36A8; --marker: #F4E75B; --good: #145537; --bad: #9A1B1B;
+    --sans: "Inter var", Inter, "Segoe UI", -apple-system, system-ui, sans-serif;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, "SF Mono", monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 2.5rem 1rem 6rem; background: #000; color: #fff; font: 16px/1.6 var(--sans); }
+  .page { max-width: 1180px; margin: 0 auto; }
+  .page > h1 { font-size: 1.4rem; margin: 0 0 .35rem; letter-spacing: -.02em; }
+  .page > p, .note { color: #B8BDC2; font-size: .9rem; margin: 0 0 1rem; max-width: 76ch; }
+  .page > h2 { font: 600 .8rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; margin: 4rem 0 .6rem; }
+  .page > h2 + p { margin-bottom: 1.5rem; }
+  .page code { font-family: var(--mono); font-size: .9em; }
+  .page a { color: #fff; }
+  .variant { margin: 0 0 2.75rem; }
+  .variant > h3 { font-size: 1.05rem; margin: 0 0 .25rem; }
+  .variant > h3 b { font-family: var(--mono); display: inline-block; min-width: 1.8rem; }
+  .frame { border: 1px solid #2A2D31; border-radius: 6px; overflow: hidden; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 60rem) { .two { grid-template-columns: 1fr; } }
+
+  /* --- product surface, app tokens --- */
+  .s { background: var(--paper); color: var(--ink); padding: 1.75rem 1.75rem 2.25rem; }
+  .s a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+  .s :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .s h4, .s h5, .s h6 { margin: 0; }
+  .s p { max-width: 68ch; }
+  .crumb { font: .8125rem var(--mono); color: var(--ink-2); margin: 0 0 .75rem; }
+  .crumb a { color: var(--ink-2) !important; }
+  .num { display: block; font: 700 clamp(2.5rem, 7vw, 3.75rem)/.9 var(--mono); letter-spacing: -.04em; margin-bottom: .5rem; }
+  .t1 { font-size: clamp(1.5rem, 3.5vw, 2rem); font-weight: 700; line-height: 1.15; letter-spacing: -.03em; margin: 0; }
+  .metaline { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin: 1rem 0 0; font: .8125rem var(--mono); color: var(--ink-2); }
+  .lvl { border: 1px solid currentColor; border-radius: 2px; padding: .25rem .4rem; font: 600 .75rem/1 var(--mono); color: var(--ink); }
+  .new { border: 1px solid var(--ink); background: var(--marker); padding: .25rem .4rem; font: 600 .75rem/1 var(--mono); color: var(--ink); border-radius: 2px; }
+  .draft { border: 1px dashed var(--ink); border-radius: 2px; padding: .25rem .4rem; font: 600 .75rem/1 var(--mono); color: var(--ink); }
+  .draft::before { content: "✎ " / ""; }
+  /* WCAG 3.0 badge: double rule, distinct from the dashed "szkic" badge and the solid level badge */
+  .wd { display: inline-flex; align-items: center; gap: .4rem; border: 3px double var(--ink); border-radius: 2px; padding: .3rem .55rem; font: 700 .75rem/1 var(--mono); color: var(--ink); letter-spacing: .02em; }
+  .wd::before { content: "◷" / ""; font-weight: 400; }
+  .lead { margin: 1.5rem 0 0; font-size: 1.25rem; line-height: 1.45; max-width: 56ch; }
+  .sechead { border-top: 2px solid var(--ink); padding-top: 1.1rem; margin-top: 2rem; font-size: 1.25rem; font-weight: 700; letter-spacing: -.02em; }
+  .chip { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; padding: 0 .75rem; border: 1px solid var(--control); border-radius: 2px; background: var(--surface); color: var(--ink) !important; text-decoration: none !important; font-size: .9375rem; }
+  .chip b { font-family: var(--mono); }
+  .chips { display: flex; flex-wrap: wrap; gap: .5rem; list-style: none; margin: .6rem 0 0; padding: 0; }
+  .muted { color: var(--ink-2); }
+  .mono { font-family: var(--mono); }
+  .kick { font: 600 .75rem var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 .4rem; }
+
+  /* 1A: comparison strip */
+  .cmp { display: grid; grid-template-columns: 1fr 1fr; margin-top: 1.5rem; border: 2px solid var(--ink); background: var(--surface); }
+  .cmp > div { padding: .9rem 1.1rem 1rem; }
+  .cmp > div + div { border-left: 2px solid var(--ink); }
+  .cmp .k { font: 600 .75rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); display: flex; gap: .5rem; align-items: center; }
+  .cmp .v { font: 700 1.75rem/1.1 var(--mono); letter-spacing: -.03em; margin: .35rem 0 .2rem; }
+  .cmp .v small { font: 600 .9rem var(--sans); letter-spacing: 0; color: var(--ink-2); }
+  .cmp .this { background: var(--paper-2); }
+  .cmp-foot { grid-column: 1 / -1; border-top: 1px solid var(--rule); padding: .6rem 1.1rem !important; font-size: .9375rem; display: flex; flex-wrap: wrap; gap: .25rem 1rem; align-items: center; }
+  @media (max-width: 40rem) { .cmp { grid-template-columns: 1fr; } .cmp > div + div { border-left: 0; border-top: 2px solid var(--ink); } }
+  .aaa-note { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-top: 1rem; font-size: .9375rem; }
+  .aaa-note .tag { font: 700 .75rem/1 var(--mono); border: 2px solid var(--ink); padding: .3rem .45rem; border-radius: 2px; }
+  .meets { display: flex; gap: .6rem; align-items: flex-start; margin-top: 1rem; font-size: .9375rem; max-width: 62ch; }
+  .meets .ok { flex: none; font: 700 .75rem/1 var(--mono); border: 2px solid var(--good); color: var(--good); padding: .3rem .45rem; border-radius: 2px; }
+  .meets .ok::before { content: "✓ " / ""; }
+
+  /* 1B: note box */
+  .box { margin-top: 1.5rem; background: var(--surface); border: 1px solid var(--rule); border-left: 4px solid var(--ink); padding: 1rem 1.25rem; max-width: 68ch; }
+  .box h5 { font-size: 1rem; }
+  .box p { margin: .35rem 0 0; }
+  .box dl { display: grid; grid-template-columns: auto 1fr; gap: .2rem 1rem; margin: .6rem 0 0; font-size: .9375rem; }
+  .box dt { font: 600 .8125rem var(--mono); color: var(--ink-2); padding-top: .1rem; }
+  .box dd { margin: 0; }
+
+  /* /wcag-3 */
+  .w3top { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center; margin: 0 0 .9rem; font: .8125rem var(--mono); color: var(--ink-2); }
+  .status { margin-top: 1rem; max-width: 66ch; }
+  table.c { width: 100%; border-collapse: collapse; font-size: .9375rem; margin-top: .75rem; background: var(--surface); }
+  table.c caption { text-align: left; font-weight: 700; padding: 0 0 .4rem; }
+  table.c th, table.c td { border-bottom: 1px solid var(--rule); padding: .55rem .7rem .55rem 0; text-align: left; vertical-align: top; }
+  table.c thead th { font: 600 .75rem var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); border-bottom: 2px solid var(--ink); }
+  table.c tbody th { font-weight: 600; width: 22%; }
+  .scroll { overflow-x: auto; }
+  .layout { display: grid; grid-template-columns: 1fr 13rem; gap: 2.5rem; margin-top: 1.5rem; }
+  .layout .toc { order: 2; align-self: start; }
+  .toc h5 { font: 600 .75rem var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); margin-bottom: .4rem; }
+  .toc ol { list-style: none; margin: 0; padding: 0; }
+  .toc li { border-top: 1px solid var(--rule); }
+  .toc a { display: flex; align-items: center; gap: .5rem; min-height: 44px; color: var(--ink-2) !important; text-decoration: none !important; font-size: .875rem; }
+  .toc a b { font-family: var(--mono); color: var(--ink); min-width: 2.4rem; }
+  @media (max-width: 52rem) { .layout { grid-template-columns: 1fr; } .layout .toc { order: 0; } }
+  .group h5 { display: flex; flex-wrap: wrap; align-items: baseline; gap: .25rem .75rem; border-top: 2px solid var(--ink); padding-top: 1rem; font-size: 1.25rem; letter-spacing: -.02em; }
+  .group h5 .mono { font-size: 1rem; }
+  .group h5 i { font-style: normal; font: 400 .875rem var(--mono); color: var(--ink-2); }
+  .gl { list-style: none; margin: .75rem 0 1.75rem; padding: 0; border-top: 1px solid var(--rule); }
+  .gl > li { display: grid; grid-template-columns: 3.4rem 1fr; gap: .1rem .75rem; padding: .8rem 0; border-bottom: 1px solid var(--rule); }
+  .gl .n { font: 700 .9375rem var(--mono); padding-top: .1rem; }
+  .gl .nm { font-weight: 600; }
+  .gl .en { font: .8125rem var(--mono); color: var(--ink-2); }
+  .gl .crit { grid-column: 2; display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .35rem; }
+  .gl .crit .chip { min-height: 44px; font-size: .875rem; }
+  .gl .nw { grid-column: 2; margin-top: .35rem; display: inline-flex; align-items: center; gap: .4rem; font-size: .9375rem; }
+  .gl .nw b { font: 700 .75rem/1 var(--mono); border: 2px solid var(--ink); background: var(--paper-2); padding: .3rem .45rem; border-radius: 2px; }
+  .gl .nt { grid-column: 2; font-size: .875rem; color: var(--ink-2); margin-top: .25rem; }
+  .ours { font-size: .9375rem; color: var(--ink-2); margin: .3rem 0 0; }
+  .collapsed { color: var(--ink-2); font: .8125rem var(--mono); padding: .6rem 0 0; }
+
+  /* 2B cards */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); list-style: none; margin: 1rem 0 0; padding: 0; }
+  .cards li { background: var(--surface); }
+  .cards a { display: block; padding: 1rem 1.1rem 1.1rem; color: var(--ink) !important; text-decoration: none !important; min-height: 44px; }
+  .cards a:hover { background: var(--paper-2); }
+  .cards .cn { font: 700 .8125rem var(--mono); color: var(--ink-2); }
+  .cards .ct { display: block; font-weight: 700; font-size: 1.05rem; margin: .15rem 0 .35rem; }
+  .cards .cs { font-size: .875rem; color: var(--ink-2); }
+
+  /* 2C filter table */
+  fieldset { border: 0; margin: 1.25rem 0 0; padding: 0; min-width: 0; }
+  legend { font-weight: 700; padding: 0; margin-bottom: .5rem; }
+  .pick { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .pick label { display: inline-flex; align-items: center; gap: .55rem; min-height: 44px; padding: .4rem .9rem .4rem .7rem; border: 1px solid var(--control); border-radius: 2px; background: var(--surface); cursor: pointer; font-size: .9375rem; }
+  .pick input { width: 20px; height: 20px; margin: 0; accent-color: var(--ink); }
+  .pick label:has(input:checked) { border: 2px solid var(--ink); font-weight: 700; }
+  table.m { width: 100%; border-collapse: collapse; font-size: .9375rem; margin-top: 1rem; background: var(--surface); }
+  table.m th, table.m td { border-bottom: 1px solid var(--rule); padding: .55rem .6rem; text-align: left; vertical-align: top; }
+  table.m thead th { font: 600 .75rem var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); border-bottom: 2px solid var(--ink); }
+  table.m .grp td { background: var(--paper-2); font-weight: 700; }
+  table.m td.mono { white-space: nowrap; }
+
+  /* 3: links on criterion pages */
+  .rel h6 { font: 600 .75rem var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); margin: 1.25rem 0 0; }
+  .relrow { display: grid; grid-template-columns: 9rem 1fr; gap: .5rem 1rem; align-items: start; padding: .75rem 0; border-top: 1px solid var(--rule); }
+  .relrow .k { font: 600 .8125rem var(--mono); color: var(--ink-2); padding-top: .7rem; }
+  @media (max-width: 40rem) { .relrow { grid-template-columns: 1fr; } .relrow .k { padding-top: 0; } }
+
+  /* 4: header */
+  .hdr { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem 1.25rem; border-bottom: 1px solid var(--rule); padding: .5rem 1.25rem; background: var(--paper); color: var(--ink); }
+  .hdr .wm { font-weight: 700; font-size: 1.0625rem; }
+  .hdr nav { margin-left: auto; }
+  .hdr ul { display: flex; flex-wrap: wrap; gap: .25rem; list-style: none; margin: 0; padding: 0; }
+  .hdr a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 .7rem; color: var(--ink-2) !important; text-decoration: none !important; font-size: .9375rem; border-bottom: 2px solid transparent; }
+  .hdr a[aria-current] { color: var(--ink) !important; font-weight: 600; border-bottom-color: var(--ink); }
+  .hdr .theme { min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--control); border-radius: 2px; font-size: .875rem; }
+  .narrow { max-width: 390px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>Phase 8 mocks: AAA criteria and WCAG 3.0</h1>
+<p>Static mocks in the app's light theme. Plan: <a href="../2026-10-01-phase-8-aaa-wcag3/phase-8-aaa-wcag3.en.html">phase-8-aaa-wcag3.en.html</a>. Pick one variant per numbered section. Copy inside the frames is Polish, as in the app; the WCAG 3.0 guideline names come from the Working Draft of 10 September 2026, the Polish names are ours.</p>
+
+<!-- ================================================================== -->
+<h2 id="m1">1. AAA criterion page header, 1.4.6</h2>
+<p>How an AAA page shows that it tightens an AA criterion and that no act requires it. All three include the optional "Ta aplikacja to spełnia" line (decision 3), so you can judge it in context.</p>
+
+<section class="variant" aria-labelledby="v1a">
+  <h3 id="v1a"><b>1A</b> Comparison strip</h3>
+  <p class="note">The AA sibling and this criterion side by side, the number first. The <code>difference</code> line sits under both. Stacks on narrow screens.</p>
+  <div class="frame"><div class="s">
+    <p class="crumb"><a href="#m1">Kryteria</a> / 1.4.6</p>
+    <h4 class="t1"><span class="num">1.4.6</span> Kontrast (wzmocniony)</h4>
+    <p class="metaline"><span class="lvl">AAA</span><span class="draft">szkic, czeka na weryfikację</span><span>od WCAG 2.0</span><span aria-hidden="true">·</span><span>1. Postrzegalność, 1.4 Rozróżnialność</span></p>
+    <p class="lead">Tekst musi odcinać się od tła w stosunku co najmniej 7 do 1. Duży tekst wystarczy 4,5 do 1.</p>
+    <div class="cmp" role="group" aria-label="Porównanie z kryterium 1.4.3">
+      <div>
+        <span class="k"><span class="lvl">AA</span> 1.4.3 Kontrast (minimum)</span>
+        <p class="v">4,5 : 1 <small>duży tekst 3 : 1</small></p>
+      </div>
+      <div class="this">
+        <span class="k"><span class="lvl">AAA</span> 1.4.6, ta strona</span>
+        <p class="v">7 : 1 <small>duży tekst 4,5 : 1</small></p>
+      </div>
+      <div class="cmp-foot">
+        <span>Wyjątki te same: logotypy, tekst dekoracyjny, nieaktywne kontrolki.</span>
+        <a href="#m1" class="chip"><b>1.4.3</b> Kontrast (minimum)</a>
+      </div>
+    </div>
+    <p class="aaa-note"><span class="tag">AAA</span> Cel, nie obowiązek. Żadna ustawa go nie wymaga. <a href="#m1">Prawo</a></p>
+    <p class="meets"><span class="ok">Ta aplikacja to spełnia</span><span>Każda para kolorów tekstu ma co najmniej 7 do 1 w obu motywach. Sprawdza to axe z regułami AAA.</span></p>
+  </div></div>
+</section>
+
+<section class="variant" aria-labelledby="v1b">
+  <h3 id="v1b"><b>1B</b> One box: what AAA means here</h3>
+  <p class="note">A single bordered box under the summary collects the level note, the sibling and the difference as a short definition list. Less visual weight on the numbers.</p>
+  <div class="frame"><div class="s">
+    <p class="crumb"><a href="#m1">Kryteria</a> / 1.4.6</p>
+    <h4 class="t1"><span class="num">1.4.6</span> Kontrast (wzmocniony)</h4>
+    <p class="metaline"><span class="lvl">AAA</span><span class="draft">szkic, czeka na weryfikację</span><span>od WCAG 2.0</span><span aria-hidden="true">·</span><span>1. Postrzegalność, 1.4 Rozróżnialność</span></p>
+    <p class="lead">Tekst musi odcinać się od tła w stosunku co najmniej 7 do 1. Duży tekst wystarczy 4,5 do 1.</p>
+    <div class="box">
+      <h5>Poziom AAA: cel, nie obowiązek</h5>
+      <p>Żadna ustawa nie wymaga kryteriów AAA. Spełniasz je, bo pomagają twoim użytkownikom, nie dlatego, że sprawdzi to kontrola.</p>
+      <dl>
+        <dt>Zaostrza</dt><dd><a href="#m1">1.4.3 Kontrast (minimum)</a>, poziom AA</dd>
+        <dt>Różnica</dt><dd>7 do 1 zamiast 4,5 do 1. Duży tekst 4,5 do 1 zamiast 3 do 1. Wyjątki te same.</dd>
+        <dt>Ta aplikacja</dt><dd><span aria-hidden="true">✓ </span>Spełnia. Każda para kolorów tekstu ma co najmniej 7 do 1, sprawdza to axe.</dd>
+      </dl>
+    </div>
+  </div></div>
+</section>
+
+<section class="variant" aria-labelledby="v1c">
+  <h3 id="v1c"><b>1C</b> Inline, minimal</h3>
+  <p class="note">No new block. The meta line gains "zaostrza 1.4.3" as a link and the AAA note; the difference is left to the summary and the body. Least work, easiest to miss.</p>
+  <div class="frame"><div class="s">
+    <p class="crumb"><a href="#m1">Kryteria</a> / 1.4.6</p>
+    <h4 class="t1"><span class="num">1.4.6</span> Kontrast (wzmocniony)</h4>
+    <p class="metaline"><span class="lvl">AAA</span><span class="draft">szkic, czeka na weryfikację</span><span>od WCAG 2.0</span><span aria-hidden="true">·</span><a href="#m1" style="min-height:44px;display:inline-flex;align-items:center">zaostrza 1.4.3</a><span aria-hidden="true">·</span><span>cel, nie obowiązek</span><span aria-hidden="true">·</span><span><span aria-hidden="true">✓ </span>ta aplikacja to spełnia</span></p>
+    <p class="lead">Tekst musi odcinać się od tła w stosunku co najmniej 7 do 1, a nie 4,5 do 1 jak w 1.4.3. Duży tekst wystarczy 4,5 do 1.</p>
+  </div></div>
+</section>
+
+<!-- ================================================================== -->
+<h2 id="m2">2. The WCAG 3.0 page, /wcag-3</h2>
+<p>The badge with a double rule is new: it means "W3C Working Draft" and nothing else, so it cannot be confused with the dashed "szkic" badge for our unverified content. Every variant shows the status, the comparison with 2.x and the mapping; they differ in how the mapping is laid out.</p>
+
+<section class="variant" aria-labelledby="v2a">
+  <h3 id="v2a"><b>2A</b> One page, groups as sections</h3>
+  <p class="note">Status and comparison on top, then the 12 groups as sections with an index on the right. Each guideline is a stacked row with its own anchor, so criterion pages can link straight to it. Two groups shown, the rest collapsed in the mock only.</p>
+  <div class="frame"><div class="s">
+    <p class="w3top"><span class="wd">wersja robocza W3C</span><span>z 10 września 2026</span><span aria-hidden="true">·</span><span>sprawdzone przez nas 1 października 2026</span></p>
+    <h4 class="t1">WCAG 3.0</h4>
+    <p class="status">WCAG 3.0 to wersja robocza, nie norma. W3C zapowiada jeszcze kilka lat pracy i zmienia ją kilka razy w roku. Ani polskie, ani unijne prawo się do niej nie odwołuje: dziś obowiązuje WCAG 2.1 przez ustawę z 2019 roku i EN 301 549. Ta strona pokazuje, dokąd zmierza standard, a nie czego masz przestrzegać.</p>
+    <div class="layout">
+      <nav class="toc" aria-label="Na tej stronie">
+        <h5>Na tej stronie</h5>
+        <ol>
+          <li><a href="#m2"><b></b>Co się zmienia</a></li>
+          <li><a href="#m2"><b>2.1</b>Obrazy i multimedia</a></li>
+          <li><a href="#m2"><b>2.2</b>Tekst i sformułowania</a></li>
+          <li><a href="#m2"><b>2.3</b>Komponenty interaktywne</a></li>
+          <li><a href="#m2"><b>2.4</b>Wprowadzanie i obsługa</a></li>
+          <li><a href="#m2"><b>2.5</b>Obsługa błędów</a></li>
+          <li><a href="#m2"><b>2.6</b>Animacja i ruch</a></li>
+          <li><a href="#m2"><b>2.7</b>Układ</a></li>
+          <li><a href="#m2"><b>2.8</b>Spójność między widokami</a></li>
+          <li><a href="#m2"><b>2.9</b>Procesy i zadania</a></li>
+          <li><a href="#m2"><b>2.10</b>Zasady i ochrona</a></li>
+          <li><a href="#m2"><b>2.11</b>Pomoc i informacja zwrotna</a></li>
+          <li><a href="#m2"><b>2.12</b>Kontrola użytkownika</a></li>
+        </ol>
+      </nav>
+      <div>
+        <h5 class="sechead" style="margin-top:0">Co się zmienia</h5>
+        <div class="scroll" role="region" aria-label="Porównanie WCAG 2.2 i 3.0" tabindex="0">
+          <table class="c">
+            <caption class="muted" style="font-weight:400;font-size:.875rem">WCAG 2.2 i wersja robocza 3.0</caption>
+            <thead><tr><th scope="col"></th><th scope="col">WCAG 2.2</th><th scope="col">WCAG 3.0, wersja robocza</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Jednostka</th><td>Kryterium sukcesu, jeden test</td><td>Wytyczna z kilkoma wymaganiami</td></tr>
+              <tr><th scope="row">Poziomy</th><td>A, AA, AAA</td><td>Wymagania <span lang="en">core</span> i <span lang="en">supplemental</span>, bez liter</td></tr>
+              <tr><th scope="row">Zgodność</th><td>Każda strona zalicza albo nie</td><td>Raport w zadeklarowanym zakresie. Model wciąż dyskutowany</td></tr>
+              <tr><th scope="row">Praktyka organizacji</th><td>Brak</td><td><span lang="en">Assertions</span>, np. testy z udziałem osób z niepełnosprawnościami</td></tr>
+              <tr><th scope="row">Zakres</th><td>Strony WWW, przez EN 301 549 także aplikacje</td><td>Treści cyfrowe, także XR i dźwięk przestrzenny</td></tr>
+              <tr><th scope="row">Prawo</th><td>Ustawa z 2019 roku, EN 301 549</td><td>Nic się do niej nie odwołuje</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="group">
+          <h5 class="sechead"><span class="mono">2.1</span> Obrazy i multimedia <i lang="en">Images and media</i></h5>
+          <p class="ours">Przypisania do WCAG 2.2 są nasze. W3C nie publikuje tabeli przejścia.</p>
+          <ul class="gl">
+            <li><span class="n">2.1.1</span><div><span class="nm">Alternatywy dla obrazów</span> <span class="en" lang="en">Image alternatives</span></div>
+              <div class="crit"><a class="chip" href="#m2"><b>1.1.1</b> Treść nietekstowa</a></div></li>
+            <li><span class="n">2.1.2</span><div><span class="nm">Podpisy pod ilustracjami</span> <span class="en" lang="en">Figure captions</span></div>
+              <p class="nw"><b>Nowe w 3.0</b> W tej wersji roboczej jeszcze bez wymagań.</p></li>
+            <li><span class="n">2.1.4</span><div><span class="nm">Transkrypcje</span> <span class="en" lang="en">Transcripts</span></div>
+              <div class="crit"><a class="chip" href="#m2"><b>1.2.1</b> Tylko audio lub tylko wideo (nagranie)</a><a class="chip" href="#m2"><b>1.2.8</b> Alternatywa dla mediów (nagranie)</a></div></li>
+            <li><span class="n">2.1.5</span><div><span class="nm">Napisy</span> <span class="en" lang="en">Captions</span></div>
+              <div class="crit"><a class="chip" href="#m2"><b>1.2.2</b> Napisy rozszerzone (nagranie)</a><a class="chip" href="#m2"><b>1.2.4</b> Napisy rozszerzone (na żywo)</a></div></li>
+            <li><span class="n">2.1.8</span><div><span class="nm">Nie tylko jeden zmysł</span> <span class="en" lang="en">Single sense</span></div>
+              <div class="crit"><a class="chip" href="#m2"><b>1.4.1</b> Użycie koloru</a><a class="chip" href="#m2"><b>1.4.11</b> Kontrast elementów nietekstowych</a><a class="chip" href="#m2"><b>1.3.3</b> Właściwości zmysłowe</a></div></li>
+            <li><span class="n">2.1.9</span><div><span class="nm">Dostępny odtwarzacz</span> <span class="en" lang="en">Accessible media player</span></div>
+              <p class="nw"><b>Nowe w 3.0</b> Twierdzenie o wyborze odtwarzacza, nie wymaganie wobec treści.</p></li>
+          </ul>
+        </div>
+
+        <div class="group">
+          <h5 class="sechead"><span class="mono">2.3</span> Komponenty interaktywne <i lang="en">Interactive components</i></h5>
+          <ul class="gl">
+            <li><span class="n">2.3.1</span><div><span class="nm">Wygląd fokusu klawiatury</span> <span class="en" lang="en">Keyboard focus appearance</span></div>
+              <div class="crit"><a class="chip" href="#m2"><b>2.4.7</b> Widoczny fokus</a><a class="chip" href="#m2"><b>2.4.13</b> Wygląd fokusu</a></div></li>
+            <li><span class="n">2.3.2</span><div><span class="nm">Wygląd fokusu wskaźnika</span> <span class="en" lang="en">Pointer focus appearance</span></div>
+              <p class="nw"><b>Nowe w 3.0</b> Widoczny kursor i wskazanie, co zostanie kliknięte.</p></li>
+            <li><span class="n">2.3.3</span><div><span class="nm">Poruszanie się po treści</span> <span class="en" lang="en">Navigating content</span></div>
+              <div class="crit"><a class="chip" href="#m2"><b>2.4.3</b> Kolejność fokusu</a></div></li>
+            <li><span class="n">2.3.5</span><div><span class="nm">Informacje o kontrolkach</span> <span class="en" lang="en">Control information</span></div>
+              <div class="crit"><a class="chip" href="#m2"><b>4.1.2</b> Nazwa, rola, wartość</a><a class="chip" href="#m2"><b>2.5.3</b> Etykieta w nazwie</a><a class="chip" href="#m2"><b>1.4.11</b> Kontrast elementów nietekstowych</a></div></li>
+          </ul>
+        </div>
+        <p class="collapsed">Grupy 2.2 i 2.4 do 2.12 w tym samym układzie (pominięte w makiecie).</p>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<section class="variant" aria-labelledby="v2b">
+  <h3 id="v2b"><b>2B</b> Overview plus a page per group</h3>
+  <p class="note">/wcag-3 holds the status, the comparison (same as 2A, left out here) and 12 cards. Each card opens /wcag-3/obrazy-i-multimedia with that group's guidelines. Shorter pages, 13 URLs to keep in step with one draft, and criterion pages link one level deeper.</p>
+  <div class="two">
+    <div class="frame"><div class="s">
+      <p class="w3top"><span class="wd">wersja robocza W3C</span><span>z 10 września 2026</span></p>
+      <h4 class="t1">WCAG 3.0</h4>
+      <p class="status">Wersja robocza, nie norma. Prawo się do niej nie odwołuje. Poniżej 12 grup wytycznych i to, czemu w WCAG 2.2 odpowiadają.</p>
+      <ul class="cards">
+        <li><a href="#v2b"><span class="cn">2.1</span><span class="ct">Obrazy i multimedia</span><span class="cs">9 wytycznych · 2 nowe w 3.0</span></a></li>
+        <li><a href="#v2b"><span class="cn">2.2</span><span class="ct">Tekst i sformułowania</span><span class="cs">wytyczne i odpowiedniki w 2.2</span></a></li>
+        <li><a href="#v2b"><span class="cn">2.3</span><span class="ct">Komponenty interaktywne</span><span class="cs">5 wytycznych · 1 nowa w 3.0</span></a></li>
+        <li><a href="#v2b"><span class="cn">2.4</span><span class="ct">Wprowadzanie i obsługa</span><span class="cs">wytyczne i odpowiedniki w 2.2</span></a></li>
+        <li><a href="#v2b"><span class="cn">2.5</span><span class="ct">Obsługa błędów</span><span class="cs">wytyczne i odpowiedniki w 2.2</span></a></li>
+        <li><a href="#v2b"><span class="cn">2.6</span><span class="ct">Animacja i ruch</span><span class="cs">wytyczne i odpowiedniki w 2.2</span></a></li>
+      </ul>
+      <p class="collapsed">Karty 2.7 do 2.12 pominięte w makiecie.</p>
+    </div></div>
+    <div class="frame"><div class="s">
+      <p class="crumb"><a href="#v2b">WCAG 3.0</a> / 2.1</p>
+      <p class="w3top"><span class="wd">wersja robocza W3C</span><span>z 10 września 2026</span></p>
+      <h4 class="t1"><span class="mono">2.1</span> Obrazy i multimedia</h4>
+      <p class="ours"><span lang="en">Images and media</span>. Przypisania do WCAG 2.2 są nasze.</p>
+      <ul class="gl">
+        <li><span class="n">2.1.1</span><div><span class="nm">Alternatywy dla obrazów</span> <span class="en" lang="en">Image alternatives</span></div>
+          <div class="crit"><a class="chip" href="#v2b"><b>1.1.1</b> Treść nietekstowa</a></div></li>
+        <li><span class="n">2.1.2</span><div><span class="nm">Podpisy pod ilustracjami</span> <span class="en" lang="en">Figure captions</span></div>
+          <p class="nw"><b>Nowe w 3.0</b> Jeszcze bez wymagań.</p></li>
+        <li><span class="n">2.1.5</span><div><span class="nm">Napisy</span> <span class="en" lang="en">Captions</span></div>
+          <div class="crit"><a class="chip" href="#v2b"><b>1.2.2</b> Napisy rozszerzone (nagranie)</a><a class="chip" href="#v2b"><b>1.2.4</b> Napisy rozszerzone (na żywo)</a></div></li>
+      </ul>
+    </div></div>
+  </div>
+</section>
+
+<section class="variant" aria-labelledby="v2c">
+  <h3 id="v2c"><b>2C</b> One table with a filter</h3>
+  <p class="note">Mapping-first: one table of every guideline, group rows as separators, and a filter for "only new in 3.0". Dense and scannable on desktop, but wide: on a phone it scrolls sideways inside its region, and the filter needs script and a search param.</p>
+  <div class="frame"><div class="s">
+    <p class="w3top"><span class="wd">wersja robocza W3C</span><span>z 10 września 2026</span></p>
+    <h4 class="t1">WCAG 3.0: co odpowiada czemu</h4>
+    <fieldset>
+      <legend>Pokaż wytyczne</legend>
+      <div class="pick">
+        <label><input type="radio" name="f2c" checked> Wszystkie</label>
+        <label><input type="radio" name="f2c"> Z odpowiednikiem w 2.2</label>
+        <label><input type="radio" name="f2c"> Tylko nowe w 3.0</label>
+      </div>
+    </fieldset>
+    <div class="scroll" role="region" aria-label="Mapowanie wytycznych WCAG 3.0" tabindex="0">
+      <table class="m">
+        <caption class="muted" style="text-align:left;font-size:.875rem;padding-top:.75rem">Przypisania są nasze, nie W3C.</caption>
+        <thead><tr><th scope="col">Nr</th><th scope="col">Wytyczna</th><th scope="col"><span lang="en">Draft</span></th><th scope="col">WCAG 2.2</th></tr></thead>
+        <tbody>
+          <tr class="grp"><td colspan="4">2.1 Obrazy i multimedia</td></tr>
+          <tr><td class="mono">2.1.1</td><td>Alternatywy dla obrazów</td><td lang="en">Image alternatives</td><td><a href="#v2c">1.1.1</a></td></tr>
+          <tr><td class="mono">2.1.2</td><td>Podpisy pod ilustracjami</td><td lang="en">Figure captions</td><td><b>Nowe w 3.0</b></td></tr>
+          <tr><td class="mono">2.1.5</td><td>Napisy</td><td lang="en">Captions</td><td><a href="#v2c">1.2.2</a>, <a href="#v2c">1.2.4</a></td></tr>
+          <tr><td class="mono">2.1.8</td><td>Nie tylko jeden zmysł</td><td lang="en">Single sense</td><td><a href="#v2c">1.4.1</a>, <a href="#v2c">1.4.11</a>, <a href="#v2c">1.3.3</a></td></tr>
+          <tr class="grp"><td colspan="4">2.3 Komponenty interaktywne</td></tr>
+          <tr><td class="mono">2.3.1</td><td>Wygląd fokusu klawiatury</td><td lang="en">Keyboard focus appearance</td><td><a href="#v2c">2.4.7</a>, <a href="#v2c">2.4.13</a></td></tr>
+          <tr><td class="mono">2.3.2</td><td>Wygląd fokusu wskaźnika</td><td lang="en">Pointer focus appearance</td><td><b>Nowe w 3.0</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div></div>
+</section>
+
+<!-- ================================================================== -->
+<h2 id="m3">3. Links from criterion pages</h2>
+<p>The "Powiązane" section of 1.1.1, and of 1.4.3, which also gets the link to its stronger version. Criteria without a 3.0 counterpart show nothing extra.</p>
+
+<div class="two">
+<section class="variant" aria-labelledby="v3a">
+  <h3 id="v3a"><b>3A</b> Labelled rows in "Powiązane"</h3>
+  <p class="note">Related criteria, the stronger version and WCAG 3.0 each get a row with a label on the left. The 3.0 row carries the badge.</p>
+  <div class="frame"><div class="s rel">
+    <h5 class="sechead" style="margin-top:0">Powiązane</h5>
+    <div class="relrow"><span class="k">Kryteria</span><ul class="chips" style="margin:0"><li><a class="chip" href="#m3"><b>1.4.11</b> Kontrast elementów nietekstowych <span class="lvl">AA</span></a></li><li><a class="chip" href="#m3"><b>1.4.1</b> Użycie koloru <span class="lvl">A</span></a></li></ul></div>
+    <div class="relrow"><span class="k">Wersja wzmocniona</span><ul class="chips" style="margin:0"><li><a class="chip" href="#m3"><b>1.4.6</b> Kontrast (wzmocniony) <span class="lvl">AAA</span></a></li></ul></div>
+    <div class="relrow"><span class="k">W WCAG 3.0</span><div><ul class="chips" style="margin:0"><li><a class="chip" href="#m3"><b>2.2.x</b> Kontrast tekstu</a></li></ul><p class="muted" style="font-size:.8125rem;margin:.4rem 0 0"><span class="wd" style="font-size:.6875rem">wersja robocza W3C</span> z 10 września 2026</p></div></div>
+  </div></div>
+</section>
+
+<section class="variant" aria-labelledby="v3b">
+  <h3 id="v3b"><b>3B</b> Separate "W WCAG 3.0" note at the end</h3>
+  <p class="note">The existing related chips stay as they are, with the stronger version added among them. 3.0 goes into a short note under the section, in a sentence.</p>
+  <div class="frame"><div class="s rel">
+    <h5 class="sechead" style="margin-top:0">Powiązane</h5>
+    <ul class="chips"><li><a class="chip" href="#m3"><b>1.4.6</b> Kontrast (wzmocniony) <span class="lvl">AAA</span></a></li><li><a class="chip" href="#m3"><b>1.4.11</b> Kontrast elementów nietekstowych <span class="lvl">AA</span></a></li><li><a class="chip" href="#m3"><b>1.4.1</b> Użycie koloru <span class="lvl">A</span></a></li></ul>
+    <div class="box" style="margin-top:1.25rem">
+      <p style="margin:0"><span class="wd">wersja robocza W3C</span></p>
+      <p>W WCAG 3.0 to kryterium odpowiada dziś wytycznej <a href="#m3">2.2.x Kontrast tekstu</a>. Wersja robocza może to zmienić.</p>
+    </div>
+  </div></div>
+</section>
+</div>
+<p>The 3.0 guideline number for text contrast is a placeholder (<code>2.2.x</code>): it is read from the draft while writing the mapping.</p>
+
+<!-- ================================================================== -->
+<h2 id="m4">4. Entry point to /wcag-3</h2>
+<p>Decision 4 in the plan.</p>
+
+<section class="variant" aria-labelledby="v4a">
+  <h3 id="v4a"><b>4A</b> An eighth item in the main navigation</h3>
+  <p class="note">Visible from every page. At 390 pixels the list wraps onto a third row.</p>
+  <div class="two">
+    <div class="frame"><header class="hdr">
+      <span class="wm"><span class="mono">a11y</span>&nbsp;playground</span>
+      <nav aria-label="Główna (4A, szeroko)"><ul>
+        <li><a href="#v4a">Start</a></li><li><a href="#v4a">Kryteria</a></li><li><a href="#v4a" aria-current="page">WCAG 3.0</a></li><li><a href="#v4a">Prawo</a></li><li><a href="#v4a">Praktyka</a></li><li><a href="#v4a">Symulatory</a></li><li><a href="#v4a">Ścieżki</a></li><li><a href="#v4a">Słownik</a></li>
+      </ul></nav>
+      <span class="theme" aria-hidden="true">◐</span>
+    </header></div>
+    <div class="frame narrow"><header class="hdr">
+      <span class="wm"><span class="mono">a11y</span>&nbsp;playground</span>
+      <span class="theme" aria-hidden="true" style="margin-left:auto">◐</span>
+      <nav aria-label="Główna (4A, wąsko)" style="width:100%;margin:0"><ul>
+        <li><a href="#v4a">Start</a></li><li><a href="#v4a">Kryteria</a></li><li><a href="#v4a" aria-current="page">WCAG 3.0</a></li><li><a href="#v4a">Prawo</a></li><li><a href="#v4a">Praktyka</a></li><li><a href="#v4a">Symulatory</a></li><li><a href="#v4a">Ścieżki</a></li><li><a href="#v4a">Słownik</a></li>
+      </ul></nav>
+    </header></div>
+  </div>
+</section>
+
+<section class="variant" aria-labelledby="v4b">
+  <h3 id="v4b"><b>4B</b> Links from /kryteria and the home page</h3>
+  <p class="note">Navigation unchanged. The criteria list gets one line under its heading; the home page kicker gains "WCAG 3.0 (wersja robocza)" as a link. Search also finds the page.</p>
+  <div class="two">
+    <div class="frame"><div class="s">
+      <h4 class="t1" style="font-size:1.875rem">Kryteria</h4>
+      <p class="muted mono" style="font-size:.875rem;margin:.35rem 0 0">Pokazuję 86 z 86 kryteriów WCAG 2.2</p>
+      <p style="margin:.75rem 0 0;font-size:.9375rem">Co dalej ze standardem: <a href="#v4b" style="display:inline-flex;min-height:44px;align-items:center">WCAG 3.0, wersja robocza</a></p>
+    </div></div>
+    <div class="frame"><div class="s">
+      <p class="kick">WCAG 2.1 · WCAG 2.2 · <a href="#v4b" style="color:var(--ink-2)">WCAG 3.0 (wersja robocza)</a> · prawo polskie</p>
+      <h4 class="t1" style="font-size:2.25rem;max-width:18ch">Zacznij od tego, co psuje najwięcej.</h4>
+    </div></div>
+  </div>
+  <p class="note">In 4B the kicker link is small text, so in the build it gets a 44 pixel high hit area through padding, as every other link in the app.</p>
+</section>
+
+<h2 id="pick">Recommendation</h2>
+<p><b>1A</b>, <b>2A</b>, <b>3A</b>, <b>4B</b>. Reasons in section 12 of the plan.</p>
+<p>Picked on 2026-10-01: <b>1A</b>, <b>2C</b>, <b>3A</b>, <b>4A</b>.</p>
+
+</div>
+</body>
+</html>

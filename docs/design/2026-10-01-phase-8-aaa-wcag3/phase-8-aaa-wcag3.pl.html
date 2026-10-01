@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan: etap 8, kryteria AAA i śledzenie WCAG 3.0</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1.25rem 6rem;
+    background: #000; color: #fff;
+    font: 16px/1.65 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  main { max-width: 82ch; margin: 0 auto; }
+  h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 .5rem; letter-spacing: -.02em; }
+  h2 { font-size: 1.2rem; margin: 3rem 0 .75rem; padding-top: 1rem; border-top: 1px solid #262626; letter-spacing: -.01em; }
+  h3 { font-size: 1rem; margin: 1.75rem 0 .5rem; }
+  p, li, dd { color: #e5e5e5; }
+  a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  ul, ol { padding-left: 1.3rem; }
+  li { margin: .3rem 0; }
+  code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .875em; background: #141414; border: 1px solid #262626; border-radius: 3px; padding: .08em .3em; }
+  pre { background: #0b0b0b; border: 1px solid #262626; border-radius: 4px; padding: .9rem 1rem; overflow-x: auto; }
+  pre code { background: none; border: 0; padding: 0; font-size: .82rem; line-height: 1.55; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; display: block; overflow-x: auto; }
+  th, td { border: 1px solid #262626; padding: .45rem .6rem; text-align: left; vertical-align: top; }
+  th { background: #101010; font-weight: 600; }
+  .meta { color: #a3a3a3; font-size: .85rem; margin: 0 0 1.5rem; }
+  .meta a { color: #fff; }
+  .flag { border-left: 2px solid #737373; padding: .1rem 0 .1rem .85rem; margin: 1rem 0; color: #d4d4d4; font-size: .93rem; }
+  .toc { border: 1px solid #262626; padding: 1rem 1rem 1rem 2.4rem; margin: 1.5rem 0 0; }
+  .toc li { margin: .15rem 0; }
+  @media (max-width: 40rem) { body { padding: 1.25rem .9rem 4rem; } h1 { font-size: 1.45rem; } }
+</style>
+</head>
+<body>
+<main>
+
+<p class="meta"><a href="phase-8-aaa-wcag3.en.html" hreflang="en">English version</a></p>
+
+<h1>Plan: etap 8, kryteria AAA i śledzenie WCAG 3.0</h1>
+<p class="meta">Szczegółowy plan etapu 8 z <a href="../2026-09-27-wcag-learning-app/wcag-learning-app.pl.html">planu głównego</a>, sekcje 3.1, 3.2 i 14. Makiety strony kryterium AAA, <code>/wcag-3</code> i odnośników do niej: <a href="../2026-10-01-aaa-wcag3-mocks/aaa-wcag3-mocks.html">aaa-wcag3-mocks.html</a>. Wersja planu: 2026-10-01.</p>
+
+<p class="flag">Plan główny, pisany z pamięci, mówi, że WCAG 3.0 porzuciło poziomy brązowy, srebrny i złoty, i posługuje się pojęciami „wymagania podstawowe” i „rezultaty”. Wersja robocza z 10 września 2026 używa innych słów: 12 grup wytycznych, w każdej wytycznej wymagania <em>core</em> i <em>supplemental</em> oraz <em>assertions</em>, a sekcja o zgodności raportuje wymagania core i supplemental bez podziału na A, AA i AAA. Ten plan idzie za wersją roboczą. Każdy fakt o 3.0 sprawdzamy jeszcze raz w wersji aktualnej w dniu pisania treści.</p>
+
+<ol class="toc">
+  <li><a href="#goal">Cel i warunek ukończenia</a></li>
+  <li><a href="#scope">Zakres</a></li>
+  <li><a href="#aaa">Treść kryteriów AAA</a></li>
+  <li><a href="#aaa-format">Co AAA dodaje do formatu kryterium</a></li>
+  <li><a href="#w3">Moduł WCAG 3.0</a></li>
+  <li><a href="#w3-format">Format treści WCAG 3.0</a></li>
+  <li><a href="#pages">Strony</a></li>
+  <li><a href="#a11y">Dostępność</a></li>
+  <li><a href="#tests">Testy</a></li>
+  <li><a href="#commits">Commity i pull request</a></li>
+  <li><a href="#risks">Ryzyka</a></li>
+  <li><a href="#decisions">Decyzje</a></li>
+</ol>
+
+<h2 id="goal">1. Cel i warunek ukończenia</h2>
+<p>Po etapie 8 aplikacja obejmuje całe WCAG 2.2 i uczciwie mówi, co nadchodzi. Kto otworzy kryterium AAA, dowie się, czego ono wymaga, o ile więcej niż jego odpowiednik AA i kiedy warto je spełnić, choć żadna polska ustawa tego nie wymaga. Kto słyszał o WCAG 3.0, dowie się, jak jest zbudowane, na jakim jest etapie i gdzie w nim trafiają dzisiejsze kryteria.</p>
+<p>Gotowe, gdy:</p>
+<ul>
+  <li>Wszystkie 86 kryteriów WCAG 2.2 ma treść. Test kompletności obejmuje każde kryterium, które nie jest wycofane, a nie tylko A i AA.</li>
+  <li>4.1.1 Poprawność kodu ma krótką stronę: dlaczego WCAG 2.2 je wycofało i dlaczego polski podmiot publiczny nadal musi je spełnić.</li>
+  <li>Istnieje <code>/wcag-3</code>. Ma widoczną plakietkę „wersja robocza W3C” z datą opisywanej wersji i datą naszego ostatniego sprawdzenia.</li>
+  <li>Każda wytyczna z wersji roboczej 3.0 ma przypisane kryteria 2.2, którym dziś odpowiada, albo informację, że w 2.2 nic jej nie odpowiada. Strony kryteriów linkują z powrotem.</li>
+  <li>Filtr ról na <code>/kryteria</code> działa dla każdego kryterium, więc znika notka o kryteriach AAA bez ról.</li>
+</ul>
+
+<h2 id="scope">2. Zakres</h2>
+<table>
+  <thead><tr><th>W zakresie</th><th>Poza zakresem, i dokąd trafia</th></tr></thead>
+  <tbody>
+    <tr><td>Treść 31 kryteriów AAA w trzech partiach według zasad, jako szkice (<code>status: szkic</code>)</td><td>Weryfikacja szkiców: robi ją człowiek, jak przy A i AA. Mówi o tym plakietka</td></tr>
+    <tr><td>Krótka strona dla 4.1.1, wycofanego w 2.2, ale wciąż obecnego w załączniku do ustawy z 2019 roku</td><td>Treść dla kryteriów istniejących tylko w 2.0: takich nie ma</td></tr>
+    <tr><td>Dwa opcjonalne pola frontmattera dla kryterium AAA, które zaostrza kryterium AA, i porównanie, które z nich powstaje na stronie</td><td>Nowe przykłady dla kryteriów AAA. Plan główny wymaga przykładów tylko dla AA. Przykład wyglądu fokusu (2.4.13) trafia na listę pomysłów</td></tr>
+    <tr><td>Pojęcia słownika potrzebne w tekstach AAA, około ośmiu (tłumaczenie na język migowy, rozszerzona audiodeskrypcja, idiom, żargon, skrót, poziom umiejętności czytania i podobne; ostateczna lista w trakcie pisania)</td><td>Lekcje o AAA w ścieżkach. Ścieżki uczą tego, czego wymaga prawo; lekcja może podlinkować kryterium AAA tam, gdzie już omawia jego odpowiednik AA</td></tr>
+    <tr><td>Moduł WCAG 3.0: jedna strona, <code>/wcag-3</code>, ze stanem prac, różnicami względem 2.x i mapowaniem wytycznych na kryteria</td><td>Nauka 3.0 wymaganie po wymaganiu. Wersja robocza ma kilkaset wymagań w statusie „developing”. Mapujemy wytyczne, nie wymagania</td></tr>
+    <tr><td>Wiersz „W WCAG 3.0” na każdej stronie kryterium, które ma odpowiednik</td><td>Importer wersji roboczej 3.0. To HTML bez danych strukturalnych, a 12 plików pisanych ręcznie łatwiej utrzymać w porządku niż skraper</td></tr>
+    <tr><td>Wytyczne 3.0 w wyszukiwarce</td><td>Śledzenie EN 301 549 albo EAA względem 3.0. Na razie nic się do niego nie odwołuje</td></tr>
+  </tbody>
+</table>
+
+<h2 id="aaa">3. Treść kryteriów AAA</h2>
+<p>Ten sam format, te same sekcje i te same zasady pisania co w etapie 2: najpierw sytuacja użytkownika, konkretne liczby, tryb rozkazujący w „Jak to spełnić”, podział na role tam, gdzie pracuje kilka osób. Trzy rzeczy są właściwe dla AAA.</p>
+<ul>
+  <li><strong>Powiedz, kiedy warto.</strong> Samo W3C nie zaleca AAA jako ogólnej zasady, bo części kryteriów nie da się spełnić dla części treści. Każda strona AAA mówi w „Jak to spełnić”, gdzie kryterium się opłaca, a gdzie nie: 2.5.5 jest tanie w systemie projektowym i drogie w starej aplikacji, 1.2.6 ma sens przy filmie urzędu, a nie przy demo produktu.</li>
+  <li><strong>Zacznij od różnicy.</strong> Dwanaście kryteriów AAA zaostrza kryterium AA (tabela niżej). W nich podsumowanie podaje różnicę w liczbach, a strona pokazuje porównanie z odpowiednikiem (sekcja 4).</li>
+  <li><strong>Jasno o prawie.</strong> Sekcja „Prawo” już mówi, że żadna ustawa nie wymaga AAA. Tekst nie powtarza tego w każdej sekcji; pada to raz, w notce AAA w nagłówku.</li>
+</ul>
+
+<h3>Partie</h3>
+<table>
+  <thead><tr><th>Partia</th><th>Kryteria</th><th>Liczba</th></tr></thead>
+  <tbody>
+    <tr><td>Zasada 1</td><td><code>1.2.6</code> <code>1.2.7</code> <code>1.2.8</code> <code>1.2.9</code> <code>1.3.6</code> <code>1.4.6</code> <code>1.4.7</code> <code>1.4.8</code> <code>1.4.9</code></td><td>9</td></tr>
+    <tr><td>Zasada 2</td><td><code>2.1.3</code> <code>2.2.3</code> <code>2.2.4</code> <code>2.2.5</code> <code>2.2.6</code> <code>2.3.2</code> <code>2.3.3</code> <code>2.4.8</code> <code>2.4.9</code> <code>2.4.10</code> <code>2.4.12</code> <code>2.4.13</code> <code>2.5.5</code> <code>2.5.6</code></td><td>14</td></tr>
+    <tr><td>Zasada 3</td><td><code>3.1.3</code> <code>3.1.4</code> <code>3.1.5</code> <code>3.1.6</code> <code>3.2.5</code> <code>3.3.5</code> <code>3.3.6</code> <code>3.3.9</code></td><td>8</td></tr>
+    <tr><td>Wycofane</td><td><code>4.1.1</code></td><td>1</td></tr>
+  </tbody>
+</table>
+<p>Zasada 4 nie ma kryteriów AAA. 2.4.12, 2.4.13 i 3.3.9 są nowe w 2.2, więc w „Treści normy” pokazują notkę o IRDPL, jak pozostałe nowe kryteria.</p>
+
+<h3>Kryteria AAA, które zaostrzają kryterium AA</h3>
+<table>
+  <thead><tr><th>AAA</th><th>Zaostrza</th><th>Różnica w skrócie</th></tr></thead>
+  <tbody>
+    <tr><td><code>1.2.7</code></td><td><code>1.2.5</code></td><td>Film się zatrzymuje, gdy przerwy są za krótkie na audiodeskrypcję</td></tr>
+    <tr><td><code>1.2.8</code></td><td><code>1.2.3</code></td><td>Pełna alternatywa tekstowa, już nie do wyboru zamiast audiodeskrypcji</td></tr>
+    <tr><td><code>1.4.6</code></td><td><code>1.4.3</code></td><td>7 do 1 zamiast 4,5 do 1, duży tekst 4,5 zamiast 3</td></tr>
+    <tr><td><code>1.4.9</code></td><td><code>1.4.5</code></td><td>Żadnych obrazów tekstu poza logo i sytuacjami, w których obraz jest niezbędny</td></tr>
+    <tr><td><code>2.1.3</code></td><td><code>2.1.1</code></td><td>Bez wyjątku dla wprowadzania zależnego od ścieżki ruchu</td></tr>
+    <tr><td><code>2.2.3</code></td><td><code>2.2.1</code></td><td>Żadnych limitów czasu poza wydarzeniami na żywo i mediami bez interakcji</td></tr>
+    <tr><td><code>2.3.2</code></td><td><code>2.3.1</code></td><td>Najwyżej trzy błyski na sekundę, bez wyjątku dla progu</td></tr>
+    <tr><td><code>2.4.9</code></td><td><code>2.4.4</code></td><td>Sam tekst łącza, bez kontekstu</td></tr>
+    <tr><td><code>2.4.12</code></td><td><code>2.4.11</code></td><td>Żadna część elementu z fokusem nie jest zakryta, a nie „nie cały”</td></tr>
+    <tr><td><code>2.5.5</code></td><td><code>2.5.8</code></td><td>44 na 44 piksele zamiast 24 na 24, mniej wyjątków</td></tr>
+    <tr><td><code>3.3.6</code></td><td><code>3.3.4</code></td><td>Każdy formularz, który wysyła dane, nie tylko prawne, finansowe i usuwanie danych</td></tr>
+    <tr><td><code>3.3.9</code></td><td><code>3.3.8</code></td><td>Bez wyjątków dla rozpoznawania obiektów i treści osobistych</td></tr>
+  </tbody>
+</table>
+<p>Dokładną listę i brzmienie ustalamy przy pisaniu, na podstawie tekstu normy. 3.2.5 wiąże się z 3.2.1 i 3.2.2, ale żadnego z nich nie zaostrza, więc zostaje w <code>related</code>.</p>
+
+<h3>4.1.1 Poprawność kodu</h3>
+<p>Krótki plik tylko z „Kogo to dotyczy” i „Częste pomyłki”: czego kryterium wymagało, dlaczego 2.2 je wycofało (przeglądarki i technologie wspomagające naprawiają dziś błędny kod tak samo, a problemy, które łapało, obejmują 1.3.1 i 4.1.2) i haczyk dla polskiego czytelnika: załącznik do ustawy z 2019 roku wymienia WCAG 2.1, więc podmiot publiczny nadal jest sprawdzany z 4.1.1. Strona już mówi „wycofane w WCAG 2.2”, a sekcja „Prawo” już pokazuje notkę z <code>legal-map.ts</code>. Test kompletności nadal pomija kryteria wycofane, więc ten plik nie musi mieć pełnego zestawu sekcji A i AA.</p>
+
+<h2 id="aaa-format">4. Co AAA dodaje do formatu kryterium</h2>
+<p>Dwa opcjonalne pola frontmattera, używane tylko w kryteriach AAA z tabeli wyżej:</p>
+<pre><code># content/kryteria/1.4.6.md
+---
+status: szkic
+summary: Tekst musi odcinać się od tła w stosunku co najmniej 7 do 1. Duży tekst wystarczy 4,5 do 1.
+roles: [projektant, programista]
+enhances: "1.4.3"
+difference: 7 do 1 zamiast 4,5 do 1. Duży tekst 4,5 do 1 zamiast 3 do 1. Wyjątki te same.
+related: ["1.4.3", "1.4.11", "1.4.8"]
+---</code></pre>
+<ul>
+  <li><code>enhances</code> musi wskazywać istniejące kryterium niższego poziomu w tej samej wytycznej. Parser sprawdza numer, a test sprawdza poziom i wytyczną, bo parser widzi naraz tylko jeden plik.</li>
+  <li><code>difference</code> jest wymagane razem z <code>enhances</code> i zabronione bez niego, do 160 znaków. To ten jeden wiersz, który pokazuje porównanie na stronie (makieta 1).</li>
+  <li>Odpowiednik AA dostaje odnośnik z powrotem bez dodatkowej pracy: strona AA czyta odwrócony indeks i mówi „Wersja wzmocniona: 1.4.6”. Po stronie AA nie ma pola, więc te dwa miejsca nie mogą się rozjechać.</li>
+</ul>
+<p>Notka AAA w nagłówku nie jest treścią: każda strona AAA dostaje to samo zdanie, „Poziom AAA: cel, nie obowiązek. Żadna ustawa go nie wymaga”, z odnośnikiem do sekcji „Prawo” na tej samej stronie. Brzmienie wybierzemy z wariantów na czacie, zanim zaczniemy budować.</p>
+<p>Opcjonalnie, decyzja 3: tam, gdzie ta aplikacja spełnia kryterium AAA (1.4.6, 2.3.3, 2.4.13, 2.5.5, według <code>docs/accessibility.md</code> i README), strona to mówi: „Ta aplikacja to spełnia”, razem z tym, jak to sprawdzamy. Jedna lista <code>as const satisfies readonly CriterionId[]</code> w kodzie, z komentarzem wskazującym testy, które stoją za każdą pozycją.</p>
+
+<h2 id="w3">5. Moduł WCAG 3.0</h2>
+<p>Strona do śledzenia, nie materiał do nauki. Trzy krótkie części:</p>
+<ol>
+  <li><strong>Stan prac.</strong> Jeden akapit: jaki to dokument (wersja robocza W3C), z której wersji pochodzi opis, że W3C zapowiada jeszcze kilka lat pracy i że ani polskie, ani unijne prawo się do niego nie odwołuje. Plakietka i obie daty stoją nad nagłówkiem.</li>
+  <li><strong>Czym 3.0 różni się od 2.x.</strong> Porównanie w dwóch kolumnach, pięć albo sześć wierszy: kryteria sukcesu kontra wytyczne z wymaganiami; A, AA i AAA kontra wymagania core i supplemental; zaliczone albo nie dla każdej strony kontra model zgodności, który wciąż jest dyskutowany; assertions (udokumentowana praktyka organizacji, na przykład testy z udziałem osób z niepełnosprawnościami), którym w 2.x nic nie odpowiada; zakres poza stronami WWW (XR, środowiska immersyjne). Każdy wiersz mówi, co to znaczy dla kogoś, kto buduje dzisiaj: dopóki nie zmieni się prawo, twoje obowiązki zostają takie same.</li>
+  <li><strong>Mapowanie.</strong> 12 grup z wersji roboczej (obrazy i multimedia, tekst i sformułowania, komponenty interaktywne, wprowadzanie i obsługa, obsługa błędów, animacja i ruch, układ, spójność między widokami, procesy i wykonanie zadań, zasady i ochrona, pomoc i informacja zwrotna, kontrola użytkownika), każda ze swoimi wytycznymi. Przy wytycznej: numer i angielska nazwa z wersji roboczej, nasza polska nazwa, kryteria 2.2, którym dziś odpowiada, i opcjonalna notka w jednym zdaniu. Wytyczna bez odpowiednika ma napis „Nowe w 3.0”, więc widać, gdzie 3.0 idzie dalej.</li>
+</ol>
+<p>Dwa słowa nie mogą się zderzyć. Aplikacja używa już „szkicu” dla naszej niezweryfikowanej treści. Wersja robocza 3.0 to zawsze „wersja robocza W3C”, z plakietką o własnym kształcie (makieta 2), żeby „szkic” miał jedno znaczenie.</p>
+<p>Mapowanie jest nasze, nie W3C. Wersja robocza nie publikuje tabeli przejścia z 2.x do 3.0. Strona mówi o tym pod nagłówkiem mapowania, a każdy wiersz jest naszą oceną, o którą można zapytać.</p>
+
+<h2 id="w3-format">6. Format treści WCAG 3.0</h2>
+<p>Jeden plik Markdown dla strony i po jednym dla każdej grupy, w <code>content/wcag3/</code>:</p>
+<pre><code>content/wcag3/
+  index.md              stan prac, porównanie, data wersji roboczej
+  obrazy-i-multimedia.md
+  tekst-i-sformulowania.md
+  ...                   12 plików grup
+
+# content/wcag3/index.md
+---
+status: szkic
+draft: 2026-09-10                     # data wersji roboczej W3C, którą opisujemy
+draftUrl: https://www.w3.org/TR/2026/WD-wcag-3.0-20260910/
+---
+## Czym jest WCAG 3.0
+...
+## Co się zmienia
+| WCAG 2.2 | WCAG 3.0 (wersja robocza) |
+...
+
+# content/wcag3/obrazy-i-multimedia.md
+---
+num: "2.1"
+title: Obrazy i multimedia
+en: Images and media
+status: szkic
+guidelines:
+  - num: "2.1.1"
+    en: Image alternatives
+    title: Alternatywy dla obrazów
+    criteria: ["1.1.1"]
+  - num: "2.1.8"
+    en: Single sense
+    title: Nie tylko jeden zmysł
+    criteria: ["1.4.1", "1.4.11", "1.3.3"]
+  - num: "2.1.9"
+    en: Accessible media player
+    title: Dostępny odtwarzacz
+    criteria: []
+    note: Twierdzenie o wyborze odtwarzacza, a nie wymaganie wobec treści.
+---
+Krótki wstęp do grupy, opcjonalny.</code></pre>
+<ul>
+  <li>Frontmatter waliduje ArkType. <code>criteria</code> są sprawdzane w rejestrze, więc literówka wywraca build jak wszędzie indziej.</li>
+  <li>Numery wytycznych muszą zaczynać się numerem grupy i być unikalne. Numery grup muszą być unikalne między plikami. Kolejność na stronie wynika z <code>num</code>, nie z nazwy pliku.</li>
+  <li><code>draft</code> jest tylko w <code>index.md</code>, więc nowa wersja robocza to zmiana jednej daty i ponowne przeczytanie 12 plików, a strona nie pokaże dwóch dat dla jednej wersji.</li>
+  <li>Odwrócony indeks, od kryterium do wytycznych, powstaje raz z plików grup. Czytają go strony kryteriów i wyszukiwarka.</li>
+  <li>Datę wersji roboczej sprawdzamy jak <code>lastVerified</code>, ale z krótszym limitem: starsza niż sześć miesięcy wywraca test treści, bo W3C publikuje nową wersję roboczą dwa, trzy razy w roku. Decyzja 5.</li>
+</ul>
+
+<h2 id="pages">7. Strony</h2>
+<ul>
+  <li><strong>Strony kryteriów AAA.</strong> W nagłówku pojawia się notka AAA. Tam, gdzie jest <code>enhances</code>, porównanie z odpowiednikiem AA: jego numer i nazwa oraz wiersz <code>difference</code> (wariant wybrany z makiety 1). Opcjonalnie wiersz „Ta aplikacja to spełnia”.</li>
+  <li><strong>Strony AA z wersją wzmocnioną.</strong> Jeden wiersz w „Powiązanych”: „Wersja wzmocniona: 1.4.6 Kontrast (wzmocniony), AAA”.</li>
+  <li><strong>Wszystkie strony kryteriów.</strong> W „Powiązanych” wiersz „W WCAG 3.0 (wersja robocza)” z numerami i nazwami wytycznych, z odnośnikami do ich kotwic na <code>/wcag-3</code> (makieta 3). Kryteria bez odpowiednika nic tu nie pokazują.</li>
+  <li><strong><code>/wcag-3</code>.</strong> Makieta 2C. Prerenderowana. Stan prac i porównanie, potem filtr i jedna tabela: wiersz grupy jako przerywnik, wiersz wytycznej z własną kotwicą (identyfikatory w stylu <code>#2.1.1</code> zapisujemy jako <code>#w3-2-1-1</code>). Odnośniki ze stron kryteriów prowadzą do strony bez filtra.</li>
+  <li><strong>Wejścia.</strong> Makieta 4A: „WCAG 3.0” w głównej nawigacji, za „Kryteriami”.</li>
+  <li><strong><code>/kryteria</code>.</strong> Znika notka pod filtrem ról o kryteriach AAA bez ról.</li>
+  <li><strong>Wyszukiwarka.</strong> Nowy rodzaj wyniku, „WCAG 3.0”, jeden dokument na wytyczną: nasza nazwa, nazwa angielska i numery przypisanych kryteriów. Zarówno „image alternatives”, jak i „alternatywy” znajdują 2.1.1.</li>
+</ul>
+
+<h2 id="a11y">8. Dostępność</h2>
+<ul>
+  <li><strong>Plakietki to tekst.</strong> „wersja robocza W3C” i „AAA: cel, nie obowiązek” to słowa, w kształcie innym niż istniejące plakietki (przerywana ramka dla naszych szkiców, pełna dla poziomów). Znaczenia nie niesie kolor.</li>
+  <li><strong>Ostrzeżenie nie jest regionem na żywo.</strong> To statyczny tekst u góry strony, czytany po kolei. Ogłaszanie go zagłuszałoby komunikat o zmianie trasy.</li>
+  <li><strong>Porównanie to tabela.</strong> 2.x kontra 3.0 to <code>table</code> z podpisem i <code>th scope</code>, więc czytnik przechodzi po wierszach. Na wąskim ekranie przewija się w opisanym obszarze z fokusem, zamiast ściskać kolumny.</li>
+  <li><strong>Tabela mapowania przy 320 pikselach.</strong> Tabela danych to treść dwuwymiarowa, którą 1.4.10 zwalnia z zawijania. Przewija się w poziomie w opisanym obszarze z fokusem, więc przewijanie działa z klawiatury. Filtr to natywne przyciski radiowe, a liczba wierszy jest ogłaszana w wierszu stanu, jak na <code>/kryteria</code>.</li>
+  <li><strong>Angielskie nazwy mają <code>lang="en"</code>.</strong> Nazwy z wersji roboczej zostają po angielsku obok naszych polskich, a polski głos czytnika nie może ich przekręcić (3.1.2).</li>
+  <li><strong>Odnośniki do odpowiednika AA i do kotwic na <code>/wcag-3</code></strong> mają co najmniej 44 piksele wysokości, jak każdy inny odnośnik w formie przycisku w aplikacji.</li>
+</ul>
+
+<h2 id="tests">9. Testy</h2>
+<ul>
+  <li><strong>Kompletność (Vitest).</strong> Istniejący test traci filtr <code>level !== "AAA"</code>: każde kryterium, które nie jest wycofane, ma role i cztery wymagane sekcje. Ten test jest warunkiem ukończenia treści.</li>
+  <li><strong>Format AAA (Vitest).</strong> <code>difference</code> bez <code>enhances</code> i odwrotnie są odrzucane; <code>enhances</code> wskazujące kryterium tego samego lub wyższego poziomu albo z innej wytycznej wywraca test; odwrócony indeks daje 1.4.3 jego wersję wzmocnioną.</li>
+  <li><strong>Treść WCAG 3.0 (Vitest).</strong> Wszystkie pliki się parsują; numery grup i wytycznych są unikalne i zagnieżdżone; każdy numer kryterium istnieje; data wersji roboczej nie jest starsza niż sześć miesięcy; odwrócony indeks znajduje 1.1.1 pod 2.1.1.</li>
+  <li><strong>End to end (Playwright).</strong> <code>/wcag-3</code> pokazuje plakietkę i datę wersji roboczej nad pierwszym nagłówkiem treści; odnośnik z 1.1.1 prowadzi do kotwicy 2.1.1 i przenosi tam fokus; 1.4.6 pokazuje porównanie z 1.4.3 i do niego linkuje.</li>
+  <li><strong>Axe i rozmiar celów.</strong> <code>/wcag-3</code>, jedna strona AAA z porównaniem (1.4.6) i 4.1.1 dołączają do listy tras, w obu motywach.</li>
+  <li><strong>Wyszukiwarka.</strong> Przypadek trafności: „alternatywy dla obrazów” zwraca najpierw 1.1.1, a obok wytyczną 3.0.</li>
+</ul>
+
+<h2 id="commits">10. Commity i pull request</h2>
+<p>Jeden pull request, gałąź <code>feat/aaa-and-wcag3</code>:</p>
+<ol>
+  <li><code>docs(design): add phase 8 plan and AAA and WCAG 3.0 mocks</code>, ten plan i makiety.</li>
+  <li><code>feat(criteria): compare AAA criteria with the AA ones they tighten</code>, <code>enhances</code> i <code>difference</code> w parserze, odwrócony indeks, notka AAA i porównanie na stronie, z testami. Pierwszym plikiem jest 1.4.6, żeby strona miała co pokazać.</li>
+  <li><code>docs(glossary): add terms for AAA criteria</code>.</li>
+  <li><code>docs(content): explain AAA criteria of principle 1</code>.</li>
+  <li><code>docs(content): explain AAA criteria of principle 2</code>.</li>
+  <li><code>docs(content): explain AAA criteria of principle 3</code>.</li>
+  <li><code>docs(content): explain why 4.1.1 was removed</code>.</li>
+  <li><code>test(content): require complete content for every criterion</code>, rozszerzony test kompletności i usunięta notka na <code>/kryteria</code>.</li>
+  <li><code>feat(wcag3): add the WCAG 3.0 content format and mapping</code>, parser, 13 plików, odwrócony indeks i ich testy.</li>
+  <li><code>feat(wcag3): add the WCAG 3.0 page</code>, <code>/wcag-3</code>, wejście z decyzji 4, axe i test end to end.</li>
+  <li><code>feat(criteria): link criteria to WCAG 3.0 guidelines</code>.</li>
+  <li><code>feat(search): index WCAG 3.0 guidelines</code>.</li>
+  <li>Jeśli decyzja 3 brzmi „tak”: <code>feat(criteria): say which AAA criteria this app meets</code>.</li>
+  <li><code>docs: update README for phase 8</code>, ze zrzutami strony AAA i <code>/wcag-3</code> oraz odhaczonym etapem 8 w planie rozwoju.</li>
+</ol>
+<p>Commity 4 do 7 to sama treść i każdy przechodzi build samodzielnie, bo test kompletności rozszerzamy dopiero w commicie 8.</p>
+
+<h2 id="risks">11. Ryzyka</h2>
+<table>
+  <thead><tr><th>Ryzyko</th><th>Co robimy</th></tr></thead>
+  <tbody>
+    <tr><td>Wersja robocza 3.0 zmienia się w trakcie pisania albo zaraz po nim</td><td>Strona opisuje jedną wersję z datą, mówi o tym na samej górze, a test sześciu miesięcy wymusza ponowną lekturę. Mapowanie jest na poziomie wytycznych, które zmieniają się rzadziej niż wymagania</td></tr>
+    <tr><td>Czytelnicy biorą mapowanie za oficjalną równoważność W3C</td><td>Zdanie pod nagłówkiem mapowania mówi, że jest nasze, a wiersze używają „odpowiada dziś”, a nie „zastępuje”</td></tr>
+    <tr><td>Strony AAA brzmią jak obowiązek i straszą małe zespoły</td><td>Notka AAA w każdym nagłówku, akapit „kiedy warto” w każdym „Jak to spełnić” i sekcja „Prawo”, która już mówi, że żadna ustawa tego nie wymaga</td></tr>
+    <tr><td>31 szkiców pisanych w jednym etapie wychodzi cieńszych niż A i AA</td><td>Ten sam test kompletności i te same sekcje. Kryteria AAA z grupy multimediów (1.2.6 do 1.2.9) są z natury krótkie; pozostałe dostają tę samą głębokość co ich odpowiedniki AA</td></tr>
+    <tr><td>Testy zależne od daty wywracają CI w dniu, w którym nikt nic nie zmienił</td><td>Akceptujemy, jak przy <code>lastVerified</code>: komunikat podaje plik i datę, a naprawą jest ponowna lektura, nie zmiana kodu</td></tr>
+    <tr><td>Twierdzenie, że aplikacja spełnia kryterium AAA, którego nie spełnia</td><td>Tylko przy decyzji 3 na „tak” i tylko dla czterech kryteriów, za którymi stoi test wskazany w komentarzu w kodzie</td></tr>
+  </tbody>
+</table>
+
+<h2 id="decisions">12. Decyzje</h2>
+<p>Wybrane 2026-10-01 z <a href="../2026-10-01-aaa-wcag3-mocks/aaa-wcag3-mocks.html">aaa-wcag3-mocks.html</a>.</p>
+<ol>
+  <li><strong>Nagłówek AAA: postanowione, 1A.</strong> Pasek porównania z odpowiednikiem AA.</li>
+  <li><strong>Układ <code>/wcag-3</code>: postanowione, 2C.</strong> Jedna tabela wszystkich wytycznych z wierszami grup jako przerywnikami i filtr: wszystkie, z odpowiednikiem w 2.2, tylko nowe w 3.0. Filtr siedzi w <code>?pokaz=</code> (<code>z-odpowiednikiem</code>, <code>nowe</code>; brak wartości to wszystkie) i jest walidowany jak filtry na <code>/kryteria</code>.</li>
+  <li><strong>„Ta aplikacja to spełnia” na czterech stronach AAA: postanowione, tak.</strong></li>
+  <li><strong>Wejście na <code>/wcag-3</code>: postanowione, 4A.</strong> „WCAG 3.0” w głównej nawigacji, za „Kryteriami”.</li>
+  <li><strong>Jak stara może być data wersji roboczej: postanowione, sześć miesięcy.</strong></li>
+  <li><strong>Głębokość mapowania: postanowione, wytyczne.</strong></li>
+  <li><strong>Notka AAA: postanowione.</strong> „Poziom AAA: cel, nie obowiązek. Żadna ustawa go nie wymaga.”</li>
+</ol>
+
+</main>
+</body>
+</html>
