@@ -24,6 +24,8 @@ describe("search", () => {
     ["domniemanie zgodnosci", "przepis:ustawa-2024-731/art-20"],
     ["semantyka", "lekcja:programista/semantyka-najpierw"],
     ["jak opisac blad", "lekcja:tester/jak-opisac-blad"],
+    ["image alternatives", "wcag3:2.1.1"],
+    ["alternatywy dla obrazow", "wcag3:2.1.1"],
   ])("%s finds %s", (query, id) => {
     const top = index
       .search(query)
