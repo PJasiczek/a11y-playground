@@ -4,6 +4,7 @@ import viteReact from "@vitejs/plugin-react";
 import { nitro } from "nitro/vite";
 import { readdirSync } from "node:fs";
 import { defineConfig } from "vite";
+import { readingOrderPlugin } from "./src/content/reading-order.vite.ts";
 import { acts, legalUnits } from "./src/content/legal.gen.ts";
 import { criteria } from "./src/content/wcag.gen.ts";
 
@@ -14,6 +15,7 @@ export default defineConfig({
   resolve: { tsconfigPaths: true },
   // Nitro picks the Vercel preset automatically when the build runs on Vercel.
   plugins: [
+    readingOrderPlugin(),
     tailwindcss(),
     tanstackStart({
       // Content is static, so every page is rendered to HTML at build time. Crawling finds the
@@ -24,9 +26,10 @@ export default defineConfig({
         enabled: true,
         crawlLinks: true,
         failOnError: true,
-        // A link like /slownik#nazwa points at the same page as /slownik. Crawling each anchor
-        // separately writes the same file in parallel, which can leave it empty.
-        filter: ({ path }) => !path.includes("#"),
+        // A link like /slownik#nazwa or /praktyka/x?symulacja=czytnik points at the same page as
+        // /slownik or /praktyka/x. Crawling each variant separately writes the same file in
+        // parallel, which can leave it empty.
+        filter: ({ path }) => !path.includes("#") && !path.includes("?"),
       },
       pages: [
         ...criteria.map((c) => ({ path: `/kryteria/${c.id}` })),

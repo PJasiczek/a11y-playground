@@ -1,0 +1,9 @@
+// Modules that Vite plugins generate at build time.
+
+declare module "virtual:reading-order" {
+  import type { VariantReading } from "~/content/reading-order";
+
+  /** What a screen reader reads in each example variant, by slug. See reading-order.vite.ts. */
+  const orders: Record<string, Partial<Record<"bad" | "good", VariantReading>> | undefined>;
+  export default orders;
+}

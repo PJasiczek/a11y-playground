@@ -35,6 +35,13 @@ describe("parseExample", () => {
     expect(example.bad.source).toBe("<p>zły</p>");
     expect(example.introHtml).toBe("<p>Wstęp.</p>\n");
     expect(example.motion).toBe(false);
+    expect(example.simulations).toEqual({});
+  });
+
+  test("keeps the simulation notes by id", () => {
+    const notes = "simulations:\n  deuteranopia: Ramka znika.\nstatus: szkic";
+    const example = parseExample("x", { ...files, index: index.replace("status: szkic", notes) });
+    expect(example.simulations).toEqual({ deuteranopia: "Ramka znika." });
   });
 
   test.each([
@@ -42,6 +49,7 @@ describe("parseExample", () => {
     ["a missing good.html", { ...files, good: undefined }, /good.html is missing/],
     ["an unknown criterion", { ...files, index: index.replace('"1.1.1"', '"9.9.9"') }, /9\.9\.9/],
     ["an effort off the scale", { ...files, index: index.replace("1 linia", "chwila") }, /effort/],
+    ["an unknown simulation", { ...files, index: index.replace("status: szkic", "simulations:\n  mgla: Nic.\nstatus: szkic") }, /mgla/],
     ["an unknown key in a variant", { ...files, index: index.replace("  why: Dobrze.", "  why: Dobrze.\n  axe: [x]") }, /axe/],
   ])("rejects %s", (_, input, message) => {
     expect(() => parseExample("x", input)).toThrow(message);

@@ -1,10 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
 import { type } from "arktype";
+import readingOrders from "virtual:reading-order";
 import { type CriterionContent, criterionContent } from "./criterion-content";
 import { examples } from "./examples";
 import { glossary } from "./glossary";
 import { lawRowsFor } from "./legal-content";
 import { lessonsCovering } from "./paths";
+import { simulators } from "./simulators";
 import { criteria, type CriterionId } from "./wcag";
 import { criterionTexts } from "./wcag-text.gen";
 
@@ -61,18 +63,33 @@ export const getCriteriaOverview = createServerFn({ method: "GET" }).handler(() 
   return overview;
 });
 
-/** One example with both fragments, or null for an unknown slug. */
+/**
+ * One example with both fragments, or null for an unknown slug. Also the general description and
+ * limits of every simulator kind, for the rail, the glossary terms both kinds of text mark, and
+ * what a screen reader reads in each variant, for the "Czytnik ekranu" simulator.
+ */
 export const getExample = createServerFn({ method: "GET" })
   .validator(type("string"))
   .handler(({ data }) => {
     const example = examples.get(data);
     if (!example) return null;
+    const kinds = [...simulators.values()];
     const terms: Record<string, { term: string; html: string }> = {};
-    for (const slug of example.terms) {
+    for (const slug of [...example.terms, ...kinds.flatMap((kind) => kind.terms)]) {
       const entry = glossary.get(slug);
       if (entry) terms[slug] = { term: entry.term, html: entry.html };
     }
-    return { example, terms };
+    const descriptions = kinds.map(({ kind, html, limits }) => ({ kind, html, limits }));
+    const none = { reading: [], tab: [] };
+    const bad = readingOrders[data]?.bad ?? none;
+    const good = readingOrders[data]?.good ?? none;
+    return {
+      example,
+      terms,
+      simulators: descriptions,
+      reading: { bad: bad.reading, good: good.reading },
+      tab: { bad: bad.tab, good: good.tab },
+    };
   });
 
 /** Every example as a catalogue card, cheapest fix first. */

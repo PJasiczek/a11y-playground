@@ -23,7 +23,7 @@ for (const { slug, declared } of examples) {
       const start = page.getByRole("button", { name: "Uruchom przykład" });
       while ((await start.count()) > 0) await start.first().click();
       const frame = page.locator('iframe[data-variant="bad"]');
-      await expect(frame).toHaveAttribute("sandbox", "allow-scripts");
+      await expect(frame).toHaveAttribute("sandbox", "allow-scripts allow-forms");
       await expect(page.frameLocator('iframe[data-variant="bad"]').locator('[data-example-root="bad"]')).toHaveCount(1);
       // Nothing from either fragment is part of this page's own document.
       await expect(page.locator("[data-example-root]")).toHaveCount(0);
@@ -68,6 +68,14 @@ test("the fixed list reorders from the keyboard and announces the new position",
   await page.keyboard.press("Enter");
   await expect(page.getByRole("status")).toHaveText("Zadanie 1: raport jest teraz na pozycji 2 z 3");
   await expect(page.getByRole("button", { name: "Przenieś Zadanie 1: raport w dół" })).toBeFocused();
+});
+
+test("the fixed form shows its error inside the sandboxed frame", async ({ page }) => {
+  await page.goto("/praktyka/formularz-z-bledami");
+  const frame = page.frameLocator('iframe[data-variant="good"]');
+  await frame.getByRole("textbox", { name: "Adres e-mail" }).fill("jan.przyklad.pl");
+  await frame.getByRole("button", { name: "Zapisz się" }).click();
+  await expect(frame.getByText("Błąd: podaj adres z małpą")).toBeVisible();
 });
 
 test("the carousel loads nothing before the reader starts it", async ({ page }) => {

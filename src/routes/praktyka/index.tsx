@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { FixCard, FixCards } from "~/components/fix-card";
 import { getExampleCards } from "~/content/content.functions";
 import { countOf } from "~/lib/plural";
@@ -21,6 +21,12 @@ function PracticePage() {
       <p className="mb-6 max-w-[60ch] text-ink-2">
         Ten sam fragment interfejsu dwa razy: zepsuty i poprawny, z kodem i z tym, co usłyszy czytnik ekranu. Żółta
         krawędź mówi, co zyskuje użytkownik. Nakład to szacunek na jedno miejsce w kodzie.
+      </p>
+      <p className="mb-6 max-w-[60ch] text-ink-2">
+        Każdy przykład obejrzysz też bez kolorów, bez myszy, przez czytnik ekranu albo na wąskim ekranie.{" "}
+        <Link to="/symulatory" className="text-accent underline underline-offset-3">
+          Jak działają symulatory
+        </Link>
       </p>
       <FixCards>
         {cards.map((card) => (
