@@ -50,8 +50,8 @@ function CriteriaPage() {
   const version = search.wersja ?? "2.2";
   const pickedLevels: readonly Level[] = search.poziom ?? levels;
   const inScope = criteria.filter((c) => inVersion(c, version));
-  // No role picked means no role filter. Criteria without content have no roles yet, so a role
-  // filter hides them; the note under the filters says so.
+  // No role picked means no role filter. Every criterion has content with roles, which the
+  // completeness test guarantees.
   const pickedRoles: readonly Role[] = search.rola ?? [];
   const matchesRole = (id: CriterionId) =>
     pickedRoles.length === 0 || (overview[id]?.roles.some((role) => pickedRoles.includes(role)) ?? false);
@@ -114,12 +114,6 @@ function CriteriaPage() {
           ))}
         </FilterGroup>
       </div>
-
-      {pickedRoles.length > 0 ? (
-        <p className="pt-3 text-[0.9375rem] text-ink-2">
-          Filtr ról pokazuje tylko kryteria z opisaną treścią. Kryteria AAA nie mają jeszcze przypisanych ról.
-        </p>
-      ) : null}
 
       {filtered ? (
         <p className="py-3">

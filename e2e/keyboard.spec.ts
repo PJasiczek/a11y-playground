@@ -84,13 +84,12 @@ test("glossary terms link to their entry on /slownik", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 3, name: "współczynnik kontrastu" })).toBeInViewport();
 });
 
-test("the role filter works from the keyboard and explains what it hides", async ({ page }) => {
+test("the role filter works from the keyboard", async ({ page }) => {
   await page.goto("/kryteria");
   const tester = page.getByRole("checkbox", { name: "tester" });
   await tester.focus();
   await page.keyboard.press("Space");
   await expect(page).toHaveURL(/rola=/);
-  await expect(page.getByText("Filtr ról pokazuje tylko kryteria z opisaną treścią.")).toBeVisible();
   await expect(page.getByRole("link", { name: /^2\.1\.1 Klawiatura/ })).toBeVisible();
   await expect(page.getByRole("link", { name: /^1\.2\.3 / })).toHaveCount(0);
   await expect(tester).toBeFocused();

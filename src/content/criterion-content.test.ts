@@ -79,11 +79,12 @@ describe("enhances", () => {
   });
 });
 
-// Phase 2 promise: every A and AA criterion of WCAG 2.2 has a usable explanation.
+// Phase 2 promised every A and AA criterion a usable explanation, phase 8 every AAA one too.
+// Obsolete criteria (4.1.1) are left out: they get a short note, not the full set of sections.
 describe("completeness", () => {
   const required = ["kogo-dotyczy", "jak-spelnic", "typowe-bledy", "jak-sprawdzic"] as const;
 
-  test.each(criteria.filter((c) => !isObsolete(c) && c.level !== "AAA").map((c) => c.id))("%s has complete content", (id) => {
+  test.each(criteria.filter((c) => !isObsolete(c)).map((c) => c.id))("%s has complete content", (id) => {
     const content = criterionContent.get(id);
     expect(content, `content/kryteria/${id}.md is missing`).toBeDefined();
     expect(content?.roles.length).toBeGreaterThan(0);
