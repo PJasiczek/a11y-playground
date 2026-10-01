@@ -19,7 +19,7 @@ a11y playground is a learning app for people who build digital products in Polan
 The interface is in Polish. This README is in English.
 
 > [!NOTE]
-> The project is in phase 7 (impairment simulators). Every A and AA criterion of WCAG 2.2 has a plain-language explanation, eleven common faults have a broken and a fixed example, and each example can be viewed through five simulators. Three Polish acts are in the app with the statute text and our summaries, and five learning paths walk through them lesson by lesson. All content is marked as a draft until a person has checked it. Phase 5 (accounts) is postponed, so progress is kept in the browser.
+> The project is in phase 8 (AAA criteria and WCAG 3.0 tracking). Every criterion of WCAG 2.2, A to AAA, has a plain-language explanation, and `/wcag-3` tracks the WCAG 3.0 Working Draft with our mapping to today's criteria. Eleven common faults have a broken and a fixed example, each viewable through five simulators. Three Polish acts are in the app with the statute text and our summaries, and five learning paths walk through them lesson by lesson. All content is marked as a draft until a person has checked it. Phase 5 (accounts) is postponed, so progress is kept in the browser.
 
 ### What works today
 
@@ -29,10 +29,12 @@ The interface is in Polish. This README is in English.
 - Skip link, a stable landmark structure, and focus moved to the new `h1` with the page title announced after every client-side route change.
 - **Criteria list** (`/kryteria`) with filters for WCAG version, level, principle and role. The filters are native radio buttons and checkboxes, their state lives in the URL, and the result count is announced to screen readers.
 - **Criterion pages** (`/kryteria/1.4.3`) with a fixed section order, a "nowe w 2.2" badge for the nine new criteria, and 4.1.1 marked as removed in 2.2. Every page is prerendered to static HTML.
-- **Explanations** for all 55 A and AA criteria: who it affects, how to meet it by role, typical errors, how to test it, common confusions. Drafts carry a visible "szkic, czeka na weryfikację" badge.
+- **Explanations** for all 86 criteria of WCAG 2.2, A, AA and AAA: who it affects, how to meet it by role, typical errors, how to test it, common confusions. 4.1.1 gets a short page on why 2.2 removed it and why the 2019 act still lists it. Drafts carry a visible "szkic, czeka na weryfikację" badge.
+- **AAA criteria** say "Poziom AAA: cel, nie obowiązek" under the summary, and each one's "Jak to spełnić" says when it pays off. Thirteen of them tighten an AA criterion, and their page compares the two side by side with the difference in one line (`/kryteria/1.4.6` against 1.4.3); the AA page links to its stronger version. Where this app meets an AAA criterion (1.4.6, 2.3.3, 2.4.13, 2.5.5), the page says so and how a test checks it.
+- **WCAG 3.0** (`/wcag-3`, in the main navigation): the status of the Working Draft of 10 September 2026 under a "wersja robocza W3C" badge, with the date we last compared it with w3.org, a table of how 3.0 differs from 2.2, and one table of all 46 guidelines in 12 groups with the 2.2 criteria that correspond to them today, or "Nowe w 3.0". The mapping is ours and the page says so. A filter (`?pokaz=nowe`) shows only what is new in 3.0, and every criterion page links to its guidelines.
 - **Normative text** in Polish from the authorized W3C translation of WCAG 2.1, collapsed on each criterion page. The criteria new in 2.2 link to their sources until a licensed Polish text is available.
 - **Glossary** (`/slownik`) of about 30 terms, alphabetical, each with a plain explanation and, where WCAG defines the term, its normative wording. The first use of a term in a criterion links to it, with a small button that opens a short definition.
-- **Search** (`/szukaj`, also on the home page) over criteria, examples, provisions, lessons and the glossary. It finds criteria by number, name or symptom ("modal", "placeholder"), articles by topic ("deklaracja dostępności"), and ignores Polish diacritics.
+- **Search** (`/szukaj`, also on the home page) over criteria, examples, provisions, lessons, WCAG 3.0 guidelines and the glossary. It finds criteria by number, name or symptom ("modal", "placeholder"), articles by topic ("deklaracja dostępności"), and ignores Polish diacritics.
 - **Practice** (`/praktyka`): eleven examples as cards ordered by the cost of the fix, each with what the user gains. An example page (`/praktyka/ikona-jako-przycisk`) shows the broken and the fixed variant one above the other, each running in a sandboxed iframe, with its code and what a screen reader says. Examples that move start only when the reader asks. Criterion pages link to their examples.
 - **Simulators** on every example page: a list beside the frames switches both variants to colour vision deficiency (four types), low vision, keyboard only, screen reader, 320 pixels wide or text at 200%. The choice lives in `?symulacja=`, and none is on by default. Each one puts text next to the frames, so no simulator is the only way to get the information: what the simulation shows and what it does not, the numbered focus steps and blocked mouse clicks, a table of what a screen reader reads in both variants (computed at build time), or whether the content fits in 320 pixels, measured in the frame.
 - **Simulators page** (`/symulatory`): what each simulator shows, its limits, the criteria it teaches, and links into the examples with the simulation already picked.
@@ -66,6 +68,10 @@ The interface is in Polish. This README is in English.
 | Paths | Path page | Lesson quiz |
 | --- | --- | --- |
 | ![Five paths with progress on the developer and designer paths](docs/screenshots/paths.png) | ![Developer path syllabus with three lessons done and quiz scores](docs/screenshots/path.png) | ![A checked quiz question with an explanation under every option](docs/screenshots/lesson-quiz.png) |
+
+| AAA criterion | WCAG 3.0 | New in WCAG 3.0 |
+| --- | --- | --- |
+| ![Criterion 1.4.6 compared with 1.4.3, with the AAA note and the difference in one line](docs/screenshots/criterion-aaa.png) | ![The WCAG 3.0 page with the working draft badge, the dates and the comparison with 2.2](docs/screenshots/wcag3.png) | ![The WCAG 3.0 mapping filtered to guidelines new in 3.0](docs/screenshots/wcag3-mapping.png) |
 
 | Glossary preview | Glossary | Search |
 | --- | --- | --- |
@@ -116,10 +122,11 @@ Osoby po czterdziestce, którym spada wrażliwość na kontrast. Kryterium mierz
   - `roles`: any of `programista`, `projektant`, `autor treści`, `tester`.
   - `related`: other criterion numbers.
   - `keywords`: optional words people search with, not shown on the page.
+  - `enhances` and `difference`: for an AAA criterion that tightens a lower-level one in the same guideline, its number and one line, up to 160 characters, on what changes. Always both or neither.
   - `lastVerified`: the date of that check. Required with `zweryfikowane`, not allowed with `szkic`.
-- **Sections** must use these `##` titles, in this order: Kogo to dotyczy, Jak to spełnić, Typowe błędy, Jak sprawdzić, Częste pomyłki. Use `###` inside a section, for example to split it by role. Every A and AA criterion needs the first four.
+- **Sections** must use these `##` titles, in this order: Kogo to dotyczy, Jak to spełnić, Typowe błędy, Jak sprawdzić, Częste pomyłki. Use `###` inside a section, for example to split it by role. Every criterion needs the first four, except 4.1.1, which WCAG 2.2 removed.
 - **Glossary terms:** mark a term as `[nazwę](slownik:nazwa)`. The first use on a page becomes a link with a definition preview, later uses stay plain text. Terms are marked by hand because Polish inflection makes automatic matching unreliable.
-- **Checks:** a file with a typo in a section title, an unknown key or glossary term, a summary that is too long, or a reference to a criterion that does not exist fails `pnpm test` and the build, with the file name and the reason. So does a missing A or AA explanation, and verified content older than 12 months.
+- **Checks:** a file with a typo in a section title, an unknown key or glossary term, a summary that is too long, or a reference to a criterion that does not exist fails `pnpm test` and the build, with the file name and the reason. So does a missing explanation, an `enhances` that points at the same or a higher level or another guideline, and verified content older than 12 months.
 
 To verify a draft, check it against the normative text and the W3C Understanding document, then change `status` to `zweryfikowane` and add `lastVerified`.
 
@@ -207,6 +214,48 @@ Opis ogólny, pokazywany przy przykładach bez własnej notatki.
 - `examples` become the "Wypróbuj na" links on `/symulatory`.
 - `limits` is shown as "Czego to nie pokazuje" next to every simulation of that kind.
 - The screen reader list is computed by a Vite plugin (`src/content/reading-order.vite.ts`) with jsdom and `dom-accessibility-api`, for each fragment after its script has run. A role without a Polish name fails `pnpm test`.
+
+### WCAG 3.0
+
+The tracking page reads `content/wcag3/`: `index.md` for the draft and the comparison, and one file per guideline group.
+
+```markdown
+---
+status: szkic
+draft: 2026-09-10
+draftUrl: https://www.w3.org/TR/2026/WD-wcag-3.0-20260910/
+checked: 2026-10-01
+compare:
+  - topic: Poziomy
+    wcag2: A, AA, AAA
+    wcag3: Wymagania podstawowe (core) i uzupełniające (supplemental), bez liter
+---
+Status of the draft, in plain words.
+```
+
+```yaml
+# content/wcag3/obrazy-i-multimedia.md (frontmatter only)
+num: "2.1"
+title: Obrazy i multimedia
+en: Images and media
+status: szkic
+guidelines:
+  - num: "2.1.1"
+    en: Image alternatives
+    title: Alternatywy dla obrazów
+    criteria: ["1.1.1"]
+  - num: "2.1.9"
+    en: Accessible media player
+    title: Dostępny odtwarzacz
+    criteria: []
+    note: Twierdzenie o wyborze dostępnego odtwarzacza, a nie wymaganie wobec samej treści.
+```
+
+- `draft` is the date of the Working Draft the content describes, `checked` the day we last compared the content with the draft current on w3.org. When `checked` is more than six months old, `pnpm test` fails: read the latest draft, update the files, and move the date.
+- A guideline with empty `criteria` shows as "Nowe w 3.0"; `note` says in one line what it asks. Guideline numbers must sit inside their group, criteria must exist, and a group file has no text after the frontmatter.
+
+> [!WARNING]
+> The mapping is our judgement, not a W3C equivalence. Write "corresponds today", never "replaces".
 
 ### Acts
 
@@ -311,7 +360,7 @@ Run the import by hand and review the diff of the generated files in a PR.
 | `pnpm build` | Builds the production app into `.output/`. |
 | `pnpm preview` | Serves the production build locally. |
 | `pnpm lint` | Runs ESLint (with `jsx-a11y` in strict mode) and the TypeScript compiler. |
-| `pnpm test` | Runs the Vitest content and data tests, then builds the app and runs the Playwright suite: axe in light and dark mode, 44px target checks, and keyboard flows. |
+| `pnpm test` | Runs the Vitest content and data tests, then builds the app and runs the Playwright suite: axe in light and dark mode, 44px target checks, no running animations, and keyboard flows. |
 | `pnpm import:wcag` | Regenerates the WCAG structure with Polish names. See [Where the criterion names come from](#where-the-criterion-names-come-from). |
 | `pnpm import:legal` | Regenerates the statute text of the acts. See [Where the statute text comes from](#where-the-statute-text-comes-from). |
 
@@ -329,10 +378,11 @@ CI runs `lint`, `build` and `test` on every pull request and on pushes to `maste
 
 ## Accessibility of the app itself
 
-The baseline is WCAG 2.2 Level AA, plus 2.3.3 and 2.5.5 at AAA. See [`docs/accessibility.md`](docs/accessibility.md). Because this is an app about accessibility, it also goes further in a few places:
+The baseline is WCAG 2.2 Level AA, plus 2.3.3 and 2.5.5 at AAA. See [`docs/accessibility.md`](docs/accessibility.md). Because this is an app about accessibility, it also goes further in a few places, and the pages of these AAA criteria say so ("Ta aplikacja to spełnia", from `src/content/app-meets.ts`):
 
 - **1.4.6 Contrast (Enhanced), AAA.** Every text colour pair reaches at least 7:1 in both themes, and axe runs with the AAA rule set.
-- **2.4.13 Focus Appearance, AAA.** A 3px solid outline on every focusable element, switched to the system `Highlight` colour in forced colours mode.
+- **2.3.3 Animation from Interactions, AAA.** The interface does not animate, and a test checks that no page runs an animation. Examples that move start only on request.
+- **2.4.13 Focus Appearance, AAA.** A 3px solid outline on every focusable element, switched to the system `Highlight` colour in forced colours mode. A keyboard test checks the outline at every Tab stop of a criterion page.
 - **2.5.5 Target Size (Enhanced), AAA.** Interactive elements are at least 44 by 44 pixels, and a test checks this on every route.
 - Zoom is never blocked, and no information is carried by colour alone.
 
@@ -349,17 +399,18 @@ content/
   prawo/         one Markdown file per act: summaries and deadlines
   sciezki/       one folder per learning path: lessons and their quizzes
   symulatory/    one Markdown file per kind of simulator
+  wcag3/         the WCAG 3.0 draft overview and one file per guideline group
 scripts/
   import-wcag.ts   generates src/content/wcag.gen.ts and wcag-text.gen.ts
   import-legal.ts  generates src/content/legal.gen.ts and legal-text.gen.ts
 src/
-  content/       WCAG structure, acts and the legal mapping, Markdown parsing and validation, server functions
+  content/       WCAG structure, the WCAG 3.0 mapping, acts and the legal mapping, Markdown parsing and validation, server functions
   search/        search options, index builder and relevance tests
   progress/      reading progress and quiz scores in localStorage
   routes/        file-based routes (__root.tsx holds the layout)
-  components/    header, theme toggle, route announcer, badges, glossary previews, example frames and cards, the simulator list, the quiz
+  components/    header, theme toggle, route announcer, badges, filter chips, the AAA comparison, glossary previews, example frames and cards, the simulator list, the quiz
   styles.css     Tailwind setup, colour tokens, styles for rendered Markdown
-e2e/             Playwright tests: axe, target size, keyboard, example isolation, simulators, a whole path from the keyboard
+e2e/             Playwright tests: axe, target size, animations, keyboard, example isolation, simulators, a whole path from the keyboard, WCAG 3.0
 docs/
   accessibility.md   the accessibility checklist
   design/            dated plans and mocks
@@ -378,4 +429,4 @@ The full plan, with content scope, architecture and risks, is in [`docs/design/2
 - [ ] **5. Accounts.** Optional progress, notes and bookmarks with Convex. Postponed; phase 6 went first with progress in the browser.
 - [x] **6. Paths and quizzes.** Five learning paths, 29 lessons with quizzes, progress in `localStorage`. Detailed plan: [`docs/design/2026-09-29-phase-6-paths`](docs/design/2026-09-29-phase-6-paths/phase-6-paths.en.html).
 - [x] **7. Impairment simulators.** Colour vision, low vision, keyboard only, screen reader and narrow screen on every example, each with a text alternative, and `/symulatory`. Detailed plan: [`docs/design/2026-09-29-phase-7-simulators`](docs/design/2026-09-29-phase-7-simulators/phase-7-simulators.en.html).
-- [ ] **8. AAA criteria and WCAG 3.0 tracking.**
+- [x] **8. AAA criteria and WCAG 3.0 tracking.** Explanations for the 31 AAA criteria and 4.1.1, the comparison with the AA criterion each one tightens, and `/wcag-3` with the guideline mapping. Detailed plan: [`docs/design/2026-10-01-phase-8-aaa-wcag3`](docs/design/2026-10-01-phase-8-aaa-wcag3/phase-8-aaa-wcag3.en.html).
