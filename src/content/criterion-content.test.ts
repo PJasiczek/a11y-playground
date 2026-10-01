@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
-import { criterionContent, parseCriterionMarkdown } from "./criterion-content";
+import { criterionContent, parseCriterionMarkdown, strongerVersionsOf } from "./criterion-content";
 import { maxVerifiedAgeMonths, staleEntries } from "./markdown";
-import { criteria, isObsolete } from "./wcag";
+import { criteria, findCriterion, isObsolete, levels } from "./wcag";
 
 const frontmatter = `---
 status: szkic
@@ -49,8 +49,33 @@ describe("parseCriterionMarkdown", () => {
     ["verified content without lastVerified", frontmatter.replace("status: szkic", "status: zweryfikowane"), /needs lastVerified/],
     ["an unknown glossary term", `${frontmatter}## Kogo to dotyczy\n\n[x](slownik:nie-ma)`, /unknown glossary term "nie-ma"/],
     ["an unknown status", frontmatter.replace("status: szkic", "status: gotowe"), /status/],
+    ["enhances without difference", frontmatter.replace("roles:", 'enhances: "1.4.3"\nroles:'), /go together/],
+    ["difference without enhances", frontmatter.replace("roles:", "difference: Więcej.\nroles:"), /go together/],
+    [
+      "enhancing a criterion that does not exist",
+      frontmatter.replace("roles:", 'enhances: "9.9.9"\ndifference: Więcej.\nroles:'),
+      /9\.9\.9/,
+    ],
   ])("rejects %s", (_, source, message) => {
     expect(() => parseCriterionMarkdown("x.md", source)).toThrow(message);
+  });
+});
+
+// The parser sees one file at a time, so the relation between two criteria is checked here.
+describe("enhances", () => {
+  const enhancing = [...criterionContent].flatMap(([id, content]) =>
+    content.enhances ? [[id, content.enhances.id] as const] : [],
+  );
+
+  test.each(enhancing)("%s tightens %s, a lower level in the same guideline", (id, target) => {
+    const [stronger, weaker] = [findCriterion(id), findCriterion(target)];
+    if (!stronger || !weaker) throw new Error(`unknown criterion ${id} or ${target}`);
+    expect(stronger.guideline).toBe(weaker.guideline);
+    expect(levels.indexOf(weaker.level)).toBeLessThan(levels.indexOf(stronger.level));
+  });
+
+  test("the AA criterion finds its stronger version", () => {
+    expect(strongerVersionsOf("1.4.3")).toEqual(["1.4.6"]);
   });
 });
 

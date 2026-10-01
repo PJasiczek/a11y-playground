@@ -7,6 +7,7 @@ const routes = [
   "/",
   "/kryteria",
   "/kryteria/1.4.3",
+  "/kryteria/1.4.6",
   "/kryteria/2.4.11",
   "/kryteria/4.1.1",
   "/prawo",

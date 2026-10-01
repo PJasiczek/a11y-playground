@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import type { ReactNode } from "react";
+import { AaaNote, EnhancesStrip } from "~/components/aaa";
 import { ProvisionLink, StrengthLabel } from "~/components/legal";
 import { DraftBadge, LevelBadge, NewBadge } from "~/components/level-badge";
 import { TermTips } from "~/components/term-tips";
@@ -13,8 +14,8 @@ export const Route = createFileRoute("/kryteria/$criterionId")({
   loader: async ({ params }) => {
     const criterion = findCriterion(params.criterionId);
     if (!criterion) throw notFound();
-    const { content, normative, terms, examples, lessons, law } = await getCriterionPage({ data: criterion.id });
-    return { criterion, content, normative, terms, examples, lessons, law };
+    const page = await getCriterionPage({ data: criterion.id });
+    return { criterion, ...page };
   },
   head: ({ loaderData }) => ({
     meta: [{ title: loaderData ? `${loaderData.criterion.id} ${loaderData.criterion.name} · a11y playground` : "a11y playground" }],
@@ -40,7 +41,7 @@ const pageSections = [
 const emptyNote = <p className="text-ink-2">Ta sekcja nie ma jeszcze treści.</p>;
 
 function CriterionPage() {
-  const { criterion, content, normative, terms, examples, lessons, law } = Route.useLoaderData();
+  const { criterion, content, normative, terms, examples, lessons, law, stronger } = Route.useLoaderData();
   const clause = enClause(criterion);
   const principle = principleOf(criterion);
   const guideline = guidelineOf(criterion);
@@ -50,6 +51,11 @@ function CriterionPage() {
     const section = content?.sections[key];
     return section ? <div className="prose" data-section={key} dangerouslySetInnerHTML={{ __html: section }} /> : null;
   };
+
+  const relations = [
+    { label: "Kryteria", ids: (content?.related ?? []).filter((id) => !stronger.includes(id)) },
+    { label: "Wersja wzmocniona", ids: stronger },
+  ].filter(({ ids }) => ids.length > 0);
 
   const body: Record<(typeof pageSections)[number]["id"], ReactNode> = {
     "kogo-dotyczy": html("kogo-dotyczy") ?? emptyNote,
@@ -180,28 +186,38 @@ function CriterionPage() {
         </p>
       </>
     ),
+    // Variant 3A of the phase 8 mocks: one labelled row per kind of relation.
     powiazane: (
       <>
-        {content && content.related.length > 0 ? (
-          <ul className="flex flex-wrap gap-2">
-            {content.related.map((id) => {
-              const related = findCriterion(id);
-              return related ? (
-                <li key={id}>
-                  <Link
-                    to="/kryteria/$criterionId"
-                    params={{ criterionId: id }}
-                    className="inline-flex min-h-11 items-center gap-2 rounded border border-control bg-surface px-3 text-[0.9375rem] hover:border-ink"
-                  >
-                    <b className="font-mono">{id}</b> {related.name} <LevelBadge level={related.level} />
-                  </Link>
-                </li>
-              ) : null;
-            })}
-          </ul>
+        {relations.length > 0 ? (
+          <dl>
+            {relations.map(({ label, ids }) => (
+              <div key={label} className="grid gap-x-4 gap-y-1 border-t border-rule py-3 sm:grid-cols-[10rem_1fr]">
+                <dt className="font-mono text-[0.8125rem] font-semibold text-ink-2 sm:pt-3">{label}</dt>
+                <dd>
+                  <ul className="flex flex-wrap gap-2">
+                    {ids.map((id) => {
+                      const related = findCriterion(id);
+                      return related ? (
+                        <li key={id}>
+                          <Link
+                            to="/kryteria/$criterionId"
+                            params={{ criterionId: id }}
+                            className="inline-flex min-h-11 items-center gap-2 rounded border border-control bg-surface px-3 text-[0.9375rem] hover:border-ink"
+                          >
+                            <b className="font-mono">{id}</b> {related.name} <LevelBadge level={related.level} />
+                          </Link>
+                        </li>
+                      ) : null;
+                    })}
+                  </ul>
+                </dd>
+              </div>
+            ))}
+          </dl>
         ) : null}
         {content?.sections["czeste-pomylki"] ? <div className="mt-4">{html("czeste-pomylki")}</div> : null}
-        {!content?.related.length && !content?.sections["czeste-pomylki"] ? emptyNote : null}
+        {relations.length === 0 && !content?.sections["czeste-pomylki"] ? emptyNote : null}
       </>
     ),
   };
@@ -246,6 +262,8 @@ function CriterionPage() {
           ) : null}
         </p>
         {content ? <p className="mt-7 max-w-[56ch] text-xl leading-normal">{content.summary}</p> : null}
+        {criterion.level === "AAA" ? <AaaNote /> : null}
+        {content?.enhances ? <EnhancesStrip criterion={criterion} enhances={content.enhances} /> : null}
       </header>
 
       <div className="grid gap-10 pt-8 lg:grid-cols-[1fr_13rem] lg:gap-12">

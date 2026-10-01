@@ -16,6 +16,8 @@ const Frontmatter = type({
   roles: type.enumerated(...roles).array(),
   "related?": "string[]",
   "keywords?": "string[]",
+  "enhances?": "string",
+  "difference?": "0 < string <= 160",
   "lastVerified?": IsoDate,
   "+": "reject",
 });
@@ -26,6 +28,11 @@ export type CriterionContent = Verification & {
   related: CriterionId[];
   /** Extra words people search with ("modal", "placeholder"); feeds search, not shown. */
   keywords: string[];
+  /**
+   * The lower-level criterion this one tightens (1.4.6 tightens 1.4.3), with one line on how.
+   * Null for every criterion that does not tighten another.
+   */
+  enhances: { id: CriterionId; difference: string } | null;
   /** Glossary slugs marked in the text, in order of first use. */
   terms: string[];
   /** Rendered HTML per section. Sections the author has not written yet are absent. */
@@ -45,6 +52,13 @@ export function parseCriterionMarkdown(file: string, source: string): CriterionC
   const related = meta.related ?? [];
   const unknown = related.filter((id) => !isCriterionId(id));
   if (unknown.length > 0) throw fail(`related lists unknown criteria: ${unknown.join(", ")}`);
+
+  if ((meta.enhances === undefined) !== (meta.difference === undefined)) {
+    throw fail("enhances and difference go together");
+  }
+  if (meta.enhances !== undefined && !isCriterionId(meta.enhances)) {
+    throw fail(`enhances an unknown criterion: ${meta.enhances}`);
+  }
 
   const [preamble = "", ...chunks] = body.split(/^## /m);
   if (preamble.trim() !== "") throw fail("text before the first ## section");
@@ -70,6 +84,10 @@ export function parseCriterionMarkdown(file: string, source: string): CriterionC
     roles: meta.roles,
     related: related.filter(isCriterionId),
     keywords: meta.keywords ?? [],
+    enhances:
+      meta.enhances !== undefined && meta.difference !== undefined && isCriterionId(meta.enhances)
+        ? { id: meta.enhances, difference: meta.difference }
+        : null,
     terms,
     sections,
   };
@@ -85,3 +103,8 @@ export const criterionContent: ReadonlyMap<CriterionId, CriterionContent> = new 
     return [id, parseCriterionMarkdown(path, source)];
   }),
 );
+
+/** Criteria whose content says they tighten the given one, read from their `enhances` field. */
+export function strongerVersionsOf(id: CriterionId): CriterionId[] {
+  return [...criterionContent].flatMap(([other, content]) => (content.enhances?.id === id ? [other] : []));
+}
