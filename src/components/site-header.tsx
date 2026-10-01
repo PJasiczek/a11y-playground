@@ -4,6 +4,7 @@ import { ThemeToggle } from "./theme-toggle";
 const navItems = [
   { to: "/", label: "Start" },
   { to: "/kryteria", label: "Kryteria" },
+  { to: "/wcag-3", label: "WCAG 3.0" },
   { to: "/prawo", label: "Prawo" },
   { to: "/praktyka", label: "Praktyka" },
   { to: "/symulatory", label: "Symulatory" },
@@ -21,7 +22,7 @@ export function SiteHeader() {
       >
         Przejdź do treści
       </a>
-      <div className="mx-auto flex max-w-245 flex-wrap items-center gap-x-5 gap-y-2 px-4 py-2 sm:px-7">
+      <div className="mx-auto flex max-w-245 flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2 sm:px-7">
         <Link to="/" className="inline-flex min-h-11 items-center text-[1.0625rem] font-bold tracking-tight">
           <span className="font-mono">a11y</span>&nbsp;playground
         </Link>
@@ -33,7 +34,7 @@ export function SiteHeader() {
                 <Link
                   to={to}
                   activeOptions={{ exact: to === "/" }}
-                  className="inline-flex min-h-11 items-center border-b-2 border-transparent px-3 text-[0.9375rem] text-ink-2 hover:bg-paper-2 hover:text-ink aria-[current=page]:border-ink aria-[current=page]:font-semibold aria-[current=page]:text-ink"
+                  className="inline-flex min-h-11 items-center border-b-2 border-transparent px-2 text-[0.9375rem] text-ink-2 hover:bg-paper-2 hover:text-ink aria-[current=page]:border-ink aria-[current=page]:font-semibold aria-[current=page]:text-ink"
                 >
                   {label}
                 </Link>

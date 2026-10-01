@@ -15,6 +15,7 @@ import { Route as SearchIndexDotjsonRouteImport } from './routes/search-index[.]
 import { Route as SlownikRouteImport } from './routes/slownik'
 import { Route as SymulatoryRouteImport } from './routes/symulatory'
 import { Route as SzukajRouteImport } from './routes/szukaj'
+import { Route as Wcag3RouteImport } from './routes/wcag-3'
 import { Route as KryteriaIndexRouteImport } from './routes/kryteria/index'
 import { Route as KryteriaCriterionIdRouteImport } from './routes/kryteria/$criterionId'
 import { Route as PraktykaIndexRouteImport } from './routes/praktyka/index'
@@ -56,6 +57,11 @@ const SymulatoryRoute = SymulatoryRouteImport.update({
 const SzukajRoute = SzukajRouteImport.update({
   id: '/szukaj',
   path: '/szukaj',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Wcag3Route = Wcag3RouteImport.update({
+  id: '/wcag-3',
+  path: '/wcag-3',
   getParentRoute: () => rootRouteImport,
 } as any)
 const KryteriaIndexRoute = KryteriaIndexRouteImport.update({
@@ -126,6 +132,7 @@ export interface FileRoutesByFullPath {
   '/slownik': typeof SlownikRoute
   '/symulatory': typeof SymulatoryRoute
   '/szukaj': typeof SzukajRoute
+  '/wcag-3': typeof Wcag3Route
   '/kryteria/$criterionId': typeof KryteriaCriterionIdRoute
   '/praktyka/$slug': typeof PraktykaSlugRoute
   '/prawo/en-301-549': typeof PrawoEn301549Route
@@ -146,6 +153,7 @@ export interface FileRoutesByTo {
   '/slownik': typeof SlownikRoute
   '/symulatory': typeof SymulatoryRoute
   '/szukaj': typeof SzukajRoute
+  '/wcag-3': typeof Wcag3Route
   '/kryteria/$criterionId': typeof KryteriaCriterionIdRoute
   '/praktyka/$slug': typeof PraktykaSlugRoute
   '/prawo/en-301-549': typeof PrawoEn301549Route
@@ -167,6 +175,7 @@ export interface FileRoutesById {
   '/slownik': typeof SlownikRoute
   '/symulatory': typeof SymulatoryRoute
   '/szukaj': typeof SzukajRoute
+  '/wcag-3': typeof Wcag3Route
   '/kryteria/$criterionId': typeof KryteriaCriterionIdRoute
   '/praktyka/$slug': typeof PraktykaSlugRoute
   '/prawo/en-301-549': typeof PrawoEn301549Route
@@ -189,6 +198,7 @@ export interface FileRouteTypes {
     | '/slownik'
     | '/symulatory'
     | '/szukaj'
+    | '/wcag-3'
     | '/kryteria/$criterionId'
     | '/praktyka/$slug'
     | '/prawo/en-301-549'
@@ -209,6 +219,7 @@ export interface FileRouteTypes {
     | '/slownik'
     | '/symulatory'
     | '/szukaj'
+    | '/wcag-3'
     | '/kryteria/$criterionId'
     | '/praktyka/$slug'
     | '/prawo/en-301-549'
@@ -229,6 +240,7 @@ export interface FileRouteTypes {
     | '/slownik'
     | '/symulatory'
     | '/szukaj'
+    | '/wcag-3'
     | '/kryteria/$criterionId'
     | '/praktyka/$slug'
     | '/prawo/en-301-549'
@@ -250,6 +262,7 @@ export interface RootRouteChildren {
   SlownikRoute: typeof SlownikRoute
   SymulatoryRoute: typeof SymulatoryRoute
   SzukajRoute: typeof SzukajRoute
+  Wcag3Route: typeof Wcag3Route
   KryteriaCriterionIdRoute: typeof KryteriaCriterionIdRoute
   PraktykaSlugRoute: typeof PraktykaSlugRoute
   PrawoEn301549Route: typeof PrawoEn301549Route
@@ -306,6 +319,13 @@ declare module '@tanstack/react-router' {
       path: '/szukaj'
       fullPath: '/szukaj'
       preLoaderRoute: typeof SzukajRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/wcag-3': {
+      id: '/wcag-3'
+      path: '/wcag-3'
+      fullPath: '/wcag-3'
+      preLoaderRoute: typeof Wcag3RouteImport
       parentRoute: typeof rootRouteImport
     }
     '/kryteria/': {
@@ -402,6 +422,7 @@ const rootRouteChildren: RootRouteChildren = {
   SlownikRoute: SlownikRoute,
   SymulatoryRoute: SymulatoryRoute,
   SzukajRoute: SzukajRoute,
+  Wcag3Route: Wcag3Route,
   KryteriaCriterionIdRoute: KryteriaCriterionIdRoute,
   PraktykaSlugRoute: PraktykaSlugRoute,
   PrawoEn301549Route: PrawoEn301549Route,

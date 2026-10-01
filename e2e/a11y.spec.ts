@@ -10,6 +10,8 @@ const routes = [
   "/kryteria/1.4.6",
   "/kryteria/2.4.11",
   "/kryteria/4.1.1",
+  "/wcag-3",
+  "/wcag-3?pokaz=nowe",
   "/prawo",
   "/prawo/ustawa-2019-848",
   "/prawo/ustawa-2019-848/art-5",
