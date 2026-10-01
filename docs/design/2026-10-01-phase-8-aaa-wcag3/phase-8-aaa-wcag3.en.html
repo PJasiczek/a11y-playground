@@ -45,6 +45,20 @@
 
 <p class="flag">The main plan, written from memory, says that WCAG 3.0 dropped the bronze, silver and gold levels and talks about "foundational requirements" and "outcomes". The Working Draft of 10 September 2026 uses different words: 12 groups of guidelines, each guideline with <em>core</em> and <em>supplemental</em> requirements and <em>assertions</em>, and a conformance section that reports on core and supplemental requirements without A, AA or AAA. This plan follows the draft. Every fact about 3.0 below is checked again against the draft current on the day the content is written.</p>
 
+<h2 id="changes">Changes after work started</h2>
+<p>Decisions made while building phase 8. Where they conflict with the sections below, these win.</p>
+<ul>
+  <li><strong>The six-month test reads <code>checked</code>, not <code>draft</code> (section 6).</strong> If W3C publishes nothing for seven months, an old draft date is correct and a test on it could only be fixed by fudging. <code>checked</code> in <code>content/wcag3/index.md</code> is the day we last compared the content with w3.org, and the page shows both dates.</li>
+  <li><strong>The comparison lives in frontmatter (section 6).</strong> <code>compare</code> in <code>index.md</code> holds the rows, so the page renders a real table with a caption and row headers. A Markdown table would lose the row headers.</li>
+  <li><strong>Group files have no body (section 6).</strong> Nothing showed a group introduction, so text after the frontmatter fails the file instead of being silently dropped.</li>
+  <li><strong>2.4.13 tightens 2.4.7 (section 3).</strong> Thirteen AAA criteria carry <code>enhances</code>, not twelve.</li>
+  <li><strong>A refactor commit before the page (section 10).</strong> The filter chips moved from <code>/kryteria</code> to <code>src/components/filters.tsx</code>, so <code>/wcag-3</code> uses the same radios.</li>
+  <li><strong>Mapping rows show criterion numbers (section 7).</strong> Each link reads "1.1.1" on screen and "1.1.1 Treść nietekstowa" to a screen reader, so the table stays narrow and the name starts with the visible label (2.5.3).</li>
+  <li><strong>A hash link moves focus to its target (section 9).</strong> The route announcer used to focus the <code>h1</code> after every path change. Now it focuses the element the hash names when there is one, so the link from a criterion page lands on its row on <code>/wcag-3</code>. Glossary and provision links benefit too.</li>
+  <li><strong>The header got tighter (section 7).</strong> With eight navigation items the theme toggle wrapped under the navigation at 1280 pixels. Link padding went from 12 to 8 pixels; targets stay 44 pixels high.</li>
+  <li><strong>New tests back two claims (section 4).</strong> "Ta aplikacja to spełnia" for 2.3.3 rests on a check that no page runs an animation, and for 2.4.13 on a Tab walk that checks every outline. 1.4.6 and 2.5.5 already had tests.</li>
+</ul>
+
 <ol class="toc">
   <li><a href="#goal">Goal and definition of done</a></li>
   <li><a href="#scope">Scope</a></li>

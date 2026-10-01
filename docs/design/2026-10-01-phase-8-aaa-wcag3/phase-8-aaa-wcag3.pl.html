@@ -45,6 +45,20 @@
 
 <p class="flag">Plan główny, pisany z pamięci, mówi, że WCAG 3.0 porzuciło poziomy brązowy, srebrny i złoty, i posługuje się pojęciami „wymagania podstawowe” i „rezultaty”. Wersja robocza z 10 września 2026 używa innych słów: 12 grup wytycznych, w każdej wytycznej wymagania <em>core</em> i <em>supplemental</em> oraz <em>assertions</em>, a sekcja o zgodności raportuje wymagania core i supplemental bez podziału na A, AA i AAA. Ten plan idzie za wersją roboczą. Każdy fakt o 3.0 sprawdzamy jeszcze raz w wersji aktualnej w dniu pisania treści.</p>
 
+<h2 id="changes">Zmiany w trakcie pracy</h2>
+<p>Decyzje podjęte przy budowie etapu 8. Gdy są sprzeczne z sekcjami poniżej, obowiązują te.</p>
+<ul>
+  <li><strong>Test sześciu miesięcy czyta <code>checked</code>, nie <code>draft</code> (sekcja 6).</strong> Jeśli W3C przez siedem miesięcy nic nie opublikuje, stara data wersji roboczej jest prawdziwa, a test na niej dałoby się naprawić tylko naciąganiem. <code>checked</code> w <code>content/wcag3/index.md</code> to dzień, w którym ostatnio porównaliśmy treść z w3.org, a strona pokazuje obie daty.</li>
+  <li><strong>Porównanie siedzi we frontmatterze (sekcja 6).</strong> <code>compare</code> w <code>index.md</code> trzyma wiersze, więc strona rysuje prawdziwą tabelę z podpisem i nagłówkami wierszy. Tabela w Markdownie straciłaby nagłówki wierszy.</li>
+  <li><strong>Pliki grup nie mają treści (sekcja 6).</strong> Nic nie pokazywało wstępu do grupy, więc tekst po frontmatterze wywraca plik, zamiast po cichu znikać.</li>
+  <li><strong>2.4.13 zaostrza 2.4.7 (sekcja 3).</strong> <code>enhances</code> ma trzynaście kryteriów AAA, a nie dwanaście.</li>
+  <li><strong>Commit refaktoryzacji przed stroną (sekcja 10).</strong> Chipy filtrów przeszły z <code>/kryteria</code> do <code>src/components/filters.tsx</code>, żeby <code>/wcag-3</code> używała tych samych przycisków radiowych.</li>
+  <li><strong>Wiersze mapowania pokazują numery kryteriów (sekcja 7).</strong> Odnośnik na ekranie brzmi „1.1.1”, a dla czytnika „1.1.1 Treść nietekstowa”, więc tabela zostaje wąska, a nazwa zaczyna się od widocznej etykiety (2.5.3).</li>
+  <li><strong>Odnośnik z kotwicą przenosi fokus do celu (sekcja 9).</strong> Komunikat o zmianie trasy przenosił fokus na <code>h1</code> po każdej zmianie ścieżki. Teraz, gdy adres ma kotwicę, przenosi go na wskazany element, więc odnośnik ze strony kryterium trafia na właściwy wiersz <code>/wcag-3</code>. Zyskują też odnośniki do słownika i przepisów.</li>
+  <li><strong>Nagłówek jest ciaśniejszy (sekcja 7).</strong> Przy ośmiu pozycjach nawigacji przełącznik motywu spadał pod nawigację przy 1280 pikselach. Odstęp w odnośnikach zmalał z 12 do 8 pikseli; cele nadal mają 44 piksele wysokości.</li>
+  <li><strong>Nowe testy stoją za dwiema deklaracjami (sekcja 4).</strong> „Ta aplikacja to spełnia” dla 2.3.3 opiera się na sprawdzeniu, że żadna strona nie odtwarza animacji, a dla 2.4.13 na przejściu klawiszem Tab, które sprawdza każdy obrys. 1.4.6 i 2.5.5 miały testy już wcześniej.</li>
+</ul>
+
 <ol class="toc">
   <li><a href="#goal">Cel i warunek ukończenia</a></li>
   <li><a href="#scope">Zakres</a></li>
