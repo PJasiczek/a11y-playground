@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { type } from "arktype";
-import type { ReactNode } from "react";
+import { Chip, FilterGroup } from "~/components/filters";
 import { DraftBadge, LevelBadge, NewBadge } from "~/components/level-badge";
 import { getCriteriaOverview } from "~/content/content.functions";
 import { type Role, roles } from "~/content/sections";
@@ -153,46 +153,5 @@ function CriteriaPage() {
         <p className="mt-6 text-ink-2">Żadne kryterium nie spełnia tych filtrów.</p>
       )}
     </>
-  );
-}
-
-function FilterGroup({ legend, children }: { legend: string; children: ReactNode }) {
-  return (
-    <fieldset className="flex flex-wrap items-center gap-2">
-      <legend className="float-left mr-1 font-mono text-xs font-semibold tracking-widest text-ink-2 uppercase">
-        {legend}
-      </legend>
-      {children}
-    </fieldset>
-  );
-}
-
-/**
- * A native radio or checkbox dressed as a chip. The input stays in the accessibility tree and
- * handles keyboard and state; the checked state shows as a tick and the marker, never colour alone.
- */
-function Chip({
-  type,
-  name,
-  checked,
-  onChange,
-  children,
-}: {
-  type: "radio" | "checkbox";
-  name?: string;
-  checked: boolean;
-  onChange: () => void;
-  children: ReactNode;
-}) {
-  return (
-    <label className="inline-flex min-h-11 cursor-pointer items-center rounded border border-control bg-surface px-3 text-sm font-medium has-checked:border-on-marker has-checked:bg-marker has-checked:font-bold has-checked:text-on-marker has-focus-visible:outline-3 has-focus-visible:outline-offset-2 has-focus-visible:outline-accent">
-      <input type={type} name={name} checked={checked} onChange={onChange} className="sr-only" />
-      {checked ? (
-        <span aria-hidden="true" className="mr-1 font-mono">
-          ✓
-        </span>
-      ) : null}
-      {children}
-    </label>
   );
 }
