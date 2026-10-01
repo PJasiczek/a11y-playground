@@ -4,6 +4,7 @@ import { expect, test } from "@playwright/test";
 test("an AAA criterion is compared with the AA one it tightens", async ({ page }) => {
   await page.goto("/kryteria/1.4.6");
   await expect(page.getByText("Poziom AAA: cel, nie obowiązek.")).toBeVisible();
+  await expect(page.getByText("Ta aplikacja to spełnia")).toBeVisible();
   const comparison = page.getByRole("group", { name: "Porównanie z kryterium 1.4.3" });
   await expect(comparison).toContainText("7 do 1 zamiast 4,5 do 1");
   await comparison.getByRole("link", { name: /1\.4\.3 Kontrast \(minimum\)/ }).click();

@@ -55,3 +55,16 @@ export function EnhancesStrip({ criterion, enhances }: { criterion: Criterion; e
     </div>
   );
 }
+
+/** "Ta aplikacja to spełnia" with how we know, for the AAA criteria listed in content/app-meets.ts. */
+export function AppMeets({ note }: { note: string }) {
+  return (
+    <p className="mt-4 flex max-w-176 flex-wrap items-start gap-x-3 gap-y-1 text-[0.9375rem]">
+      <span className="rounded-xs border-2 border-good px-1.5 py-1 font-mono text-xs leading-none font-bold whitespace-nowrap text-good">
+        <span aria-hidden="true">✓ </span>
+        Ta aplikacja to spełnia
+      </span>
+      <span className="min-w-0 flex-1 basis-80">{note}</span>
+    </p>
+  );
+}

@@ -1,9 +1,10 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { AaaNote, EnhancesStrip } from "~/components/aaa";
+import { AaaNote, AppMeets, EnhancesStrip } from "~/components/aaa";
 import { ProvisionLink, StrengthLabel } from "~/components/legal";
 import { DraftBadge, LevelBadge, NewBadge, WorkingDraftBadge } from "~/components/level-badge";
 import { TermTips } from "~/components/term-tips";
+import { appMeets } from "~/content/app-meets";
 import { getCriterionPage } from "~/content/content.functions";
 import { formatDate } from "~/content/legal";
 import { enClause } from "~/content/legal-map";
@@ -46,6 +47,7 @@ const emptyNote = <p className="text-ink-2">Ta sekcja nie ma jeszcze treści.</p
 function CriterionPage() {
   const { criterion, content, normative, terms, examples, lessons, law, stronger, wcag3 } = Route.useLoaderData();
   const clause = enClause(criterion);
+  const meets = appMeets[criterion.id];
   const principle = principleOf(criterion);
   const guideline = guidelineOf(criterion);
 
@@ -284,6 +286,7 @@ function CriterionPage() {
         </p>
         {content ? <p className="mt-7 max-w-[56ch] text-xl leading-normal">{content.summary}</p> : null}
         {criterion.level === "AAA" ? <AaaNote /> : null}
+        {meets ? <AppMeets note={meets} /> : null}
         {content?.enhances ? <EnhancesStrip criterion={criterion} enhances={content.enhances} /> : null}
       </header>
 
