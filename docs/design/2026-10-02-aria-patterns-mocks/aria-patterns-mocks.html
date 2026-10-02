@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ARIA pattern mocks: pattern page, catalogue, live region playground, entry point</title>
+<style>
+  :root {
+    --paper: #FBFAF7; --paper-2: #F1EFE8; --surface: #FFFFFF;
+    --ink: #14171A; --ink-2: #484D52; --rule: #DFDBD1; --control: #857F72;
+    --accent: #2C36A8; --marker: #F4E75B; --good: #145537; --bad: #9A1B1B;
+    --sans: "Inter var", Inter, "Segoe UI", -apple-system, system-ui, sans-serif;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, "SF Mono", monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 2.5rem 1rem 6rem; background: #000; color: #fff; font: 16px/1.6 var(--sans); }
+  .page { max-width: 1180px; margin: 0 auto; }
+  .page > h1 { font-size: 1.4rem; margin: 0 0 .35rem; letter-spacing: -.02em; }
+  .page > p, .note { color: #B8BDC2; font-size: .9rem; margin: 0 0 1rem; max-width: 76ch; }
+  .page > h2 { font: 600 .8rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; margin: 4rem 0 .6rem; }
+  .page code { font-family: var(--mono); font-size: .9em; }
+  .page a { color: #fff; }
+  .variant { margin: 0 0 3rem; }
+  .variant > h3 { font-size: 1.05rem; margin: 0 0 .25rem; }
+  .variant > h3 b { font-family: var(--mono); display: inline-block; min-width: 1.9rem; }
+  .frame { border: 1px solid #2A2D31; border-radius: 6px; overflow: hidden; }
+  .two { display: grid; grid-template-columns: 1fr 390px; gap: 1rem; align-items: start; }
+  @media (max-width: 900px) { .two { grid-template-columns: 1fr; } }
+
+  /* product surface, app tokens */
+  .s { background: var(--paper); color: var(--ink); padding: 1.75rem 1.75rem 2.25rem; }
+  .s a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+  .s :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .s h4, .s h5, .s h6 { margin: 0; }
+  .s p { max-width: 68ch; margin: .4rem 0 0; }
+  .mono { font-family: var(--mono); }
+  .crumb { font: .8125rem var(--mono); color: var(--ink-2); margin: 0 0 .75rem; }
+  .crumb a { color: var(--ink-2) !important; }
+  .t1 { font-size: 1.875rem; font-weight: 700; line-height: 1.15; letter-spacing: -.03em; margin: 0; }
+  .en { font: 600 .875rem var(--mono); color: var(--ink-2); margin: .25rem 0 .6rem; }
+  .lead { color: var(--ink-2); margin: 0 0 1rem; }
+  .row { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin: .75rem 0 0; padding: 0; list-style: none; }
+  .sc { display: inline-flex; align-items: center; min-height: 44px; padding: 0 .75rem; font: 600 .875rem var(--mono); border: 1px solid var(--control); border-radius: 2px; background: var(--surface); color: var(--ink) !important; text-decoration: none !important; }
+  .draft { display: inline-flex; align-items: center; min-height: 44px; font: 600 .75rem/1 var(--mono); border: 1px dashed var(--ink); border-radius: 2px; padding: 0 .5rem; }
+  .draft::before { content: "✎ " / ""; }
+  .kick { font: 600 .75rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 .4rem; }
+
+  /* native verdict: shape carries the meaning together with the words */
+  .verdict { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; padding: 0 .8rem; border: 2px solid var(--ink); border-radius: 2px; font-weight: 700; font-size: .9375rem; background: var(--surface); }
+  .verdict i { font-style: normal; font-size: 1.1rem; line-height: 1; }
+
+  /* stand-in for the sandboxed iframe */
+  .demo { position: relative; background: #fff; border: 2px solid var(--control); border-radius: 2px; padding: 1.25rem 1rem 1rem; font: 16px/1.5 "Segoe UI", system-ui, sans-serif; color: #14171A; }
+  .demo .tag { position: absolute; top: -.7rem; right: .6rem; font: 600 .6875rem/1 var(--mono); background: var(--ink); color: var(--paper); padding: .25rem .4rem; letter-spacing: .04em; }
+  .acc h6 { font-size: 1rem; }
+  .acc h6 + h6, .acc .panel + h6 { border-top: 1px solid #DFDBD1; }
+  .acc button { all: unset; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; gap: 1rem; width: 100%; min-height: 48px; padding: 0 .75rem; font-weight: 600; cursor: pointer; }
+  .acc button:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
+  .acc button::after { content: "+" / ""; font: 700 1.25rem var(--mono); }
+  .acc button[aria-expanded="true"]::after { content: "−" / ""; }
+  .acc .panel { padding: 0 .75rem .9rem; color: #484D52; }
+
+  .tgl { display: flex; align-items: center; gap: .6rem; min-height: 44px; font-size: .9375rem; }
+  .tgl input { width: 22px; height: 22px; margin: 0; accent-color: var(--ink); }
+
+  /* the announcement log: the signature of the section */
+  .log { background: var(--ink); color: var(--paper); border-radius: 2px; padding: .9rem 1rem 1rem; }
+  .log h5 { font: 700 .8125rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--paper); display: flex; justify-content: space-between; align-items: center; gap: .5rem; }
+  .log .lim { color: #C9CDD1; font-size: .8125rem; margin: .35rem 0 .7rem; max-width: none; }
+  .log ol { list-style: none; margin: 0; padding: 0; counter-reset: l; font: .875rem/1.45 var(--mono); }
+  .log li { counter-increment: l; display: grid; grid-template-columns: 2.2rem 5.6rem 1fr; gap: .4rem; padding: .4rem 0; border-top: 1px solid #33383D; }
+  .log li::before { content: counter(l, decimal-leading-zero) / ""; color: #9AA0A6; }
+  .log .k { font-weight: 700; font-size: .6875rem; letter-spacing: .06em; text-transform: uppercase; align-self: start; border: 1px solid #9AA0A6; padding: .05rem .3rem; justify-self: start; }
+  .log .k.live { border-style: dashed; }
+  .log .k.state { border-color: var(--marker); color: var(--marker); }
+  .log .key { display: block; color: #9AA0A6; font-size: .75rem; }
+  .log .clear { all: unset; box-sizing: border-box; min-height: 44px; padding: 0 .75rem; display: inline-flex; align-items: center; border: 1px solid #9AA0A6; font: 600 .75rem var(--mono); cursor: pointer; color: var(--paper); text-transform: none; letter-spacing: 0; }
+  .log .clear:focus-visible { outline: 3px solid #AEB5FF; outline-offset: 2px; }
+
+  table.t { width: 100%; border-collapse: collapse; font-size: .875rem; background: var(--surface); }
+  table.t caption { text-align: left; font-weight: 700; font-size: .9375rem; padding: 0 0 .4rem; }
+  table.t th, table.t td { border: 1px solid var(--rule); padding: .45rem .55rem; text-align: left; vertical-align: top; }
+  table.t thead th { background: var(--paper-2); font-size: .8125rem; }
+  kbd { font: 600 .8125rem var(--mono); border: 1px solid var(--control); border-bottom-width: 2px; border-radius: 3px; padding: .05rem .35rem; background: var(--surface); white-space: nowrap; }
+  .now { font-family: var(--mono); font-weight: 700; }
+  tr.changed td.now::after { content: " ↺ zmienione"; font-weight: 600; font-size: .75rem; }
+  tr.changed { background: #FFFBD6; }
+
+  .codes { margin-top: 1.25rem; border-top: 1px solid var(--rule); }
+  .codes details { border-bottom: 1px solid var(--rule); }
+  .codes summary { min-height: 44px; display: flex; align-items: center; font-weight: 600; cursor: pointer; }
+
+  .grid-a { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-top: 1.25rem; }
+  .grid-b { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 1.25rem; margin-top: 1.25rem; align-items: start; }
+  .stack > * + * { margin-top: 1.25rem; }
+  @media (max-width: 860px) { .grid-a, .grid-b { grid-template-columns: 1fr; } }
+
+  /* 1C exercise */
+  .ex { list-style: none; margin: 1rem 0 0; padding: 0; border: 1px solid var(--rule); background: var(--surface); }
+  .ex li { display: grid; grid-template-columns: 2.5rem 1fr 1fr; gap: .75rem; padding: .8rem 1rem; border-top: 1px solid var(--rule); align-items: start; }
+  .ex li:first-child { border-top: 0; }
+  .ex .st { font: 700 1rem var(--mono); }
+  .ex .heard { font: .875rem var(--mono); background: var(--paper-2); padding: .35rem .5rem; border-left: 3px solid var(--ink); }
+  .vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .ex li.done .st::before { content: "✓" / ""; }
+  .ex li.now { outline: 2px solid var(--ink); outline-offset: -2px; }
+  .ex li.now .st::before { content: "→" / ""; }
+  .ex li.todo .st::before { content: "○" / ""; color: var(--ink-2); }
+  .ex li.todo .heard { color: var(--ink-2); border-left-style: dashed; }
+  @media (max-width: 700px) { .ex li { grid-template-columns: 2rem 1fr; } .ex .heard { grid-column: 2; } }
+
+  /* catalogue */
+  fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+  legend { font-weight: 700; padding: 0; margin-bottom: .5rem; }
+  .pick { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .pick label { display: inline-flex; align-items: center; gap: .55rem; min-height: 44px; padding: .4rem .9rem .4rem .7rem; border: 1px solid var(--control); border-radius: 2px; background: var(--surface); cursor: pointer; font-size: .9375rem; }
+  .pick input { width: 20px; height: 20px; margin: 0; accent-color: var(--ink); }
+  .pick label:has(input:checked) { border: 2px solid var(--ink); font-weight: 700; }
+  .pick label:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .batch { margin-top: 1.75rem; }
+  .batch h5 { font-size: 1.125rem; letter-spacing: -.01em; }
+  .batch h5 small { font: 600 .8125rem var(--mono); color: var(--ink-2); margin-left: .5rem; }
+  .batch > p { color: var(--ink-2); margin: .2rem 0 .6rem; }
+  .plist { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
+  .plist li { display: grid; grid-template-columns: 1.6rem minmax(0, 1fr) auto; gap: .6rem; align-items: center; min-height: 52px; border-bottom: 1px solid var(--rule); padding: .3rem 0; }
+  .plist .g { font-size: 1.1rem; text-align: center; }
+  .plist a { font-weight: 600; }
+  .plist .enn { font: .8125rem var(--mono); color: var(--ink-2); display: block; }
+  .plist .vd { font-size: .8125rem; color: var(--ink-2); text-align: right; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 1rem; margin-top: 1rem; list-style: none; padding: 0; }
+  .card { background: var(--surface); border: 1px solid var(--rule); display: flex; flex-direction: column; }
+  .card .pv { background: var(--paper-2); border-bottom: 1px solid var(--rule); min-height: 110px; display: flex; align-items: center; justify-content: center; padding: .75rem; }
+  .card .bd { padding: .75rem .9rem 1rem; }
+  .card a { font-weight: 700; font-size: 1.0625rem; }
+  .card .vd { font-size: .8125rem; color: var(--ink-2); margin-top: .35rem; }
+  .p-tabs { display: flex; gap: 0; border-bottom: 2px solid var(--ink); font-size: .8125rem; }
+  .p-tabs span { padding: .35rem .6rem; border: 1px solid var(--control); border-bottom: 0; margin-right: -1px; background: #fff; }
+  .p-tabs span:first-child { border: 2px solid var(--ink); border-bottom: 0; font-weight: 700; }
+  .p-slider { width: 150px; height: 6px; background: var(--control); position: relative; border-radius: 3px; }
+  .p-slider::after { content: ""; position: absolute; left: 60%; top: -9px; width: 24px; height: 24px; border-radius: 50%; background: #fff; border: 2px solid var(--ink); }
+  .p-tree { font: .8125rem/1.5 var(--mono); }
+  .p-btn { border: 2px solid var(--ink); padding: .35rem .8rem; border-radius: 4px; background: #fff; font-weight: 600; font-size: .875rem; }
+  .p-cb { display: flex; flex-direction: column; gap: .2rem; font-size: .8125rem; }
+  .p-cb b { display: inline-block; width: 16px; height: 16px; border: 2px solid var(--ink); margin-right: .4rem; vertical-align: -3px; text-align: center; line-height: 11px; font-size: 12px; }
+  .p-live { font: .8125rem var(--mono); border-left: 3px dashed var(--ink); padding: .25rem .5rem; background: #fff; }
+
+  /* playground */
+  .pg { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 1.25rem; margin-top: 1.25rem; align-items: start; }
+  @media (max-width: 860px) { .pg { grid-template-columns: 1fr; } }
+  .ctl { background: var(--surface); border: 1px solid var(--rule); padding: 1rem; }
+  .ctl fieldset + fieldset, .ctl fieldset + .fld, .ctl .fld + .fld { margin-top: 1rem; }
+  .vlist { display: flex; flex-direction: column; gap: .35rem; }
+  .vlist label { display: flex; gap: .6rem; align-items: center; min-height: 44px; padding: 0 .6rem; border: 1px solid var(--control); border-radius: 2px; background: var(--surface); }
+  .vlist label:has(input:checked) { border: 2px solid var(--ink); font-weight: 700; }
+  .vlist input { width: 20px; height: 20px; margin: 0; accent-color: var(--ink); }
+  .fld label { display: block; font-weight: 700; margin-bottom: .3rem; }
+  .fld .inp { min-height: 44px; border: 1px solid var(--control); border-radius: 2px; background: #fff; display: flex; align-items: center; padding: 0 .6rem; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 1rem; border: 2px solid var(--ink); background: var(--ink); color: var(--paper); font-weight: 700; border-radius: 2px; }
+  .btn.ghost { background: var(--surface); color: var(--ink); }
+  .sentence { font-size: 1.125rem; line-height: 2.6; background: var(--surface); border: 1px solid var(--rule); padding: .75rem 1rem; }
+  .sentence .sel { display: inline-flex; align-items: center; gap: .4rem; min-height: 44px; padding: 0 .6rem; border: 1px solid var(--control); border-radius: 2px; background: #fff; font-weight: 700; vertical-align: middle; line-height: 1.2; }
+  .sentence .sel::after { content: "▾" / ""; font-size: .8rem; }
+  .tl { list-style: none; margin: 1rem 0 0; padding: 0; display: grid; grid-template-columns: 4.5rem 1fr 1fr; border: 1px solid var(--rule); background: var(--surface); font-size: .875rem; }
+  .tl > li { display: contents; }
+  .tl > li > * { padding: .5rem .6rem; border-top: 1px solid var(--rule); }
+  .tl .hd > * { background: var(--paper-2); font-weight: 700; border-top: 0; font-size: .8125rem; }
+  .tl .ms { font-family: var(--mono); color: var(--ink-2); }
+  .tl .sp { font-family: var(--mono); }
+  .tl .mute { color: var(--ink-2); font-style: italic; }
+
+  /* header and practice tabs */
+  .hdr { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem 1.25rem; border-bottom: 1px solid var(--rule); padding: .5rem 1.25rem; background: var(--paper); color: var(--ink); }
+  .hdr .wm { font-weight: 700; font-size: 1.0625rem; }
+  .hdr nav { margin-left: auto; }
+  .hdr ul { display: flex; flex-wrap: wrap; gap: .25rem; list-style: none; margin: 0; padding: 0; }
+  .hdr a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 .5rem; color: var(--ink-2) !important; text-decoration: none !important; font-size: .9375rem; border-bottom: 2px solid transparent; }
+  .hdr a[aria-current] { color: var(--ink) !important; font-weight: 600; border-bottom-color: var(--ink); }
+  .hdr .theme { min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--control); border-radius: 2px; font-size: .875rem; }
+  .narrow { max-width: 390px; }
+  .sub { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0 0; padding: 0; list-style: none; border-bottom: 1px solid var(--rule); }
+  .sub a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 .9rem; color: var(--ink-2) !important; text-decoration: none !important; font-weight: 600; border-bottom: 3px solid transparent; margin-bottom: -1px; }
+  .sub a[aria-current] { color: var(--ink) !important; border-bottom-color: var(--ink); }
+  .sub a small { font: .75rem var(--mono); margin-left: .4rem; }
+
+  @media (max-width: 600px) { .s { padding: 1.25rem 1rem 1.5rem; } .log li { grid-template-columns: 2rem 1fr; } .log li > :last-child { grid-column: 2; } }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>ARIA pattern mocks</h1>
+<p>For <a href="../2026-10-02-phase-9-aria-patterns/phase-9-aria-patterns.en.html">the phase 9 plan</a>, decisions 5 to 7. Light theme only; dark follows the existing tokens. Interface copy is Polish, as in the app. In 1B the accordion works: Tab to a header and press Enter or Space, and the log and the ARIA table follow.</p>
+<p>Native verdict glyphs used throughout: <strong>●</strong> Wystarczy HTML, <strong>◐</strong> HTML z dodatkiem ARIA, <strong>○</strong> Tylko ARIA. The shape and the words carry the meaning, never colour.</p>
+
+<!-- ================================================================== -->
+<h2 id="m1">1. Pattern page, /wzorce/akordeon-pojedynczy</h2>
+<p>Decision 5. Same content in all three; what changes is where the log sits and whether the page leads the reader through the keys.</p>
+
+<section class="variant" aria-labelledby="v1a">
+  <h3 id="v1a"><b>1A</b> Stacked: the pattern, then three tables in a row</h3>
+  <p class="note">The frame gets the full width. Log, keys and ARIA sit under it side by side, so they are out of view while the reader presses keys on a short screen.</p>
+  <div class="frame"><div class="s">
+    <p class="crumb"><a href="#v1a">Wzorce</a> / Akordeon, jedna sekcja</p>
+    <h4 class="t1">Akordeon, jedna sekcja</h4>
+    <p class="en" lang="en">Accordion (Single)</p>
+    <p class="lead">Lista nagłówków, z których każdy rozwija swoją sekcję. Otwarcie jednej zamyka poprzednią.</p>
+    <ul class="row">
+      <li><span class="verdict"><i aria-hidden="true">◐</i> HTML z dodatkiem ARIA</span></li>
+      <li><a class="sc" href="#v1a">1.3.1</a></li><li><a class="sc" href="#v1a">4.1.2</a></li>
+      <li><span class="draft">szkic, czeka na weryfikację</span></li>
+    </ul>
+    <div style="margin-top:1.25rem">
+      <label class="tgl"><input type="checkbox"> Tylko klawiatura</label>
+      <div class="demo" style="margin-top:.5rem"><span class="tag">WZORZEC</span>
+        <div class="acc">
+          <h6><button type="button" aria-expanded="true" tabindex="-1">Dostawa</button></h6>
+          <div class="panel">Kurier w 2 dni robocze. Paczkomat w 1 dzień.</div>
+          <h6><button type="button" aria-expanded="false" tabindex="-1">Zwroty</button></h6>
+          <h6><button type="button" aria-expanded="false" tabindex="-1">Płatności</button></h6>
+        </div>
+      </div>
+    </div>
+    <div class="grid-a">
+      <div class="log"><h5>Co słyszy czytnik</h5><p class="lim">Przybliżenie. Prawdziwy czytnik może mówić inaczej.</p>
+        <ol>
+          <li><span class="k">fokus</span><span>Dostawa, przycisk, zwinięty<span class="key">Tab</span></span></li>
+          <li><span class="k state">zmiana</span><span>rozwinięty<span class="key">Enter</span></span></li>
+          <li><span class="k">fokus</span><span>Zwroty, przycisk, zwinięty<span class="key">Tab</span></span></li>
+        </ol>
+      </div>
+      <table class="t"><caption>Klawisze</caption>
+        <thead><tr><th scope="col">Klawisz</th><th scope="col">Co robi</th></tr></thead>
+        <tbody>
+          <tr><td><kbd>Enter</kbd> <kbd>Spacja</kbd></td><td>Rozwija albo zwija sekcję.</td></tr>
+          <tr><td><kbd>Tab</kbd></td><td>Następny nagłówek albo treść otwartej sekcji.</td></tr>
+        </tbody>
+      </table>
+      <table class="t"><caption>ARIA</caption>
+        <thead><tr><th scope="col">Atrybut</th><th scope="col">Teraz</th></tr></thead>
+        <tbody>
+          <tr class="changed"><td><code>aria-expanded</code><br><small>Dostawa</small></td><td class="now">true</td></tr>
+          <tr><td><code>aria-controls</code></td><td class="now">sekcja-dostawa</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div></div>
+</section>
+
+<section class="variant" aria-labelledby="v1b">
+  <h3 id="v1b"><b>1B</b> Rail: the log beside the pattern, live</h3>
+  <p class="note">The layout of the phase 7 example page turned around: the frame on the left, the log and the ARIA table on the right, so both stay in view while the reader presses keys. Keys and code under the frame. On narrow screens the rail goes under the frame. Try it.</p>
+  <div class="frame"><div class="s">
+    <p class="crumb"><a href="#v1b">Wzorce</a> / Akordeon, jedna sekcja</p>
+    <h4 class="t1">Akordeon, jedna sekcja</h4>
+    <p class="en" lang="en">Accordion (Single)</p>
+    <ul class="row">
+      <li><span class="verdict"><i aria-hidden="true">◐</i> HTML z dodatkiem ARIA</span></li>
+      <li><a class="sc" href="#v1b">1.3.1</a></li><li><a class="sc" href="#v1b">4.1.2</a></li>
+      <li><span class="draft">szkic, czeka na weryfikację</span></li>
+    </ul>
+    <div class="grid-b">
+      <div class="stack">
+        <div>
+          <label class="tgl"><input type="checkbox"> Tylko klawiatura</label>
+          <div class="demo" style="margin-top:.5rem"><span class="tag">WZORZEC</span>
+            <div class="acc" id="acc-b">
+              <h6><button type="button" id="b-dost" aria-expanded="false" aria-controls="b-p1">Dostawa</button></h6>
+              <div class="panel" id="b-p1" hidden>Kurier w 2 dni robocze. Paczkomat w 1 dzień.</div>
+              <h6><button type="button" id="b-zwr" aria-expanded="false" aria-controls="b-p2">Zwroty</button></h6>
+              <div class="panel" id="b-p2" hidden>Masz 30 dni na zwrot. Etykietę wydrukujesz z zakładki Zamówienia.</div>
+              <h6><button type="button" id="b-pl" aria-expanded="false" aria-controls="b-p3">Płatności</button></h6>
+              <div class="panel" id="b-p3" hidden>Karta, BLIK albo przelew.</div>
+            </div>
+          </div>
+        </div>
+        <table class="t"><caption>Klawisze</caption>
+          <thead><tr><th scope="col">Klawisz</th><th scope="col">Co robi</th></tr></thead>
+          <tbody>
+            <tr><td><kbd>Enter</kbd> <kbd>Spacja</kbd></td><td>Rozwija sekcję pod nagłówkiem i zwija tę, która była otwarta.</td></tr>
+            <tr><td><kbd>Tab</kbd></td><td>Przechodzi do następnego nagłówka albo do treści otwartej sekcji.</td></tr>
+            <tr><td><kbd>Shift+Tab</kbd></td><td>Wraca do poprzedniego.</td></tr>
+          </tbody>
+        </table>
+        <div class="codes">
+          <details><summary>HTML</summary><pre class="mono" style="font-size:.8rem;overflow:auto">&lt;h3&gt;&lt;button aria-expanded="false" aria-controls="dostawa"&gt;Dostawa&lt;/button&gt;&lt;/h3&gt;
+&lt;div id="dostawa" hidden&gt;…&lt;/div&gt;</pre></details>
+          <details><summary>CSS</summary><p>…</p></details>
+          <details><summary>JavaScript</summary><p>…</p></details>
+        </div>
+      </div>
+      <div class="stack">
+        <div class="log"><h5>Co słyszy czytnik <button type="button" class="clear" id="b-clear">Wyczyść</button></h5>
+          <p class="lim">Przybliżenie z kodu wzorca. NVDA, JAWS i VoiceOver mogą mówić inaczej.</p>
+          <ol id="b-log"><li><span class="k">start</span><span>Przejdź klawiszem Tab do pierwszego nagłówka.</span></li></ol>
+        </div>
+        <table class="t"><caption>ARIA w tym wzorcu</caption>
+          <thead><tr><th scope="col">Atrybut</th><th scope="col">Na czym</th><th scope="col">Teraz</th></tr></thead>
+          <tbody id="b-aria">
+            <tr data-for="b-dost"><td><code>aria-expanded</code></td><td>Dostawa</td><td class="now">false</td></tr>
+            <tr data-for="b-zwr"><td><code>aria-expanded</code></td><td>Zwroty</td><td class="now">false</td></tr>
+            <tr data-for="b-pl"><td><code>aria-expanded</code></td><td>Płatności</td><td class="now">false</td></tr>
+            <tr><td><code>aria-controls</code></td><td>każdy nagłówek</td><td class="now">id sekcji</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<section class="variant" aria-labelledby="v1c">
+  <h3 id="v1c"><b>1C</b> Exercise: the keyboard table becomes a checklist</h3>
+  <p class="note">Each keyboard row turns into a step with what the reader should hear. The frame ticks a step when it sees the matching key and announcement. Teaches more, costs more: steps need an expected announcement per row in the frontmatter. Layout otherwise as 1B.</p>
+  <div class="frame"><div class="s">
+    <p class="crumb"><a href="#v1c">Wzorce</a> / Akordeon, jedna sekcja</p>
+    <h4 class="t1">Akordeon, jedna sekcja</h4>
+    <p class="en" lang="en">Accordion (Single)</p>
+    <ul class="row">
+      <li><span class="verdict"><i aria-hidden="true">◐</i> HTML z dodatkiem ARIA</span></li>
+      <li><a class="sc" href="#v1c">1.3.1</a></li><li><a class="sc" href="#v1c">4.1.2</a></li>
+    </ul>
+    <div class="demo" style="margin-top:1.25rem"><span class="tag">WZORZEC</span>
+      <div class="acc">
+        <h6><button type="button" aria-expanded="true" tabindex="-1">Dostawa</button></h6>
+        <div class="panel">Kurier w 2 dni robocze. Paczkomat w 1 dzień.</div>
+        <h6><button type="button" aria-expanded="false" tabindex="-1">Zwroty</button></h6>
+        <h6><button type="button" aria-expanded="false" tabindex="-1">Płatności</button></h6>
+      </div>
+    </div>
+    <h5 style="margin-top:1.25rem;font-size:1.0625rem">Sprawdź sam: 2 z 4</h5>
+    <ol class="ex">
+      <li class="done"><span class="st"><span class="vh">zrobione</span></span><span>Przejdź <kbd>Tab</kbd> do nagłówka „Dostawa”.</span><span class="heard">Dostawa, przycisk, zwinięty</span></li>
+      <li class="done"><span class="st"><span class="vh">zrobione</span></span><span>Naciśnij <kbd>Enter</kbd>.</span><span class="heard">rozwinięty</span></li>
+      <li class="now"><span class="st"><span class="vh">teraz</span></span><span>Naciśnij <kbd>Tab</kbd>. Fokus przechodzi do treści sekcji czy do następnego nagłówka?</span><span class="heard">Zwroty, przycisk, zwinięty</span></li>
+      <li class="todo"><span class="st"><span class="vh">do zrobienia</span></span><span>Naciśnij <kbd>Spacja</kbd>. Co stało się z „Dostawą”?</span><span class="heard">rozwinięty, a „Dostawa” zwinięta</span></li>
+    </ol>
+  </div></div>
+</section>
+
+<!-- ================================================================== -->
+<h2 id="m2">2. Catalogue, /wzorce</h2>
+<p>Decision 6. All three filter by the native verdict in <code>?natywnie=</code>. Shown with the filter on "Wszystkie".</p>
+
+<section class="variant" aria-labelledby="v2a">
+  <h3 id="v2a"><b>2A</b> Grouped list by batch</h3>
+  <p class="note">Four groups, each with one line on what it teaches. Dense: 30 rows fit on two screens. Close to the /kryteria list.</p>
+  <div class="frame"><div class="s">
+    <h4 class="t1">Wzorce</h4>
+    <p class="lead" style="margin-top:.4rem">Działające kontrolki do obsłużenia klawiaturą, z tym, co powiedziałby czytnik ekranu. Na podstawie <span lang="en">WAI-ARIA Authoring Practices</span> i listy <span lang="en">Deque University</span>.</p>
+    <fieldset><legend>Pokaż</legend><div class="pick">
+      <label><input type="radio" name="f2a" checked> Wszystkie (30)</label>
+      <label><input type="radio" name="f2a"> ● Wystarczy HTML (7)</label>
+      <label><input type="radio" name="f2a"> ◐ HTML z dodatkiem ARIA (16)</label>
+      <label><input type="radio" name="f2a"> ○ Tylko ARIA (7)</label>
+    </div></fieldset>
+    <div class="batch"><h5>Najpierw HTML <small>9</small></h5><p>Element natywny robi większość pracy. Zobacz, co dostajesz za darmo.</p>
+      <ul class="plist">
+        <li><span class="g" aria-hidden="true">●</span><span><a href="#v2a">Przycisk</a><span class="enn" lang="en">Button</span></span><span class="vd">Wystarczy HTML</span></li>
+        <li><span class="g" aria-hidden="true">◐</span><span><a href="#v2a">Przycisk przełącznik</a><span class="enn" lang="en">Button (Toggle)</span></span><span class="vd">HTML z ARIA</span></li>
+        <li><span class="g" aria-hidden="true">●</span><span><a href="#v2a">Pole wyboru</a><span class="enn" lang="en">Checkbox (Single)</span></span><span class="vd">Wystarczy HTML</span></li>
+        <li><span class="g" aria-hidden="true">◐</span><span><a href="#v2a">Pole wyboru trójstanowe</a><span class="enn" lang="en">Checkbox (Tri-State)</span></span><span class="vd">HTML z ARIA</span></li>
+      </ul>
+    </div>
+    <div class="batch"><h5>Złożone kontrolki <small>7</small></h5><p>Jeden przystanek Tab, a w środku strzałki. Tu ARIA robi wszystko i ty też.</p>
+      <ul class="plist">
+        <li><span class="g" aria-hidden="true">○</span><span><a href="#v2a">Zakładki</a><span class="enn" lang="en">Tabpanel</span></span><span class="vd">Tylko ARIA</span></li>
+        <li><span class="g" aria-hidden="true">○</span><span><a href="#v2a">Drzewo</a><span class="enn" lang="en">Tree View</span></span><span class="vd">Tylko ARIA</span></li>
+        <li><span class="g" aria-hidden="true">◐</span><span><a href="#v2a">Suwak</a><span class="enn" lang="en">Slider</span></span><span class="vd">HTML z ARIA</span></li>
+      </ul>
+    </div>
+  </div></div>
+</section>
+
+<section class="variant" aria-labelledby="v2b">
+  <h3 id="v2b"><b>2B</b> One table: name, verdict, keys, criteria</h3>
+  <p class="note">Like the /wcag-3 mapping: one table, batch rows as separators. Shows at a glance which patterns need arrow keys. Scrolls sideways at 320 pixels inside a labelled region.</p>
+  <div class="frame"><div class="s">
+    <h4 class="t1">Wzorce</h4>
+    <div style="overflow-x:auto;margin-top:1rem" role="region" aria-label="Tabela wzorców" tabindex="0">
+    <table class="t" style="min-width:640px">
+      <caption>30 wzorców, 4 partie</caption>
+      <thead><tr><th scope="col">Wzorzec</th><th scope="col">Natywnie</th><th scope="col">Klawisze</th><th scope="col">Kryteria</th></tr></thead>
+      <tbody>
+        <tr><th scope="rowgroup" colspan="4" style="background:var(--paper-2)">Pokazywanie i ukrywanie</th></tr>
+        <tr><td><a href="#v2b">Akordeon, jedna sekcja</a></td><td>◐ HTML z ARIA</td><td><kbd>Enter</kbd> <kbd>Spacja</kbd></td><td class="mono">1.3.1 4.1.2</td></tr>
+        <tr><td><a href="#v2b">Okno dialogowe</a></td><td>● Wystarczy HTML</td><td><kbd>Esc</kbd> <kbd>Tab</kbd></td><td class="mono">2.4.3 2.1.2</td></tr>
+        <tr><td><a href="#v2b">Dymek</a></td><td>○ Tylko ARIA</td><td><kbd>Esc</kbd></td><td class="mono">1.4.13</td></tr>
+      </tbody>
+      <tbody>
+        <tr><th scope="rowgroup" colspan="4" style="background:var(--paper-2)">Złożone kontrolki</th></tr>
+        <tr><td><a href="#v2b">Zakładki</a></td><td>○ Tylko ARIA</td><td><kbd>←</kbd> <kbd>→</kbd> <kbd>Home</kbd> <kbd>End</kbd></td><td class="mono">1.3.1 2.1.1</td></tr>
+        <tr><td><a href="#v2b">Wybór daty</a></td><td>○ Tylko ARIA</td><td><kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> <kbd>PageUp</kbd></td><td class="mono">2.1.1 3.3.2</td></tr>
+      </tbody>
+    </table></div>
+  </div></div>
+</section>
+
+<section class="variant" aria-labelledby="v2c">
+  <h3 id="v2c"><b>2C</b> Cards with a still of each pattern</h3>
+  <p class="note">Like the /praktyka catalogue. Recognisable at a glance ("ah, that is a tree"), but 30 static stills to draw and keep in sync, and four screens of scrolling.</p>
+  <div class="frame"><div class="s">
+    <h4 class="t1">Wzorce</h4>
+    <ul class="cards">
+      <li class="card"><div class="pv" aria-hidden="true"><div class="p-tabs"><span>Opis</span><span>Wymiary</span><span>Opinie</span></div></div><div class="bd"><a href="#v2c">Zakładki</a><p class="vd">○ Tylko ARIA</p></div></li>
+      <li class="card"><div class="pv" aria-hidden="true"><div class="p-slider"></div></div><div class="bd"><a href="#v2c">Suwak</a><p class="vd">◐ HTML z dodatkiem ARIA</p></div></li>
+      <li class="card"><div class="pv" aria-hidden="true"><div class="p-tree">▾ Dokumenty<br>&nbsp;&nbsp;▸ Faktury<br>&nbsp;&nbsp;&nbsp;&nbsp;umowa.pdf</div></div><div class="bd"><a href="#v2c">Drzewo</a><p class="vd">○ Tylko ARIA</p></div></li>
+      <li class="card"><div class="pv" aria-hidden="true"><span class="p-btn">Zapisz</span></div><div class="bd"><a href="#v2c">Przycisk</a><p class="vd">● Wystarczy HTML</p></div></li>
+      <li class="card"><div class="pv" aria-hidden="true"><div class="p-cb"><span><b>–</b>Wszystkie dodatki</span><span>&nbsp;&nbsp;&nbsp;<b>✓</b>Ser</span><span>&nbsp;&nbsp;&nbsp;<b></b>Oliwki</span></div></div><div class="bd"><a href="#v2c">Pole wyboru trójstanowe</a><p class="vd">◐ HTML z dodatkiem ARIA</p></div></li>
+      <li class="card"><div class="pv" aria-hidden="true"><span class="p-live">„Dodano do koszyka: 2 szt.”</span></div><div class="bd"><a href="#v2c">Regiony na żywo</a><p class="vd">◐ HTML z dodatkiem ARIA</p></div></li>
+    </ul>
+  </div></div>
+</section>
+
+<!-- ================================================================== -->
+<h2 id="m3">3. Live region playground, /wzorce/regiony-na-zywo</h2>
+<p>Not a numbered decision in the plan; pick A or B with the rest. The log here gets a time column, because timing is the lesson.</p>
+
+<section class="variant" aria-labelledby="v3a">
+  <h3 id="v3a"><b>3A</b> Settings panel and log</h3>
+  <p class="note">Native radios and checkboxes on the page, the region in the frame, the log beside it. Familiar, a little dry.</p>
+  <div class="frame"><div class="s">
+    <h4 class="t1">Regiony na żywo</h4>
+    <p class="en" lang="en">Live Region Playground</p>
+    <div class="pg">
+      <div class="ctl">
+        <fieldset><legend>Grzeczność</legend><div class="vlist">
+          <label><input type="radio" name="p3a" checked> <span><code>polite</code>, po bieżącej wypowiedzi</span></label>
+          <label><input type="radio" name="p3a"> <span><code>assertive</code>, przerywa</span></label>
+          <label><input type="radio" name="p3a"> <span><code>off</code>, nic</span></label>
+        </div></fieldset>
+        <fieldset><legend>Opcje</legend><div class="vlist">
+          <label><input type="checkbox" checked> <code>aria-atomic="true"</code></label>
+          <label><input type="checkbox"> Region dodany razem z treścią</label>
+        </div></fieldset>
+        <div class="fld"><label for="m3a">Komunikat</label><div class="inp" id="m3a">Dodano do koszyka: 2 szt.</div></div>
+        <div class="row"><span class="btn">Wyślij</span><span class="btn ghost">Wyślij 3 razy szybko</span></div>
+      </div>
+      <div class="stack">
+        <div class="demo"><span class="tag">WZORZEC</span><p class="mono" style="margin:0">&lt;div aria-live="polite" aria-atomic="true"&gt;<br>&nbsp;&nbsp;Koszyk: 3 produkty, 147 zł<br>&lt;/div&gt;</p></div>
+        <div class="log"><h5>Co słyszy czytnik</h5>
+          <ol>
+            <li><span class="k live">grzecznie</span><span>Koszyk: 2 produkty, 98 zł<span class="key">+0,0 s</span></span></li>
+            <li><span class="k live">grzecznie</span><span>Koszyk: 3 produkty, 147 zł<span class="key">+1,2 s, cały region, bo atomic</span></span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<section class="variant" aria-labelledby="v3b">
+  <h3 id="v3b"><b>3B</b> One sentence, then a timeline of DOM against speech</h3>
+  <p class="note">The settings read as a sentence made of native selects. Underneath, a two-column timeline: what changed in the page, and what the reader would hear, with "nic" where a change goes unannounced. Shows the classic mistake (region added together with its text) as a row of silence.</p>
+  <div class="frame"><div class="s">
+    <h4 class="t1">Regiony na żywo</h4>
+    <p class="en" lang="en">Live Region Playground</p>
+    <p class="sentence">Wstaw tekst <span class="sel">Dodano do koszyka</span> do regionu <span class="sel">polite</span>, który <span class="sel">już był na stronie</span>, i czytaj <span class="sel">cały region</span>. <span class="btn" style="vertical-align:middle">Wyślij</span></p>
+    <ol class="tl">
+      <li class="hd"><span>Czas</span><span>Zmiana na stronie</span><span>Czytnik</span></li>
+      <li><span class="ms">0,0 s</span><span>Tekst „Dodano do koszyka” w istniejącym regionie</span><span class="sp">„Dodano do koszyka”</span></li>
+      <li><span class="ms">2,4 s</span><span>Nowy region z tekstem, wstawiony jednym ruchem</span><span class="mute">nic: region musi istnieć, zanim zmieni się treść</span></li>
+      <li><span class="ms">4,1 s</span><span>Trzy komunikaty w 300 ms, <code>assertive</code></span><span class="sp">tylko ostatni, dwa przerwane</span></li>
+    </ol>
+  </div></div>
+</section>
+
+<!-- ================================================================== -->
+<h2 id="m4">4. Entry point</h2>
+<p>Decision 7.</p>
+
+<section class="variant" aria-labelledby="v4a">
+  <h3 id="v4a"><b>4A</b> A ninth item in the main navigation</h3>
+  <p class="note">"Wzorce" after "Praktyka". At 1280 pixels the row is full; at 390 it wraps onto a third row.</p>
+  <div class="two">
+    <div class="frame"><header class="hdr">
+      <span class="wm"><span class="mono">a11y</span>&nbsp;playground</span>
+      <nav aria-label="Główna (4A, szeroko)"><ul>
+        <li><a href="#v4a">Start</a></li><li><a href="#v4a">Kryteria</a></li><li><a href="#v4a">WCAG 3.0</a></li><li><a href="#v4a">Prawo</a></li><li><a href="#v4a">Praktyka</a></li><li><a href="#v4a" aria-current="page">Wzorce</a></li><li><a href="#v4a">Symulatory</a></li><li><a href="#v4a">Ścieżki</a></li><li><a href="#v4a">Słownik</a></li>
+      </ul></nav>
+      <span class="theme" aria-hidden="true">◐</span>
+    </header></div>
+    <div class="frame narrow"><header class="hdr">
+      <span class="wm"><span class="mono">a11y</span>&nbsp;playground</span>
+      <span class="theme" aria-hidden="true" style="margin-left:auto">◐</span>
+      <nav aria-label="Główna (4A, wąsko)" style="width:100%;margin:0"><ul>
+        <li><a href="#v4a">Start</a></li><li><a href="#v4a">Kryteria</a></li><li><a href="#v4a">WCAG 3.0</a></li><li><a href="#v4a">Prawo</a></li><li><a href="#v4a">Praktyka</a></li><li><a href="#v4a" aria-current="page">Wzorce</a></li><li><a href="#v4a">Symulatory</a></li><li><a href="#v4a">Ścieżki</a></li><li><a href="#v4a">Słownik</a></li>
+      </ul></nav>
+    </header></div>
+  </div>
+</section>
+
+<section class="variant" aria-labelledby="v4b">
+  <h3 id="v4b"><b>4B</b> Inside Praktyka: two links under its heading</h3>
+  <p class="note">The header stays at eight items. "Praktyka" stays current on both pages, and two links under the heading switch between broken-and-fixed examples and patterns. They are links to two URLs, not ARIA tabs, so no arrow keys are expected.</p>
+  <div class="frame"><div class="s" style="padding-top:0;padding-left:0;padding-right:0">
+    <header class="hdr" style="border-bottom:1px solid var(--rule)">
+      <span class="wm"><span class="mono">a11y</span>&nbsp;playground</span>
+      <nav aria-label="Główna (4B)"><ul>
+        <li><a href="#v4b">Start</a></li><li><a href="#v4b">Kryteria</a></li><li><a href="#v4b">WCAG 3.0</a></li><li><a href="#v4b">Prawo</a></li><li><a href="#v4b" aria-current="page">Praktyka</a></li><li><a href="#v4b">Symulatory</a></li><li><a href="#v4b">Ścieżki</a></li><li><a href="#v4b">Słownik</a></li>
+      </ul></nav>
+      <span class="theme" aria-hidden="true">◐</span>
+    </header>
+    <div style="padding:1.5rem 1.75rem 0">
+      <h4 class="t1">Praktyka</h4>
+      <nav aria-label="Praktyka"><ul class="sub">
+        <li><a href="#v4b">Błędy i poprawki <small>11</small></a></li>
+        <li><a href="#v4b" aria-current="page">Wzorce komponentów <small>30</small></a></li>
+      </ul></nav>
+      <p class="lead" style="margin-top:1rem">Działające kontrolki do obsłużenia klawiaturą, z tym, co powiedziałby czytnik ekranu.</p>
+    </div>
+  </div></div>
+</section>
+
+</div>
+
+<script>
+  // Mock 1B only: a working single-open accordion that writes to the log and the ARIA table.
+  (function () {
+    var acc = document.getElementById("acc-b");
+    var log = document.getElementById("b-log");
+    var aria = document.getElementById("b-aria");
+    if (!acc || !log || !aria) return;
+    var state = function (b) { return b.getAttribute("aria-expanded") === "true" ? "rozwinięty" : "zwinięty"; };
+    function add(kind, text, key) {
+      var li = document.createElement("li");
+      var k = document.createElement("span");
+      k.className = "k" + (kind === "zmiana" ? " state" : "");
+      k.textContent = kind;
+      var t = document.createElement("span");
+      t.textContent = text;
+      var kk = document.createElement("span");
+      kk.className = "key";
+      kk.textContent = key;
+      t.appendChild(kk);
+      li.appendChild(k); li.appendChild(t);
+      log.appendChild(li);
+      while (log.children.length > 8) log.removeChild(log.firstChild);
+    }
+    function sync(changedId) {
+      aria.querySelectorAll("tr[data-for]").forEach(function (tr) {
+        var b = document.getElementById(tr.getAttribute("data-for"));
+        tr.querySelector(".now").textContent = b.getAttribute("aria-expanded");
+        tr.classList.toggle("changed", tr.getAttribute("data-for") === changedId);
+      });
+    }
+    var lastKey = "Tab";
+    acc.addEventListener("keydown", function (e) {
+      lastKey = e.key === " " ? "Spacja" : e.key === "Tab" ? (e.shiftKey ? "Shift+Tab" : "Tab") : e.key;
+    });
+    acc.addEventListener("pointerdown", function () { lastKey = "klik"; });
+    acc.addEventListener("focusin", function (e) {
+      var b = e.target.closest("button");
+      if (b) add("fokus", b.textContent + ", przycisk, " + state(b), lastKey);
+    });
+    acc.addEventListener("click", function (e) {
+      var b = e.target.closest("button");
+      if (!b) return;
+      var open = b.getAttribute("aria-expanded") !== "true";
+      acc.querySelectorAll("button").forEach(function (o) {
+        o.setAttribute("aria-expanded", "false");
+        document.getElementById(o.getAttribute("aria-controls")).hidden = true;
+      });
+      b.setAttribute("aria-expanded", String(open));
+      document.getElementById(b.getAttribute("aria-controls")).hidden = !open;
+      add("zmiana", state(b), e.detail === 0 ? lastKey : "klik");
+      sync(b.id);
+    });
+    document.getElementById("b-clear").addEventListener("click", function () {
+      log.textContent = "";
+    });
+  })();
+</script>
+</body>
+</html>
