@@ -7,8 +7,11 @@ const routes = [
   "/",
   "/kryteria",
   "/kryteria/1.4.3",
+  "/kryteria/1.4.6",
   "/kryteria/2.4.11",
   "/kryteria/4.1.1",
+  "/wcag-3",
+  "/wcag-3?pokaz=nowe",
   "/prawo",
   "/prawo/ustawa-2019-848",
   "/prawo/ustawa-2019-848/art-5",
@@ -35,6 +38,14 @@ for (const route of routes) {
       expect(violations).toEqual([]);
     });
   }
+
+  // 2.3.3 Animation from Interactions, claimed in src/content/app-meets.ts: the interface itself
+  // never animates. Example frames are separate documents and do not count here.
+  test(`${route} runs no animations`, async ({ page }) => {
+    await page.goto(route);
+    await page.waitForLoadState("networkidle");
+    expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
+  });
 
   // 2.5.5 Target Size (Enhanced), which we opt into. Inline links in running text are exempt,
   // and so is the skip link while it is visually hidden (keyboard.spec.ts checks it on focus).

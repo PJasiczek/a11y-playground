@@ -84,13 +84,12 @@ test("glossary terms link to their entry on /slownik", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 3, name: "współczynnik kontrastu" })).toBeInViewport();
 });
 
-test("the role filter works from the keyboard and explains what it hides", async ({ page }) => {
+test("the role filter works from the keyboard", async ({ page }) => {
   await page.goto("/kryteria");
   const tester = page.getByRole("checkbox", { name: "tester" });
   await tester.focus();
   await page.keyboard.press("Space");
   await expect(page).toHaveURL(/rola=/);
-  await expect(page.getByText("Filtr ról pokazuje tylko kryteria z opisaną treścią.")).toBeVisible();
   await expect(page.getByRole("link", { name: /^2\.1\.1 Klawiatura/ })).toBeVisible();
   await expect(page.getByRole("link", { name: /^1\.2\.3 / })).toHaveCount(0);
   await expect(tester).toBeFocused();
@@ -108,4 +107,23 @@ test("search from the home page works from the keyboard", async ({ page }) => {
   await first.focus();
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL("/kryteria/1.4.3");
+});
+
+// 2.4.13 Focus Appearance, claimed in src/content/app-meets.ts: every Tab stop gets a solid
+// outline at least 2px thick.
+test("every Tab stop on a criterion page has a solid outline of at least 2px", async ({ page }) => {
+  await page.goto("/kryteria/1.4.6");
+  await page.waitForLoadState("networkidle");
+  for (let stop = 0; stop < 30; stop++) {
+    await page.keyboard.press("Tab");
+    const outline = await page.evaluate(() => {
+      const el = document.activeElement;
+      if (!el || el === document.body) return null;
+      const style = getComputedStyle(el);
+      return { text: el.textContent.trim().slice(0, 40), style: style.outlineStyle, width: parseFloat(style.outlineWidth) };
+    });
+    if (!outline) break;
+    expect(outline, outline.text).toMatchObject({ style: "solid" });
+    expect(outline.width, outline.text).toBeGreaterThanOrEqual(2);
+  }
 });

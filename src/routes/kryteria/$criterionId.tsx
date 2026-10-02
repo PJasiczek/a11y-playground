@@ -1,20 +1,22 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import type { ReactNode } from "react";
+import { AaaNote, AppMeets, EnhancesStrip } from "~/components/aaa";
 import { ProvisionLink, StrengthLabel } from "~/components/legal";
-import { DraftBadge, LevelBadge, NewBadge } from "~/components/level-badge";
+import { DraftBadge, LevelBadge, NewBadge, WorkingDraftBadge } from "~/components/level-badge";
 import { TermTips } from "~/components/term-tips";
+import { appMeets } from "~/content/app-meets";
 import { getCriterionPage } from "~/content/content.functions";
 import { formatDate } from "~/content/legal";
 import { enClause } from "~/content/legal-map";
 import type { SectionKey } from "~/content/sections";
-import { findCriterion, guidelineOf, isNewIn22, isObsolete, principleOf } from "~/content/wcag";
+import { type CriterionId, findCriterion, guidelineOf, isNewIn22, isObsolete, principleOf } from "~/content/wcag";
 
 export const Route = createFileRoute("/kryteria/$criterionId")({
   loader: async ({ params }) => {
     const criterion = findCriterion(params.criterionId);
     if (!criterion) throw notFound();
-    const { content, normative, terms, examples, lessons, law } = await getCriterionPage({ data: criterion.id });
-    return { criterion, content, normative, terms, examples, lessons, law };
+    const page = await getCriterionPage({ data: criterion.id });
+    return { criterion, ...page };
   },
   head: ({ loaderData }) => ({
     meta: [{ title: loaderData ? `${loaderData.criterion.id} ${loaderData.criterion.name} · a11y playground` : "a11y playground" }],
@@ -37,11 +39,15 @@ const pageSections = [
   { id: "powiazane", title: "Powiązane" },
 ] as const satisfies readonly { id: string; title: string; content?: SectionKey }[];
 
+const chipClass =
+  "inline-flex min-h-11 items-center gap-2 rounded border border-control bg-surface px-3 text-[0.9375rem] hover:border-ink";
+
 const emptyNote = <p className="text-ink-2">Ta sekcja nie ma jeszcze treści.</p>;
 
 function CriterionPage() {
-  const { criterion, content, normative, terms, examples, lessons, law } = Route.useLoaderData();
+  const { criterion, content, normative, terms, examples, lessons, law, stronger, wcag3 } = Route.useLoaderData();
   const clause = enClause(criterion);
+  const meets = appMeets[criterion.id];
   const principle = principleOf(criterion);
   const guideline = guidelineOf(criterion);
 
@@ -50,6 +56,39 @@ function CriterionPage() {
     const section = content?.sections[key];
     return section ? <div className="prose" data-section={key} dangerouslySetInnerHTML={{ __html: section }} /> : null;
   };
+
+  const criterionLink = (id: CriterionId) => {
+    const related = findCriterion(id);
+    return {
+      key: id,
+      node: related ? (
+        <Link to="/kryteria/$criterionId" params={{ criterionId: id }} className={chipClass}>
+          <b className="font-mono">{id}</b> {related.name} <LevelBadge level={related.level} />
+        </Link>
+      ) : null,
+    };
+  };
+
+  const relations: { label: string; links: { key: string; node: ReactNode }[]; note?: ReactNode }[] = [
+    { label: "Kryteria", links: (content?.related ?? []).filter((id) => !stronger.includes(id)).map(criterionLink) },
+    { label: "Wersja wzmocniona", links: stronger.map(criterionLink) },
+    {
+      label: "W WCAG 3.0",
+      links: wcag3.map((g) => ({
+        key: g.num,
+        node: (
+          <Link to="/wcag-3" hash={g.anchor} className={chipClass}>
+            <b className="font-mono">{g.num}</b> {g.title}
+          </Link>
+        ),
+      })),
+      note: (
+        <p className="mt-2 flex flex-wrap items-center gap-2 font-mono text-[0.8125rem] text-ink-2">
+          <WorkingDraftBadge /> przypisanie nasze, wersja robocza może je zmienić
+        </p>
+      ),
+    },
+  ].filter(({ links }) => links.length > 0);
 
   const body: Record<(typeof pageSections)[number]["id"], ReactNode> = {
     "kogo-dotyczy": html("kogo-dotyczy") ?? emptyNote,
@@ -180,28 +219,28 @@ function CriterionPage() {
         </p>
       </>
     ),
+    // Variant 3A of the phase 8 mocks: one labelled row per kind of relation.
     powiazane: (
       <>
-        {content && content.related.length > 0 ? (
-          <ul className="flex flex-wrap gap-2">
-            {content.related.map((id) => {
-              const related = findCriterion(id);
-              return related ? (
-                <li key={id}>
-                  <Link
-                    to="/kryteria/$criterionId"
-                    params={{ criterionId: id }}
-                    className="inline-flex min-h-11 items-center gap-2 rounded border border-control bg-surface px-3 text-[0.9375rem] hover:border-ink"
-                  >
-                    <b className="font-mono">{id}</b> {related.name} <LevelBadge level={related.level} />
-                  </Link>
-                </li>
-              ) : null;
-            })}
-          </ul>
+        {relations.length > 0 ? (
+          <dl>
+            {relations.map(({ label, links, note }) => (
+              <div key={label} className="grid gap-x-4 gap-y-1 border-t border-rule py-3 sm:grid-cols-[10rem_1fr]">
+                <dt className="font-mono text-[0.8125rem] font-semibold text-ink-2 sm:pt-3">{label}</dt>
+                <dd>
+                  <ul className="flex flex-wrap gap-2">
+                    {links.map(({ key, node }) => (
+                      <li key={key}>{node}</li>
+                    ))}
+                  </ul>
+                  {note}
+                </dd>
+              </div>
+            ))}
+          </dl>
         ) : null}
         {content?.sections["czeste-pomylki"] ? <div className="mt-4">{html("czeste-pomylki")}</div> : null}
-        {!content?.related.length && !content?.sections["czeste-pomylki"] ? emptyNote : null}
+        {relations.length === 0 && !content?.sections["czeste-pomylki"] ? emptyNote : null}
       </>
     ),
   };
@@ -246,6 +285,9 @@ function CriterionPage() {
           ) : null}
         </p>
         {content ? <p className="mt-7 max-w-[56ch] text-xl leading-normal">{content.summary}</p> : null}
+        {criterion.level === "AAA" ? <AaaNote /> : null}
+        {meets ? <AppMeets note={meets} /> : null}
+        {content?.enhances ? <EnhancesStrip criterion={criterion} enhances={content.enhances} /> : null}
       </header>
 
       <div className="grid gap-10 pt-8 lg:grid-cols-[1fr_13rem] lg:gap-12">

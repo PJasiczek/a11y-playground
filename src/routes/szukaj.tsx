@@ -16,7 +16,12 @@ type Hit = SearchResult & Pick<SearchDoc, "kind" | "ref" | "title" | "summary">;
 function isHit(result: SearchResult): result is Hit {
   const { kind, ref, title, summary } = result;
   return (
-    (kind === "kryterium" || kind === "pojecie" || kind === "przyklad" || kind === "przepis" || kind === "lekcja") &&
+    (kind === "kryterium" ||
+      kind === "pojecie" ||
+      kind === "przyklad" ||
+      kind === "przepis" ||
+      kind === "lekcja" ||
+      kind === "wcag3") &&
     typeof ref === "string" &&
     typeof title === "string" &&
     typeof summary === "string"
@@ -33,7 +38,7 @@ function loadIndex() {
 }
 
 /**
- * Search over criteria, examples, provisions, lessons and the glossary (screen 7 of variant A, with a
+ * Search over criteria, examples, provisions, lessons, WCAG 3.0 guidelines and the glossary (screen 7 of variant A, with a
  * visible label instead of a placeholder). The form works as a plain GET to /szukaj?q=; the
  * index is searched in the browser and the result count is announced in a status region.
  */
@@ -66,6 +71,7 @@ function SearchPage() {
   const practice = hits?.filter((hit) => hit.kind === "przyklad") ?? [];
   const law = hits?.filter((hit) => hit.kind === "przepis") ?? [];
   const lessons = hits?.filter((hit) => hit.kind === "lekcja") ?? [];
+  const wcag3 = hits?.filter((hit) => hit.kind === "wcag3") ?? [];
   const status = !q ? "" : hits ? `${countOf(hits.length, ["wynik", "wyniki", "wyników"])} dla „${q}”` : "Szukam…";
 
   return (
@@ -128,6 +134,26 @@ function SearchPage() {
                 <span className="text-[1.0625rem] font-semibold">
                   {hit.title}
                   {hit.summary ? <span className="mt-1 block text-[0.9375rem] font-normal text-ink-2">{hit.summary}</span> : null}
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ResultGroup>
+      ) : null}
+
+      {wcag3.length > 0 ? (
+        <ResultGroup title="WCAG 3.0, wersja robocza">
+          {wcag3.map((hit) => (
+            <li key={hit.ref} className="border-t border-rule last:border-b">
+              <Link
+                to="/wcag-3"
+                hash={hit.ref}
+                className="grid grid-cols-[5.5rem_1fr] gap-x-4 gap-y-1 px-1 py-3.5 hover:bg-surface max-sm:grid-cols-1"
+              >
+                <span className="font-mono text-[0.8125rem] font-semibold text-ink-2">WCAG 3.0</span>
+                <span className="text-[1.0625rem] font-semibold">
+                  {hit.title}
+                  <span className="mt-1 block text-[0.9375rem] font-normal text-ink-2">{hit.summary}</span>
                 </span>
               </Link>
             </li>

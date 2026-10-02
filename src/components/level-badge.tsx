@@ -28,3 +28,16 @@ export function DraftBadge({ long = false }: { long?: boolean }) {
     </span>
   );
 }
+
+/**
+ * Marks content about a W3C Working Draft (WCAG 3.0). A double rule and a clock glyph, so it
+ * reads differently from the dashed DraftBadge, which means our own unverified content.
+ */
+export function WorkingDraftBadge() {
+  return (
+    <span className="rounded-xs border-3 border-double border-ink px-1.5 py-1 font-mono text-xs leading-none font-bold whitespace-nowrap text-ink">
+      <span aria-hidden="true">◷ </span>
+      wersja robocza W3C
+    </span>
+  );
+}

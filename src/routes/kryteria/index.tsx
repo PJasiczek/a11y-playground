@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { type } from "arktype";
-import type { ReactNode } from "react";
+import { Chip, FilterGroup } from "~/components/filters";
 import { DraftBadge, LevelBadge, NewBadge } from "~/components/level-badge";
 import { getCriteriaOverview } from "~/content/content.functions";
 import { type Role, roles } from "~/content/sections";
@@ -50,8 +50,8 @@ function CriteriaPage() {
   const version = search.wersja ?? "2.2";
   const pickedLevels: readonly Level[] = search.poziom ?? levels;
   const inScope = criteria.filter((c) => inVersion(c, version));
-  // No role picked means no role filter. Criteria without content have no roles yet, so a role
-  // filter hides them; the note under the filters says so.
+  // No role picked means no role filter. Every criterion has content with roles, which the
+  // completeness test guarantees.
   const pickedRoles: readonly Role[] = search.rola ?? [];
   const matchesRole = (id: CriterionId) =>
     pickedRoles.length === 0 || (overview[id]?.roles.some((role) => pickedRoles.includes(role)) ?? false);
@@ -115,12 +115,6 @@ function CriteriaPage() {
         </FilterGroup>
       </div>
 
-      {pickedRoles.length > 0 ? (
-        <p className="pt-3 text-[0.9375rem] text-ink-2">
-          Filtr ról pokazuje tylko kryteria z opisaną treścią. Kryteria AAA nie mają jeszcze przypisanych ról.
-        </p>
-      ) : null}
-
       {filtered ? (
         <p className="py-3">
           <Link to="/kryteria" className="font-semibold text-accent underline underline-offset-3">
@@ -159,46 +153,5 @@ function CriteriaPage() {
         <p className="mt-6 text-ink-2">Żadne kryterium nie spełnia tych filtrów.</p>
       )}
     </>
-  );
-}
-
-function FilterGroup({ legend, children }: { legend: string; children: ReactNode }) {
-  return (
-    <fieldset className="flex flex-wrap items-center gap-2">
-      <legend className="float-left mr-1 font-mono text-xs font-semibold tracking-widest text-ink-2 uppercase">
-        {legend}
-      </legend>
-      {children}
-    </fieldset>
-  );
-}
-
-/**
- * A native radio or checkbox dressed as a chip. The input stays in the accessibility tree and
- * handles keyboard and state; the checked state shows as a tick and the marker, never colour alone.
- */
-function Chip({
-  type,
-  name,
-  checked,
-  onChange,
-  children,
-}: {
-  type: "radio" | "checkbox";
-  name?: string;
-  checked: boolean;
-  onChange: () => void;
-  children: ReactNode;
-}) {
-  return (
-    <label className="inline-flex min-h-11 cursor-pointer items-center rounded border border-control bg-surface px-3 text-sm font-medium has-checked:border-on-marker has-checked:bg-marker has-checked:font-bold has-checked:text-on-marker has-focus-visible:outline-3 has-focus-visible:outline-offset-2 has-focus-visible:outline-accent">
-      <input type={type} name={name} checked={checked} onChange={onChange} className="sr-only" />
-      {checked ? (
-        <span aria-hidden="true" className="mr-1 font-mono">
-          ✓
-        </span>
-      ) : null}
-      {children}
-    </label>
   );
 }

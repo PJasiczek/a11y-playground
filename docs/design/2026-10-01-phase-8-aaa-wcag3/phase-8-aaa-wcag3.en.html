@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan: phase 8, AAA criteria and WCAG 3.0 tracking</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1.25rem 6rem;
+    background: #000; color: #fff;
+    font: 16px/1.65 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  main { max-width: 82ch; margin: 0 auto; }
+  h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 .5rem; letter-spacing: -.02em; }
+  h2 { font-size: 1.2rem; margin: 3rem 0 .75rem; padding-top: 1rem; border-top: 1px solid #262626; letter-spacing: -.01em; }
+  h3 { font-size: 1rem; margin: 1.75rem 0 .5rem; }
+  p, li, dd { color: #e5e5e5; }
+  a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  ul, ol { padding-left: 1.3rem; }
+  li { margin: .3rem 0; }
+  code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .875em; background: #141414; border: 1px solid #262626; border-radius: 3px; padding: .08em .3em; }
+  pre { background: #0b0b0b; border: 1px solid #262626; border-radius: 4px; padding: .9rem 1rem; overflow-x: auto; }
+  pre code { background: none; border: 0; padding: 0; font-size: .82rem; line-height: 1.55; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; display: block; overflow-x: auto; }
+  th, td { border: 1px solid #262626; padding: .45rem .6rem; text-align: left; vertical-align: top; }
+  th { background: #101010; font-weight: 600; }
+  .meta { color: #a3a3a3; font-size: .85rem; margin: 0 0 1.5rem; }
+  .meta a { color: #fff; }
+  .flag { border-left: 2px solid #737373; padding: .1rem 0 .1rem .85rem; margin: 1rem 0; color: #d4d4d4; font-size: .93rem; }
+  .toc { border: 1px solid #262626; padding: 1rem 1rem 1rem 2.4rem; margin: 1.5rem 0 0; }
+  .toc li { margin: .15rem 0; }
+  @media (max-width: 40rem) { body { padding: 1.25rem .9rem 4rem; } h1 { font-size: 1.45rem; } }
+</style>
+</head>
+<body>
+<main>
+
+<p class="meta"><a href="phase-8-aaa-wcag3.pl.html" hreflang="pl">Wersja polska</a></p>
+
+<h1>Plan: phase 8, AAA criteria and WCAG 3.0 tracking</h1>
+<p class="meta">Detailed plan for phase 8 of the <a href="../2026-09-27-wcag-learning-app/wcag-learning-app.en.html">main plan</a>, sections 3.1, 3.2 and 14. Mocks of the AAA criterion page, <code>/wcag-3</code> and the links into it: <a href="../2026-10-01-aaa-wcag3-mocks/aaa-wcag3-mocks.html">aaa-wcag3-mocks.html</a>. Plan version: 2026-10-01.</p>
+
+<p class="flag">The main plan, written from memory, says that WCAG 3.0 dropped the bronze, silver and gold levels and talks about "foundational requirements" and "outcomes". The Working Draft of 10 September 2026 uses different words: 12 groups of guidelines, each guideline with <em>core</em> and <em>supplemental</em> requirements and <em>assertions</em>, and a conformance section that reports on core and supplemental requirements without A, AA or AAA. This plan follows the draft. Every fact about 3.0 below is checked again against the draft current on the day the content is written.</p>
+
+<h2 id="changes">Changes after work started</h2>
+<p>Decisions made while building phase 8. Where they conflict with the sections below, these win.</p>
+<ul>
+  <li><strong>The six-month test reads <code>checked</code>, not <code>draft</code> (section 6).</strong> If W3C publishes nothing for seven months, an old draft date is correct and a test on it could only be fixed by fudging. <code>checked</code> in <code>content/wcag3/index.md</code> is the day we last compared the content with w3.org, and the page shows both dates.</li>
+  <li><strong>The comparison lives in frontmatter (section 6).</strong> <code>compare</code> in <code>index.md</code> holds the rows, so the page renders a real table with a caption and row headers. A Markdown table would lose the row headers.</li>
+  <li><strong>Group files have no body (section 6).</strong> Nothing showed a group introduction, so text after the frontmatter fails the file instead of being silently dropped.</li>
+  <li><strong>2.4.13 tightens 2.4.7 (section 3).</strong> Thirteen AAA criteria carry <code>enhances</code>, not twelve.</li>
+  <li><strong>A refactor commit before the page (section 10).</strong> The filter chips moved from <code>/kryteria</code> to <code>src/components/filters.tsx</code>, so <code>/wcag-3</code> uses the same radios.</li>
+  <li><strong>Mapping rows show criterion numbers (section 7).</strong> Each link reads "1.1.1" on screen and "1.1.1 Treść nietekstowa" to a screen reader, so the table stays narrow and the name starts with the visible label (2.5.3).</li>
+  <li><strong>A hash link moves focus to its target (section 9).</strong> The route announcer used to focus the <code>h1</code> after every path change. Now it focuses the element the hash names when there is one, so the link from a criterion page lands on its row on <code>/wcag-3</code>. Glossary and provision links benefit too.</li>
+  <li><strong>The header got tighter (section 7).</strong> With eight navigation items the theme toggle wrapped under the navigation at 1280 pixels. Link padding went from 12 to 8 pixels; targets stay 44 pixels high.</li>
+  <li><strong>New tests back two claims (section 4).</strong> "Ta aplikacja to spełnia" for 2.3.3 rests on a check that no page runs an animation, and for 2.4.13 on a Tab walk that checks every outline. 1.4.6 and 2.5.5 already had tests.</li>
+</ul>
+
+<ol class="toc">
+  <li><a href="#goal">Goal and definition of done</a></li>
+  <li><a href="#scope">Scope</a></li>
+  <li><a href="#aaa">AAA content</a></li>
+  <li><a href="#aaa-format">What AAA adds to the criterion format</a></li>
+  <li><a href="#w3">The WCAG 3.0 module</a></li>
+  <li><a href="#w3-format">WCAG 3.0 content format</a></li>
+  <li><a href="#pages">Pages</a></li>
+  <li><a href="#a11y">Accessibility</a></li>
+  <li><a href="#tests">Tests</a></li>
+  <li><a href="#commits">Commits and the pull request</a></li>
+  <li><a href="#risks">Risks</a></li>
+  <li><a href="#decisions">Decisions</a></li>
+</ol>
+
+<h2 id="goal">1. Goal and definition of done</h2>
+<p>After phase 8 the app covers the whole of WCAG 2.2 and says honestly what is coming next. A reader who opens an AAA criterion learns what it asks, how much more it asks than its AA sibling, and when it is worth doing even though no Polish act requires it. A reader who has heard about WCAG 3.0 learns how it is built, how far along it is, and where each of today's criteria sits in it.</p>
+<p>Done when:</p>
+<ul>
+  <li>All 86 criteria of WCAG 2.2 have content. The completeness test covers every criterion that is not obsolete, not only A and AA.</li>
+  <li>4.1.1 Parsing has a short page explaining why 2.2 removed it and why a Polish public body still has to meet it.</li>
+  <li><code>/wcag-3</code> exists. It carries a visible "wersja robocza W3C" badge with the date of the draft it describes, and the date we last checked it.</li>
+  <li>Every guideline of the 3.0 draft is listed with the 2.2 criteria that correspond to it, or a note that nothing in 2.2 does. Criterion pages link back.</li>
+  <li>The role filter on <code>/kryteria</code> works for every criterion, so the note about AAA criteria without roles goes away.</li>
+</ul>
+
+<h2 id="scope">2. Scope</h2>
+<table>
+  <thead><tr><th>In</th><th>Out, and where it goes</th></tr></thead>
+  <tbody>
+    <tr><td>Content for the 31 AAA criteria, in three batches by principle, as drafts (<code>status: szkic</code>)</td><td>Verifying the drafts: done by a person, as for A and AA. The badge says so</td></tr>
+    <tr><td>A short page for 4.1.1, obsolete in 2.2 but still in the annex to the 2019 act</td><td>Content for criteria that only existed in 2.0: there are none</td></tr>
+    <tr><td>Two optional frontmatter fields for an AAA criterion that tightens an AA one, and the comparison they produce on the page</td><td>New examples for AAA criteria. The main plan asks for examples at AA only. A focus appearance example (2.4.13) goes on the list of ideas</td></tr>
+    <tr><td>Glossary terms the AAA texts need, about eight (sign language interpretation, extended audio description, idiom, jargon, abbreviation, reading level and similar; final list while writing)</td><td>AAA lessons in the paths. The paths teach what the law requires; one lesson may link to an AAA criterion where it already discusses its AA sibling</td></tr>
+    <tr><td>The WCAG 3.0 module: one page, <code>/wcag-3</code>, with the status, how 3.0 differs from 2.x, and the guideline to criterion mapping</td><td>Teaching 3.0 requirement by requirement. The draft has several hundred requirements in "developing" status. We map guidelines, not requirements</td></tr>
+    <tr><td>A "W WCAG 3.0" line on every criterion page that has a counterpart</td><td>An importer for the 3.0 draft. The draft is HTML without structured data, and 12 hand-written files are cheaper to keep correct than a scraper</td></tr>
+    <tr><td>3.0 guidelines in search</td><td>Tracking EN 301 549 or the EAA against 3.0. Nothing cites it yet</td></tr>
+  </tbody>
+</table>
+
+<h2 id="aaa">3. AAA content</h2>
+<p>Same format, same sections, same writing rules as phase 2: user situation first, concrete numbers, imperative verbs under "Jak to spełnić", split by role where several people are involved. Three things are specific to AAA.</p>
+<ul>
+  <li><strong>Say when it is worth it.</strong> W3C itself does not recommend AAA as a blanket policy, because some criteria cannot be met for some content. Each AAA page says in "Jak to spełnić" where the criterion pays off and where it does not: 2.5.5 is cheap in a design system and expensive in a legacy app, 1.2.6 makes sense for a public service video and not for a product demo.</li>
+  <li><strong>Lead with the difference.</strong> Twelve AAA criteria tighten an AA one (table below). For those the summary states the difference in numbers, and the page shows a comparison with the sibling (section 4).</li>
+  <li><strong>Be clear about the law.</strong> The "Prawo" section already says no act requires AAA. The text does not repeat that in every section; it appears once, in the AAA note in the header.</li>
+</ul>
+
+<h3>Batches</h3>
+<table>
+  <thead><tr><th>Batch</th><th>Criteria</th><th>Count</th></tr></thead>
+  <tbody>
+    <tr><td>Principle 1</td><td><code>1.2.6</code> <code>1.2.7</code> <code>1.2.8</code> <code>1.2.9</code> <code>1.3.6</code> <code>1.4.6</code> <code>1.4.7</code> <code>1.4.8</code> <code>1.4.9</code></td><td>9</td></tr>
+    <tr><td>Principle 2</td><td><code>2.1.3</code> <code>2.2.3</code> <code>2.2.4</code> <code>2.2.5</code> <code>2.2.6</code> <code>2.3.2</code> <code>2.3.3</code> <code>2.4.8</code> <code>2.4.9</code> <code>2.4.10</code> <code>2.4.12</code> <code>2.4.13</code> <code>2.5.5</code> <code>2.5.6</code></td><td>14</td></tr>
+    <tr><td>Principle 3</td><td><code>3.1.3</code> <code>3.1.4</code> <code>3.1.5</code> <code>3.1.6</code> <code>3.2.5</code> <code>3.3.5</code> <code>3.3.6</code> <code>3.3.9</code></td><td>8</td></tr>
+    <tr><td>Obsolete</td><td><code>4.1.1</code></td><td>1</td></tr>
+  </tbody>
+</table>
+<p>Principle 4 has no AAA criteria. 2.4.12, 2.4.13 and 3.3.9 are new in 2.2, so they show the IRDPL note in "Treść normy" like the other new criteria.</p>
+
+<h3>AAA criteria that tighten an AA one</h3>
+<table>
+  <thead><tr><th>AAA</th><th>Tightens</th><th>The difference, roughly</th></tr></thead>
+  <tbody>
+    <tr><td><code>1.2.7</code></td><td><code>1.2.5</code></td><td>Pauses the video when the gaps are too short for audio description</td></tr>
+    <tr><td><code>1.2.8</code></td><td><code>1.2.3</code></td><td>A full text alternative, no longer an option next to audio description</td></tr>
+    <tr><td><code>1.4.6</code></td><td><code>1.4.3</code></td><td>7 to 1 instead of 4.5 to 1, large text 4.5 instead of 3</td></tr>
+    <tr><td><code>1.4.9</code></td><td><code>1.4.5</code></td><td>No images of text at all, except logos and where the image is essential</td></tr>
+    <tr><td><code>2.1.3</code></td><td><code>2.1.1</code></td><td>No exception for path-dependent input</td></tr>
+    <tr><td><code>2.2.3</code></td><td><code>2.2.1</code></td><td>No time limits, except real-time events and non-interactive media</td></tr>
+    <tr><td><code>2.3.2</code></td><td><code>2.3.1</code></td><td>No more than three flashes a second, without the threshold exception</td></tr>
+    <tr><td><code>2.4.9</code></td><td><code>2.4.4</code></td><td>The link text alone, not its context</td></tr>
+    <tr><td><code>2.4.12</code></td><td><code>2.4.11</code></td><td>No part of the focused element hidden, not "not entirely hidden"</td></tr>
+    <tr><td><code>2.5.5</code></td><td><code>2.5.8</code></td><td>44 by 44 pixels instead of 24 by 24, fewer exceptions</td></tr>
+    <tr><td><code>3.3.6</code></td><td><code>3.3.4</code></td><td>Every form that submits information, not only legal, financial and data deletion</td></tr>
+    <tr><td><code>3.3.9</code></td><td><code>3.3.8</code></td><td>No object recognition or personal content exceptions</td></tr>
+  </tbody>
+</table>
+<p>The exact list and wording are settled against the normative text while writing. 3.2.5 relates to 3.2.1 and 3.2.2 but does not tighten either one, so it stays in <code>related</code>.</p>
+
+<h3>4.1.1 Parsing</h3>
+<p>A short file with "Kogo to dotyczy" and "Częste pomyłki" only: what the criterion asked, why 2.2 removed it (browsers and assistive technology now repair broken markup the same way, and the problems it caught are covered by 1.3.1 and 4.1.2), and the catch for Polish readers: the annex to the 2019 act lists WCAG 2.1, so a public body is still checked against 4.1.1. The page already says "wycofane w WCAG 2.2", and the "Prawo" section already shows the note from <code>legal-map.ts</code>. The completeness test keeps skipping obsolete criteria, so this file is not forced into the A and AA section list.</p>
+
+<h2 id="aaa-format">4. What AAA adds to the criterion format</h2>
+<p>Two optional frontmatter fields, used only on the AAA criteria in the table above:</p>
+<pre><code># content/kryteria/1.4.6.md
+---
+status: szkic
+summary: Tekst musi odcinać się od tła w stosunku co najmniej 7 do 1. Duży tekst wystarczy 4,5 do 1.
+roles: [projektant, programista]
+enhances: "1.4.3"
+difference: 7 do 1 zamiast 4,5 do 1. Duży tekst 4,5 do 1 zamiast 3 do 1. Wyjątki te same.
+related: ["1.4.3", "1.4.11", "1.4.8"]
+---</code></pre>
+<ul>
+  <li><code>enhances</code> must name an existing criterion at a lower level in the same guideline. The parser checks the id; a test checks the level and the guideline, because the parser only sees one file at a time.</li>
+  <li><code>difference</code> is required with <code>enhances</code> and forbidden without it, up to 160 characters. It is the one line the comparison on the page shows (mock 1).</li>
+  <li>The sibling gets the link back for free: the AA page reads the reverse index and says "Wersja wzmocniona: 1.4.6". No field on the AA side, so the two cannot drift apart.</li>
+</ul>
+<p>The AAA note in the header is not content: every AAA page gets the same sentence, "Poziom AAA: cel, nie obowiązek. Żadna ustawa go nie wymaga", linking to the "Prawo" section on the same page. Its wording is picked from the variants in chat before building.</p>
+<p>Optional, decision 3: where this app meets an AAA criterion (1.4.6, 2.3.3, 2.4.13, 2.5.5, from <code>docs/accessibility.md</code> and the README), the page says so, "Ta aplikacja to spełnia", with how we check it. One <code>as const satisfies readonly CriterionId[]</code> list in code, next to a comment pointing at the tests that back each entry.</p>
+
+<h2 id="w3">5. The WCAG 3.0 module</h2>
+<p>A tracking page, not learning material. Three parts, each short:</p>
+<ol>
+  <li><strong>Status.</strong> One paragraph: what kind of document it is (a W3C Working Draft), the date of the draft we describe, that W3C expects several more years of work, and that nothing in Polish or EU law points at it. The badge and both dates sit above the heading.</li>
+  <li><strong>How 3.0 differs from 2.x.</strong> A two-column comparison, five or six rows: success criteria versus guidelines with requirements; A, AA and AAA versus core and supplemental requirements; pass or fail per page versus the conformance model still being discussed; assertions (documented organisational practice such as usability testing with disabled people), which 2.x has no equivalent for; scope beyond the web (XR, immersive). Each row says what it means for someone who builds today: nothing changes in what you must do until the law moves.</li>
+  <li><strong>The mapping.</strong> The 12 groups of the draft (images and media, text and wording, interactive components, input and operation, error handling, animation and movement, layout, consistency across views, process and task completion, policy and protection, help and feedback, user control), each with its guidelines. Per guideline: the number and English name from the draft, our Polish name, the 2.2 criteria that correspond today, and an optional one-line note. A guideline with no counterpart says "Nowe w 3.0" in text, so the reader sees where 3.0 goes further.</li>
+</ol>
+<p>Two words must not collide. The app already uses "szkic" for our own unverified content. The 3.0 draft is always "wersja robocza W3C", with its own badge shape (mock 2), so "szkic" keeps one meaning.</p>
+<p>The mapping is ours, not W3C's. The draft does not publish a 2.x to 3.0 table. The page says so under the mapping heading, and every row is a judgement we can be asked about.</p>
+
+<h2 id="w3-format">6. WCAG 3.0 content format</h2>
+<p>One Markdown file for the page and one per group, in <code>content/wcag3/</code>:</p>
+<pre><code>content/wcag3/
+  index.md              status, the comparison, the draft date
+  obrazy-i-multimedia.md
+  tekst-i-sformulowania.md
+  ...                   12 group files
+
+# content/wcag3/index.md
+---
+status: szkic
+draft: 2026-09-10                     # date of the W3C Working Draft we describe
+draftUrl: https://www.w3.org/TR/2026/WD-wcag-3.0-20260910/
+---
+## Czym jest WCAG 3.0
+...
+## Co się zmienia
+| WCAG 2.2 | WCAG 3.0 (wersja robocza) |
+...
+
+# content/wcag3/obrazy-i-multimedia.md
+---
+num: "2.1"
+title: Obrazy i multimedia
+en: Images and media
+status: szkic
+guidelines:
+  - num: "2.1.1"
+    en: Image alternatives
+    title: Alternatywy dla obrazów
+    criteria: ["1.1.1"]
+  - num: "2.1.8"
+    en: Single sense
+    title: Nie tylko jeden zmysł
+    criteria: ["1.4.1", "1.4.11", "1.3.3"]
+  - num: "2.1.9"
+    en: Accessible media player
+    title: Dostępny odtwarzacz
+    criteria: []
+    note: Twierdzenie o wyborze odtwarzacza, a nie wymaganie wobec treści.
+---
+Krótki wstęp do grupy, opcjonalny.</code></pre>
+<ul>
+  <li>ArkType validates the frontmatter. <code>criteria</code> resolve against the registry, so a typo fails the build like everywhere else.</li>
+  <li>Guideline numbers must start with the group number and be unique. Group numbers must be unique across files. The order on the page comes from <code>num</code>, not the file name.</li>
+  <li><code>draft</code> lives only in <code>index.md</code>, so a new draft means changing one date and rereading 12 files, and the page cannot show two dates for one draft.</li>
+  <li>A reverse index, criterion id to guidelines, is built once from the group files. Criterion pages and search read it.</li>
+  <li>The draft date is checked like <code>lastVerified</code>, with a shorter limit: if it is older than six months, the content test fails, because W3C has been publishing a new draft two or three times a year. Decision 5.</li>
+</ul>
+
+<h2 id="pages">7. Pages</h2>
+<ul>
+  <li><strong>AAA criterion pages.</strong> The header gains the AAA note. Where <code>enhances</code> is set, a comparison with the AA sibling: the sibling's number and name, and the <code>difference</code> line (variant picked from mock 1). Optionally the "Ta aplikacja to spełnia" line.</li>
+  <li><strong>AA pages with a stronger version.</strong> One line in "Powiązane": "Wersja wzmocniona: 1.4.6 Kontrast (wzmocniony), AAA".</li>
+  <li><strong>All criterion pages.</strong> In "Powiązane", a line "W WCAG 3.0 (wersja robocza)" with the guideline numbers and names, linking to their anchors on <code>/wcag-3</code> (mock 3). Criteria without a counterpart show nothing.</li>
+  <li><strong><code>/wcag-3</code>.</strong> Mock 2C. Prerendered. The status and the comparison, then the filter and one table: a row per group as a separator, a row per guideline with its own anchor (<code>#2.1.1</code> style ids are escaped as <code>#w3-2-1-1</code>). Links from criterion pages go to the unfiltered page.</li>
+  <li><strong>Entry points.</strong> Mock 4A: "WCAG 3.0" in the main navigation, after "Kryteria".</li>
+  <li><strong><code>/kryteria</code>.</strong> The note under the role filter about AAA criteria without roles is removed.</li>
+  <li><strong>Search.</strong> A new kind, "WCAG 3.0", one document per guideline: our name, the English name and the numbers of the mapped criteria. "image alternatives" and "alternatywy" both find 2.1.1.</li>
+</ul>
+
+<h2 id="a11y">8. Accessibility</h2>
+<ul>
+  <li><strong>Badges are text.</strong> "wersja robocza W3C" and "AAA: cel, nie obowiązek" are words, with a shape distinct from the existing badges (dashed for our drafts, solid for levels). No colour carries the meaning.</li>
+  <li><strong>The warning is not a live region.</strong> It is static text near the top of the page, read in order. Announcing it would talk over the route announcer.</li>
+  <li><strong>The comparison is a table.</strong> 2.x versus 3.0 is a <code>table</code> with a caption and <code>th scope</code>, so a screen reader can move by row. On a narrow screen it scrolls inside a labelled, focusable region rather than squeezing columns.</li>
+  <li><strong>The mapping table at 320 pixels.</strong> A data table is two-dimensional content, which 1.4.10 exempts from reflow. It scrolls sideways inside a labelled, focusable region, so the scroll works from the keyboard. The filter is native radios, and the row count is announced in a status line, as on <code>/kryteria</code>.</li>
+  <li><strong>English names have <code>lang="en"</code>.</strong> The draft names stay in English next to our Polish ones, and a Polish screen reader voice must not mispronounce them (3.1.2).</li>
+  <li><strong>Links to the AA sibling and to <code>/wcag-3</code> anchors</strong> are at least 44 pixels high like every other link chip in the app.</li>
+</ul>
+
+<h2 id="tests">9. Tests</h2>
+<ul>
+  <li><strong>Completeness (Vitest).</strong> The existing test drops the <code>level !== "AAA"</code> filter: every non-obsolete criterion has roles and the four required sections. This test is the definition of done for the content.</li>
+  <li><strong>AAA format (Vitest).</strong> <code>difference</code> without <code>enhances</code> and the other way round are rejected; <code>enhances</code> pointing at a criterion of the same or higher level, or in another guideline, fails; the reverse index gives 1.4.3 its stronger version.</li>
+  <li><strong>WCAG 3.0 content (Vitest).</strong> All files parse; group and guideline numbers are unique and nested; every criterion id resolves; the draft date is no older than six months; the reverse index finds 1.1.1 under 2.1.1.</li>
+  <li><strong>End to end (Playwright).</strong> <code>/wcag-3</code> shows the badge and the draft date above the first heading of content; the link from 1.1.1 lands on the 2.1.1 anchor and moves focus there; 1.4.6 shows the comparison with 1.4.3 and links to it.</li>
+  <li><strong>Axe and target size.</strong> <code>/wcag-3</code>, one AAA page with a comparison (1.4.6) and 4.1.1 join the routes list, in both themes.</li>
+  <li><strong>Search.</strong> A relevance case: "alternatywy dla obrazów" returns 1.1.1 first and the 3.0 guideline next to it.</li>
+</ul>
+
+<h2 id="commits">10. Commits and the pull request</h2>
+<p>One pull request, branch <code>feat/aaa-and-wcag3</code>:</p>
+<ol>
+  <li><code>docs(design): add phase 8 plan and AAA and WCAG 3.0 mocks</code>, this plan and the mocks.</li>
+  <li><code>feat(criteria): compare AAA criteria with the AA ones they tighten</code>, <code>enhances</code> and <code>difference</code> in the parser, the reverse index, the AAA note and the comparison on the page, with tests. Uses 1.4.6 as the first file so the page has something to show.</li>
+  <li><code>docs(glossary): add terms for AAA criteria</code>.</li>
+  <li><code>docs(content): explain AAA criteria of principle 1</code>.</li>
+  <li><code>docs(content): explain AAA criteria of principle 2</code>.</li>
+  <li><code>docs(content): explain AAA criteria of principle 3</code>.</li>
+  <li><code>docs(content): explain why 4.1.1 was removed</code>.</li>
+  <li><code>test(content): require complete content for every criterion</code>, the widened completeness test, and the note on <code>/kryteria</code> removed.</li>
+  <li><code>feat(wcag3): add the WCAG 3.0 content format and mapping</code>, the parser, the 13 files, the reverse index and their tests.</li>
+  <li><code>feat(wcag3): add the WCAG 3.0 page</code>, <code>/wcag-3</code>, the entry point from decision 4, axe and the end-to-end test.</li>
+  <li><code>feat(criteria): link criteria to WCAG 3.0 guidelines</code>.</li>
+  <li><code>feat(search): index WCAG 3.0 guidelines</code>.</li>
+  <li>If decision 3 is yes: <code>feat(criteria): say which AAA criteria this app meets</code>.</li>
+  <li><code>docs: update README for phase 8</code>, with screenshots of an AAA page and <code>/wcag-3</code>, and phase 8 ticked in the roadmap.</li>
+</ol>
+<p>Commits 4 to 7 are content only and each passes the build on its own, because the completeness test is widened only in commit 8.</p>
+
+<h2 id="risks">11. Risks</h2>
+<table>
+  <thead><tr><th>Risk</th><th>What we do</th></tr></thead>
+  <tbody>
+    <tr><td>The 3.0 draft changes while we write, or right after</td><td>The page describes one dated draft, says so above the fold, and the six-month test forces a reread. The mapping is at guideline level, which moves less than requirements</td></tr>
+    <tr><td>Readers take the mapping for an official W3C equivalence</td><td>A sentence under the mapping heading says it is ours, and each row uses "odpowiada dziś" rather than "zastępuje"</td></tr>
+    <tr><td>AAA pages read as obligations and scare small teams</td><td>The AAA note in every header, the "kiedy warto" paragraph in every "Jak to spełnić", and the "Prawo" section that already says no act requires it</td></tr>
+    <tr><td>31 drafts written in one phase are thinner than the A and AA ones</td><td>The same completeness test and the same sections. AAA criteria in the media group (1.2.6 to 1.2.9) are short by nature; the others get the same depth as their AA siblings</td></tr>
+    <tr><td>The time-based tests fail CI on a day nobody changed anything</td><td>Accepted, as for <code>lastVerified</code>: the failure message names the file and the date, and the fix is a reread, not a code change</td></tr>
+    <tr><td>Claiming the app meets an AAA criterion it does not</td><td>Only if decision 3 is yes, and only for the four criteria with a test behind them, named in the code comment</td></tr>
+  </tbody>
+</table>
+
+<h2 id="decisions">12. Decisions</h2>
+<p>Picked on 2026-10-01 from <a href="../2026-10-01-aaa-wcag3-mocks/aaa-wcag3-mocks.html">aaa-wcag3-mocks.html</a>.</p>
+<ol>
+  <li><strong>The AAA header: decided, 1A.</strong> The comparison strip with the AA sibling.</li>
+  <li><strong>The <code>/wcag-3</code> layout: decided, 2C.</strong> One table of every guideline with group rows as separators, and a filter: all, with a counterpart in 2.2, only new in 3.0. The filter lives in <code>?pokaz=</code> (<code>z-odpowiednikiem</code>, <code>nowe</code>; no value means all), validated like the filters on <code>/kryteria</code>.</li>
+  <li><strong>"Ta aplikacja to spełnia" on four AAA pages: decided, yes.</strong></li>
+  <li><strong>Entry point to <code>/wcag-3</code>: decided, 4A.</strong> "WCAG 3.0" in the main navigation, after "Kryteria".</li>
+  <li><strong>How old the draft date may get: decided, six months.</strong></li>
+  <li><strong>Mapping depth: decided, guidelines.</strong></li>
+  <li><strong>The AAA note: decided.</strong> "Poziom AAA: cel, nie obowiązek. Żadna ustawa go nie wymaga."</li>
+</ol>
+
+</main>
+</body>
+</html>

@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { type } from "arktype";
 import readingOrders from "virtual:reading-order";
-import { type CriterionContent, criterionContent } from "./criterion-content";
+import { type CriterionContent, criterionContent, strongerVersionsOf } from "./criterion-content";
 import { examples } from "./examples";
 import { glossary } from "./glossary";
 import { lawRowsFor } from "./legal-content";
@@ -9,6 +9,7 @@ import { lessonsCovering } from "./paths";
 import { simulators } from "./simulators";
 import { criteria, type CriterionId } from "./wcag";
 import { criterionTexts } from "./wcag-text.gen";
+import { wcag3GuidelinesFor } from "./wcag3";
 
 // Server functions over content/. They keep the Markdown parser and the raw files out of the
 // client bundle.
@@ -19,7 +20,8 @@ const CriterionIdInput = type.enumerated(...criteria.map((c) => c.id));
  * Everything the criterion page shows beyond the structure: the editorial content (null until
  * written), the normative Polish text (null where no authorized translation exists), the short
  * definitions of the glossary terms the content marks, for the preview bubbles, the examples
- * that show the criterion, the lessons that teach it, and which provisions require it.
+ * that show the criterion, the lessons that teach it, which provisions require it, and the
+ * stronger AAA criteria that tighten it, and the WCAG 3.0 guidelines it corresponds to.
  */
 export const getCriterionPage = createServerFn({ method: "GET" })
   .validator(CriterionIdInput)
@@ -40,6 +42,8 @@ export const getCriterionPage = createServerFn({ method: "GET" })
       examples: relatedExamples,
       lessons: lessonsCovering(data),
       law: lawRowsFor(data),
+      stronger: strongerVersionsOf(data),
+      wcag3: wcag3GuidelinesFor(data),
     };
   });
 

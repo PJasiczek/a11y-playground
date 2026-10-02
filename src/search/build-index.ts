@@ -7,6 +7,7 @@ import { actContent, isStub } from "~/content/legal-content";
 import { legalTexts } from "~/content/legal-text.gen";
 import { learningPaths } from "~/content/paths";
 import { criteria } from "~/content/wcag";
+import { wcag3Groups } from "~/content/wcag3";
 import { type SearchDoc, searchOptions } from "./options";
 
 // Server-only: reads every content file. The browser gets the serialized index from
@@ -14,7 +15,7 @@ import { type SearchDoc, searchOptions } from "./options";
 
 const text = (html: string) => html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 
-/** Every criterion (with or without written content), glossary term, example, article and lesson, as search documents. */
+/** Every criterion, glossary term, example, article, lesson and WCAG 3.0 guideline, as search documents. */
 export function buildSearchDocs(): SearchDoc[] {
   const criterionDocs = criteria.map((c): SearchDoc => {
     const content = criterionContent.get(c.id);
@@ -82,7 +83,21 @@ export function buildSearchDocs(): SearchDoc[] {
       }),
     ),
   );
-  return [...criterionDocs, ...termDocs, ...exampleDocs, ...provisionDocs, ...lessonDocs];
+  // WCAG 3.0 guidelines by our Polish name and the draft's English one, so both find them.
+  const wcag3Docs = wcag3Groups.flatMap((group) =>
+    group.guidelines.map(
+      (g): SearchDoc => ({
+        id: `wcag3:${g.num}`,
+        kind: "wcag3",
+        ref: g.anchor,
+        title: `${g.num} ${g.title}`,
+        summary: g.criteria.length > 0 ? `Odpowiada dziś: ${g.criteria.join(", ")}` : "Nowe w 3.0",
+        keywords: [g.en, group.title, ...g.criteria].join(" "),
+        body: g.note ?? "",
+      }),
+    ),
+  );
+  return [...criterionDocs, ...termDocs, ...exampleDocs, ...provisionDocs, ...lessonDocs, ...wcag3Docs];
 }
 
 export function buildSearchIndex() {
