@@ -11,7 +11,7 @@ import { criteria } from "./src/content/wcag.gen.ts";
 
 // One folder per example; each has a page and two demo documents for its iframes.
 const exampleSlugs = readdirSync("content/praktyka");
-// One folder per pattern; each has a demo document with the live log.
+// One folder per pattern; each has a page and a demo document with the live log.
 const patternSlugs = readdirSync("content/wzorce");
 
 export default defineConfig({
@@ -44,7 +44,7 @@ export default defineConfig({
           { path: `/demo/${slug}/bad` },
           { path: `/demo/${slug}/good` },
         ]),
-        ...patternSlugs.map((slug) => ({ path: `/demo/wzorce/${slug}` })),
+        ...patternSlugs.flatMap((slug) => [{ path: `/praktyka/wzorce/${slug}` }, { path: `/demo/wzorce/${slug}` }]),
         // Written as a plain file, not /search-index.json/index.html.
         { path: "/search-index.json", prerender: { autoSubfolderIndex: false } },
       ],
