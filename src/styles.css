@@ -353,6 +353,12 @@
         border-bottom: 0;
       }
     }
+    & .p-tree {
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      line-height: 1.7;
+      color: var(--ink);
+    }
     & .p-link {
       color: var(--accent);
       text-decoration: underline;
