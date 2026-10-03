@@ -1,0 +1,57 @@
+<table>
+  <caption>Oddziały<span class="visually-hidden">, kolumny można sortować przyciskami w nagłówkach</span></caption>
+  <thead>
+    <tr>
+      <th scope="col" id="kol-miasto"><button type="button" data-column="0" data-name="Miasto">Miasto <span class="arrow" aria-hidden="true">↕</span></button></th>
+      <th scope="col" id="kol-klienci"><button type="button" data-column="1" data-name="Liczba klientów">Liczba klientów <span class="arrow" aria-hidden="true">↕</span></button></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><th scope="row">Kraków</th><td>1200</td></tr>
+    <tr><th scope="row">Gdańsk</th><td>800</td></tr>
+    <tr><th scope="row">Wrocław</th><td>950</td></tr>
+    <tr><th scope="row">Poznań</th><td>600</td></tr>
+  </tbody>
+</table>
+<p role="status" id="sortowanie" class="status"></p>
+
+<script>
+  const tbody = document.querySelector("tbody");
+  const headers = [...document.querySelectorAll("thead th")];
+  const arrows = { ascending: "▲", descending: "▼" };
+  for (const button of document.querySelectorAll("thead button")) {
+    button.addEventListener("click", () => {
+      const th = button.closest("th");
+      const direction = th.getAttribute("aria-sort") === "ascending" ? "descending" : "ascending";
+      // Only the sorted column carries aria-sort; the others lose it.
+      for (const other of headers) {
+        other.removeAttribute("aria-sort");
+        other.querySelector(".arrow").textContent = "↕";
+      }
+      th.setAttribute("aria-sort", direction);
+      button.querySelector(".arrow").textContent = arrows[direction];
+      const column = Number(button.dataset.column);
+      const value = (row) => row.cells[column].textContent;
+      const rows = [...tbody.rows].sort((a, b) =>
+        column === 0 ? value(a).localeCompare(value(b), "pl") : Number(value(a)) - Number(value(b)),
+      );
+      if (direction === "descending") rows.reverse();
+      tbody.append(...rows);
+      document.getElementById("sortowanie").textContent =
+        `Posortowano według kolumny ${button.dataset.name}, ${direction === "ascending" ? "rosnąco" : "malejąco"}.`;
+    });
+  }
+</script>
+
+<style>
+  table { border-collapse: collapse; min-width: 20rem; background: #fff; }
+  caption { padding-bottom: 0.25rem; text-align: left; font-weight: 700; }
+  th, td { padding: 0.25rem 0.75rem; border-bottom: 1px solid #dfdbd1; text-align: left; }
+  thead th { padding: 0; }
+  thead button { display: flex; align-items: center; gap: 0.5rem; width: 100%; min-height: 44px; padding: 0 0.75rem; border: 0; background: none; color: #14171a; font: inherit; font-weight: 700; cursor: pointer; }
+  thead button:focus-visible { outline-offset: -3px; }
+  /* The sorted column: an arrow and an underline, not colour alone. */
+  th[aria-sort] button { text-decoration: underline; text-underline-offset: 4px; }
+  .status { min-height: 1.5rem; margin: 0.5rem 0 0; }
+  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+</style>

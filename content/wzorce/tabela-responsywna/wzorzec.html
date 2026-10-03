@@ -1,0 +1,74 @@
+<div class="wrap">
+  <label class="choice"><input type="checkbox" id="waski"> Pokaż jak na wąskim ekranie</label>
+
+  <div class="table-region" role="region" aria-labelledby="oddzialy-podpis" tabindex="0">
+    <table>
+      <caption id="oddzialy-podpis">Oddziały</caption>
+      <thead>
+        <tr><th scope="col">Miasto</th><th scope="col">Adres</th><th scope="col">Godziny</th><th scope="col">Dojazd</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Kraków</th><td>ul. Długa 5</td><td>8–18</td><td><a href="#krakow" aria-label="Mapa: Kraków">Mapa</a></td></tr>
+        <tr><th scope="row">Gdańsk</th><td>ul. Morska 12</td><td>9–17</td><td><a href="#gdansk" aria-label="Mapa: Gdańsk">Mapa</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ul class="cards" aria-label="Oddziały"></ul>
+</div>
+
+<script>
+  const wrap = document.querySelector(".wrap");
+  const table = document.querySelector("table");
+  const headers = [...table.tHead.rows[0].cells].map((th) => th.textContent);
+  // The list is built from the table, so both show the same data. Each row becomes a region named
+  // by its first cell, and the column headers become the labels of a description list.
+  document.querySelector(".cards").append(
+    ...[...table.tBodies[0].rows].map((row, i) => {
+      const item = document.createElement("li");
+      const card = document.createElement("section");
+      card.setAttribute("aria-labelledby", `karta-${i}`);
+      const heading = document.createElement("h3");
+      heading.id = `karta-${i}`;
+      heading.textContent = row.cells[0].textContent;
+      const details = document.createElement("dl");
+      for (const [c, cell] of [...row.cells].entries()) {
+        if (c === 0) continue;
+        const term = document.createElement("dt");
+        term.textContent = headers[c];
+        const value = document.createElement("dd");
+        value.innerHTML = cell.innerHTML;
+        details.append(term, value);
+      }
+      card.append(heading, details);
+      item.append(card);
+      return item;
+    }),
+  );
+  document.getElementById("waski").addEventListener("change", (event) => {
+    wrap.toggleAttribute("data-waski", event.target.checked);
+  });
+</script>
+
+<style>
+  .choice { display: flex; align-items: center; gap: 0.6rem; min-height: 44px; margin-bottom: 0.5rem; cursor: pointer; }
+  .choice input { width: 22px; height: 22px; margin: 0; accent-color: #14171a; }
+  .table-region { overflow-x: auto; }
+  table { border-collapse: collapse; background: #fff; }
+  caption { padding-bottom: 0.25rem; text-align: left; font-weight: 700; }
+  th, td { padding: 0.25rem 0.75rem; border-bottom: 1px solid #dfdbd1; text-align: left; white-space: nowrap; }
+  a { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; color: #2c36a8; }
+  .cards { display: none; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+  .cards section { padding: 0.5rem 0.75rem; border: 1px solid #857f72; border-radius: 4px; background: #fff; }
+  .cards h3 { margin: 0; font-size: 1.0625rem; }
+  .cards dl { display: grid; grid-template-columns: auto 1fr; gap: 0 0.75rem; margin: 0.25rem 0 0; }
+  .cards dt { color: #484d52; }
+  .cards dd { margin: 0; }
+  /* Below 30rem, or when asked, the rows become cards. Only one version is ever rendered. */
+  [data-waski] .table-region { display: none; }
+  [data-waski] .cards { display: grid; }
+  @media (max-width: 30rem) {
+    .table-region { display: none; }
+    .cards { display: grid; }
+  }
+</style>

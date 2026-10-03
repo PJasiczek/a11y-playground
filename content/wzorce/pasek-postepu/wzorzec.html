@@ -1,0 +1,36 @@
+<p class="file">raport.pdf, 2,4 MB</p>
+<button type="button" id="wyslij">Wyślij raport.pdf</button>
+<div class="progress">
+  <label for="postep">Wysyłanie raportu</label>
+  <progress id="postep" max="100" value="0">0%</progress>
+</div>
+<p role="status" id="stan" class="status"></p>
+
+<script>
+  const bar = document.getElementById("postep");
+  const status = document.getElementById("stan");
+  let running = false;
+  document.getElementById("wyslij").addEventListener("click", () => {
+    if (running) return;
+    running = true;
+    bar.value = 0;
+    status.textContent = "";
+    // The bar moves on its own; only the end is announced, not every 10 percent.
+    const timer = setInterval(() => {
+      bar.value = Math.min(100, bar.value + 10);
+      bar.textContent = `${bar.value}%`;
+      if (bar.value < 100) return;
+      clearInterval(timer);
+      running = false;
+      status.textContent = "Wysłano raport.pdf.";
+    }, 120);
+  });
+</script>
+
+<style>
+  .file { margin: 0 0 0.5rem; font-weight: 600; }
+  #wyslij { min-height: 44px; padding: 0 1rem; border: 2px solid #14171a; border-radius: 4px; background: #14171a; color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+  .progress { display: grid; gap: 0.25rem; max-width: 24rem; margin-top: 0.75rem; }
+  progress { width: 100%; height: 16px; accent-color: #14171a; }
+  .status { min-height: 1.5rem; margin: 0.5rem 0 0; }
+</style>

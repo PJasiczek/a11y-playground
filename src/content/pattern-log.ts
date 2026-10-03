@@ -20,7 +20,8 @@ import {
  *   arrows check is read checked.
  * - state: a state change on the focused element, in the words of that state only ("rozwinięte").
  * - live: text added to a live region that was already on the page. A region added together with
- *   its text says nothing, as in most screen readers, except an alert.
+ *   its text says nothing, as in most screen readers, except an alert; a region inside
+ *   aria-busy="true" waits.
  */
 
 type Key = Announcement["key"];
@@ -339,7 +340,8 @@ export function startLog(win: Window & typeof globalThis, post: (message: Patter
           if (el.getAttribute("role") === "alert" && textOf(el)) added.set(el, [textOf(el)]);
         }
       }
-      if (!region || !known.has(region) || hidden(region)) continue;
+      // A busy region is still being filled; screen readers wait until aria-busy is gone.
+      if (!region || !known.has(region) || hidden(region) || region.closest('[aria-busy="true"]')) continue;
       const texts = record.type === "characterData" ? [textOf(record.target)] : [...record.addedNodes].map(textOf);
       added.set(region, [...(added.get(region) ?? []), ...texts]);
     }
@@ -358,7 +360,7 @@ export function startLog(win: Window & typeof globalThis, post: (message: Patter
     if (!el) return null;
     if (!isProperty(attr)) return el.getAttribute(attr);
     const value: unknown = Reflect.get(el, attr);
-    return typeof value === "string" || typeof value === "boolean" ? String(value) : null;
+    return typeof value === "string" || typeof value === "boolean" || typeof value === "number" ? String(value) : null;
   };
   let reported = "";
   let scheduled = false;

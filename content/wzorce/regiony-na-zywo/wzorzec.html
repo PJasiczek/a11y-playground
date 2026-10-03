@@ -1,0 +1,62 @@
+<div class="playground">
+  <form class="settings" id="ustawienia">
+    <fieldset>
+      <legend>Grzeczność regionu</legend>
+      <label class="choice"><input type="radio" name="grzecznosc" value="polite" checked> grzecznie (polite)</label>
+      <label class="choice"><input type="radio" name="grzecznosc" value="assertive"> natychmiast (assertive)</label>
+      <label class="choice"><input type="radio" name="grzecznosc" value="off"> wyłączony (off)</label>
+    </fieldset>
+    <label class="choice"><input type="checkbox" id="atomowy" checked> Czytaj cały region (aria-atomic)</label>
+    <label class="choice"><input type="checkbox" id="razem"> Wstaw region razem z tekstem</label>
+    <button type="button" id="wyslij">Wyślij komunikat</button>
+  </form>
+
+  <div class="stage">
+    <p class="caption">Region na stronie:</p>
+    <div id="miejsce">
+      <p id="region" class="region" aria-live="polite" aria-atomic="true">Koszyk: <span id="ile">pusty</span></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  const form = document.getElementById("ustawienia");
+  const place = document.getElementById("miejsce");
+  const word = (n) => (n === 1 ? "produkt" : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? "produkty" : "produktów");
+  let count = 0;
+
+  document.getElementById("wyslij").addEventListener("click", () => {
+    count += 1;
+    const politeness = form.elements.grzecznosc.value;
+    const atomic = document.getElementById("atomowy").checked;
+    const text = `${count} ${word(count)}`;
+    if (document.getElementById("razem").checked) {
+      // The common mistake: a new region arrives with its text already inside. Nothing is read.
+      place.innerHTML = "";
+      const region = document.createElement("p");
+      region.id = "region";
+      region.className = "region";
+      region.setAttribute("aria-live", politeness);
+      region.setAttribute("aria-atomic", String(atomic));
+      region.innerHTML = `Koszyk: <span id="ile">${text}</span>`;
+      place.append(region);
+      return;
+    }
+    const region = document.getElementById("region");
+    region.setAttribute("aria-live", politeness);
+    region.setAttribute("aria-atomic", String(atomic));
+    document.getElementById("ile").textContent = text;
+  });
+</script>
+
+<style>
+  .playground { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); }
+  .settings { display: grid; gap: 0.25rem; align-content: start; }
+  fieldset { margin: 0; padding: 0.25rem 0.75rem 0.5rem; border: 1px solid #857f72; border-radius: 4px; background: #fff; }
+  legend { padding: 0 0.25rem; font-weight: 600; }
+  .choice { display: flex; align-items: center; gap: 0.6rem; min-height: 44px; cursor: pointer; }
+  .choice input { width: 22px; height: 22px; margin: 0; accent-color: #14171a; }
+  #wyslij { justify-self: start; min-height: 44px; padding: 0 1rem; border: 2px solid #14171a; border-radius: 4px; background: #14171a; color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+  .caption { margin: 0 0 0.25rem; color: #484d52; font-size: 0.9375rem; }
+  .region { margin: 0; padding: 0.75rem; border: 2px dashed #14171a; border-radius: 4px; background: #fff; font-family: ui-monospace, Consolas, monospace; }
+</style>

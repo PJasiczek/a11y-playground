@@ -121,6 +121,14 @@ describe("startLog", () => {
     ]);
   });
 
+  test("waits while a live region is busy", async () => {
+    const { lines } = run(`<div aria-busy="true"><p role="status" id="s"></p></div><p role="status" id="t"></p>`);
+    byId("s").textContent = "Ładuję";
+    byId("t").textContent = "Znaleziono 3 wyniki";
+    await tick();
+    expect(lines().map((line) => line.text)).toEqual(["Znaleziono 3 wyniki"]);
+  });
+
   test("stays silent for a region added with its text, except an alert", async () => {
     const { lines } = run(`<div id="host"></div>`);
     byId("host").innerHTML = `<p role="status">Zapisano</p><p role="alert">Nie zapisano</p>`;

@@ -26,6 +26,7 @@ export const polishRoles: Record<string, string> = {
   listitem: "element listy",
   navigation: "nawigacja",
   option: "opcja",
+  progressbar: "pasek postępu",
   radio: "przycisk opcji",
   radiogroup: "grupa opcji",
   region: "region",
@@ -54,7 +55,7 @@ export const keyNames = ["Tab", "Shift+Tab", "Enter", "Spacja", "Esc", "↑", "�
 export type KeyName = (typeof keyNames)[number];
 
 /** DOM state read as a property rather than an attribute: the attribute only holds the initial value. */
-export const stateProperties = ["checked", "disabled", "hidden", "indeterminate", "open", "value"] as const;
+export const stateProperties = ["checked", "disabled", "hidden", "indeterminate", "max", "open", "value"] as const;
 
 /** What the ARIA table of a pattern can show live: attributes the frame reads, and the properties above. */
 export const reportedAttributes = [
@@ -64,6 +65,7 @@ export const reportedAttributes = [
   "tabindex",
   "aria-activedescendant",
   "aria-atomic",
+  "aria-autocomplete",
   "aria-busy",
   "aria-checked",
   "aria-controls",
