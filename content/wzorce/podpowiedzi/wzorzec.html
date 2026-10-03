@@ -1,0 +1,84 @@
+<label for="miasto">Miasto</label>
+<div class="combo">
+  <input id="miasto" role="combobox" aria-expanded="false" aria-controls="miasta" aria-autocomplete="list" autocomplete="off">
+  <ul id="miasta" role="listbox" aria-label="Podpowiedzi" hidden></ul>
+</div>
+<p role="status" id="ile" class="visually-hidden"></p>
+
+<script>
+  const input = document.getElementById("miasto");
+  const list = document.getElementById("miasta");
+  const count = document.getElementById("ile");
+  const cities = ["Gdańsk", "Gdynia", "Kraków", "Wrocław"];
+  let options = [];
+  let active = -1;
+
+  const word = (n) => (n === 1 ? "podpowiedź" : "podpowiedzi");
+  const open = () => {
+    const typed = input.value.trim().toLocaleLowerCase("pl");
+    options = cities.filter((city) => city.toLocaleLowerCase("pl").startsWith(typed));
+    list.replaceChildren(
+      ...options.map((city, i) => {
+        const li = document.createElement("li");
+        li.setAttribute("role", "option");
+        li.id = `miasto-${i}`;
+        li.textContent = city;
+        li.addEventListener("click", () => choose(i));
+        return li;
+      }),
+    );
+    list.hidden = options.length === 0;
+    input.setAttribute("aria-expanded", String(options.length > 0));
+    // The count goes to a status region, so a screen reader hears how many suggestions there are.
+    count.textContent = options.length ? `${options.length} ${word(options.length)}.` : "Brak podpowiedzi.";
+    active = -1;
+  };
+  const close = () => {
+    list.hidden = true;
+    input.setAttribute("aria-expanded", "false");
+    input.removeAttribute("aria-activedescendant");
+    active = -1;
+  };
+  // Focus stays in the field; aria-activedescendant points at the option the arrows reached.
+  const highlight = (i) => {
+    active = i;
+    list.querySelectorAll('[role="option"]').forEach((li, j) => li.setAttribute("aria-selected", String(j === i)));
+    input.setAttribute("aria-activedescendant", `miasto-${i}`);
+  };
+  const choose = (i) => {
+    input.value = options[i];
+    close();
+    input.focus();
+  };
+
+  input.addEventListener("input", open);
+  input.addEventListener("keydown", (event) => {
+    const expanded = input.getAttribute("aria-expanded") === "true";
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      if (!expanded) open();
+      if (options.length) highlight((active + 1) % options.length);
+    } else if (event.key === "ArrowUp" && expanded) {
+      event.preventDefault();
+      highlight((active - 1 + options.length) % options.length);
+    } else if (event.key === "Enter" && expanded && active >= 0) {
+      event.preventDefault();
+      choose(active);
+    } else if (event.key === "Escape" && expanded) {
+      close();
+    }
+  });
+  input.addEventListener("blur", () => setTimeout(close, 150));
+</script>
+
+<style>
+  label { display: block; font-weight: 600; margin-bottom: 0.25rem; }
+  .combo { position: relative; max-width: 18rem; min-height: 14rem; }
+  input { width: 100%; min-height: 44px; padding: 0 0.5rem; border: 1px solid #857f72; border-radius: 4px; font: inherit; }
+  [role="listbox"] { position: absolute; left: 0; right: 0; margin: 0.25rem 0 0; padding: 0.25rem 0; list-style: none; border: 1px solid #14171a; border-radius: 4px; background: #fff; }
+  [role="option"] { display: flex; align-items: center; min-height: 44px; padding: 0 0.75rem; cursor: pointer; }
+  /* The option the arrows reached: filled and marked with an arrow. Not colour alone. */
+  [role="option"][aria-selected="true"] { background: #14171a; color: #fff; }
+  [role="option"][aria-selected="true"]::before { content: "→ " / ""; white-space: pre; }
+  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+</style>
