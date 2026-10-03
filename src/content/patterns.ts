@@ -136,3 +136,12 @@ export const patterns: ReadonlyMap<string, Pattern> = new Map(
     .map((pattern) => [pattern.slug, pattern]),
 );
 
+/** Patterns that show a criterion, for its page. */
+export function patternsFor(id: CriterionId) {
+  return [...patterns.values()].filter((pattern) => pattern.criteria.includes(id)).map(({ slug, title }) => ({ slug, title }));
+}
+
+/** Patterns that show the fixed version of a practice example, for its page. */
+export function patternsForExample(slug: string) {
+  return [...patterns.values()].filter((pattern) => pattern.examples.includes(slug)).map(({ slug, title }) => ({ slug, title }));
+}

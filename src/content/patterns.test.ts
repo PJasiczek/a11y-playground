@@ -1,7 +1,7 @@
 import { JSDOM } from "jsdom";
 import { describe, expect, test } from "vitest";
 import { staleEntries } from "./markdown";
-import { parsePattern, patterns } from "./patterns";
+import { parsePattern, patterns, patternsFor, patternsForExample } from "./patterns";
 import { readingOrder } from "./reading-order";
 
 const index = `---
@@ -73,5 +73,12 @@ describe("parsePattern", () => {
     ["an unknown verdict", { ...files, index: index.replace("native: html", "native: aria") }, /native/],
   ])("rejects %s", (_, input, message) => {
     expect(() => parsePattern("x", input)).toThrow(message);
+  });
+});
+
+describe("links to patterns", () => {
+  test("a criterion finds the patterns that list it, and an example the patterns that fix it", () => {
+    expect(patternsFor("4.1.3")).toContainEqual({ slug: "komunikat", title: "Komunikat" });
+    expect(patternsForExample("ikona-jako-przycisk")).toEqual([{ slug: "przycisk", title: "Przycisk" }]);
   });
 });

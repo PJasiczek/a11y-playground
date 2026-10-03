@@ -59,3 +59,12 @@ for (const { slug, steps } of patterns) {
     });
   });
 }
+
+test("a criterion page and a practice example link to their patterns", async ({ page }) => {
+  await page.goto("/kryteria/4.1.3");
+  await page.getByRole("link", { name: "Komunikat", exact: true }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Komunikat" })).toBeVisible();
+  await page.goto("/praktyka/ikona-jako-przycisk");
+  await page.getByRole("link", { name: "Przycisk", exact: true }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Przycisk" })).toBeVisible();
+});

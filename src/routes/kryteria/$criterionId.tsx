@@ -45,7 +45,7 @@ const chipClass =
 const emptyNote = <p className="text-ink-2">Ta sekcja nie ma jeszcze treści.</p>;
 
 function CriterionPage() {
-  const { criterion, content, normative, terms, examples, lessons, law, stronger, wcag3 } = Route.useLoaderData();
+  const { criterion, content, normative, terms, examples, lessons, law, stronger, wcag3, patterns } = Route.useLoaderData();
   const clause = enClause(criterion);
   const meets = appMeets[criterion.id];
   const principle = principleOf(criterion);
@@ -72,6 +72,17 @@ function CriterionPage() {
   const relations: { label: string; links: { key: string; node: ReactNode }[]; note?: ReactNode }[] = [
     { label: "Kryteria", links: (content?.related ?? []).filter((id) => !stronger.includes(id)).map(criterionLink) },
     { label: "Wersja wzmocniona", links: stronger.map(criterionLink) },
+    {
+      label: "Wzorce",
+      links: patterns.map((pattern) => ({
+        key: pattern.slug,
+        node: (
+          <Link to="/praktyka/wzorce/$slug" params={{ slug: pattern.slug }} className={chipClass}>
+            {pattern.title}
+          </Link>
+        ),
+      })),
+    },
     {
       label: "W WCAG 3.0",
       links: wcag3.map((g) => ({

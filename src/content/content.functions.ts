@@ -6,6 +6,7 @@ import { examples } from "./examples";
 import { glossary } from "./glossary";
 import { lawRowsFor } from "./legal-content";
 import { lessonsCovering } from "./paths";
+import { patternsFor, patternsForExample } from "./patterns";
 import { simulators } from "./simulators";
 import { criteria, type CriterionId } from "./wcag";
 import { criterionTexts } from "./wcag-text.gen";
@@ -21,7 +22,8 @@ const CriterionIdInput = type.enumerated(...criteria.map((c) => c.id));
  * written), the normative Polish text (null where no authorized translation exists), the short
  * definitions of the glossary terms the content marks, for the preview bubbles, the examples
  * that show the criterion, the lessons that teach it, which provisions require it, and the
- * stronger AAA criteria that tighten it, and the WCAG 3.0 guidelines it corresponds to.
+ * stronger AAA criteria that tighten it, the WCAG 3.0 guidelines it corresponds to, and the ARIA
+ * patterns that show it.
  */
 export const getCriterionPage = createServerFn({ method: "GET" })
   .validator(CriterionIdInput)
@@ -44,6 +46,7 @@ export const getCriterionPage = createServerFn({ method: "GET" })
       law: lawRowsFor(data),
       stronger: strongerVersionsOf(data),
       wcag3: wcag3GuidelinesFor(data),
+      patterns: patternsFor(data),
     };
   });
 
@@ -70,7 +73,8 @@ export const getCriteriaOverview = createServerFn({ method: "GET" }).handler(() 
 /**
  * One example with both fragments, or null for an unknown slug. Also the general description and
  * limits of every simulator kind, for the rail, the glossary terms both kinds of text mark, and
- * what a screen reader reads in each variant, for the "Czytnik ekranu" simulator.
+ * what a screen reader reads in each variant, for the "Czytnik ekranu" simulator, and the ARIA
+ * patterns that show the fixed version.
  */
 export const getExample = createServerFn({ method: "GET" })
   .validator(type("string"))
@@ -93,6 +97,7 @@ export const getExample = createServerFn({ method: "GET" })
       simulators: descriptions,
       reading: { bad: bad.reading, good: good.reading },
       tab: { bad: bad.tab, good: good.tab },
+      patterns: patternsForExample(data),
     };
   });
 
