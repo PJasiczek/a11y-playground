@@ -1,0 +1,33 @@
+<fieldset>
+  <legend>Dodatki do pizzy</legend>
+  <label class="check"><input type="checkbox" id="wszystkie" aria-controls="ser oliwki pieczarki"> Wszystkie dodatki</label>
+  <ul>
+    <li><label class="check"><input type="checkbox" id="ser" checked> Ser</label></li>
+    <li><label class="check"><input type="checkbox" id="oliwki"> Oliwki</label></li>
+    <li><label class="check"><input type="checkbox" id="pieczarki"> Pieczarki</label></li>
+  </ul>
+</fieldset>
+
+<script>
+  const all = document.getElementById("wszystkie");
+  const items = all.getAttribute("aria-controls").split(" ").map((id) => document.getElementById(id));
+  const sync = () => {
+    const checked = items.filter((item) => item.checked).length;
+    all.checked = checked === items.length;
+    all.indeterminate = checked > 0 && checked < items.length;
+  };
+  all.addEventListener("change", () => {
+    for (const item of items) item.checked = all.checked;
+    sync();
+  });
+  for (const item of items) item.addEventListener("change", sync);
+  sync();
+</script>
+
+<style>
+  fieldset { margin: 0; padding: 0.5rem 1rem 0.75rem; border: 1px solid #857f72; border-radius: 4px; background: #fff; }
+  legend { padding: 0 0.25rem; font-weight: 600; }
+  ul { margin: 0; padding: 0 0 0 2rem; list-style: none; }
+  .check { display: inline-flex; align-items: center; gap: 0.6rem; min-height: 44px; cursor: pointer; }
+  .check input { width: 24px; height: 24px; margin: 0; accent-color: #14171a; }
+</style>

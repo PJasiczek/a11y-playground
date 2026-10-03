@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan: phase 9, ARIA widget patterns</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1.25rem 6rem;
+    background: #000; color: #fff;
+    font: 16px/1.65 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  main { max-width: 82ch; margin: 0 auto; }
+  h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 .5rem; letter-spacing: -.02em; }
+  h2 { font-size: 1.2rem; margin: 3rem 0 .75rem; padding-top: 1rem; border-top: 1px solid #262626; letter-spacing: -.01em; }
+  h3 { font-size: 1rem; margin: 1.75rem 0 .5rem; }
+  p, li, dd { color: #e5e5e5; }
+  a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  ul, ol { padding-left: 1.3rem; }
+  li { margin: .3rem 0; }
+  code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .875em; background: #141414; border: 1px solid #262626; border-radius: 3px; padding: .08em .3em; }
+  pre { background: #0b0b0b; border: 1px solid #262626; border-radius: 4px; padding: .9rem 1rem; overflow-x: auto; }
+  pre code { background: none; border: 0; padding: 0; font-size: .82rem; line-height: 1.55; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; display: block; overflow-x: auto; }
+  th, td { border: 1px solid #262626; padding: .45rem .6rem; text-align: left; vertical-align: top; }
+  th { background: #101010; font-weight: 600; }
+  .meta { color: #a3a3a3; font-size: .85rem; margin: 0 0 1.5rem; }
+  .meta a { color: #fff; }
+  .flag { border-left: 2px solid #737373; padding: .1rem 0 .1rem .85rem; margin: 1rem 0; color: #d4d4d4; font-size: .93rem; }
+  .toc { border: 1px solid #262626; padding: 1rem 1rem 1rem 2.4rem; margin: 1.5rem 0 0; }
+  .toc li { margin: .15rem 0; }
+  @media (max-width: 40rem) { body { padding: 1.25rem .9rem 4rem; } h1 { font-size: 1.45rem; } }
+</style>
+</head>
+<body>
+<main>
+
+<p class="meta"><a href="phase-9-aria-patterns.pl.html" hreflang="pl">Wersja polska</a></p>
+
+<h1>Plan: phase 9, ARIA widget patterns</h1>
+<p class="meta">A phase outside the <a href="../2026-09-27-wcag-learning-app/wcag-learning-app.en.html">main plan</a>. Scope taken from the 30 entries of <a href="https://dequeuniversity.com/library/" target="_blank" rel="noopener noreferrer">Deque University ARIA Examples</a>. Mocks of the pattern page, the catalogue, the live region playground and the entry point: <a href="../2026-10-02-aria-patterns-mocks/aria-patterns-mocks.html">aria-patterns-mocks.html</a>. Plan version: 2026-10-02, changes 2026-10-03.</p>
+
+<p class="flag">"Symulatory" already means the impairment simulators from phase 7 (<code>/symulatory</code>, <code>?symulacja=</code>). These widgets are a different thing: working components you operate and listen to. This plan calls them <strong>wzorce</strong> (patterns) and puts them at <code>/wzorce</code>, so one word keeps one meaning. Decision 1.</p>
+
+<p class="flag">We do not copy Deque's code. The Deque library has no open licence; its pages fall under Deque's terms of use. Each pattern is written by us from the WAI-ARIA Authoring Practices Guide (APG, W3C), and links to the Deque page and the APG pattern as further reading.</p>
+
+<h2 id="changes">Changes after work started</h2>
+<p>Decisions made while building the first pull request (the groundwork and batch 1). Where they conflict with the sections below, these win.</p>
+<ul>
+  <li><strong>Patterns live inside Praktyka (sections 7, 12).</strong> Mock 4B puts them under the Praktyka heading, so the routes are <code>/praktyka/wzorce</code> and <code>/praktyka/wzorce/$slug</code>, not <code>/wzorce</code>. The header keeps "Praktyka" current on them without new code. Demo documents stay at <code>/demo/wzorce/$slug</code>.</li>
+  <li><strong>The exercise replaces the keyboard table (sections 6, 9).</strong> With mock 1C the frontmatter has <code>steps</code> instead of <code>keyboard</code>: what to do, the keys, and the log line to hear. The first step must start with Tab, which enters the frame. The Playwright test presses each step's first key on the real page and expects every step ticked, so the walk table in section 9 is the content itself.</li>
+  <li><strong>The log is inlined, not <code>/demo/wzorce/log.js</code> (section 5).</strong> A Vite plugin builds it with <code>dom-accessibility-api</code> into one classic script, served as <code>virtual:pattern-log</code>, and every pattern document inlines it. About 22 KB minified, under the 30 KB limit from section 11.</li>
+  <li><strong>Generated content is left out of names (section 5).</strong> <code>dom-accessibility-api</code> does not understand CSS alt text (<code>content: "+" / ""</code>) and would read "+" in a button's name. Our patterns give generated content empty alt text anyway.</li>
+  <li><strong>State words are neuter (section 5).</strong> "zwinięte", "zaznaczone", "naciśnięte", like the build-time reading order, not "zwinięty".</li>
+  <li><strong>ARIA rows carry a selector (section 6).</strong> <code>selector</code> tells the frame which element to read for the "Teraz" column. A test checks that every selector matches an element of its fragment.</li>
+  <li><strong>One "Kod" disclosure, not three (section 7).</strong> A fragment is one file, as in the practice examples.</li>
+  <li><strong>The keyboard-only toggle is a checkbox (section 7).</strong> It is local to the page, not <code>?symulacja=</code>. A blocked click is counted under the frame and announced once, as on example pages.</li>
+  <li><strong>Two more refactor commits (section 10).</strong> The iframe plumbing moved into <code>useDemoFrame</code>, and the <code>##</code> section splitter into <code>render.ts</code>, so pattern pages and pattern files reuse them. <code>legend</code> now reads as plain text in the build-time reading order.</li>
+</ul>
+
+<ol class="toc">
+  <li><a href="#goal">Goal and definition of done</a></li>
+  <li><a href="#scope">Scope</a></li>
+  <li><a href="#list">The 30 patterns</a></li>
+  <li><a href="#native">Native element first</a></li>
+  <li><a href="#log">What a screen reader would say, live</a></li>
+  <li><a href="#format">Content format</a></li>
+  <li><a href="#pages">Pages</a></li>
+  <li><a href="#a11y">Accessibility of the patterns</a></li>
+  <li><a href="#tests">Tests</a></li>
+  <li><a href="#commits">Branches, commits and pull requests</a></li>
+  <li><a href="#risks">Risks</a></li>
+  <li><a href="#decisions">Decisions</a></li>
+</ol>
+
+<h2 id="goal">1. Goal and definition of done</h2>
+<p>The practice section shows what goes wrong. Phase 9 shows what right looks like for the components people build by hand: an accordion, tabs, a slider, a combobox, a date picker. The reader operates each one with the keyboard and sees, next to it, what a screen reader would say after every key press and which ARIA attributes changed.</p>
+<p>Done when:</p>
+<ul>
+  <li>All 30 patterns from section 3 run on <code>/wzorce/$slug</code>, each in a sandboxed frame, each operable with the keyboard alone.</li>
+  <li>Every pattern page has a keyboard table, an ARIA table, the criteria it serves, and a log of announcements that fills in as the reader interacts.</li>
+  <li>Where a native element does the job (<code>button</code>, <code>a</code>, <code>input type="checkbox"</code>, <code>details</code>, <code>progress</code>), the page says so before any ARIA, and the pattern uses it.</li>
+  <li>Axe passes on every pattern frame in both themes, and a Playwright test walks every pattern with the keyboard and checks the state attributes.</li>
+  <li><code>/wzorce</code> lists the patterns, and criterion pages and practice examples link to the patterns that show them.</li>
+</ul>
+
+<h2 id="scope">2. Scope</h2>
+<table>
+  <thead><tr><th scope="col">In</th><th scope="col">Out, and where it goes</th></tr></thead>
+  <tbody>
+    <tr><td>30 patterns, our own code, Polish interface copy</td><td>Ports of Deque's or APG's code. APG examples are under the W3C software licence and may be adapted with credit; we read them, we do not paste them</td></tr>
+    <tr><td>The announcement log: what a screen reader would say on focus, on a state change of the focused element, and from live regions</td><td>Speech output, browse mode, differences between NVDA, JAWS, VoiceOver and TalkBack. The page says the log is an approximation</td></tr>
+    <tr><td>An ARIA table per pattern, with the current value of each state attribute updated live</td><td>A general ARIA reference. Roles and attributes appear only where a pattern uses them</td></tr>
+    <tr><td>The keyboard-only toggle from phase 7 on pattern pages</td><td>The colour, low vision and narrow screen simulators on pattern pages. Decision 8</td></tr>
+    <tr><td><code>/wzorce</code>, search, links from criterion pages and from practice examples</td><td>Lessons about patterns in the paths. A lesson may link to a pattern later</td></tr>
+    <tr><td>A "Typowe błędy" section in each pattern, in text</td><td>A broken variant of each pattern. Practice already has broken and fixed pairs. Decision 4</td></tr>
+    <tr><td>The pattern's code, shown under the frame</td><td>An npm package or React components for reuse. The patterns are teaching code in plain HTML, CSS and JS</td></tr>
+  </tbody>
+</table>
+
+<h2 id="list">3. The 30 patterns</h2>
+<p>The first column keeps Deque's English names, with <code>lang="en"</code> on the page. Four batches, each with one teaching idea. "Native" names the element to reach for first.</p>
+<table>
+  <caption class="meta" style="text-align:left">Deque's 30 examples, grouped into four batches</caption>
+  <thead><tr><th scope="col">Deque name</th><th scope="col">Ours, slug</th><th scope="col">Native</th><th scope="col">Roles and key attributes</th><th scope="col">Criteria</th></tr></thead>
+  <tbody>
+    <tr><th scope="rowgroup" colspan="5">Batch 1. Native first (9)</th></tr>
+    <tr><td>Button</td><td>Przycisk, <code>przycisk</code></td><td><code>button</code></td><td><code>button</code></td><td>4.1.2, 2.1.1</td></tr>
+    <tr><td>Button (Toggle)</td><td>Przycisk przełącznik, <code>przycisk-przelacznik</code></td><td><code>button</code></td><td><code>aria-pressed</code></td><td>4.1.2, 1.4.1</td></tr>
+    <tr><td>Link</td><td>Łącze, <code>lacze</code></td><td><code>a href</code></td><td><code>link</code></td><td>2.4.4, 4.1.2</td></tr>
+    <tr><td>Checkbox (Single)</td><td>Pole wyboru, <code>pole-wyboru</code></td><td><code>input type="checkbox"</code></td><td><code>checkbox</code></td><td>4.1.2, 1.3.1, 3.3.2</td></tr>
+    <tr><td>Checkbox (Tri-State)</td><td>Pole wyboru trójstanowe, <code>pole-wyboru-trojstanowe</code></td><td><code>indeterminate</code></td><td><code>aria-checked="mixed"</code>, <code>aria-controls</code></td><td>4.1.2, 1.3.1</td></tr>
+    <tr><td>Radio and Radio Group</td><td>Przyciski opcji, <code>przyciski-opcji</code></td><td><code>fieldset</code>, <code>input type="radio"</code></td><td><code>radiogroup</code>, <code>radio</code>, roving <code>tabindex</code></td><td>1.3.1, 2.1.1, 4.1.2</td></tr>
+    <tr><td>Expand/Collapse</td><td>Rozwiń i zwiń, <code>rozwin-zwin</code></td><td><code>details</code></td><td><code>aria-expanded</code>, <code>aria-controls</code></td><td>4.1.2</td></tr>
+    <tr><td>Expand/Collapse (based on Details/Summary)</td><td>Rozwiń i zwiń na details, <code>rozwin-zwin-details</code></td><td><code>details</code>, <code>summary</code></td><td>none needed</td><td>4.1.2</td></tr>
+    <tr><td>Alert</td><td>Komunikat, <code>komunikat</code></td><td>none</td><td><code>alert</code></td><td>4.1.3</td></tr>
+  </tbody>
+  <tbody>
+    <tr><th scope="rowgroup" colspan="5">Batch 2. Showing and hiding (7)</th></tr>
+    <tr><td>Accordion (Single)</td><td>Akordeon, jedna sekcja, <code>akordeon-pojedynczy</code></td><td><code>details name</code></td><td><code>aria-expanded</code>, headings around buttons</td><td>1.3.1, 4.1.2</td></tr>
+    <tr><td>Accordion (Multiselect)</td><td>Akordeon, kilka sekcji, <code>akordeon-wielokrotny</code></td><td><code>details</code></td><td>as above</td><td>1.3.1, 4.1.2</td></tr>
+    <tr><td>Dialog</td><td>Okno dialogowe, <code>okno-dialogowe</code></td><td><code>dialog</code> with <code>showModal()</code></td><td><code>dialog</code>, <code>aria-labelledby</code></td><td>2.4.3, 2.1.2, 4.1.2</td></tr>
+    <tr><td>Dialog (Alert Dialog)</td><td>Okno alertu, <code>okno-alertu</code></td><td><code>dialog</code></td><td><code>alertdialog</code>, <code>aria-describedby</code></td><td>2.4.3, 3.3.4</td></tr>
+    <tr><td>Tooltip</td><td>Dymek, <code>dymek</code></td><td>none</td><td><code>tooltip</code>, <code>aria-describedby</code></td><td>1.4.13</td></tr>
+    <tr><td>Tooltip Dialog</td><td>Dymek z oknem, <code>dymek-z-oknem</code></td><td><code>popover</code></td><td>non-modal <code>dialog</code>, <code>aria-expanded</code></td><td>1.4.13, 2.4.3</td></tr>
+    <tr><td>Navigation (Hierarchical) with Expand/Collapse</td><td>Nawigacja wielopoziomowa, <code>nawigacja-wielopoziomowa</code></td><td><code>nav</code>, lists</td><td><code>aria-expanded</code>, <code>aria-current="page"</code></td><td>2.4.5, 1.3.1, 3.2.3</td></tr>
+  </tbody>
+  <tbody>
+    <tr><th scope="rowgroup" colspan="5">Batch 3. Composite widgets with arrow keys (7)</th></tr>
+    <tr><td>Tabpanel</td><td>Zakładki, <code>zakladki</code></td><td>none</td><td><code>tablist</code>, <code>tab</code>, <code>tabpanel</code>, <code>aria-selected</code></td><td>1.3.1, 2.1.1, 4.1.2</td></tr>
+    <tr><td>Carousel (based on a tabpanel)</td><td>Karuzela, <code>karuzela</code></td><td>none</td><td><code>aria-roledescription</code>, tabs, pause button</td><td>2.2.2, 2.1.1</td></tr>
+    <tr><td>Tree View</td><td>Drzewo, <code>drzewo</code></td><td>none</td><td><code>tree</code>, <code>treeitem</code>, <code>group</code>, <code>aria-expanded</code></td><td>1.3.1, 2.1.1, 4.1.2</td></tr>
+    <tr><td>Slider</td><td>Suwak, <code>suwak</code></td><td><code>input type="range"</code></td><td><code>slider</code>, <code>aria-valuenow</code>, <code>aria-valuetext</code></td><td>2.5.7, 4.1.2</td></tr>
+    <tr><td>Slider (Multirange)</td><td>Suwak z zakresem, <code>suwak-zakres</code></td><td>two <code>range</code> inputs</td><td>two <code>slider</code>s with linked limits</td><td>2.5.7, 4.1.2</td></tr>
+    <tr><td>Stepper</td><td>Kroki formularza, <code>kroki-formularza</code></td><td><code>ol</code>, <code>form</code></td><td><code>aria-current="step"</code>, focus to the step heading</td><td>3.3.1, 2.4.3, 1.3.1</td></tr>
+    <tr><td>Datepicker</td><td>Wybór daty, <code>wybor-daty</code></td><td><code>input type="date"</code></td><td>modal <code>dialog</code>, <code>grid</code>, roving <code>tabindex</code></td><td>2.1.1, 3.3.2, 4.1.2</td></tr>
+  </tbody>
+  <tbody>
+    <tr><th scope="rowgroup" colspan="5">Batch 4. Content that changes (7)</th></tr>
+    <tr><td>Live Region Playground</td><td>Regiony na żywo, <code>regiony-na-zywo</code></td><td><code>output</code></td><td><code>aria-live</code>, <code>aria-atomic</code>, <code>aria-relevant</code>, <code>status</code>, <code>alert</code>, <code>log</code></td><td>4.1.3</td></tr>
+    <tr><td>Progress Bar (Bounded)</td><td>Pasek postępu, <code>pasek-postepu</code></td><td><code>progress</code></td><td><code>progressbar</code>, <code>aria-valuenow</code></td><td>4.1.2, 4.1.3</td></tr>
+    <tr><td>Progress Bar (Unbounded)</td><td>Postęp bez końca, <code>postep-nieokreslony</code></td><td><code>progress</code> without <code>value</code></td><td><code>aria-busy</code>, a status at the end</td><td>4.1.3, 2.2.2</td></tr>
+    <tr><td>Predictive Text</td><td>Podpowiedzi przy wpisywaniu, <code>podpowiedzi</code></td><td><code>datalist</code>, limited</td><td><code>combobox</code>, <code>listbox</code>, <code>aria-activedescendant</code></td><td>4.1.2, 4.1.3, 1.3.5</td></tr>
+    <tr><td>Shopping Cart</td><td>Koszyk, <code>koszyk</code></td><td><code>table</code>, <code>button</code></td><td>polite atomic live region, <code>alertdialog</code> before removing</td><td>4.1.3, 1.3.1, 3.3.4</td></tr>
+    <tr><td>Table (Sortable)</td><td>Tabela z sortowaniem, <code>tabela-sortowana</code></td><td><code>table</code>, <code>button</code> in <code>th</code></td><td><code>aria-sort</code></td><td>1.3.1, 4.1.2</td></tr>
+    <tr><td>Table (Responsive, Collapsible)</td><td>Tabela na wąskim ekranie, <code>tabela-responsywna</code></td><td><code>table</code></td><td>a list of rows below a breakpoint, headers kept as labels</td><td>1.4.10, 1.3.1</td></tr>
+  </tbody>
+</table>
+<p>Practice examples that cover the same ground get a link both ways: <code>okno-modalne-i-fokus</code> with the dialog, <code>karuzela-automatyczna</code> with the carousel, <code>tabela-z-naglowkami</code> with both tables, <code>ikona-jako-przycisk</code> with the button, <code>przeciaganie-z-alternatywa</code> with both sliders, <code>wlasna-lista-zamiast-select</code> with predictive text.</p>
+<p>The stepper on Deque's page is a multi-step form indicator, not a numeric spin button. We follow Deque here. A spin button can join the list of ideas.</p>
+
+<h2 id="native">4. Native element first</h2>
+<p>The first rule of ARIA is not to use it when HTML has the element. A catalogue of 30 ARIA widgets can teach the opposite by accident, so every pattern page opens with one of three verdicts, in text and with a glyph:</p>
+<ul>
+  <li><strong>Wystarczy HTML.</strong> The native element does everything. The pattern uses it, and the page shows what the browser gives for free (button, link, checkbox, details, progress).</li>
+  <li><strong>HTML z dodatkiem ARIA.</strong> A native base with one or two attributes on top: the toggle button with <code>aria-pressed</code>, the sortable table with <code>aria-sort</code>.</li>
+  <li><strong>Tylko ARIA.</strong> HTML has nothing equivalent: tabs, tree, combobox, the date grid. The page says what the author now owes: every key and every state.</li>
+</ul>
+<p>The verdict is a frontmatter field, so <code>/wzorce</code> can filter by it, and the catalogue shows how few patterns need ARIA alone.</p>
+
+<h2 id="log">5. What a screen reader would say, live</h2>
+<p>Phase 7 rejected a live list and computed the reading order at build time. For widgets that decision does not hold, because a pattern is its state changes. Pressing Enter on an accordion header matters because <code>aria-expanded</code> flips and the reader hears "rozwinięty". So pattern frames get a live log, and practice examples keep the build-time list.</p>
+<ul>
+  <li><strong>Where it runs.</strong> Inside the frame, in a script added to pattern demo documents only. It uses <code>dom-accessibility-api</code> (<code>computeAccessibleName</code>, <code>getRole</code>), the library the build-time list already uses, bundled once into <code>/demo/wzorce/log.js</code> and loaded by every pattern frame. The sandbox stays <code>allow-scripts allow-forms</code> with an opaque origin. Decision 3.</li>
+  <li><strong>What it logs.</strong> Three kinds of line, posted to the page as <code>{ a11yAnnounce: { kind, text } }</code>:
+    <ul>
+      <li><em>focus</em>: on <code>focusin</code>, the name, the Polish role and the states, for example "Dostawa, przycisk, zwinięty". Also when <code>aria-activedescendant</code> moves, which is how the combobox and the date grid move their focus.</li>
+      <li><em>state</em>: a <code>MutationObserver</code> on the focused element for <code>aria-expanded</code>, <code>aria-checked</code>, <code>aria-pressed</code>, <code>aria-selected</code>, <code>aria-valuenow</code>, <code>aria-valuetext</code>, <code>aria-sort</code>, <code>aria-current</code> and the native <code>checked</code>, <code>open</code> and <code>value</code>. Only the focused element, because that is what screen readers announce.</li>
+      <li><em>live</em>: text added inside <code>aria-live</code>, <code>role="status"</code>, <code>alert</code> or <code>log</code>, marked "grzecznie" (polite) or "natychmiast" (assertive), respecting <code>aria-atomic</code>.</li>
+    </ul>
+  </li>
+  <li><strong>The ARIA table follows along.</strong> The same script posts <code>{ a11yState: Record&lt;string, string&gt; }</code> for the attributes the pattern's frontmatter lists, so the "Teraz" column shows current values.</li>
+  <li><strong>The page does not speak.</strong> The log is an ordered list, not a live region, for the same reason as the focus trace in phase 7: it would talk over the reader's own screen reader. A "Wyczyść" button empties it.</li>
+  <li><strong>Polish names.</strong> The role map from <code>reading-order</code> moves to a shared module. States get the same treatment: a typed <code>stateLabels</code> map, so <code>aria-expanded="false"</code> reads "zwinięty" everywhere.</li>
+  <li><strong>Limits, stated above the log.</strong> Real screen readers differ in wording, order and timing; some announce <code>aria-live</code> changes late or not at all; browse mode is not simulated. The log answers "what does the code expose", not "what will JAWS say".</li>
+</ul>
+<pre><code>// src/content/announce.ts, shared by the frame script and the page
+export const announceKinds = { focus: "Fokus", state: "Zmiana", live: "Region na żywo" } as const;
+export type AnnounceKind = keyof typeof announceKinds;
+
+export const Announce = type({
+  a11yAnnounce: { kind: "'focus' | 'state' | 'live'", text: "string", "politeness?": "'polite' | 'assertive'" },
+});</code></pre>
+
+<h2 id="format">6. Content format</h2>
+<p>One folder per pattern, shaped like the practice examples:</p>
+<pre><code>content/wzorce/
+  akordeon-pojedynczy/
+    index.md        frontmatter, then "Kiedy używać", "Typowe błędy", "Jak sprawdzić"
+    wzorzec.html    the fragment: markup, style, script</code></pre>
+<pre><code>---
+title: Akordeon, jedna sekcja
+en: Accordion (Single)
+batch: pokazywanie
+native: html-i-aria            # html | html-i-aria | tylko-aria
+summary: Lista nagłówków, z których każdy rozwija swoją sekcję. Otwarcie jednej zamyka poprzednią.
+criteria: ["1.3.1", "4.1.2"]
+keyboard:
+  - keys: [Enter, Spacja]
+    action: Rozwija albo zwija sekcję pod nagłówkiem.
+  - keys: [Tab]
+    action: Przechodzi do następnego nagłówka albo do treści otwartej sekcji.
+aria:
+  - attr: aria-expanded
+    on: przycisk w nagłówku
+    meaning: Czy sekcja jest otwarta.
+  - attr: aria-controls
+    on: przycisk w nagłówku
+    meaning: Która sekcja należy do przycisku.
+sources:
+  apg: https://www.w3.org/WAI/ARIA/apg/patterns/accordion/
+  deque: https://dequeuniversity.com/library/aria/accordion-single
+status: szkic
+---</code></pre>
+<ul>
+  <li>ArkType validates it. <code>keys</code> come from a typed list (<code>Enter</code>, <code>Spacja</code>, <code>Tab</code>, <code>Shift+Tab</code>, the arrows, <code>Home</code>, <code>End</code>, <code>PageUp</code>, <code>PageDown</code>, <code>Esc</code>, letters), so a typo fails the build. <code>attr</code> comes from the list of attributes the log watches, so the "Teraz" column never points at something nobody reports.</li>
+  <li><code>criteria</code> and the optional <code>examples</code> resolve against their registries, as everywhere else.</li>
+  <li><code>keyboard</code> may be empty only where the pattern has no interaction of its own (the alert, the bounded progress bar). A test names the allowed ones.</li>
+  <li>Sections: "Kiedy używać" (including when the native element is enough), "Typowe błędy", "Jak sprawdzić". The first two are required.</li>
+</ul>
+
+<h2 id="pages">7. Pages</h2>
+<ul>
+  <li><strong><code>/wzorce/$slug</code>.</strong> Mock 1. A header with the Polish and English name, the native verdict, criteria chips and the draft badge. The frame with the working pattern, and next to it the announcement log, the keyboard table and the ARIA table with its live column. Under them the code (HTML, CSS, JS in three disclosures), "Kiedy używać", "Typowe błędy", "Jak sprawdzić", and links to APG and Deque. The keyboard-only toggle from phase 7 sits above the frame. Prerendered.</li>
+  <li><strong><code>/wzorce/regiony-na-zywo</code>.</strong> The playground needs its own controls outside the frame: politeness, <code>aria-atomic</code>, <code>aria-relevant</code>, a delay, and a button that pushes a message. Mock 3. The controls are native radios and checkboxes on the page; the frame receives the settings over <code>postMessage</code>.</li>
+  <li><strong><code>/wzorce</code>.</strong> Mock 2. The patterns grouped by batch, filterable by the native verdict (<code>?natywnie=</code>), validated like the filters on <code>/kryteria</code>. Prerendered.</li>
+  <li><strong>Entry point.</strong> Mock 4. Either "Wzorce" in the main navigation after "Praktyka", or a pair of links on <code>/praktyka</code>. The header already holds eight items. Decision 7.</li>
+  <li><strong>Criterion pages.</strong> In "Powiązane", a "Wzorce" line with the patterns that list the criterion, from a reverse index.</li>
+  <li><strong>Practice example pages.</strong> One line, "Zobacz poprawny wzorzec", where section 3 pairs them.</li>
+  <li><strong>Search.</strong> A new kind, "Wzorzec": the Polish name, the English name, roles and attributes. "accordion", "akordeon" and "aria-expanded" all find the accordion.</li>
+</ul>
+
+<h2 id="a11y">8. Accessibility of the patterns</h2>
+<p>The patterns are teaching material, so each one meets <code>docs/accessibility.md</code> on its own, not only the page around it.</p>
+<ul>
+  <li><strong>Targets.</strong> 44 by 44 pixels for every control in every pattern, including tree twisties, date grid cells, slider thumbs and carousel dots (2.5.5).</li>
+  <li><strong>Focus.</strong> The app's 3-pixel outline inside the frames too (2.4.7, 2.4.13), and nothing that covers the focused element (2.4.11, 2.4.12): the tooltip opens beside its trigger, not over the next control.</li>
+  <li><strong>Motion.</strong> The carousel does not rotate until the reader starts it, and never under <code>prefers-reduced-motion</code>. The unbounded progress bar has a static variant under reduced motion (2.2.2, 2.3.3).</li>
+  <li><strong>Dragging.</strong> Sliders move with the arrows and with a click on the track; the multirange slider adds two number fields (2.5.7).</li>
+  <li><strong>Hover content.</strong> The tooltip opens on focus too, stays while hovered, and closes with Esc without moving focus (1.4.13).</li>
+  <li><strong>Forced colours.</strong> Custom states (the mixed checkbox, the selected tab, the sort direction, the selected date) show with a glyph or a border, not a background colour alone (1.4.1, 1.4.11).</li>
+  <li><strong>Language.</strong> English names carry <code>lang="en"</code>; interface copy in the frames is Polish (3.1.2).</li>
+  <li><strong>The log and the ARIA table</strong> are a list and a table with a caption. Changed rows are marked with a word ("zmienione") and a glyph, not colour.</li>
+</ul>
+
+<h2 id="tests">9. Tests</h2>
+<ul>
+  <li><strong>Content (Vitest).</strong> Every pattern parses; slugs match section 3; <code>criteria</code>, <code>examples</code>, <code>keys</code> and <code>attr</code> resolve; every pattern has "Kiedy używać" and "Typowe błędy".</li>
+  <li><strong>The log (Vitest, jsdom).</strong> The accordion fragment and a click on its header: the log reads "Dostawa, przycisk, zwinięty", then "rozwinięty". A polite and an assertive region: the right politeness and the atomic text.</li>
+  <li><strong>Keyboard walks (Playwright).</strong> One table in <code>e2e/patterns.spec.ts</code>: per pattern, the keys to press and the attribute values expected after each. Thirty short walks, not thirty files.</li>
+  <li><strong>Axe and target size.</strong> Every <code>/demo/wzorce/&lt;slug&gt;</code>, <code>/wzorce</code> and one pattern page in both themes join the routes list. Pattern frames are also checked open (dialog open, combobox expanded, date picker open), because axe sees only what is rendered.</li>
+  <li><strong>Reduced motion.</strong> The carousel and the unbounded progress bar run no animation with <code>reducedMotion: "reduce"</code>.</li>
+</ul>
+
+<h2 id="commits">10. Branches, commits and pull requests</h2>
+<p>Thirty patterns are too many for one honest review. Four pull requests, each on its own branch from <code>master</code> (decision 2):</p>
+<ol>
+  <li><code>feat/aria-patterns</code>: the groundwork and batch 1.
+    <ul>
+      <li><code>docs(design): add phase 9 plan and ARIA pattern mocks</code></li>
+      <li><code>refactor(practice): move the Polish role map to a shared module</code></li>
+      <li><code>refactor(practice): let the example frame show a single document</code>, so pattern pages reuse it without the bad and good split</li>
+      <li><code>feat(patterns): add the pattern content format</code>, the parser, the reverse index and their tests</li>
+      <li><code>feat(patterns): log what a screen reader would announce</code>, the frame script, <code>log.js</code> and the jsdom tests</li>
+      <li><code>feat(patterns): add the pattern page and the catalogue</code>, the entry point, axe and the walk table</li>
+      <li><code>docs(patterns): add native-first patterns</code>, the nine patterns of batch 1 and their walks</li>
+      <li><code>feat(criteria): link criteria and examples to patterns</code></li>
+      <li><code>feat(search): index patterns</code></li>
+      <li><code>docs: update README for phase 9</code>, with screenshots of the catalogue and a pattern page</li>
+    </ul>
+  </li>
+  <li><code>feat/aria-patterns-disclosure</code>: batch 2, one commit per group (accordions, dialogs, tooltips, navigation).</li>
+  <li><code>feat/aria-patterns-composite</code>: batch 3. The date picker gets its own commit, last.</li>
+  <li><code>feat/aria-patterns-live</code>: batch 4. The playground page and its controls in their own commit.</li>
+</ol>
+<p>Pull requests 2 to 4 each end with the README updated and the keyboard walks of their batch.</p>
+
+<h2 id="risks">11. Risks</h2>
+<table>
+  <thead><tr><th scope="col">Risk</th><th scope="col">What we do</th></tr></thead>
+  <tbody>
+    <tr><td>Copying from Deque by accident</td><td>Code is written from APG's specification text, not from either site's source. Deque is linked as further reading, never quoted as code</td></tr>
+    <tr><td>Readers take the log for what their screen reader will say</td><td>The limits paragraph sits above the log, and "Jak sprawdzić" in every pattern names a test in a real screen reader</td></tr>
+    <tr><td><code>log.js</code> gets heavy</td><td>Measured in the groundwork commit. Over 30 KB minified, the frame falls back to the short name approximation the focus trace uses, and the page says so</td></tr>
+    <tr><td>The date picker eats batch 3</td><td>It goes last. If it runs over, it moves to its own pull request; "Kiedy używać" leads with <code>input type="date"</code> anyway</td></tr>
+    <tr><td>The catalogue teaches "use ARIA"</td><td>The native verdict on every page and a filter on <code>/wzorce</code> (section 4)</td></tr>
+    <tr><td>The header overflows with a ninth item</td><td>Decision 7. Mock 4B leaves the header alone</td></tr>
+    <tr><td>APG patterns change</td><td>Each pattern links to its APG page. A reread belongs to verification, as with <code>lastVerified</code></td></tr>
+  </tbody>
+</table>
+
+<h2 id="decisions">12. Decisions</h2>
+<p>Picked on 2026-10-03 from <a href="../2026-10-02-aria-patterns-mocks/aria-patterns-mocks.html">aria-patterns-mocks.html</a>.</p>
+<ol>
+  <li><strong>Name and route:</strong> decided, "Wzorce", inside Praktyka at <code>/praktyka/wzorce</code> (see the changes above).</li>
+  <li><strong>Release shape:</strong> decided, the groundwork and batch 1 first, then a pull request per batch.</li>
+  <li><strong>The live log:</strong> decided, <code>dom-accessibility-api</code> in the frame.</li>
+  <li><strong>Broken variants:</strong> decided, none. "Typowe błędy" in text and links to practice.</li>
+  <li><strong>Pattern page layout:</strong> decided, 1C. The rail of 1B with the exercise under the frame.</li>
+  <li><strong>Catalogue layout:</strong> decided, 2C. Cards with a still of each pattern, grouped by batch, filtered by <code>?natywnie=</code>.</li>
+  <li><strong>Entry point:</strong> decided, 4B. Two links under the Praktyka heading; the header stays at eight items.</li>
+  <li><strong>Simulators on pattern pages:</strong> decided, only the keyboard-only toggle.</li>
+  <li><strong>Live region playground:</strong> decided, 3A, for batch 4.</li>
+</ol>
+
+</main>
+</body>
+</html>

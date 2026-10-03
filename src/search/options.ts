@@ -1,14 +1,14 @@
 import type { Options } from "minisearch";
 
 /**
- * One searchable thing: a criterion, a glossary term, an example, an article of an act, a lesson
- * or a WCAG 3.0 guideline.
+ * One searchable thing: a criterion, a glossary term, an example, an ARIA pattern, an article of an
+ * act, a lesson or a WCAG 3.0 guideline.
  */
 export type SearchDoc = {
   id: string;
-  kind: "kryterium" | "pojecie" | "przyklad" | "przepis" | "lekcja" | "wcag3";
+  kind: "kryterium" | "pojecie" | "przyklad" | "wzorzec" | "przepis" | "lekcja" | "wcag3";
   /**
-   * Criterion number, glossary slug, example slug, "act/article", "path/lesson" or the anchor of a
+   * Criterion number, glossary slug, example or pattern slug, "act/article", "path/lesson" or the anchor of a
    * guideline on /wcag-3, used to build the link.
    */
   ref: string;

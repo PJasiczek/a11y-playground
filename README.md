@@ -19,7 +19,7 @@ a11y playground is a learning app for people who build digital products in Polan
 The interface is in Polish. This README is in English.
 
 > [!NOTE]
-> The project is in phase 8 (AAA criteria and WCAG 3.0 tracking). Every criterion of WCAG 2.2, A to AAA, has a plain-language explanation, and `/wcag-3` tracks the WCAG 3.0 Working Draft with our mapping to today's criteria. Eleven common faults have a broken and a fixed example, each viewable through five simulators. Three Polish acts are in the app with the statute text and our summaries, and five learning paths walk through them lesson by lesson. All content is marked as a draft until a person has checked it. Phase 5 (accounts) is postponed, so progress is kept in the browser.
+> The project is in phase 9 (ARIA widget patterns). The first nine patterns, the ones where HTML does most of the work, run in Praktyka with a live log of what a screen reader would say; the other 21 from the Deque University list follow batch by batch. Every criterion of WCAG 2.2, A to AAA, has a plain-language explanation, and `/wcag-3` tracks the WCAG 3.0 Working Draft with our mapping to today's criteria. Eleven common faults have a broken and a fixed example, each viewable through five simulators. Three Polish acts are in the app with the statute text and our summaries, and five learning paths walk through them lesson by lesson. All content is marked as a draft until a person has checked it. Phase 5 (accounts) is postponed, so progress is kept in the browser.
 
 ### What works today
 
@@ -34,8 +34,9 @@ The interface is in Polish. This README is in English.
 - **WCAG 3.0** (`/wcag-3`, in the main navigation): the status of the Working Draft of 10 September 2026 under a "wersja robocza W3C" badge, with the date we last compared it with w3.org, a table of how 3.0 differs from 2.2, and one table of all 46 guidelines in 12 groups with the 2.2 criteria that correspond to them today, or "Nowe w 3.0". The mapping is ours and the page says so. A filter (`?pokaz=nowe`) shows only what is new in 3.0, and every criterion page links to its guidelines.
 - **Normative text** in Polish from the authorized W3C translation of WCAG 2.1, collapsed on each criterion page. The criteria new in 2.2 link to their sources until a licensed Polish text is available.
 - **Glossary** (`/slownik`) of about 30 terms, alphabetical, each with a plain explanation and, where WCAG defines the term, its normative wording. The first use of a term in a criterion links to it, with a small button that opens a short definition.
-- **Search** (`/szukaj`, also on the home page) over criteria, examples, provisions, lessons, WCAG 3.0 guidelines and the glossary. It finds criteria by number, name or symptom ("modal", "placeholder"), articles by topic ("deklaracja dostępności"), and ignores Polish diacritics.
+- **Search** (`/szukaj`, also on the home page) over criteria, examples, patterns, provisions, lessons, WCAG 3.0 guidelines and the glossary. It finds criteria by number, name or symptom ("modal", "placeholder"), articles by topic ("deklaracja dostępności"), and ignores Polish diacritics.
 - **Practice** (`/praktyka`): eleven examples as cards ordered by the cost of the fix, each with what the user gains. An example page (`/praktyka/ikona-jako-przycisk`) shows the broken and the fixed variant one above the other, each running in a sandboxed iframe, with its code and what a screen reader says. Examples that move start only when the reader asks. Criterion pages link to their examples.
+- **Patterns** (`/praktyka/wzorce`, the second half of Praktyka): working components built from the WAI-ARIA Authoring Practices, after the list of Deque University ARIA Examples. The catalogue shows a still of each, grouped by batch, and filters by whether HTML has the element for the job (`?natywnie=`). A pattern page (`/praktyka/wzorce/rozwin-zwin`) runs the pattern in a sandboxed iframe, logs beside it what a screen reader would say after every key (focus, state changes, live regions), shows its ARIA attributes with their current values, and turns its keyboard behaviour into an exercise that ticks itself off. Criterion pages and practice examples link to their patterns.
 - **Simulators** on every example page: a list beside the frames switches both variants to colour vision deficiency (four types), low vision, keyboard only, screen reader, 320 pixels wide or text at 200%. The choice lives in `?symulacja=`, and none is on by default. Each one puts text next to the frames, so no simulator is the only way to get the information: what the simulation shows and what it does not, the numbered focus steps and blocked mouse clicks, a table of what a screen reader reads in both variants (computed at build time), or whether the content fits in 320 pixels, measured in the frame.
 - **Simulators page** (`/symulatory`): what each simulator shows, its limits, the criteria it teaches, and links into the examples with the simulation already picked.
 - **Law** (`/prawo`): the 2019 digital accessibility act in full, the parts of the 2019 special needs act and the 2024 products and services act (the Polish EAA) that create digital obligations, and a page on EN 301 549. An article page (`/prawo/ustawa-2019-848/art-5`) shows each ustęp next to our summary. Every act says which consolidated text it comes from, when it was downloaded, and whether it was amended after that text.
@@ -56,6 +57,10 @@ The interface is in Polish. This README is in English.
 | Practice | Example page |
 | --- | --- |
 | ![Practice catalogue with cards ordered by the cost of the fix](docs/screenshots/practice.png) | ![Example page with the simulator list beside the broken and the fixed variant](docs/screenshots/example-page.png) |
+
+| Patterns | Pattern page |
+| --- | --- |
+| ![Pattern catalogue with a still of each pattern and the native element filter](docs/screenshots/patterns.png) | ![The expand and collapse pattern with the exercise half done and the screen reader log beside it](docs/screenshots/pattern-page.png) |
 
 | Colour vision | Screen reader | Simulators |
 | --- | --- | --- |
@@ -214,6 +219,44 @@ Opis ogólny, pokazywany przy przykładach bez własnej notatki.
 - `examples` become the "Wypróbuj na" links on `/symulatory`.
 - `limits` is shown as "Czego to nie pokazuje" next to every simulation of that kind.
 - The screen reader list is computed by a Vite plugin (`src/content/reading-order.vite.ts`) with jsdom and `dom-accessibility-api`, for each fragment after its script has run. A role without a Polish name fails `pnpm test`.
+
+### ARIA patterns
+
+One folder per pattern in `content/wzorce/<slug>/`: `index.md` and `wzorzec.html`, the fragment the frame renders (markup, style and script, written by us, not copied from Deque).
+
+```markdown
+---
+title: Rozwiń i zwiń
+en: Expand/Collapse
+batch: html
+native: html-i-aria
+summary: Przycisk, który pokazuje i chowa panel pod sobą.
+criteria: ["4.1.2"]
+preview: <span class="p-disclosure">Szczegóły zamówienia <b>+</b></span>
+steps:
+  - do: Przejdź do przycisku.
+    keys: [Tab]
+    hear: Szczegóły zamówienia, przycisk, zwinięte
+aria:
+  - attr: aria-expanded
+    on: przycisk
+    selector: "#szczegoly-przycisk"
+    meaning: Czy panel jest otwarty.
+sources:
+  apg: https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/
+  deque: https://dequeuniversity.com/library/aria/expand-collapse
+status: szkic
+---
+## Kiedy używać
+## Typowe błędy
+## Jak sprawdzić
+```
+
+- `batch` and `native` come from `src/content/pattern-labels.ts`: the batch it belongs to, and whether HTML is enough (`html`), needs a little ARIA (`html-i-aria`) or has nothing (`tylko-aria`).
+- `steps` is the exercise. `hear` must be exactly what the live log says after one of `keys`, and the first step starts with Tab, which enters the frame. `pnpm test` presses the keys of every step in a real browser and fails if a step does not tick off.
+- `aria` rows are the ARIA table; `selector` says which element the frame reads for the current value. `attr` must be one the frame can report.
+- `examples` (optional) names practice examples that show the same thing broken.
+- The live log is `src/content/pattern-log.ts`, bundled with `dom-accessibility-api` by a Vite plugin and inlined into every pattern document.
 
 ### WCAG 3.0
 
@@ -396,6 +439,7 @@ content/
   kryteria/      one Markdown file per criterion
   slownik/       one Markdown file per glossary term
   praktyka/      one folder per example: index.md, bad.html, good.html
+  wzorce/        one folder per ARIA pattern: index.md, wzorzec.html
   prawo/         one Markdown file per act: summaries and deadlines
   sciezki/       one folder per learning path: lessons and their quizzes
   symulatory/    one Markdown file per kind of simulator
@@ -404,13 +448,13 @@ scripts/
   import-wcag.ts   generates src/content/wcag.gen.ts and wcag-text.gen.ts
   import-legal.ts  generates src/content/legal.gen.ts and legal-text.gen.ts
 src/
-  content/       WCAG structure, the WCAG 3.0 mapping, acts and the legal mapping, Markdown parsing and validation, server functions
+  content/       WCAG structure, the WCAG 3.0 mapping, acts and the legal mapping, Markdown parsing and validation, the live log of pattern frames, server functions
   search/        search options, index builder and relevance tests
   progress/      reading progress and quiz scores in localStorage
   routes/        file-based routes (__root.tsx holds the layout)
-  components/    header, theme toggle, route announcer, badges, filter chips, the AAA comparison, glossary previews, example frames and cards, the simulator list, the quiz
+  components/    header, theme toggle, route announcer, badges, filter chips, the AAA comparison, glossary previews, example and pattern frames and cards, the screen reader log, the simulator list, the quiz
   styles.css     Tailwind setup, colour tokens, styles for rendered Markdown
-e2e/             Playwright tests: axe, target size, animations, keyboard, example isolation, simulators, a whole path from the keyboard, WCAG 3.0
+e2e/             Playwright tests: axe, target size, animations, keyboard, example isolation, simulators, a whole path from the keyboard, WCAG 3.0, every pattern exercise
 docs/
   accessibility.md   the accessibility checklist
   design/            dated plans and mocks
@@ -430,3 +474,4 @@ The full plan, with content scope, architecture and risks, is in [`docs/design/2
 - [x] **6. Paths and quizzes.** Five learning paths, 29 lessons with quizzes, progress in `localStorage`. Detailed plan: [`docs/design/2026-09-29-phase-6-paths`](docs/design/2026-09-29-phase-6-paths/phase-6-paths.en.html).
 - [x] **7. Impairment simulators.** Colour vision, low vision, keyboard only, screen reader and narrow screen on every example, each with a text alternative, and `/symulatory`. Detailed plan: [`docs/design/2026-09-29-phase-7-simulators`](docs/design/2026-09-29-phase-7-simulators/phase-7-simulators.en.html).
 - [x] **8. AAA criteria and WCAG 3.0 tracking.** Explanations for the 31 AAA criteria and 4.1.1, the comparison with the AA criterion each one tightens, and `/wcag-3` with the guideline mapping. Detailed plan: [`docs/design/2026-10-01-phase-8-aaa-wcag3`](docs/design/2026-10-01-phase-8-aaa-wcag3/phase-8-aaa-wcag3.en.html).
+- [ ] **9. ARIA widget patterns.** The 30 patterns of Deque University ARIA Examples, our own code, each with a live screen reader log, an ARIA table and a keyboard exercise. Done: the groundwork and batch 1 (nine native-first patterns). Next: showing and hiding, composite widgets, content that changes. Detailed plan: [`docs/design/2026-10-02-phase-9-aria-patterns`](docs/design/2026-10-02-phase-9-aria-patterns/phase-9-aria-patterns.en.html).

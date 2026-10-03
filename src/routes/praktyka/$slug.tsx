@@ -37,7 +37,7 @@ const panes = [
  * the simulator rail beside them (variant 1C of the simulator mocks).
  */
 function ExamplePage() {
-  const { example, terms, simulators, reading, tab } = Route.useLoaderData();
+  const { example, terms, simulators, reading, tab, patterns } = Route.useLoaderData();
   const { symulacja } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
   const simulator = symulacja ? simulators.find((s) => s.kind === simulations[symulacja].kind) : undefined;
@@ -84,6 +84,21 @@ function ExamplePage() {
             </li>
           ) : null}
         </ul>
+        {patterns.length > 0 ? (
+          <p className="mt-3 flex flex-wrap items-center gap-x-3 text-[0.9375rem]">
+            <span className="text-ink-2">Zobacz poprawny wzorzec:</span>
+            {patterns.map((pattern) => (
+              <Link
+                key={pattern.slug}
+                to="/praktyka/wzorce/$slug"
+                params={{ slug: pattern.slug }}
+                className="inline-flex min-h-11 items-center text-accent underline underline-offset-3"
+              >
+                {pattern.title}
+              </Link>
+            ))}
+          </p>
+        ) : null}
       </header>
 
       <div className="mt-6 grid items-start gap-6 lg:grid-cols-[17rem_minmax(0,1fr)]">

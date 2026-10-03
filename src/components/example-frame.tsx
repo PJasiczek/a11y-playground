@@ -1,16 +1,13 @@
 import { type } from "arktype";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { type SimulationId, simulations } from "~/content/simulations";
+import { useDemoFrame } from "./use-demo-frame";
 
-const minHeight = 112;
 const narrowWidth = 320;
 
-// What a demo document posts to the page, see frameScript in demo-document.ts.
-const FrameMessage = type({ a11yExampleHeight: "number", a11yExampleWidth: "number", a11yExampleViewport: "number" })
-  .or({ a11yFocusStep: { n: "number", name: "string", role: "string" } })
-  .or({ a11yBlockedClick: "true" });
+// What the demo posts in keyboard mode, see frameScript in demo-document.ts.
+const KeyboardMessage = type({ a11yFocusStep: { n: "number", name: "string", role: "string" } }).or({ a11yBlockedClick: "true" });
 
-type Size = { width: number; viewport: number };
 type Step = { n: number; name: string; role: string };
 
 /**
@@ -37,39 +34,23 @@ export function ExampleFrame({
   motion: boolean;
   simulation: SimulationId | undefined;
 }) {
-  const frame = useRef<HTMLIFrameElement>(null);
-  const [height, setHeight] = useState(minHeight);
-  const [size, setSize] = useState<Size | null>(null);
   const [steps, setSteps] = useState<Step[]>([]);
   const [blocked, setBlocked] = useState(0);
   const [started, setStarted] = useState(!motion);
-
-  const send = () => {
-    frame.current?.contentWindow?.postMessage({ a11ySimulation: simulation ?? null }, "*");
-  };
-
-  useEffect(() => {
-    const onMessage = (event: MessageEvent<unknown>) => {
-      if (event.source !== frame.current?.contentWindow) return;
-      const data = FrameMessage(event.data);
+  const { ref: frame, height, size, send } = useDemoFrame({
+    simulation,
+    active: started,
+    onMessage: (message) => {
+      const data = KeyboardMessage(message);
       if (data instanceof type.errors) return;
-      if ("a11yExampleHeight" in data) {
-        setHeight(Math.max(minHeight, Math.ceil(data.a11yExampleHeight)));
-        setSize({ width: Math.ceil(data.a11yExampleWidth), viewport: Math.ceil(data.a11yExampleViewport) });
-      } else if ("a11yFocusStep" in data) {
+      if ("a11yFocusStep" in data) {
         const step = data.a11yFocusStep;
         setSteps((previous) => [...previous, step]);
       } else {
         setBlocked((count) => count + 1);
       }
-    };
-    window.addEventListener("message", onMessage);
-    // The frame may have loaded, and reported, before this page became interactive.
-    frame.current?.contentWindow?.postMessage("a11y-example-measure", "*");
-    return () => {
-      window.removeEventListener("message", onMessage);
-    };
-  }, [started]);
+    },
+  });
 
   // A new simulation starts a new trace. The frame resets its own badges when the message arrives.
   const [traced, setTraced] = useState(simulation);
@@ -78,9 +59,6 @@ export function ExampleFrame({
     setSteps([]);
     setBlocked(0);
   }
-  useEffect(() => {
-    frame.current?.contentWindow?.postMessage({ a11ySimulation: simulation ?? null }, "*");
-  }, [simulation, started]);
 
   if (!started) {
     return (

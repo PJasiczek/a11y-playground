@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan: faza 9, wzorce komponentów ARIA</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1.25rem 6rem;
+    background: #000; color: #fff;
+    font: 16px/1.65 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  main { max-width: 82ch; margin: 0 auto; }
+  h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 .5rem; letter-spacing: -.02em; }
+  h2 { font-size: 1.2rem; margin: 3rem 0 .75rem; padding-top: 1rem; border-top: 1px solid #262626; letter-spacing: -.01em; }
+  h3 { font-size: 1rem; margin: 1.75rem 0 .5rem; }
+  p, li, dd { color: #e5e5e5; }
+  a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  ul, ol { padding-left: 1.3rem; }
+  li { margin: .3rem 0; }
+  code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .875em; background: #141414; border: 1px solid #262626; border-radius: 3px; padding: .08em .3em; }
+  pre { background: #0b0b0b; border: 1px solid #262626; border-radius: 4px; padding: .9rem 1rem; overflow-x: auto; }
+  pre code { background: none; border: 0; padding: 0; font-size: .82rem; line-height: 1.55; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; display: block; overflow-x: auto; }
+  th, td { border: 1px solid #262626; padding: .45rem .6rem; text-align: left; vertical-align: top; }
+  th { background: #101010; font-weight: 600; }
+  .meta { color: #a3a3a3; font-size: .85rem; margin: 0 0 1.5rem; }
+  .meta a { color: #fff; }
+  .flag { border-left: 2px solid #737373; padding: .1rem 0 .1rem .85rem; margin: 1rem 0; color: #d4d4d4; font-size: .93rem; }
+  .toc { border: 1px solid #262626; padding: 1rem 1rem 1rem 2.4rem; margin: 1.5rem 0 0; }
+  .toc li { margin: .15rem 0; }
+  @media (max-width: 40rem) { body { padding: 1.25rem .9rem 4rem; } h1 { font-size: 1.45rem; } }
+</style>
+</head>
+<body>
+<main>
+
+<p class="meta"><a href="phase-9-aria-patterns.en.html" hreflang="en">English version</a></p>
+
+<h1>Plan: faza 9, wzorce komponentów ARIA</h1>
+<p class="meta">Faza spoza <a href="../2026-09-27-wcag-learning-app/wcag-learning-app.pl.html">planu głównego</a>. Zakres to 30 pozycji z <a href="https://dequeuniversity.com/library/" target="_blank" rel="noopener noreferrer">Deque University ARIA Examples</a>. Mocki strony wzorca, katalogu, placu zabaw dla regionów na żywo i wejścia do sekcji: <a href="../2026-10-02-aria-patterns-mocks/aria-patterns-mocks.html">aria-patterns-mocks.html</a>. Wersja planu: 2026-10-02, zmiany 2026-10-03.</p>
+
+<p class="flag">„Symulatory” to w aplikacji już symulatory niepełnosprawności z fazy 7 (<code>/symulatory</code>, <code>?symulacja=</code>). Komponenty z listy Deque to coś innego: działające kontrolki, które się obsługuje i których się słucha. Plan nazywa je <strong>wzorcami</strong> i umieszcza pod <code>/wzorce</code>, żeby jedno słowo miało jedno znaczenie. Decyzja 1.</p>
+
+<p class="flag">Nie kopiujemy kodu Deque. Biblioteka Deque nie ma otwartej licencji, jej strony podlegają warunkom korzystania z serwisu Deque. Każdy wzorzec piszemy sami na podstawie WAI-ARIA Authoring Practices Guide (APG, W3C), a do strony Deque i do wzorca w APG linkujemy jako do lektury uzupełniającej.</p>
+
+<h2 id="changes">Zmiany po rozpoczęciu pracy</h2>
+<p>Decyzje podjęte przy budowaniu pierwszego pull requesta (podstawy i partia 1). Tam, gdzie kłócą się z sekcjami poniżej, wygrywają.</p>
+<ul>
+  <li><strong>Wzorce są w Praktyce (sekcje 7 i 12).</strong> Mock 4B umieszcza je pod nagłówkiem Praktyki, więc adresy to <code>/praktyka/wzorce</code> i <code>/praktyka/wzorce/$slug</code>, a nie <code>/wzorce</code>. Nagłówek bez nowego kodu zaznacza na nich „Praktykę”. Dokumenty demo zostają pod <code>/demo/wzorce/$slug</code>.</li>
+  <li><strong>Ćwiczenie zastępuje tabelę klawiszy (sekcje 6 i 9).</strong> Przy mocku 1C frontmatter ma <code>steps</code> zamiast <code>keyboard</code>: co zrobić, klawisze i wpis dziennika, który ma się pojawić. Pierwszy krok musi zaczynać się od Tab, bo tak wchodzi się do ramki. Test Playwright naciska pierwszy klawisz każdego kroku na prawdziwej stronie i sprawdza, czy wszystkie kroki są odhaczone, więc tabelą przejść z sekcji 9 jest sama treść.</li>
+  <li><strong>Dziennik jest wstawiony do dokumentu, a nie w <code>/demo/wzorce/log.js</code> (sekcja 5).</strong> Plugin Vite buduje go razem z <code>dom-accessibility-api</code> w jeden zwykły skrypt, udostępnia jako <code>virtual:pattern-log</code>, a każdy dokument wzorca wstawia go w całości. Około 22 KB po minifikacji, poniżej limitu 30 KB z sekcji 11.</li>
+  <li><strong>Treść generowana nie trafia do nazw (sekcja 5).</strong> <code>dom-accessibility-api</code> nie rozumie tekstu alternatywnego w CSS (<code>content: "+" / ""</code>) i dokleiłby „+” do nazwy przycisku. Nasze wzorce i tak dają treści generowanej pusty tekst alternatywny.</li>
+  <li><strong>Stany w rodzaju nijakim (sekcja 5).</strong> „zwinięte”, „zaznaczone”, „naciśnięte”, jak w liście czytania z fazy 7, a nie „zwinięty”.</li>
+  <li><strong>Wiersze ARIA mają selektor (sekcja 6).</strong> <code>selector</code> mówi ramce, który element odczytać do kolumny „Teraz”. Test sprawdza, czy każdy selektor trafia w element fragmentu.</li>
+  <li><strong>Jedna sekcja „Kod”, nie trzy (sekcja 7).</strong> Fragment to jeden plik, jak w przykładach z Praktyki.</li>
+  <li><strong>Przełącznik „Tylko klawiatura” to pole wyboru (sekcja 7).</strong> Działa tylko na stronie, bez <code>?symulacja=</code>. Zablokowane kliknięcia są liczone pod ramką i ogłaszane raz, jak na stronach przykładów.</li>
+  <li><strong>Dwa dodatkowe commity refaktoryzacji (sekcja 10).</strong> Obsługa ramek przeszła do <code>useDemoFrame</code>, a dzielenie na sekcje <code>##</code> do <code>render.ts</code>, żeby strony i pliki wzorców z nich korzystały. <code>legend</code> czyta się teraz w liście czytania jako zwykły tekst.</li>
+</ul>
+
+<ol class="toc">
+  <li><a href="#goal">Cel i warunek ukończenia</a></li>
+  <li><a href="#scope">Zakres</a></li>
+  <li><a href="#list">30 wzorców</a></li>
+  <li><a href="#native">Najpierw element natywny</a></li>
+  <li><a href="#log">Co powiedziałby czytnik ekranu, na żywo</a></li>
+  <li><a href="#format">Format treści</a></li>
+  <li><a href="#pages">Strony</a></li>
+  <li><a href="#a11y">Dostępność samych wzorców</a></li>
+  <li><a href="#tests">Testy</a></li>
+  <li><a href="#commits">Gałęzie, commity i pull requesty</a></li>
+  <li><a href="#risks">Ryzyka</a></li>
+  <li><a href="#decisions">Decyzje</a></li>
+</ol>
+
+<h2 id="goal">1. Cel i warunek ukończenia</h2>
+<p>Sekcja Praktyka pokazuje, co się psuje. Faza 9 pokazuje, jak wygląda poprawna wersja komponentów, które ludzie budują ręcznie: akordeonu, zakładek, suwaka, pola z podpowiedziami, wyboru daty. Czytelnik obsługuje każdy z nich klawiaturą i obok widzi, co powiedziałby czytnik ekranu po każdym naciśnięciu klawisza i które atrybuty ARIA się zmieniły.</p>
+<p>Gotowe, gdy:</p>
+<ul>
+  <li>Wszystkie 30 wzorców z sekcji 3 działa pod <code>/wzorce/$slug</code>, każdy w ramce z piaskownicą i każdy da się obsłużyć samą klawiaturą.</li>
+  <li>Każda strona wzorca ma tabelę klawiszy, tabelę ARIA, kryteria, które wzorzec realizuje, i dziennik komunikatów, który wypełnia się w trakcie obsługi.</li>
+  <li>Tam, gdzie wystarczy element natywny (<code>button</code>, <code>a</code>, <code>input type="checkbox"</code>, <code>details</code>, <code>progress</code>), strona mówi o tym przed jakimkolwiek ARIA, a wzorzec go używa.</li>
+  <li>Axe przechodzi na każdej ramce wzorca w obu motywach, a test Playwright przechodzi każdy wzorzec klawiaturą i sprawdza atrybuty stanu.</li>
+  <li><code>/wzorce</code> wymienia wszystkie wzorce, a strony kryteriów i przykłady z Praktyki linkują do wzorców, które je pokazują.</li>
+</ul>
+
+<h2 id="scope">2. Zakres</h2>
+<table>
+  <thead><tr><th scope="col">W zakresie</th><th scope="col">Poza zakresem i dokąd trafia</th></tr></thead>
+  <tbody>
+    <tr><td>30 wzorców, nasz kod, polskie teksty interfejsu</td><td>Przeniesienie kodu Deque albo APG. Przykłady APG są na licencji W3C i można je adaptować z podaniem źródła; czytamy je, nie wklejamy</td></tr>
+    <tr><td>Dziennik komunikatów: co powiedziałby czytnik przy fokusie, przy zmianie stanu elementu z fokusem i z regionów na żywo</td><td>Synteza mowy, tryb przeglądania, różnice między NVDA, JAWS, VoiceOverem i TalkBackiem. Strona mówi, że dziennik jest przybliżeniem</td></tr>
+    <tr><td>Tabela ARIA dla każdego wzorca, z bieżącą wartością każdego atrybutu stanu</td><td>Ogólny słownik ARIA. Role i atrybuty pojawiają się tylko tam, gdzie używa ich wzorzec</td></tr>
+    <tr><td>Przełącznik „Tylko klawiatura” z fazy 7 na stronach wzorców</td><td>Symulatory barw, słabego widzenia i wąskiego ekranu na stronach wzorców. Decyzja 8</td></tr>
+    <tr><td><code>/wzorce</code>, wyszukiwarka, linki ze stron kryteriów i z przykładów</td><td>Lekcje o wzorcach w ścieżkach. Lekcja może później podlinkować wzorzec</td></tr>
+    <tr><td>Sekcja „Typowe błędy” w każdym wzorcu, jako tekst</td><td>Zepsuta wersja każdego wzorca. Praktyka ma już pary zepsute i poprawne. Decyzja 4</td></tr>
+    <tr><td>Kod wzorca pod ramką</td><td>Paczka npm albo komponenty React do użycia gdzie indziej. Wzorce to kod do nauki w czystym HTML, CSS i JS</td></tr>
+  </tbody>
+</table>
+
+<h2 id="list">3. 30 wzorców</h2>
+<p>Pierwsza kolumna zachowuje angielskie nazwy Deque, na stronie z <code>lang="en"</code>. Cztery partie, każda uczy jednej rzeczy. Kolumna „Natywnie” podaje element, po który warto sięgnąć najpierw.</p>
+<table>
+  <caption class="meta" style="text-align:left">30 przykładów Deque w czterech partiach</caption>
+  <thead><tr><th scope="col">Nazwa Deque</th><th scope="col">Nasza nazwa, slug</th><th scope="col">Natywnie</th><th scope="col">Role i kluczowe atrybuty</th><th scope="col">Kryteria</th></tr></thead>
+  <tbody>
+    <tr><th scope="rowgroup" colspan="5">Partia 1. Najpierw HTML (9)</th></tr>
+    <tr><td lang="en">Button</td><td>Przycisk, <code>przycisk</code></td><td><code>button</code></td><td><code>button</code></td><td>4.1.2, 2.1.1</td></tr>
+    <tr><td lang="en">Button (Toggle)</td><td>Przycisk przełącznik, <code>przycisk-przelacznik</code></td><td><code>button</code></td><td><code>aria-pressed</code></td><td>4.1.2, 1.4.1</td></tr>
+    <tr><td lang="en">Link</td><td>Łącze, <code>lacze</code></td><td><code>a href</code></td><td><code>link</code></td><td>2.4.4, 4.1.2</td></tr>
+    <tr><td lang="en">Checkbox (Single)</td><td>Pole wyboru, <code>pole-wyboru</code></td><td><code>input type="checkbox"</code></td><td><code>checkbox</code></td><td>4.1.2, 1.3.1, 3.3.2</td></tr>
+    <tr><td lang="en">Checkbox (Tri-State)</td><td>Pole wyboru trójstanowe, <code>pole-wyboru-trojstanowe</code></td><td><code>indeterminate</code></td><td><code>aria-checked="mixed"</code>, <code>aria-controls</code></td><td>4.1.2, 1.3.1</td></tr>
+    <tr><td lang="en">Radio and Radio Group</td><td>Przyciski opcji, <code>przyciski-opcji</code></td><td><code>fieldset</code>, <code>input type="radio"</code></td><td><code>radiogroup</code>, <code>radio</code>, wędrujący <code>tabindex</code></td><td>1.3.1, 2.1.1, 4.1.2</td></tr>
+    <tr><td lang="en">Expand/Collapse</td><td>Rozwiń i zwiń, <code>rozwin-zwin</code></td><td><code>details</code></td><td><code>aria-expanded</code>, <code>aria-controls</code></td><td>4.1.2</td></tr>
+    <tr><td lang="en">Expand/Collapse (based on Details/Summary)</td><td>Rozwiń i zwiń na details, <code>rozwin-zwin-details</code></td><td><code>details</code>, <code>summary</code></td><td>niepotrzebne</td><td>4.1.2</td></tr>
+    <tr><td lang="en">Alert</td><td>Komunikat, <code>komunikat</code></td><td>brak</td><td><code>alert</code></td><td>4.1.3</td></tr>
+  </tbody>
+  <tbody>
+    <tr><th scope="rowgroup" colspan="5">Partia 2. Pokazywanie i ukrywanie (7)</th></tr>
+    <tr><td lang="en">Accordion (Single)</td><td>Akordeon, jedna sekcja, <code>akordeon-pojedynczy</code></td><td><code>details name</code></td><td><code>aria-expanded</code>, nagłówki wokół przycisków</td><td>1.3.1, 4.1.2</td></tr>
+    <tr><td lang="en">Accordion (Multiselect)</td><td>Akordeon, kilka sekcji, <code>akordeon-wielokrotny</code></td><td><code>details</code></td><td>jak wyżej</td><td>1.3.1, 4.1.2</td></tr>
+    <tr><td lang="en">Dialog</td><td>Okno dialogowe, <code>okno-dialogowe</code></td><td><code>dialog</code> z <code>showModal()</code></td><td><code>dialog</code>, <code>aria-labelledby</code></td><td>2.4.3, 2.1.2, 4.1.2</td></tr>
+    <tr><td lang="en">Dialog (Alert Dialog)</td><td>Okno alertu, <code>okno-alertu</code></td><td><code>dialog</code></td><td><code>alertdialog</code>, <code>aria-describedby</code></td><td>2.4.3, 3.3.4</td></tr>
+    <tr><td lang="en">Tooltip</td><td>Dymek, <code>dymek</code></td><td>brak</td><td><code>tooltip</code>, <code>aria-describedby</code></td><td>1.4.13</td></tr>
+    <tr><td lang="en">Tooltip Dialog</td><td>Dymek z oknem, <code>dymek-z-oknem</code></td><td><code>popover</code></td><td>niemodalny <code>dialog</code>, <code>aria-expanded</code></td><td>1.4.13, 2.4.3</td></tr>
+    <tr><td lang="en">Navigation (Hierarchical) with Expand/Collapse</td><td>Nawigacja wielopoziomowa, <code>nawigacja-wielopoziomowa</code></td><td><code>nav</code>, listy</td><td><code>aria-expanded</code>, <code>aria-current="page"</code></td><td>2.4.5, 1.3.1, 3.2.3</td></tr>
+  </tbody>
+  <tbody>
+    <tr><th scope="rowgroup" colspan="5">Partia 3. Złożone kontrolki obsługiwane strzałkami (7)</th></tr>
+    <tr><td lang="en">Tabpanel</td><td>Zakładki, <code>zakladki</code></td><td>brak</td><td><code>tablist</code>, <code>tab</code>, <code>tabpanel</code>, <code>aria-selected</code></td><td>1.3.1, 2.1.1, 4.1.2</td></tr>
+    <tr><td lang="en">Carousel (based on a tabpanel)</td><td>Karuzela, <code>karuzela</code></td><td>brak</td><td><code>aria-roledescription</code>, zakładki, przycisk pauzy</td><td>2.2.2, 2.1.1</td></tr>
+    <tr><td lang="en">Tree View</td><td>Drzewo, <code>drzewo</code></td><td>brak</td><td><code>tree</code>, <code>treeitem</code>, <code>group</code>, <code>aria-expanded</code></td><td>1.3.1, 2.1.1, 4.1.2</td></tr>
+    <tr><td lang="en">Slider</td><td>Suwak, <code>suwak</code></td><td><code>input type="range"</code></td><td><code>slider</code>, <code>aria-valuenow</code>, <code>aria-valuetext</code></td><td>2.5.7, 4.1.2</td></tr>
+    <tr><td lang="en">Slider (Multirange)</td><td>Suwak z zakresem, <code>suwak-zakres</code></td><td>dwa pola <code>range</code></td><td>dwa <code>slider</code> z powiązanymi granicami</td><td>2.5.7, 4.1.2</td></tr>
+    <tr><td lang="en">Stepper</td><td>Kroki formularza, <code>kroki-formularza</code></td><td><code>ol</code>, <code>form</code></td><td><code>aria-current="step"</code>, fokus na nagłówek kroku</td><td>3.3.1, 2.4.3, 1.3.1</td></tr>
+    <tr><td lang="en">Datepicker</td><td>Wybór daty, <code>wybor-daty</code></td><td><code>input type="date"</code></td><td>modalny <code>dialog</code>, <code>grid</code>, wędrujący <code>tabindex</code></td><td>2.1.1, 3.3.2, 4.1.2</td></tr>
+  </tbody>
+  <tbody>
+    <tr><th scope="rowgroup" colspan="5">Partia 4. Treść, która się zmienia (7)</th></tr>
+    <tr><td lang="en">Live Region Playground</td><td>Regiony na żywo, <code>regiony-na-zywo</code></td><td><code>output</code></td><td><code>aria-live</code>, <code>aria-atomic</code>, <code>aria-relevant</code>, <code>status</code>, <code>alert</code>, <code>log</code></td><td>4.1.3</td></tr>
+    <tr><td lang="en">Progress Bar (Bounded)</td><td>Pasek postępu, <code>pasek-postepu</code></td><td><code>progress</code></td><td><code>progressbar</code>, <code>aria-valuenow</code></td><td>4.1.2, 4.1.3</td></tr>
+    <tr><td lang="en">Progress Bar (Unbounded)</td><td>Postęp bez końca, <code>postep-nieokreslony</code></td><td><code>progress</code> bez <code>value</code></td><td><code>aria-busy</code>, status na końcu</td><td>4.1.3, 2.2.2</td></tr>
+    <tr><td lang="en">Predictive Text</td><td>Podpowiedzi przy wpisywaniu, <code>podpowiedzi</code></td><td><code>datalist</code>, z ograniczeniami</td><td><code>combobox</code>, <code>listbox</code>, <code>aria-activedescendant</code></td><td>4.1.2, 4.1.3, 1.3.5</td></tr>
+    <tr><td lang="en">Shopping Cart</td><td>Koszyk, <code>koszyk</code></td><td><code>table</code>, <code>button</code></td><td>grzeczny, atomowy region na żywo, <code>alertdialog</code> przed usunięciem</td><td>4.1.3, 1.3.1, 3.3.4</td></tr>
+    <tr><td lang="en">Table (Sortable)</td><td>Tabela z sortowaniem, <code>tabela-sortowana</code></td><td><code>table</code>, <code>button</code> w <code>th</code></td><td><code>aria-sort</code></td><td>1.3.1, 4.1.2</td></tr>
+    <tr><td lang="en">Table (Responsive, Collapsible)</td><td>Tabela na wąskim ekranie, <code>tabela-responsywna</code></td><td><code>table</code></td><td>poniżej progu lista wierszy, nagłówki zostają etykietami</td><td>1.4.10, 1.3.1</td></tr>
+  </tbody>
+</table>
+<p>Przykłady z Praktyki, które dotyczą tego samego, dostają linki w obie strony: <code>okno-modalne-i-fokus</code> z oknem dialogowym, <code>karuzela-automatyczna</code> z karuzelą, <code>tabela-z-naglowkami</code> z obiema tabelami, <code>ikona-jako-przycisk</code> z przyciskiem, <code>przeciaganie-z-alternatywa</code> z oboma suwakami, <code>wlasna-lista-zamiast-select</code> z podpowiedziami.</p>
+<p>„Stepper” u Deque to wskaźnik kroków formularza, a nie pole liczbowe ze strzałkami. Idziemy za Deque. Pole liczbowe (<code>spinbutton</code>) może trafić na listę pomysłów.</p>
+
+<h2 id="native">4. Najpierw element natywny</h2>
+<p>Pierwsza zasada ARIA mówi: nie używaj jej, jeśli HTML ma odpowiedni element. Katalog 30 kontrolek ARIA może niechcący uczyć odwrotnie, więc każda strona wzorca zaczyna się od jednego z trzech werdyktów, tekstem i znakiem:</p>
+<ul>
+  <li><strong>Wystarczy HTML.</strong> Element natywny robi wszystko. Wzorzec go używa, a strona pokazuje, co przeglądarka daje za darmo (przycisk, łącze, pole wyboru, details, progress).</li>
+  <li><strong>HTML z dodatkiem ARIA.</strong> Natywna podstawa i jeden albo dwa atrybuty: przycisk przełącznik z <code>aria-pressed</code>, tabela z <code>aria-sort</code>.</li>
+  <li><strong>Tylko ARIA.</strong> HTML nie ma odpowiednika: zakładki, drzewo, pole z podpowiedziami, siatka dat. Strona mówi, co autor teraz musi zrobić sam: każdy klawisz i każdy stan.</li>
+</ul>
+<p>Werdykt jest polem we frontmatterze, więc <code>/wzorce</code> może po nim filtrować, a katalog pokazuje, jak niewiele wzorców naprawdę wymaga samego ARIA.</p>
+
+<h2 id="log">5. Co powiedziałby czytnik ekranu, na żywo</h2>
+<p>Faza 7 odrzuciła listę na żywo i liczy kolejność czytania przy budowaniu. Przy kontrolkach ta decyzja nie działa, bo wzorzec to właśnie zmiany stanu. Enter na nagłówku akordeonu ma znaczenie dlatego, że <code>aria-expanded</code> zmienia wartość, a czytelnik słyszy „rozwinięty”. Ramki wzorców dostają więc dziennik na żywo, a przykłady z Praktyki zostają przy liście liczonej przy budowaniu.</p>
+<ul>
+  <li><strong>Gdzie działa.</strong> W ramce, w skrypcie dodawanym tylko do dokumentów wzorców. Używa <code>dom-accessibility-api</code> (<code>computeAccessibleName</code>, <code>getRole</code>), tej samej biblioteki co lista z fazy 7, zbudowanej raz do <code>/demo/wzorce/log.js</code> i ładowanej przez każdą ramkę wzorca. Piaskownica zostaje bez zmian: <code>allow-scripts allow-forms</code>, nieprzezroczyste pochodzenie. Decyzja 3.</li>
+  <li><strong>Co zapisuje.</strong> Trzy rodzaje wpisów, wysyłane do strony jako <code>{ a11yAnnounce: { kind, text } }</code>:
+    <ul>
+      <li><em>fokus</em>: przy <code>focusin</code> nazwa, polska rola i stany, na przykład „Dostawa, przycisk, zwinięty”. Także gdy zmienia się <code>aria-activedescendant</code>, bo tak przesuwają fokus pole z podpowiedziami i siatka dat.</li>
+      <li><em>zmiana</em>: <code>MutationObserver</code> na elemencie z fokusem, dla <code>aria-expanded</code>, <code>aria-checked</code>, <code>aria-pressed</code>, <code>aria-selected</code>, <code>aria-valuenow</code>, <code>aria-valuetext</code>, <code>aria-sort</code>, <code>aria-current</code> oraz natywnych <code>checked</code>, <code>open</code> i <code>value</code>. Tylko na elemencie z fokusem, bo to właśnie ogłaszają czytniki.</li>
+      <li><em>region na żywo</em>: tekst dodany w <code>aria-live</code>, <code>role="status"</code>, <code>alert</code> albo <code>log</code>, oznaczony „grzecznie” albo „natychmiast”, z uwzględnieniem <code>aria-atomic</code>.</li>
+    </ul>
+  </li>
+  <li><strong>Tabela ARIA nadąża.</strong> Ten sam skrypt wysyła <code>{ a11yState: Record&lt;string, string&gt; }</code> dla atrybutów wymienionych we frontmatterze, więc kolumna „Teraz” pokazuje bieżące wartości.</li>
+  <li><strong>Strona nie mówi.</strong> Dziennik to lista numerowana, a nie region na żywo, z tego samego powodu co ślad fokusu w fazie 7: zagłuszałby czytnik, którego używa czytelnik. Przycisk „Wyczyść” go opróżnia.</li>
+  <li><strong>Polskie nazwy.</strong> Mapa ról z <code>reading-order</code> przechodzi do wspólnego modułu. Stany dostają to samo: typowaną mapę <code>stateLabels</code>, dzięki której <code>aria-expanded="false"</code> wszędzie brzmi „zwinięty”.</li>
+  <li><strong>Ograniczenia nad dziennikiem.</strong> Prawdziwe czytniki różnią się słowami, kolejnością i czasem; niektóre ogłaszają zmiany w <code>aria-live</code> z opóźnieniem albo wcale; trybu przeglądania nie symulujemy. Dziennik odpowiada na pytanie „co wystawia kod”, nie „co powie JAWS”.</li>
+</ul>
+<pre><code>// src/content/announce.ts, shared by the frame script and the page
+export const announceKinds = { focus: "Fokus", state: "Zmiana", live: "Region na żywo" } as const;
+export type AnnounceKind = keyof typeof announceKinds;
+
+export const Announce = type({
+  a11yAnnounce: { kind: "'focus' | 'state' | 'live'", text: "string", "politeness?": "'polite' | 'assertive'" },
+});</code></pre>
+
+<h2 id="format">6. Format treści</h2>
+<p>Jeden katalog na wzorzec, o kształcie przykładów z Praktyki:</p>
+<pre><code>content/wzorce/
+  akordeon-pojedynczy/
+    index.md        frontmatter, then "Kiedy używać", "Typowe błędy", "Jak sprawdzić"
+    wzorzec.html    the fragment: markup, style, script</code></pre>
+<pre><code>---
+title: Akordeon, jedna sekcja
+en: Accordion (Single)
+batch: pokazywanie
+native: html-i-aria            # html | html-i-aria | tylko-aria
+summary: Lista nagłówków, z których każdy rozwija swoją sekcję. Otwarcie jednej zamyka poprzednią.
+criteria: ["1.3.1", "4.1.2"]
+keyboard:
+  - keys: [Enter, Spacja]
+    action: Rozwija albo zwija sekcję pod nagłówkiem.
+  - keys: [Tab]
+    action: Przechodzi do następnego nagłówka albo do treści otwartej sekcji.
+aria:
+  - attr: aria-expanded
+    on: przycisk w nagłówku
+    meaning: Czy sekcja jest otwarta.
+  - attr: aria-controls
+    on: przycisk w nagłówku
+    meaning: Która sekcja należy do przycisku.
+sources:
+  apg: https://www.w3.org/WAI/ARIA/apg/patterns/accordion/
+  deque: https://dequeuniversity.com/library/aria/accordion-single
+status: szkic
+---</code></pre>
+<ul>
+  <li>Frontmatter sprawdza ArkType. <code>keys</code> pochodzą z typowanej listy (<code>Enter</code>, <code>Spacja</code>, <code>Tab</code>, <code>Shift+Tab</code>, strzałki, <code>Home</code>, <code>End</code>, <code>PageUp</code>, <code>PageDown</code>, <code>Esc</code>, litery), więc literówka psuje build. <code>attr</code> pochodzi z listy atrybutów, które obserwuje dziennik, więc kolumna „Teraz” nigdy nie wskaże czegoś, czego nikt nie raportuje.</li>
+  <li><code>criteria</code> i opcjonalne <code>examples</code> są sprawdzane z rejestrami, jak wszędzie.</li>
+  <li><code>keyboard</code> może być puste tylko tam, gdzie wzorzec nie ma własnej obsługi (komunikat, pasek postępu z wartością). Test wymienia dozwolone.</li>
+  <li>Sekcje: „Kiedy używać” (także kiedy wystarczy element natywny), „Typowe błędy”, „Jak sprawdzić”. Dwie pierwsze są wymagane.</li>
+</ul>
+
+<h2 id="pages">7. Strony</h2>
+<ul>
+  <li><strong><code>/wzorce/$slug</code>.</strong> Mock 1. Nagłówek z polską i angielską nazwą, werdyktem o elemencie natywnym, kryteriami i znaczkiem szkicu. Ramka z działającym wzorcem, a obok dziennik komunikatów, tabela klawiszy i tabela ARIA z kolumną na żywo. Pod spodem kod (HTML, CSS i JS w trzech rozwijanych sekcjach), „Kiedy używać”, „Typowe błędy”, „Jak sprawdzić” i linki do APG i Deque. Przełącznik „Tylko klawiatura” z fazy 7 nad ramką. Prerenderowana.</li>
+  <li><strong><code>/wzorce/regiony-na-zywo</code>.</strong> Plac zabaw potrzebuje własnych ustawień poza ramką: grzeczność, <code>aria-atomic</code>, <code>aria-relevant</code>, opóźnienie i przycisk, który wysyła komunikat. Mock 3. Ustawienia to natywne radia i pola wyboru na stronie, a ramka dostaje je przez <code>postMessage</code>.</li>
+  <li><strong><code>/wzorce</code>.</strong> Mock 2. Wzorce w partiach, z filtrem po werdykcie (<code>?natywnie=</code>), sprawdzanym jak filtry na <code>/kryteria</code>. Prerenderowana.</li>
+  <li><strong>Wejście.</strong> Mock 4. Albo „Wzorce” w menu głównym po „Praktyce”, albo para linków na <code>/praktyka</code>. Nagłówek ma już osiem pozycji. Decyzja 7.</li>
+  <li><strong>Strony kryteriów.</strong> W „Powiązanych” wiersz „Wzorce” z wzorcami, które wymieniają dane kryterium, z odwrotnego indeksu.</li>
+  <li><strong>Strony przykładów.</strong> Jedna linijka, „Zobacz poprawny wzorzec”, tam gdzie sekcja 3 łączy je w pary.</li>
+  <li><strong>Wyszukiwarka.</strong> Nowy rodzaj wyniku, „Wzorzec”: polska nazwa, angielska nazwa, role i atrybuty. „accordion”, „akordeon” i „aria-expanded” znajdują akordeon.</li>
+</ul>
+
+<h2 id="a11y">8. Dostępność samych wzorców</h2>
+<p>Wzorce służą do nauki, więc każdy z osobna spełnia <code>docs/accessibility.md</code>, a nie tylko strona wokół niego.</p>
+<ul>
+  <li><strong>Cele.</strong> 44 na 44 piksele dla każdej kontrolki w każdym wzorcu, także przycisków rozwijania w drzewie, dni w siatce dat, uchwytów suwaka i kropek karuzeli (2.5.5).</li>
+  <li><strong>Fokus.</strong> Ta sama 3-pikselowa obwódka co w aplikacji, także w ramkach (2.4.7, 2.4.13), i nic, co zasłania element z fokusem (2.4.11, 2.4.12): dymek otwiera się obok wyzwalacza, nie na następnej kontrolce.</li>
+  <li><strong>Ruch.</strong> Karuzela nie przewija się, dopóki czytelnik jej nie uruchomi, a przy <code>prefers-reduced-motion</code> nie przewija się wcale. Pasek postępu bez końca ma statyczny wariant przy ograniczonym ruchu (2.2.2, 2.3.3).</li>
+  <li><strong>Przeciąganie.</strong> Suwaki działają strzałkami i kliknięciem w tor; suwak z zakresem ma dodatkowo dwa pola liczbowe (2.5.7).</li>
+  <li><strong>Treść po najechaniu.</strong> Dymek otwiera się także przy fokusie, zostaje, gdy kursor jest nad nim, i zamyka się klawiszem Esc bez przesuwania fokusu (1.4.13).</li>
+  <li><strong>Wymuszone kolory.</strong> Stany własnych kontrolek (pole wyboru częściowo zaznaczone, wybrana zakładka, kierunek sortowania, wybrana data) widać po znaku albo obramowaniu, a nie tylko po kolorze tła (1.4.1, 1.4.11).</li>
+  <li><strong>Język.</strong> Angielskie nazwy mają <code>lang="en"</code>, teksty interfejsu w ramkach są po polsku (3.1.2).</li>
+  <li><strong>Dziennik i tabela ARIA</strong> to lista i tabela z podpisem. Zmienione wiersze oznacza słowo („zmienione”) i znak, nie kolor.</li>
+</ul>
+
+<h2 id="tests">9. Testy</h2>
+<ul>
+  <li><strong>Treść (Vitest).</strong> Każdy wzorzec się parsuje; slugi zgadzają się z sekcją 3; <code>criteria</code>, <code>examples</code>, <code>keys</code> i <code>attr</code> istnieją; każdy wzorzec ma „Kiedy używać” i „Typowe błędy”.</li>
+  <li><strong>Dziennik (Vitest, jsdom).</strong> Fragment akordeonu i kliknięcie w nagłówek: dziennik mówi „Dostawa, przycisk, zwinięty”, potem „rozwinięty”. Region grzeczny i natychmiastowy: właściwa grzeczność i tekst przy <code>aria-atomic</code>.</li>
+  <li><strong>Przejścia klawiaturą (Playwright).</strong> Jedna tabela w <code>e2e/patterns.spec.ts</code>: dla każdego wzorca klawisze do naciśnięcia i wartości atrybutów po każdym z nich. Trzydzieści krótkich przejść, nie trzydzieści plików.</li>
+  <li><strong>Axe i rozmiar celów.</strong> Każde <code>/demo/wzorce/&lt;slug&gt;</code>, <code>/wzorce</code> i jedna strona wzorca w obu motywach trafiają na listę tras. Ramki sprawdzamy też w stanie otwartym (okno otwarte, lista podpowiedzi rozwinięta, wybór daty otwarty), bo axe widzi tylko to, co jest wyrenderowane.</li>
+  <li><strong>Ograniczony ruch.</strong> Karuzela i pasek postępu bez końca nie uruchamiają animacji przy <code>reducedMotion: "reduce"</code>.</li>
+</ul>
+
+<h2 id="commits">10. Gałęzie, commity i pull requesty</h2>
+<p>Trzydzieści wzorców to za dużo na jedną rzetelną recenzję. Cztery pull requesty, każdy na osobnej gałęzi od <code>master</code> (decyzja 2):</p>
+<ol>
+  <li><code>feat/aria-patterns</code>: podstawy i partia 1.
+    <ul>
+      <li><code>docs(design): add phase 9 plan and ARIA pattern mocks</code></li>
+      <li><code>refactor(practice): move the Polish role map to a shared module</code></li>
+      <li><code>refactor(practice): let the example frame show a single document</code>, żeby strony wzorców używały jej bez podziału na zepsute i poprawne</li>
+      <li><code>feat(patterns): add the pattern content format</code>, parser, odwrotny indeks i testy</li>
+      <li><code>feat(patterns): log what a screen reader would announce</code>, skrypt ramki, <code>log.js</code> i testy w jsdom</li>
+      <li><code>feat(patterns): add the pattern page and the catalogue</code>, wejście do sekcji, axe i tabela przejść</li>
+      <li><code>docs(patterns): add native-first patterns</code>, dziewięć wzorców partii 1 i ich przejścia</li>
+      <li><code>feat(criteria): link criteria and examples to patterns</code></li>
+      <li><code>feat(search): index patterns</code></li>
+      <li><code>docs: update README for phase 9</code>, ze zrzutami katalogu i strony wzorca</li>
+    </ul>
+  </li>
+  <li><code>feat/aria-patterns-disclosure</code>: partia 2, commit na grupę (akordeony, okna, dymki, nawigacja).</li>
+  <li><code>feat/aria-patterns-composite</code>: partia 3. Wybór daty w osobnym commicie, na końcu.</li>
+  <li><code>feat/aria-patterns-live</code>: partia 4. Plac zabaw i jego ustawienia w osobnym commicie.</li>
+</ol>
+<p>Pull requesty od 2 do 4 kończą się aktualizacją README i przejściami klawiaturą dla swojej partii.</p>
+
+<h2 id="risks">11. Ryzyka</h2>
+<table>
+  <thead><tr><th scope="col">Ryzyko</th><th scope="col">Co robimy</th></tr></thead>
+  <tbody>
+    <tr><td>Przypadkowe skopiowanie kodu Deque</td><td>Kod piszemy na podstawie opisu wzorca w APG, a nie źródeł którejkolwiek strony. Deque linkujemy jako lekturę, nigdy nie cytujemy jako kodu</td></tr>
+    <tr><td>Czytelnik uzna dziennik za to, co powie jego czytnik</td><td>Akapit o ograniczeniach stoi nad dziennikiem, a „Jak sprawdzić” w każdym wzorcu opisuje test w prawdziwym czytniku</td></tr>
+    <tr><td><code>log.js</code> robi się ciężki</td><td>Mierzymy w commicie z podstawami. Powyżej 30 KB po minifikacji ramka wraca do krótkiego przybliżenia nazwy, którego używa ślad fokusu, a strona o tym mówi</td></tr>
+    <tr><td>Wybór daty zjada partię 3</td><td>Idzie na koniec. Jeśli się przeciągnie, przechodzi do osobnego pull requesta; „Kiedy używać” i tak zaczyna od <code>input type="date"</code></td></tr>
+    <tr><td>Katalog uczy „używaj ARIA”</td><td>Werdykt o elemencie natywnym na każdej stronie i filtr na <code>/wzorce</code> (sekcja 4)</td></tr>
+    <tr><td>Dziewiąta pozycja nie mieści się w nagłówku</td><td>Decyzja 7. Mock 4B zostawia nagłówek bez zmian</td></tr>
+    <tr><td>Wzorce w APG się zmieniają</td><td>Każdy wzorzec linkuje do swojej strony w APG. Ponowne przeczytanie należy do weryfikacji, jak przy <code>lastVerified</code></td></tr>
+  </tbody>
+</table>
+
+<h2 id="decisions">12. Decyzje</h2>
+<p>Wybrane 2026-10-03 na podstawie <a href="../2026-10-02-aria-patterns-mocks/aria-patterns-mocks.html">aria-patterns-mocks.html</a>.</p>
+<ol>
+  <li><strong>Nazwa i adres:</strong> postanowione, „Wzorce”, w Praktyce pod <code>/praktyka/wzorce</code> (zobacz zmiany wyżej).</li>
+  <li><strong>Kształt wydań:</strong> postanowione, najpierw podstawy i partia 1, potem pull request na partię.</li>
+  <li><strong>Dziennik na żywo:</strong> postanowione, <code>dom-accessibility-api</code> w ramce.</li>
+  <li><strong>Zepsute wersje:</strong> postanowione, bez nich. „Typowe błędy” jako tekst i linki do Praktyki.</li>
+  <li><strong>Układ strony wzorca:</strong> postanowione, 1C. Kolumna boczna z 1B i ćwiczenie pod ramką.</li>
+  <li><strong>Układ katalogu:</strong> postanowione, 2C. Karty z podglądem wzorca, w partiach, z filtrem <code>?natywnie=</code>.</li>
+  <li><strong>Wejście do sekcji:</strong> postanowione, 4B. Dwa linki pod nagłówkiem Praktyki; nagłówek strony zostaje przy ośmiu pozycjach.</li>
+  <li><strong>Symulatory na stronach wzorców:</strong> postanowione, tylko przełącznik „Tylko klawiatura”.</li>
+  <li><strong>Plac zabaw regionów na żywo:</strong> postanowione, 3A, w partii 4.</li>
+</ol>
+
+</main>
+</body>
+</html>

@@ -19,6 +19,7 @@ function isHit(result: SearchResult): result is Hit {
     (kind === "kryterium" ||
       kind === "pojecie" ||
       kind === "przyklad" ||
+      kind === "wzorzec" ||
       kind === "przepis" ||
       kind === "lekcja" ||
       kind === "wcag3") &&
@@ -38,7 +39,7 @@ function loadIndex() {
 }
 
 /**
- * Search over criteria, examples, provisions, lessons, WCAG 3.0 guidelines and the glossary (screen 7 of variant A, with a
+ * Search over criteria, examples, patterns, provisions, lessons, WCAG 3.0 guidelines and the glossary (screen 7 of variant A, with a
  * visible label instead of a placeholder). The form works as a plain GET to /szukaj?q=; the
  * index is searched in the browser and the result count is announced in a status region.
  */
@@ -69,6 +70,7 @@ function SearchPage() {
   const criteria = hits?.filter((hit) => hit.kind === "kryterium") ?? [];
   const terms = hits?.filter((hit) => hit.kind === "pojecie") ?? [];
   const practice = hits?.filter((hit) => hit.kind === "przyklad") ?? [];
+  const patterns = hits?.filter((hit) => hit.kind === "wzorzec") ?? [];
   const law = hits?.filter((hit) => hit.kind === "przepis") ?? [];
   const lessons = hits?.filter((hit) => hit.kind === "lekcja") ?? [];
   const wcag3 = hits?.filter((hit) => hit.kind === "wcag3") ?? [];
@@ -171,6 +173,26 @@ function SearchPage() {
                 className="grid grid-cols-[5.5rem_1fr] gap-x-4 gap-y-1 px-1 py-3.5 hover:bg-surface max-sm:grid-cols-1"
               >
                 <span className="font-mono text-[0.8125rem] font-semibold text-ink-2">przykład</span>
+                <span className="text-[1.0625rem] font-semibold">
+                  {hit.title}
+                  <span className="mt-1 block text-[0.9375rem] font-normal text-ink-2">{hit.summary}</span>
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ResultGroup>
+      ) : null}
+
+      {patterns.length > 0 ? (
+        <ResultGroup title="Wzorce">
+          {patterns.map((hit) => (
+            <li key={hit.ref} className="border-t border-rule last:border-b">
+              <Link
+                to="/praktyka/wzorce/$slug"
+                params={{ slug: hit.ref }}
+                className="grid grid-cols-[5.5rem_1fr] gap-x-4 gap-y-1 px-1 py-3.5 hover:bg-surface max-sm:grid-cols-1"
+              >
+                <span className="font-mono text-[0.8125rem] font-semibold text-ink-2">wzorzec</span>
                 <span className="text-[1.0625rem] font-semibold">
                   {hit.title}
                   <span className="mt-1 block text-[0.9375rem] font-normal text-ink-2">{hit.summary}</span>

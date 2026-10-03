@@ -218,9 +218,9 @@
   }
 
   /*
-   * Static pictures of a fault on the practice cards (the `preview` field of an example).
-   * Decorative and hidden from assistive technology; the colours imitate the broken UI on
-   * purpose, so they are not held to the app's own contrast rules.
+   * Static pictures on the practice and pattern cards (the `preview` field of an example or a
+   * pattern). Decorative and hidden from assistive technology. An example's picture imitates the
+   * broken UI on purpose, so it is not held to the app's own contrast rules.
    */
   .preview {
     font-size: 0.9375rem;
@@ -277,6 +277,49 @@
       font-size: 0.6875rem;
       letter-spacing: 0.15em;
       color: #484d52;
+    }
+    /* Stills of the patterns on /praktyka/wzorce. These show working controls, so they keep the app's colours. */
+    & .p-button,
+    & .p-toggle,
+    & .p-disclosure,
+    & .p-check,
+    & .p-radio,
+    & .p-alert {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 2px solid var(--ink);
+      border-radius: 4px;
+      background: var(--surface);
+      color: var(--ink);
+      padding: 0.35rem 0.8rem;
+      font-weight: 600;
+    }
+    & .p-button,
+    & .p-toggle {
+      background: var(--ink);
+      color: var(--paper);
+    }
+    & .p-disclosure {
+      min-width: 70%;
+      justify-content: space-between;
+      border-width: 1px;
+      border-color: var(--control);
+    }
+    & .p-check,
+    & .p-radio {
+      border: 0;
+      background: none;
+      font-weight: 400;
+    }
+    & .p-alert {
+      border-color: var(--bad);
+      border-left-width: 6px;
+    }
+    & .p-link {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 3px;
     }
   }
 

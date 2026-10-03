@@ -1,0 +1,19 @@
+<p class="product">Kubek termiczny, 49 zł</p>
+<button type="button" id="dodaj">Dodaj do koszyka</button>
+<p role="status" id="koszyk" class="status"></p>
+
+<script>
+  const status = document.getElementById("koszyk");
+  const word = (n) => (n === 1 ? "produkt" : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? "produkty" : "produktów");
+  let count = 0;
+  document.getElementById("dodaj").addEventListener("click", () => {
+    count += 1;
+    status.textContent = `W koszyku: ${count} ${word(count)}`;
+  });
+</script>
+
+<style>
+  .product { margin: 0 0 0.5rem; font-weight: 600; }
+  #dodaj { min-height: 44px; padding: 0 1rem; border: 2px solid #14171a; border-radius: 4px; background: #14171a; color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+  .status { min-height: 1.5rem; margin: 0.5rem 0 0; }
+</style>

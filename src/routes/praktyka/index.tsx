@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { FixCard, FixCards } from "~/components/fix-card";
+import { PracticeTabs } from "~/components/patterns";
 import { getExampleCards } from "~/content/content.functions";
 import { countOf } from "~/lib/plural";
 
@@ -9,15 +10,17 @@ export const Route = createFileRoute("/praktyka/")({
   component: PracticePage,
 });
 
-/** The catalogue of examples as cards ordered by payoff (variant B of the practice mocks). */
+/**
+ * The catalogue of examples as cards ordered by payoff (variant B of the practice mocks), the first
+ * half of Praktyka; the patterns are the second (mock 4B of phase 9).
+ */
 function PracticePage() {
   const cards = Route.useLoaderData();
   return (
     <>
-      <div className="flex flex-wrap items-baseline gap-x-5 gap-y-2 pt-8 pb-2">
-        <h1 className="text-[1.875rem] font-bold tracking-tight">Praktyka</h1>
-        <p className="font-mono text-sm text-ink-2">{countOf(cards.length, ["przykład", "przykłady", "przykładów"])}, od najtańszej poprawki</p>
-      </div>
+      <h1 className="pt-8 pb-2 text-[1.875rem] font-bold tracking-tight">Praktyka</h1>
+      <PracticeTabs />
+      <p className="mb-2 font-mono text-sm text-ink-2">{countOf(cards.length, ["przykład", "przykłady", "przykładów"])}, od najtańszej poprawki</p>
       <p className="mb-6 max-w-[60ch] text-ink-2">
         Ten sam fragment interfejsu dwa razy: zepsuty i poprawny, z kodem i z tym, co usłyszy czytnik ekranu. Żółta
         krawędź mówi, co zyskuje użytkownik. Nakład to szacunek na jedno miejsce w kodzie.
