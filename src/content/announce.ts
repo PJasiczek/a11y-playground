@@ -1,0 +1,37 @@
+// What a screen reader says about an element, in Polish. Free of imports, so it runs anywhere:
+// in Node for the build-time reading order (reading-order.ts) and inside a demo document.
+
+/** ARIA roles as a Polish screen reader names them. A role missing here fails the content tests. */
+export const polishRoles: Record<string, string> = {
+  alert: "alert",
+  alertdialog: "okno alertu",
+  button: "przycisk",
+  cell: "komórka",
+  checkbox: "pole wyboru",
+  columnheader: "nagłówek kolumny",
+  combobox: "pole kombi",
+  dialog: "okno dialogowe",
+  figure: "rycina",
+  form: "formularz",
+  heading: "nagłówek",
+  img: "grafika",
+  link: "łącze",
+  password: "pole hasła",
+  list: "lista",
+  listbox: "lista wyboru",
+  listitem: "element listy",
+  navigation: "nawigacja",
+  option: "opcja",
+  radio: "przycisk opcji",
+  region: "region",
+  row: "wiersz",
+  rowheader: "nagłówek wiersza",
+  searchbox: "pole wyszukiwania",
+  slider: "suwak",
+  spinbutton: "pole liczbowe",
+  status: "status",
+  switch: "przełącznik",
+  tab: "karta",
+  table: "tabela",
+  textbox: "pole edycji",
+};

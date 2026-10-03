@@ -1,6 +1,7 @@
 import { computeAccessibleName, getRole, isInaccessible } from "dom-accessibility-api";
 import { JSDOM, VirtualConsole } from "jsdom";
 import { countOf } from "../lib/plural.ts";
+import { polishRoles } from "./announce.ts";
 
 /**
  * What a screen reader would read in one example fragment, computed at build time for the state
@@ -24,40 +25,6 @@ export type ReadingOrder = {
 
 /** What the page gets per variant. */
 export type VariantReading = Pick<ReadingOrder, "reading" | "tab">;
-
-const polishRoles: Record<string, string> = {
-  alert: "alert",
-  alertdialog: "okno alertu",
-  button: "przycisk",
-  cell: "komórka",
-  checkbox: "pole wyboru",
-  columnheader: "nagłówek kolumny",
-  combobox: "pole kombi",
-  dialog: "okno dialogowe",
-  figure: "rycina",
-  form: "formularz",
-  heading: "nagłówek",
-  img: "grafika",
-  link: "łącze",
-  password: "pole hasła",
-  list: "lista",
-  listbox: "lista wyboru",
-  listitem: "element listy",
-  navigation: "nawigacja",
-  option: "opcja",
-  radio: "przycisk opcji",
-  region: "region",
-  row: "wiersz",
-  rowheader: "nagłówek wiersza",
-  searchbox: "pole wyszukiwania",
-  slider: "suwak",
-  spinbutton: "pole liczbowe",
-  status: "status",
-  switch: "przełącznik",
-  tab: "karta",
-  table: "tabela",
-  textbox: "pole edycji",
-};
 
 // Controls read as one announcement: name, role, state. Their content is not read again.
 const leafRoles = new Set([
