@@ -1,0 +1,37 @@
+<button type="button" id="szukaj">Szukaj kurtek</button>
+<progress id="ladowanie" aria-label="Ładowanie wyników" hidden></progress>
+<ul id="wyniki" aria-label="Wyniki" aria-busy="false"></ul>
+<p role="status" id="stan" class="status"></p>
+
+<script>
+  const list = document.getElementById("wyniki");
+  const loading = document.getElementById("ladowanie");
+  const status = document.getElementById("stan");
+  document.getElementById("szukaj").addEventListener("click", () => {
+    // While the list fills, it is busy: a screen reader waits for the whole result.
+    list.setAttribute("aria-busy", "true");
+    list.replaceChildren();
+    loading.hidden = false;
+    status.textContent = "Szukam kurtek.";
+    setTimeout(() => {
+      for (const name of ["Kurtka puchowa", "Kurtka przeciwdeszczowa", "Kurtka softshell"]) {
+        const item = document.createElement("li");
+        item.textContent = name;
+        list.append(item);
+      }
+      loading.hidden = true;
+      list.setAttribute("aria-busy", "false");
+      status.textContent = "Znaleziono 3 kurtki.";
+    }, 900);
+  });
+</script>
+
+<style>
+  #szukaj { min-height: 44px; padding: 0 1rem; border: 2px solid #14171a; border-radius: 4px; background: #14171a; color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+  /* A progress without value has no end. Drawn static, so nothing moves on the page. */
+  progress { display: block; appearance: none; width: 100%; max-width: 24rem; height: 12px; margin-top: 0.75rem; border: 1px solid #14171a; border-radius: 6px; background: repeating-linear-gradient(135deg, #14171a 0 8px, #fff 8px 16px); }
+  progress[hidden] { display: none; }
+  progress::-webkit-progress-bar { background: transparent; }
+  #wyniki { margin: 0.75rem 0 0; padding-left: 1.25rem; }
+  .status { min-height: 1.5rem; margin: 0.5rem 0 0; }
+</style>
