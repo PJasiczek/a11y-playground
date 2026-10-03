@@ -1,0 +1,36 @@
+<div class="accordion">
+  <h3><button type="button" id="filtr-rozmiar" aria-expanded="false" aria-controls="sekcja-rozmiar">Rozmiar</button></h3>
+  <div id="sekcja-rozmiar" class="panel" role="region" aria-labelledby="filtr-rozmiar" hidden>
+    <label class="check"><input type="checkbox"> S</label>
+    <label class="check"><input type="checkbox"> M</label>
+  </div>
+  <h3><button type="button" id="filtr-kolor" aria-expanded="false" aria-controls="sekcja-kolor">Kolor</button></h3>
+  <div id="sekcja-kolor" class="panel" role="region" aria-labelledby="filtr-kolor" hidden>
+    <label class="check"><input type="checkbox"> Czarny</label>
+    <label class="check"><input type="checkbox"> Biały</label>
+  </div>
+</div>
+
+<script>
+  for (const button of document.querySelectorAll(".accordion h3 button")) {
+    button.addEventListener("click", () => {
+      const open = button.getAttribute("aria-expanded") !== "true";
+      button.setAttribute("aria-expanded", String(open));
+      document.getElementById(button.getAttribute("aria-controls")).hidden = !open;
+    });
+  }
+</script>
+
+<style>
+  .accordion { max-width: 30rem; border: 1px solid #857f72; border-radius: 4px; background: #fff; }
+  .accordion h3 { margin: 0; font-size: 1rem; }
+  .accordion h3 + .panel + h3, .accordion h3 + h3 { border-top: 1px solid #dfdbd1; }
+  .accordion h3 button { display: flex; justify-content: space-between; align-items: center; gap: 1rem; width: 100%; min-height: 48px; padding: 0 0.75rem; border: 0; background: none; color: #14171a; font: inherit; font-weight: 600; text-align: left; cursor: pointer; }
+  .accordion h3 button::after { content: "+" / ""; font: 700 1.25rem ui-monospace, Consolas, monospace; }
+  .accordion h3 button[aria-expanded="true"]::after { content: "−" / ""; }
+  .accordion h3 button:focus-visible { outline-offset: -3px; }
+  .panel { display: flex; flex-wrap: wrap; gap: 0 1.5rem; padding: 0 0.75rem 0.5rem; }
+  .panel[hidden] { display: none; }
+  .check { display: inline-flex; align-items: center; gap: 0.6rem; min-height: 44px; cursor: pointer; }
+  .check input { width: 24px; height: 24px; margin: 0; accent-color: #14171a; }
+</style>
