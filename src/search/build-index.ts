@@ -6,6 +6,7 @@ import { legalUnits } from "~/content/legal";
 import { actContent, isStub } from "~/content/legal-content";
 import { legalTexts } from "~/content/legal-text.gen";
 import { learningPaths } from "~/content/paths";
+import { patterns } from "~/content/patterns";
 import { criteria } from "~/content/wcag";
 import { wcag3Groups } from "~/content/wcag3";
 import { type SearchDoc, searchOptions } from "./options";
@@ -15,7 +16,7 @@ import { type SearchDoc, searchOptions } from "./options";
 
 const text = (html: string) => html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 
-/** Every criterion, glossary term, example, article, lesson and WCAG 3.0 guideline, as search documents. */
+/** Every criterion, glossary term, example, pattern, article, lesson and WCAG 3.0 guideline, as search documents. */
 export function buildSearchDocs(): SearchDoc[] {
   const criterionDocs = criteria.map((c): SearchDoc => {
     const content = criterionContent.get(c.id);
@@ -49,6 +50,19 @@ export function buildSearchDocs(): SearchDoc[] {
       summary: example.summary,
       keywords: example.criteria.join(" "),
       body: [text(example.introHtml), example.bad.why, example.good.why].join(" "),
+    }),
+  );
+  // Patterns by our Polish name and Deque's English one, and by the attributes they use, so
+  // "accordion", "akordeon" and "aria-expanded" all find them.
+  const patternDocs = [...patterns.values()].map(
+    (pattern): SearchDoc => ({
+      id: `wzorzec:${pattern.slug}`,
+      kind: "wzorzec",
+      ref: pattern.slug,
+      title: pattern.title,
+      summary: pattern.summary,
+      keywords: [pattern.en, ...pattern.aria.map((row) => row.attr), ...pattern.criteria].join(" "),
+      body: text(Object.values(pattern.sections).join(" ")),
     }),
   );
   // Articles: our title and summary first, the statute text as the body, so "deklaracja
@@ -97,7 +111,7 @@ export function buildSearchDocs(): SearchDoc[] {
       }),
     ),
   );
-  return [...criterionDocs, ...termDocs, ...exampleDocs, ...provisionDocs, ...lessonDocs, ...wcag3Docs];
+  return [...criterionDocs, ...termDocs, ...exampleDocs, ...patternDocs, ...provisionDocs, ...lessonDocs, ...wcag3Docs];
 }
 
 export function buildSearchIndex() {
