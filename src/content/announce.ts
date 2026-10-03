@@ -1,5 +1,6 @@
-// What a screen reader says about an element, in Polish. Free of imports, so it runs anywhere:
-// in Node for the build-time reading order (reading-order.ts) and inside a demo document.
+// What a screen reader says about an element, in Polish, and the messages a pattern frame posts
+// about it. Free of imports, so it runs anywhere: in Node for the build-time reading order
+// (reading-order.ts), inside a pattern frame for the live log (pattern-log.ts), and on the page.
 
 /** ARIA roles as a Polish screen reader names them. A role missing here fails the content tests. */
 export const polishRoles: Record<string, string> = {
@@ -13,6 +14,7 @@ export const polishRoles: Record<string, string> = {
   dialog: "okno dialogowe",
   figure: "rycina",
   form: "formularz",
+  group: "grupa",
   heading: "nagłówek",
   img: "grafika",
   link: "łącze",
@@ -23,6 +25,7 @@ export const polishRoles: Record<string, string> = {
   navigation: "nawigacja",
   option: "opcja",
   radio: "przycisk opcji",
+  radiogroup: "grupa opcji",
   region: "region",
   row: "wiersz",
   rowheader: "nagłówek wiersza",
@@ -79,3 +82,26 @@ export const reportedAttributes = [
 ] as const;
 export type ReportedAttribute = (typeof reportedAttributes)[number];
 
+/** The three kinds of line in the log, with the tag the page shows for each. */
+export const announceKinds = { focus: "fokus", state: "zmiana", live: "na żywo" } as const;
+export type AnnounceKind = keyof typeof announceKinds;
+
+/**
+ * One line of the log. `key` is what caused it: a key by its name, "klik" for the pointer, or
+ * null when nothing did (a timer). `politeness` comes with live lines only.
+ */
+export type Announcement = {
+  kind: AnnounceKind;
+  text: string;
+  key: KeyName | "klik" | null;
+  politeness?: "polite" | "assertive";
+};
+
+/** One row the ARIA table watches: which element, and what to read from it. */
+export type Watch = { selector: string; attr: ReportedAttribute };
+
+/**
+ * What a pattern frame posts to the page: a log line, or the current values of the watched rows
+ * in their order, null where the element or attribute is missing.
+ */
+export type PatternMessage = { a11yAnnounce: Announcement } | { a11yState: (string | null)[] };

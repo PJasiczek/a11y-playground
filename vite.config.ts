@@ -4,18 +4,22 @@ import viteReact from "@vitejs/plugin-react";
 import { nitro } from "nitro/vite";
 import { readdirSync } from "node:fs";
 import { defineConfig } from "vite";
+import { patternLogPlugin } from "./src/content/pattern-log.vite.ts";
 import { readingOrderPlugin } from "./src/content/reading-order.vite.ts";
 import { acts, legalUnits } from "./src/content/legal.gen.ts";
 import { criteria } from "./src/content/wcag.gen.ts";
 
 // One folder per example; each has a page and two demo documents for its iframes.
 const exampleSlugs = readdirSync("content/praktyka");
+// One folder per pattern; each has a demo document with the live log.
+const patternSlugs = readdirSync("content/wzorce");
 
 export default defineConfig({
   resolve: { tsconfigPaths: true },
   // Nitro picks the Vercel preset automatically when the build runs on Vercel.
   plugins: [
     readingOrderPlugin(),
+    patternLogPlugin(),
     tailwindcss(),
     tanstackStart({
       // Content is static, so every page is rendered to HTML at build time. Crawling finds the
@@ -40,6 +44,7 @@ export default defineConfig({
           { path: `/demo/${slug}/bad` },
           { path: `/demo/${slug}/good` },
         ]),
+        ...patternSlugs.map((slug) => ({ path: `/demo/wzorce/${slug}` })),
         // Written as a plain file, not /search-index.json/index.html.
         { path: "/search-index.json", prerender: { autoSubfolderIndex: false } },
       ],

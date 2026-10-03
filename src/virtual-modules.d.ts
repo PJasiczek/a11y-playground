@@ -7,3 +7,9 @@ declare module "virtual:reading-order" {
   const orders: Record<string, Partial<Record<"bad" | "good", VariantReading>> | undefined>;
   export default orders;
 }
+
+declare module "virtual:pattern-log" {
+  /** The live log of pattern frames as one classic script. See pattern-log.vite.ts. */
+  const script: string;
+  export default script;
+}

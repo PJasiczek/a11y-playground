@@ -1,4 +1,6 @@
+import type { Watch } from "./announce";
 import type { Example } from "./examples";
+import type { Pattern } from "./patterns";
 
 export const variants = ["bad", "good"] as const;
 export type VariantName = (typeof variants)[number];
@@ -114,13 +116,8 @@ const frameScript = `
   report();
 `;
 
-/**
- * The full HTML document one variant of an example renders in. Served by /demo/$slug/$variant
- * and loaded in a sandboxed iframe, so nothing in it reaches the page around it. The
- * data-example-root marker lets the isolation test prove that.
- */
-export function demoDocument(example: Example, variant: VariantName) {
-  const title = `Przykład ${variantLabels[variant]}: ${example.title}`;
+/** The document every demo frame loads: base styles, the fragment, the colour filters and the frame script. */
+function demoShell({ title, root, fragment, scripts = "" }: { title: string; root: string; fragment: string; scripts?: string }) {
   return `<!doctype html>
 <html lang="pl">
 <head>
@@ -130,11 +127,38 @@ export function demoDocument(example: Example, variant: VariantName) {
 <style>${baseStyles}</style>
 </head>
 <body>
-<div data-example-root="${variant}">
-${example[variant].source}
+<div data-example-root="${root}">
+${fragment}
 </div>
 ${colourFilters}
-<script>${frameScript}</script>
+<script>${frameScript}</script>${scripts}
 </body>
 </html>`;
+}
+
+/**
+ * The full HTML document one variant of an example renders in. Served by /demo/$slug/$variant
+ * and loaded in a sandboxed iframe, so nothing in it reaches the page around it. The
+ * data-example-root marker lets the isolation test prove that.
+ */
+export function demoDocument(example: Example, variant: VariantName) {
+  return demoShell({ title: `Przykład ${variantLabels[variant]}: ${example.title}`, root: variant, fragment: example[variant].source });
+}
+
+/**
+ * The document a pattern renders in, served by /demo/wzorce/$slug. On top of the example shell
+ * it runs the live log: `logScript` is the bundle from virtual:pattern-log, started with the rows
+ * the pattern's ARIA table watches. Both go into script elements, so nothing in them may close one.
+ */
+export function patternDocument(pattern: Pattern, logScript: string) {
+  const watch: Watch[] = pattern.aria.map(({ selector, attr }) => ({ selector, attr }));
+  const rows = JSON.stringify(watch).replace(/</g, "\\u003c");
+  return demoShell({
+    title: `Wzorzec: ${pattern.title}`,
+    root: "wzorzec",
+    fragment: pattern.source,
+    scripts: `
+<script>${logScript.replace(/<\/script/gi, "<\\/script")}</script>
+<script>a11yPatternLog.start(${rows});</script>`,
+  });
 }
