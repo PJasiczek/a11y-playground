@@ -48,7 +48,7 @@
 <p class="flag">We do not copy Deque's code. The Deque library has no open licence; its pages fall under Deque's terms of use. Each pattern is written by us from the WAI-ARIA Authoring Practices Guide (APG, W3C), and links to the Deque page and the APG pattern as further reading.</p>
 
 <h2 id="changes">Changes after work started</h2>
-<p>Decisions made while building the first pull request (the groundwork and batch 1). Where they conflict with the sections below, these win.</p>
+<p>Decisions made while building the pull requests so far. Where they conflict with the sections below, these win.</p>
 <ul>
   <li><strong>Patterns live inside Praktyka (sections 7, 12).</strong> Mock 4B puts them under the Praktyka heading, so the routes are <code>/praktyka/wzorce</code> and <code>/praktyka/wzorce/$slug</code>, not <code>/wzorce</code>. The header keeps "Praktyka" current on them without new code. Demo documents stay at <code>/demo/wzorce/$slug</code>.</li>
   <li><strong>The exercise replaces the keyboard table (sections 6, 9).</strong> With mock 1C the frontmatter has <code>steps</code> instead of <code>keyboard</code>: what to do, the keys, and the log line to hear. The first step must start with Tab, which enters the frame. The Playwright test presses each step's first key on the real page and expects every step ticked, so the walk table in section 9 is the content itself.</li>
@@ -59,6 +59,8 @@
   <li><strong>One "Kod" disclosure, not three (section 7).</strong> A fragment is one file, as in the practice examples.</li>
   <li><strong>The keyboard-only toggle is a checkbox (section 7).</strong> It is local to the page, not <code>?symulacja=</code>. A blocked click is counted under the frame and announced once, as on example pages.</li>
   <li><strong>Two more refactor commits (section 10).</strong> The iframe plumbing moved into <code>useDemoFrame</code>, and the <code>##</code> section splitter into <code>render.ts</code>, so pattern pages and pattern files reuse them. <code>legend</code> now reads as plain text in the build-time reading order.</li>
+  <li><strong>Batch 2: the log reads descriptions and popovers (section 5).</strong> Focus lines end with the accessible description (<code>aria-describedby</code>), which is how a tooltip's text and an alert dialog's message get read; a container entered with a description reads it too. A button with <code>popovertarget</code> reads expanded or collapsed from its popover, which changes no attribute.</li>
+  <li><strong>Batch 2: native first where it now exists (section 3).</strong> The tooltip dialog is a <code>popover</code> with <code>role="dialog"</code>; the browser closes it with Esc and hands focus back. Both dialogs are <code>dialog</code> with <code>showModal()</code>, the alert dialog with <code>role="alertdialog"</code>. Both accordions keep the button in a heading, because <code>details</code> loses the heading inside <code>summary</code>.</li>
 </ul>
 
 <ol class="toc">
