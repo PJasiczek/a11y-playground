@@ -359,6 +359,26 @@
       line-height: 1.7;
       color: var(--ink);
     }
+    & .p-slider {
+      position: relative;
+      width: 9rem;
+      height: 6px;
+      border-radius: 3px;
+      background: var(--control);
+      & > b {
+        position: absolute;
+        top: -9px;
+        left: 30%;
+        width: 24px;
+        height: 24px;
+        border: 2px solid var(--ink);
+        border-radius: 50%;
+        background: var(--surface);
+      }
+      &.p-range > b:last-child {
+        left: 65%;
+      }
+    }
     & .p-link {
       color: var(--accent);
       text-decoration: underline;

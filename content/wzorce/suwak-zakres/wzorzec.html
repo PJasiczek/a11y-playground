@@ -1,0 +1,40 @@
+<fieldset>
+  <legend>Cena</legend>
+  <label for="cena-od">Od</label>
+  <div class="row">
+    <input type="range" id="cena-od" min="0" max="1000" step="50" value="100" aria-valuetext="100 zł">
+    <span class="value" id="tekst-od">100 zł</span>
+  </div>
+  <label for="cena-do">Do</label>
+  <div class="row">
+    <input type="range" id="cena-do" min="0" max="1000" step="50" value="500" aria-valuetext="500 zł">
+    <span class="value" id="tekst-do">500 zł</span>
+  </div>
+</fieldset>
+
+<script>
+  const from = document.getElementById("cena-od");
+  const to = document.getElementById("cena-do");
+  const show = (slider, text) => {
+    slider.setAttribute("aria-valuetext", `${slider.value} zł`);
+    document.getElementById(text).textContent = `${slider.value} zł`;
+  };
+  // Each limit stops at the other one, so the range never turns inside out.
+  from.addEventListener("input", () => {
+    if (Number(from.value) > Number(to.value)) from.value = to.value;
+    show(from, "tekst-od");
+  });
+  to.addEventListener("input", () => {
+    if (Number(to.value) < Number(from.value)) to.value = from.value;
+    show(to, "tekst-do");
+  });
+</script>
+
+<style>
+  fieldset { max-width: 28rem; margin: 0; padding: 0.5rem 1rem 0.75rem; border: 1px solid #857f72; border-radius: 4px; background: #fff; }
+  legend { padding: 0 0.25rem; font-weight: 600; }
+  label { display: block; margin-top: 0.25rem; }
+  .row { display: flex; align-items: center; gap: 1rem; }
+  input[type="range"] { flex: 1; height: 44px; margin: 0; accent-color: #14171a; cursor: pointer; }
+  .value { min-width: 5rem; font-family: ui-monospace, Consolas, monospace; font-weight: 700; }
+</style>
