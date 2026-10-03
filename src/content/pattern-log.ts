@@ -1,4 +1,4 @@
-import { computeAccessibleName, getRole, isInaccessible } from "dom-accessibility-api";
+import { computeAccessibleDescription, computeAccessibleName, getRole, isInaccessible } from "dom-accessibility-api";
 import {
   type Announcement,
   type KeyName,
@@ -15,9 +15,9 @@ import {
  * pattern-log.vite.ts, and posts each line to the page. An approximation, not NVDA: it answers
  * "what does the code expose", one line per thing a screen reader would announce.
  *
- * - focus: the name, the role in Polish and the states of whatever takes focus, after the
- *   containers it enters ("Sposób dostawy, grupa"). Logged a tick late, so a radio that arrows
- *   check is read checked.
+ * - focus: the name, the role in Polish, the states and the description of whatever takes focus,
+ *   after the containers it enters ("Sposób dostawy, grupa"). Logged a tick late, so a radio that
+ *   arrows check is read checked.
  * - state: a state change on the focused element, in the words of that state only ("rozwinięte").
  * - live: text added to a live region that was already on the page. A region added together with
  *   its text says nothing, as in most screen readers, except an alert.
@@ -90,8 +90,10 @@ export function startLog(win: Window & typeof globalThis, post: (message: Patter
 
   // Generated content is left out of names. Our patterns give it empty alt text (content: "+" / ""),
   // which the library does not understand, and would read the "+" a browser leaves out.
-  const nameOf = (el: Element) =>
-    computeAccessibleName(el, { getComputedStyle, computedStyleSupportsPseudoElements: false }).replace(/\s+/g, " ").trim();
+  const accName = { getComputedStyle, computedStyleSupportsPseudoElements: false };
+  const nameOf = (el: Element) => computeAccessibleName(el, accName).replace(/\s+/g, " ").trim();
+  // aria-describedby: a tooltip's text, an alert dialog's message. Read after the states.
+  const descriptionOf = (el: Element) => computeAccessibleDescription(el, accName).replace(/\s+/g, " ").trim();
   const hidden = (el: Element) => el.closest("[hidden]") !== null || isInaccessible(el, { getComputedStyle });
   const roleOf = (el: Element) => getRole(el) ?? "";
 
@@ -121,6 +123,9 @@ export function startLog(win: Window & typeof globalThis, post: (message: Patter
       case "expanded": {
         const details = el.localName === "summary" ? el.parentElement : null;
         if (details instanceof win.HTMLDetailsElement) return details.open ? "rozwinięte" : "zwinięte";
+        // A button with popovertarget is expanded while its popover is open, with no attribute.
+        const popover = el instanceof win.HTMLButtonElement ? el.popoverTargetElement : null;
+        if (popover) return popover.matches(":popover-open") ? "rozwinięte" : "zwinięte";
         const expanded = attr("aria-expanded");
         if (expanded === null) return null;
         return expanded === "true" ? "rozwinięte" : "zwinięte";
@@ -175,8 +180,15 @@ export function startLog(win: Window & typeof globalThis, post: (message: Patter
     }
     const at = position(el, role);
     if (at) parts.push(at);
+    const description = descriptionOf(el);
+    if (description) parts.push(description);
     return parts.join(", ");
   };
+
+  // A container as a screen reader names it on the way in: name, role, and its description, which
+  // is how an alert dialog's message gets read.
+  const describeContainer = (el: Element) =>
+    [nameOf(el) || "bez nazwy", roleWords(el, roleOf(el)), descriptionOf(el)].filter(Boolean).join(", ");
 
   // Named containers around `el`, outermost first, that `previous` was not already inside.
   const enteredContainers = (el: Element, previous: Element | null) => {
@@ -214,7 +226,7 @@ export function startLog(win: Window & typeof globalThis, post: (message: Patter
     const { el, key } = pending;
     pending = null;
     for (const container of enteredContainers(el, previous)) {
-      say({ kind: "focus", text: `${nameOf(container) || "bez nazwy"}, ${roleWords(container, roleOf(container))}`, key });
+      say({ kind: "focus", text: describeContainer(container), key });
     }
     say({ kind: "focus", text: describe(el), key });
     previous = el;
@@ -243,6 +255,13 @@ export function startLog(win: Window & typeof globalThis, post: (message: Patter
     if (!(el instanceof win.HTMLInputElement) || el !== document.activeElement) return;
     if (event.type === "change" && (el.type === "checkbox" || el.type === "radio")) sayState(el, "checked");
     if (event.type === "input" && el.type === "range") sayState(el, "value");
+    report();
+  };
+  // A popover opening or closing changes no attribute either; its invoker reads expanded.
+  const onToggle = (event: Event) => {
+    const active = document.activeElement;
+    if (!(event.target instanceof win.HTMLElement) || !event.target.hasAttribute("popover")) return;
+    if (active instanceof win.HTMLButtonElement && active.popoverTargetElement === event.target) sayState(active, "expanded");
     report();
   };
   const states = new win.MutationObserver((records) => {
@@ -340,6 +359,7 @@ export function startLog(win: Window & typeof globalThis, post: (message: Patter
   document.addEventListener("focusin", onFocusIn);
   document.addEventListener("change", onInput, true);
   document.addEventListener("input", onInput, true);
+  document.addEventListener("toggle", onToggle, true);
   win.addEventListener("blur", onBlur);
   win.addEventListener("message", onMessage);
   states.observe(document.body, { subtree: true, attributes: true, attributeFilter: [...Object.keys(groupOf), "aria-activedescendant"] });
@@ -352,6 +372,7 @@ export function startLog(win: Window & typeof globalThis, post: (message: Patter
     document.removeEventListener("focusin", onFocusIn);
     document.removeEventListener("change", onInput, true);
     document.removeEventListener("input", onInput, true);
+    document.removeEventListener("toggle", onToggle, true);
     win.removeEventListener("blur", onBlur);
     win.removeEventListener("message", onMessage);
     states.disconnect();

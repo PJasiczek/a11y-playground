@@ -56,6 +56,22 @@ describe("startLog", () => {
     expect(lines().map((line) => line.text)).toEqual(["Dostawa, grupa", "Kurier, przycisk opcji, zaznaczone, 1 z 2"]);
   });
 
+  test("reads a description after the states, and an alert dialog's message on the way in", async () => {
+    const { lines } = run(
+      `<button id="k" aria-label="Kopiuj link" aria-describedby="t">⧉</button><div role="tooltip" id="t" hidden>Skopiuje adres strony</div>
+      <div role="alertdialog" aria-labelledby="h" aria-describedby="m"><h2 id="h">Usunąć adres?</h2><p id="m">Tego nie da się cofnąć.</p><button id="a">Anuluj</button></div>`,
+    );
+    byId("k").focus();
+    await tick();
+    byId("a").focus();
+    await tick();
+    expect(lines().map((line) => line.text)).toEqual([
+      "Kopiuj link, przycisk, Skopiuje adres strony",
+      "Usunąć adres?, okno alertu, Tego nie da się cofnąć.",
+      "Anuluj, przycisk",
+    ]);
+  });
+
   test("reads text added to a live region that was already there, by its politeness", async () => {
     const { lines } = run(`<p role="status" id="s"></p><div aria-live="assertive" id="a"></div>`);
     byId("s").textContent = "Zapisano";
