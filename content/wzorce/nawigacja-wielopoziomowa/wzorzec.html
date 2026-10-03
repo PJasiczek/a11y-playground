@@ -1,0 +1,41 @@
+<nav aria-label="Sklep">
+  <ul class="menu">
+    <li><a href="#nowosci" id="nav-nowosci" aria-current="page">Nowości</a></li>
+    <li>
+      <button type="button" id="nav-odziez" aria-expanded="false" aria-controls="podmenu-odziez">Odzież</button>
+      <ul id="podmenu-odziez" class="submenu" hidden>
+        <li><a href="#kurtki">Kurtki</a></li>
+        <li><a href="#spodnie">Spodnie</a></li>
+      </ul>
+    </li>
+    <li><a href="#kontakt">Kontakt</a></li>
+  </ul>
+</nav>
+
+<script>
+  const button = document.getElementById("nav-odziez");
+  const submenu = document.getElementById("podmenu-odziez");
+  const setOpen = (open) => {
+    button.setAttribute("aria-expanded", String(open));
+    submenu.hidden = !open;
+  };
+  button.addEventListener("click", () => setOpen(button.getAttribute("aria-expanded") !== "true"));
+  // Esc closes the submenu from anywhere in it and hands focus back to its button.
+  button.parentElement.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape" || submenu.hidden) return;
+    setOpen(false);
+    button.focus();
+  });
+</script>
+
+<style>
+  nav { min-height: 9rem; }
+  .menu { display: flex; flex-wrap: wrap; gap: 0.25rem; margin: 0; padding: 0; list-style: none; }
+  .menu > li { position: relative; }
+  .menu a, .menu button { display: inline-flex; align-items: center; min-height: 44px; padding: 0 0.75rem; border: 0; border-bottom: 3px solid transparent; background: none; color: #14171a; font: inherit; text-decoration: none; cursor: pointer; }
+  .menu a[aria-current="page"] { border-bottom-color: #14171a; font-weight: 700; }
+  .menu button::after { content: "▾" / ""; margin-left: 0.4rem; }
+  .menu button[aria-expanded="true"]::after { content: "▴" / ""; }
+  .submenu { position: absolute; z-index: 1; min-width: 10rem; margin: 0; padding: 0.25rem 0; list-style: none; border: 1px solid #857f72; border-radius: 4px; background: #fff; }
+  .submenu a { display: flex; width: 100%; text-decoration: underline; text-underline-offset: 3px; }
+</style>
