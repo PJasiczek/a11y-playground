@@ -379,6 +379,28 @@
         left: 65%;
       }
     }
+    & .p-steps {
+      display: inline-flex;
+      gap: 0.75rem;
+      & > * {
+        display: inline-grid;
+        place-items: center;
+        width: 1.75rem;
+        height: 1.75rem;
+        border: 2px solid var(--control);
+        border-radius: 50%;
+        background: var(--surface);
+        color: var(--ink);
+      }
+      & > b:first-child {
+        border-color: var(--ink);
+        background: var(--ink);
+        color: var(--paper);
+      }
+      & > b + b {
+        border: 3px solid var(--ink);
+      }
+    }
     & .p-link {
       color: var(--accent);
       text-decoration: underline;
