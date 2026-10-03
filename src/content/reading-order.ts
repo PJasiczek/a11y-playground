@@ -35,7 +35,7 @@ const containerRoles = new Set(["alert", "alertdialog", "dialog", "list", "listb
 // Containers a screen reader only announces when they have a name. An empty live region says nothing.
 const namedOnlyRoles = new Set(["form", "region", "status", "alert"]);
 // Roles that add nothing to what is read.
-const silentRoles = new Set(["generic", "none", "presentation", "paragraph", "group", "row", "rowgroup", "cell", "listitem", "term", "definition"]);
+const silentRoles = new Set(["generic", "none", "presentation", "paragraph", "group", "legend", "row", "rowgroup", "cell", "listitem", "term", "definition"]);
 const inlineTags = new Set(["a", "abbr", "b", "bdi", "bdo", "cite", "code", "data", "dfn", "em", "i", "kbd", "mark", "q", "s", "samp", "small", "span", "strong", "sub", "sup", "time", "u", "var"]);
 const skippedTags = new Set(["script", "style", "template", "noscript", "caption"]);
 const focusable = "a[href], button, input:not([type='hidden']), select, textarea, summary, [tabindex]";

@@ -1,0 +1,16 @@
+<button type="button" id="zapisz">Zapisz zmiany</button>
+<div role="alert" id="blad" class="alert"></div>
+
+<script>
+  document.getElementById("zapisz").addEventListener("click", () => {
+    document.getElementById("blad").textContent = "Nie zapisano. Brak połączenia z serwerem, spróbuj za minutę.";
+  });
+</script>
+
+<style>
+  #zapisz { min-height: 44px; padding: 0 1rem; border: 2px solid #14171a; border-radius: 4px; background: #14171a; color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+  /* The region stays rendered while empty, so the text added later is announced. */
+  .alert { margin-top: 0.75rem; max-width: 28rem; }
+  .alert:not(:empty) { padding: 0.5rem 0.75rem; border: 2px solid #9a1b1b; border-left-width: 6px; border-radius: 4px; background: #fff; font-weight: 600; }
+  .alert:not(:empty)::before { content: "Błąd: " / ""; }
+</style>
