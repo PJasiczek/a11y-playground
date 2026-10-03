@@ -336,6 +336,23 @@
       background: var(--ink);
       color: var(--paper);
     }
+    & .p-tabs {
+      display: inline-flex;
+      border-bottom: 2px solid var(--ink);
+      & > * {
+        padding: 0.3rem 0.7rem;
+        border: 1px solid var(--control);
+        border-bottom: 0;
+        margin-right: -1px;
+        background: var(--surface);
+        color: var(--ink);
+      }
+      & > b {
+        border: 2px solid var(--ink);
+        border-top-width: 4px;
+        border-bottom: 0;
+      }
+    }
     & .p-link {
       color: var(--accent);
       text-decoration: underline;

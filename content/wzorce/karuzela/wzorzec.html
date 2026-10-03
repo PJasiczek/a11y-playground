@@ -1,0 +1,79 @@
+<section class="carousel" aria-roledescription="karuzela" aria-label="Promocje">
+  <button type="button" id="przewijanie" class="rotate">Uruchom przewijanie</button>
+  <div role="tablist" aria-label="Wybierz slajd">
+    <button type="button" role="tab" id="karta-1" aria-label="Slajd 1" aria-selected="true" aria-controls="slajd-1">1</button>
+    <button type="button" role="tab" id="karta-2" aria-label="Slajd 2" aria-selected="false" aria-controls="slajd-2" tabindex="-1">2</button>
+    <button type="button" role="tab" id="karta-3" aria-label="Slajd 3" aria-selected="false" aria-controls="slajd-3" tabindex="-1">3</button>
+  </div>
+  <div class="slides">
+    <div role="tabpanel" id="slajd-1" aria-roledescription="slajd" aria-label="1 z 3">
+      <h3>Nowa kolekcja jesień 2026</h3>
+      <a href="#slajd-1">Zobacz kolekcję</a>
+    </div>
+    <div role="tabpanel" id="slajd-2" aria-roledescription="slajd" aria-label="2 z 3" hidden>
+      <h3>Kurtki zimowe −30%</h3>
+      <a href="#slajd-2">Zobacz kurtki</a>
+    </div>
+    <div role="tabpanel" id="slajd-3" aria-roledescription="slajd" aria-label="3 z 3" hidden>
+      <h3>Darmowa dostawa od 200 zł</h3>
+      <a href="#slajd-3">Zobacz warunki</a>
+    </div>
+  </div>
+</section>
+
+<script>
+  const tabs = [...document.querySelectorAll('[role="tab"]')];
+  const rotate = document.getElementById("przewijanie");
+  const show = (tab, focus) => {
+    for (const other of tabs) {
+      const selected = other === tab;
+      other.setAttribute("aria-selected", String(selected));
+      other.tabIndex = selected ? 0 : -1;
+      document.getElementById(other.getAttribute("aria-controls")).hidden = !selected;
+    }
+    if (focus) tab.focus();
+  };
+  for (const tab of tabs) {
+    tab.addEventListener("click", () => show(tab, true));
+    tab.addEventListener("keydown", (event) => {
+      const at = tabs.indexOf(tab);
+      const next = { ArrowRight: at + 1, ArrowLeft: at - 1, Home: 0, End: tabs.length - 1 }[event.key];
+      if (next === undefined) return;
+      event.preventDefault();
+      show(tabs[(next + tabs.length) % tabs.length], true);
+    });
+  }
+
+  // Rotation runs only after the reader asks for it, and stops when focus or the pointer enters
+  // the tabs or the slides, so nothing changes under someone who is reading.
+  let timer = null;
+  const stop = () => {
+    clearInterval(timer);
+    timer = null;
+    rotate.textContent = "Uruchom przewijanie";
+  };
+  rotate.addEventListener("click", () => {
+    if (timer) return stop();
+    rotate.textContent = "Zatrzymaj przewijanie";
+    timer = setInterval(() => {
+      const at = tabs.findIndex((tab) => tab.getAttribute("aria-selected") === "true");
+      show(tabs[(at + 1) % tabs.length], false);
+    }, 5000);
+  });
+  for (const part of [document.querySelector('[role="tablist"]'), document.querySelector(".slides")]) {
+    part.addEventListener("focusin", stop);
+    part.addEventListener("pointerenter", stop);
+  }
+</script>
+
+<style>
+  .carousel { display: grid; grid-template-columns: auto 1fr; gap: 0.75rem; align-items: center; max-width: 32rem; }
+  .rotate, [role="tab"] { min-height: 44px; min-width: 44px; padding: 0 0.75rem; border: 2px solid #14171a; border-radius: 4px; background: #fff; color: #14171a; font: inherit; font-weight: 600; cursor: pointer; }
+  [role="tablist"] { display: flex; gap: 0.5rem; }
+  /* The selected slide's tab is filled and underlined. Not colour alone. */
+  [role="tab"][aria-selected="true"] { background: #14171a; color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+  .slides { grid-column: 1 / -1; }
+  [role="tabpanel"] { padding: 1rem; border: 1px solid #857f72; border-radius: 4px; background: #fff; }
+  [role="tabpanel"] h3 { margin: 0 0 0.25rem; font-size: 1.25rem; }
+  [role="tabpanel"] a { display: inline-flex; align-items: center; min-height: 44px; color: #2c36a8; }
+</style>
