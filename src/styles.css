@@ -316,7 +316,8 @@
       border-color: var(--bad);
       border-left-width: 6px;
     }
-    & .p-dialog-still {
+    & .p-dialog-still,
+    & .p-tooltip-still {
       display: inline-flex;
       flex-direction: column;
       gap: 0.25rem;
@@ -326,6 +327,14 @@
       color: var(--ink);
       padding: 0.5rem 0.8rem;
       box-shadow: 0 6px 16px rgb(0 0 0 / 0.12);
+    }
+    & .p-tooltip-still {
+      flex-direction: row;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: none;
+      background: var(--ink);
+      color: var(--paper);
     }
     & .p-link {
       color: var(--accent);
