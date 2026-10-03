@@ -41,11 +41,25 @@
 <p class="meta"><a href="phase-9-aria-patterns.en.html" hreflang="en">English version</a></p>
 
 <h1>Plan: faza 9, wzorce komponentów ARIA</h1>
-<p class="meta">Faza spoza <a href="../2026-09-27-wcag-learning-app/wcag-learning-app.pl.html">planu głównego</a>. Zakres to 30 pozycji z <a href="https://dequeuniversity.com/library/" target="_blank" rel="noopener noreferrer">Deque University ARIA Examples</a>. Mocki strony wzorca, katalogu, placu zabaw dla regionów na żywo i wejścia do sekcji: <a href="../2026-10-02-aria-patterns-mocks/aria-patterns-mocks.html">aria-patterns-mocks.html</a>. Wersja planu: 2026-10-02.</p>
+<p class="meta">Faza spoza <a href="../2026-09-27-wcag-learning-app/wcag-learning-app.pl.html">planu głównego</a>. Zakres to 30 pozycji z <a href="https://dequeuniversity.com/library/" target="_blank" rel="noopener noreferrer">Deque University ARIA Examples</a>. Mocki strony wzorca, katalogu, placu zabaw dla regionów na żywo i wejścia do sekcji: <a href="../2026-10-02-aria-patterns-mocks/aria-patterns-mocks.html">aria-patterns-mocks.html</a>. Wersja planu: 2026-10-02, zmiany 2026-10-03.</p>
 
 <p class="flag">„Symulatory” to w aplikacji już symulatory niepełnosprawności z fazy 7 (<code>/symulatory</code>, <code>?symulacja=</code>). Komponenty z listy Deque to coś innego: działające kontrolki, które się obsługuje i których się słucha. Plan nazywa je <strong>wzorcami</strong> i umieszcza pod <code>/wzorce</code>, żeby jedno słowo miało jedno znaczenie. Decyzja 1.</p>
 
 <p class="flag">Nie kopiujemy kodu Deque. Biblioteka Deque nie ma otwartej licencji, jej strony podlegają warunkom korzystania z serwisu Deque. Każdy wzorzec piszemy sami na podstawie WAI-ARIA Authoring Practices Guide (APG, W3C), a do strony Deque i do wzorca w APG linkujemy jako do lektury uzupełniającej.</p>
+
+<h2 id="changes">Zmiany po rozpoczęciu pracy</h2>
+<p>Decyzje podjęte przy budowaniu pierwszego pull requesta (podstawy i partia 1). Tam, gdzie kłócą się z sekcjami poniżej, wygrywają.</p>
+<ul>
+  <li><strong>Wzorce są w Praktyce (sekcje 7 i 12).</strong> Mock 4B umieszcza je pod nagłówkiem Praktyki, więc adresy to <code>/praktyka/wzorce</code> i <code>/praktyka/wzorce/$slug</code>, a nie <code>/wzorce</code>. Nagłówek bez nowego kodu zaznacza na nich „Praktykę”. Dokumenty demo zostają pod <code>/demo/wzorce/$slug</code>.</li>
+  <li><strong>Ćwiczenie zastępuje tabelę klawiszy (sekcje 6 i 9).</strong> Przy mocku 1C frontmatter ma <code>steps</code> zamiast <code>keyboard</code>: co zrobić, klawisze i wpis dziennika, który ma się pojawić. Pierwszy krok musi zaczynać się od Tab, bo tak wchodzi się do ramki. Test Playwright naciska pierwszy klawisz każdego kroku na prawdziwej stronie i sprawdza, czy wszystkie kroki są odhaczone, więc tabelą przejść z sekcji 9 jest sama treść.</li>
+  <li><strong>Dziennik jest wstawiony do dokumentu, a nie w <code>/demo/wzorce/log.js</code> (sekcja 5).</strong> Plugin Vite buduje go razem z <code>dom-accessibility-api</code> w jeden zwykły skrypt, udostępnia jako <code>virtual:pattern-log</code>, a każdy dokument wzorca wstawia go w całości. Około 22 KB po minifikacji, poniżej limitu 30 KB z sekcji 11.</li>
+  <li><strong>Treść generowana nie trafia do nazw (sekcja 5).</strong> <code>dom-accessibility-api</code> nie rozumie tekstu alternatywnego w CSS (<code>content: "+" / ""</code>) i dokleiłby „+” do nazwy przycisku. Nasze wzorce i tak dają treści generowanej pusty tekst alternatywny.</li>
+  <li><strong>Stany w rodzaju nijakim (sekcja 5).</strong> „zwinięte”, „zaznaczone”, „naciśnięte”, jak w liście czytania z fazy 7, a nie „zwinięty”.</li>
+  <li><strong>Wiersze ARIA mają selektor (sekcja 6).</strong> <code>selector</code> mówi ramce, który element odczytać do kolumny „Teraz”. Test sprawdza, czy każdy selektor trafia w element fragmentu.</li>
+  <li><strong>Jedna sekcja „Kod”, nie trzy (sekcja 7).</strong> Fragment to jeden plik, jak w przykładach z Praktyki.</li>
+  <li><strong>Przełącznik „Tylko klawiatura” to pole wyboru (sekcja 7).</strong> Działa tylko na stronie, bez <code>?symulacja=</code>. Zablokowane kliknięcia są liczone pod ramką i ogłaszane raz, jak na stronach przykładów.</li>
+  <li><strong>Dwa dodatkowe commity refaktoryzacji (sekcja 10).</strong> Obsługa ramek przeszła do <code>useDemoFrame</code>, a dzielenie na sekcje <code>##</code> do <code>render.ts</code>, żeby strony i pliki wzorców z nich korzystały. <code>legend</code> czyta się teraz w liście czytania jako zwykły tekst.</li>
+</ul>
 
 <ol class="toc">
   <li><a href="#goal">Cel i warunek ukończenia</a></li>
@@ -279,16 +293,17 @@ status: szkic
 </table>
 
 <h2 id="decisions">12. Decyzje</h2>
-<p>Otwarte. Wybór w czacie; mocki do decyzji 5 do 7 są w <a href="../2026-10-02-aria-patterns-mocks/aria-patterns-mocks.html">aria-patterns-mocks.html</a>.</p>
+<p>Wybrane 2026-10-03 na podstawie <a href="../2026-10-02-aria-patterns-mocks/aria-patterns-mocks.html">aria-patterns-mocks.html</a>.</p>
 <ol>
-  <li><strong>Nazwa i adres.</strong> Rekomendacja: „Wzorce”, <code>/wzorce</code>. Alternatywa: „Komponenty”, <code>/komponenty</code>. Nie „Symulatory”.</li>
-  <li><strong>Kształt wydań.</strong> Rekomendacja: najpierw podstawy i partia 1, potem pull request na partię. Alternatywa: wszystkie 30 naraz.</li>
-  <li><strong>Dziennik na żywo.</strong> Rekomendacja: <code>dom-accessibility-api</code> w ramce. Alternatywa: krótkie przybliżenie z fazy 7, lżejsze i mniej dokładne (bez łańcuchów <code>aria-labelledby</code> i bez reguł nazwy z treści).</li>
-  <li><strong>Zepsute wersje.</strong> Rekomendacja: bez nich; „Typowe błędy” jako tekst i linki do Praktyki. Alternatywa: zepsuta wersja dla sześciu najczęstszych błędów.</li>
-  <li><strong>Układ strony wzorca.</strong> Mock 1: A, B albo C.</li>
-  <li><strong>Układ katalogu.</strong> Mock 2: A, B albo C.</li>
-  <li><strong>Wejście do sekcji.</strong> Mock 4: A albo B.</li>
-  <li><strong>Symulatory na stronach wzorców.</strong> Rekomendacja: tylko przełącznik „Tylko klawiatura”. Alternatywa: pełny wybór z fazy 7.</li>
+  <li><strong>Nazwa i adres:</strong> postanowione, „Wzorce”, w Praktyce pod <code>/praktyka/wzorce</code> (zobacz zmiany wyżej).</li>
+  <li><strong>Kształt wydań:</strong> postanowione, najpierw podstawy i partia 1, potem pull request na partię.</li>
+  <li><strong>Dziennik na żywo:</strong> postanowione, <code>dom-accessibility-api</code> w ramce.</li>
+  <li><strong>Zepsute wersje:</strong> postanowione, bez nich. „Typowe błędy” jako tekst i linki do Praktyki.</li>
+  <li><strong>Układ strony wzorca:</strong> postanowione, 1C. Kolumna boczna z 1B i ćwiczenie pod ramką.</li>
+  <li><strong>Układ katalogu:</strong> postanowione, 2C. Karty z podglądem wzorca, w partiach, z filtrem <code>?natywnie=</code>.</li>
+  <li><strong>Wejście do sekcji:</strong> postanowione, 4B. Dwa linki pod nagłówkiem Praktyki; nagłówek strony zostaje przy ośmiu pozycjach.</li>
+  <li><strong>Symulatory na stronach wzorców:</strong> postanowione, tylko przełącznik „Tylko klawiatura”.</li>
+  <li><strong>Plac zabaw regionów na żywo:</strong> postanowione, 3A, w partii 4.</li>
 </ol>
 
 </main>

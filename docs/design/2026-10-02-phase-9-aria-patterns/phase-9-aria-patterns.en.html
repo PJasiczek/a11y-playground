@@ -41,11 +41,25 @@
 <p class="meta"><a href="phase-9-aria-patterns.pl.html" hreflang="pl">Wersja polska</a></p>
 
 <h1>Plan: phase 9, ARIA widget patterns</h1>
-<p class="meta">A phase outside the <a href="../2026-09-27-wcag-learning-app/wcag-learning-app.en.html">main plan</a>. Scope taken from the 30 entries of <a href="https://dequeuniversity.com/library/" target="_blank" rel="noopener noreferrer">Deque University ARIA Examples</a>. Mocks of the pattern page, the catalogue, the live region playground and the entry point: <a href="../2026-10-02-aria-patterns-mocks/aria-patterns-mocks.html">aria-patterns-mocks.html</a>. Plan version: 2026-10-02.</p>
+<p class="meta">A phase outside the <a href="../2026-09-27-wcag-learning-app/wcag-learning-app.en.html">main plan</a>. Scope taken from the 30 entries of <a href="https://dequeuniversity.com/library/" target="_blank" rel="noopener noreferrer">Deque University ARIA Examples</a>. Mocks of the pattern page, the catalogue, the live region playground and the entry point: <a href="../2026-10-02-aria-patterns-mocks/aria-patterns-mocks.html">aria-patterns-mocks.html</a>. Plan version: 2026-10-02, changes 2026-10-03.</p>
 
 <p class="flag">"Symulatory" already means the impairment simulators from phase 7 (<code>/symulatory</code>, <code>?symulacja=</code>). These widgets are a different thing: working components you operate and listen to. This plan calls them <strong>wzorce</strong> (patterns) and puts them at <code>/wzorce</code>, so one word keeps one meaning. Decision 1.</p>
 
 <p class="flag">We do not copy Deque's code. The Deque library has no open licence; its pages fall under Deque's terms of use. Each pattern is written by us from the WAI-ARIA Authoring Practices Guide (APG, W3C), and links to the Deque page and the APG pattern as further reading.</p>
+
+<h2 id="changes">Changes after work started</h2>
+<p>Decisions made while building the first pull request (the groundwork and batch 1). Where they conflict with the sections below, these win.</p>
+<ul>
+  <li><strong>Patterns live inside Praktyka (sections 7, 12).</strong> Mock 4B puts them under the Praktyka heading, so the routes are <code>/praktyka/wzorce</code> and <code>/praktyka/wzorce/$slug</code>, not <code>/wzorce</code>. The header keeps "Praktyka" current on them without new code. Demo documents stay at <code>/demo/wzorce/$slug</code>.</li>
+  <li><strong>The exercise replaces the keyboard table (sections 6, 9).</strong> With mock 1C the frontmatter has <code>steps</code> instead of <code>keyboard</code>: what to do, the keys, and the log line to hear. The first step must start with Tab, which enters the frame. The Playwright test presses each step's first key on the real page and expects every step ticked, so the walk table in section 9 is the content itself.</li>
+  <li><strong>The log is inlined, not <code>/demo/wzorce/log.js</code> (section 5).</strong> A Vite plugin builds it with <code>dom-accessibility-api</code> into one classic script, served as <code>virtual:pattern-log</code>, and every pattern document inlines it. About 22 KB minified, under the 30 KB limit from section 11.</li>
+  <li><strong>Generated content is left out of names (section 5).</strong> <code>dom-accessibility-api</code> does not understand CSS alt text (<code>content: "+" / ""</code>) and would read "+" in a button's name. Our patterns give generated content empty alt text anyway.</li>
+  <li><strong>State words are neuter (section 5).</strong> "zwinięte", "zaznaczone", "naciśnięte", like the build-time reading order, not "zwinięty".</li>
+  <li><strong>ARIA rows carry a selector (section 6).</strong> <code>selector</code> tells the frame which element to read for the "Teraz" column. A test checks that every selector matches an element of its fragment.</li>
+  <li><strong>One "Kod" disclosure, not three (section 7).</strong> A fragment is one file, as in the practice examples.</li>
+  <li><strong>The keyboard-only toggle is a checkbox (section 7).</strong> It is local to the page, not <code>?symulacja=</code>. A blocked click is counted under the frame and announced once, as on example pages.</li>
+  <li><strong>Two more refactor commits (section 10).</strong> The iframe plumbing moved into <code>useDemoFrame</code>, and the <code>##</code> section splitter into <code>render.ts</code>, so pattern pages and pattern files reuse them. <code>legend</code> now reads as plain text in the build-time reading order.</li>
+</ul>
 
 <ol class="toc">
   <li><a href="#goal">Goal and definition of done</a></li>
@@ -279,16 +293,17 @@ status: szkic
 </table>
 
 <h2 id="decisions">12. Decisions</h2>
-<p>Open. Pick in chat; the mocks for 5 to 7 are in <a href="../2026-10-02-aria-patterns-mocks/aria-patterns-mocks.html">aria-patterns-mocks.html</a>.</p>
+<p>Picked on 2026-10-03 from <a href="../2026-10-02-aria-patterns-mocks/aria-patterns-mocks.html">aria-patterns-mocks.html</a>.</p>
 <ol>
-  <li><strong>Name and route.</strong> Recommended: "Wzorce", <code>/wzorce</code>. Alternative: "Komponenty", <code>/komponenty</code>. Not "Symulatory".</li>
-  <li><strong>Release shape.</strong> Recommended: groundwork and batch 1 first, then a pull request per batch. Alternative: all 30 in one.</li>
-  <li><strong>The live log.</strong> Recommended: <code>dom-accessibility-api</code> in the frame. Alternative: the short in-frame approximation from phase 7, lighter and less correct (no <code>aria-labelledby</code> chains, no name-from-content rules).</li>
-  <li><strong>Broken variants.</strong> Recommended: none; "Typowe błędy" in text and links to practice. Alternative: a broken variant for the six most common mistakes.</li>
-  <li><strong>Pattern page layout.</strong> Mock 1: A, B or C.</li>
-  <li><strong>Catalogue layout.</strong> Mock 2: A, B or C.</li>
-  <li><strong>Entry point.</strong> Mock 4: A or B.</li>
-  <li><strong>Simulators on pattern pages.</strong> Recommended: only the keyboard-only toggle. Alternative: the full phase 7 picker.</li>
+  <li><strong>Name and route:</strong> decided, "Wzorce", inside Praktyka at <code>/praktyka/wzorce</code> (see the changes above).</li>
+  <li><strong>Release shape:</strong> decided, the groundwork and batch 1 first, then a pull request per batch.</li>
+  <li><strong>The live log:</strong> decided, <code>dom-accessibility-api</code> in the frame.</li>
+  <li><strong>Broken variants:</strong> decided, none. "Typowe błędy" in text and links to practice.</li>
+  <li><strong>Pattern page layout:</strong> decided, 1C. The rail of 1B with the exercise under the frame.</li>
+  <li><strong>Catalogue layout:</strong> decided, 2C. Cards with a still of each pattern, grouped by batch, filtered by <code>?natywnie=</code>.</li>
+  <li><strong>Entry point:</strong> decided, 4B. Two links under the Praktyka heading; the header stays at eight items.</li>
+  <li><strong>Simulators on pattern pages:</strong> decided, only the keyboard-only toggle.</li>
+  <li><strong>Live region playground:</strong> decided, 3A, for batch 4.</li>
 </ol>
 
 </main>
