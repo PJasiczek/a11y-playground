@@ -1,0 +1,37 @@
+<div class="accordion" data-single>
+  <h3><button type="button" id="akordeon-dostawa" aria-expanded="false" aria-controls="sekcja-dostawa">Dostawa</button></h3>
+  <div id="sekcja-dostawa" class="panel" hidden><p>Kurier w 2 dni robocze, paczkomat w 1 dzień.</p></div>
+  <h3><button type="button" id="akordeon-zwroty" aria-expanded="false" aria-controls="sekcja-zwroty">Zwroty</button></h3>
+  <div id="sekcja-zwroty" class="panel" hidden><p>Masz 30 dni na zwrot. Etykietę wydrukujesz z zakładki Zamówienia.</p></div>
+  <h3><button type="button" id="akordeon-platnosci" aria-expanded="false" aria-controls="sekcja-platnosci">Płatności</button></h3>
+  <div id="sekcja-platnosci" class="panel" hidden><p>Karta, BLIK albo przelew.</p></div>
+</div>
+
+<script>
+  const accordion = document.querySelector(".accordion");
+  const buttons = [...accordion.querySelectorAll("h3 button")];
+  const setOpen = (button, open) => {
+    button.setAttribute("aria-expanded", String(open));
+    document.getElementById(button.getAttribute("aria-controls")).hidden = !open;
+  };
+  for (const button of buttons) {
+    button.addEventListener("click", () => {
+      const open = button.getAttribute("aria-expanded") !== "true";
+      // One section at a time: opening this one closes the others.
+      if (open) for (const other of buttons) if (other !== button) setOpen(other, false);
+      setOpen(button, open);
+    });
+  }
+</script>
+
+<style>
+  .accordion { max-width: 30rem; border: 1px solid #857f72; border-radius: 4px; background: #fff; }
+  .accordion h3 { margin: 0; font-size: 1rem; }
+  .accordion h3 + .panel + h3, .accordion h3 + h3 { border-top: 1px solid #dfdbd1; }
+  .accordion h3 button { display: flex; justify-content: space-between; align-items: center; gap: 1rem; width: 100%; min-height: 48px; padding: 0 0.75rem; border: 0; background: none; color: #14171a; font: inherit; font-weight: 600; text-align: left; cursor: pointer; }
+  .accordion h3 button::after { content: "+" / ""; font: 700 1.25rem ui-monospace, Consolas, monospace; }
+  .accordion h3 button[aria-expanded="true"]::after { content: "−" / ""; }
+  .accordion h3 button:focus-visible { outline-offset: -3px; }
+  .panel { padding: 0 0.75rem 0.25rem; }
+  .panel p { margin: 0 0 0.75rem; }
+</style>

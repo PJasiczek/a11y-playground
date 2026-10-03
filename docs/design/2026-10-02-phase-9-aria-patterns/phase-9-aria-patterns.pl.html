@@ -48,7 +48,7 @@
 <p class="flag">Nie kopiujemy kodu Deque. Biblioteka Deque nie ma otwartej licencji, jej strony podlegają warunkom korzystania z serwisu Deque. Każdy wzorzec piszemy sami na podstawie WAI-ARIA Authoring Practices Guide (APG, W3C), a do strony Deque i do wzorca w APG linkujemy jako do lektury uzupełniającej.</p>
 
 <h2 id="changes">Zmiany po rozpoczęciu pracy</h2>
-<p>Decyzje podjęte przy budowaniu pierwszego pull requesta (podstawy i partia 1). Tam, gdzie kłócą się z sekcjami poniżej, wygrywają.</p>
+<p>Decyzje podjęte przy budowaniu dotychczasowych pull requestów. Tam, gdzie kłócą się z sekcjami poniżej, wygrywają.</p>
 <ul>
   <li><strong>Wzorce są w Praktyce (sekcje 7 i 12).</strong> Mock 4B umieszcza je pod nagłówkiem Praktyki, więc adresy to <code>/praktyka/wzorce</code> i <code>/praktyka/wzorce/$slug</code>, a nie <code>/wzorce</code>. Nagłówek bez nowego kodu zaznacza na nich „Praktykę”. Dokumenty demo zostają pod <code>/demo/wzorce/$slug</code>.</li>
   <li><strong>Ćwiczenie zastępuje tabelę klawiszy (sekcje 6 i 9).</strong> Przy mocku 1C frontmatter ma <code>steps</code> zamiast <code>keyboard</code>: co zrobić, klawisze i wpis dziennika, który ma się pojawić. Pierwszy krok musi zaczynać się od Tab, bo tak wchodzi się do ramki. Test Playwright naciska pierwszy klawisz każdego kroku na prawdziwej stronie i sprawdza, czy wszystkie kroki są odhaczone, więc tabelą przejść z sekcji 9 jest sama treść.</li>
@@ -59,6 +59,8 @@
   <li><strong>Jedna sekcja „Kod”, nie trzy (sekcja 7).</strong> Fragment to jeden plik, jak w przykładach z Praktyki.</li>
   <li><strong>Przełącznik „Tylko klawiatura” to pole wyboru (sekcja 7).</strong> Działa tylko na stronie, bez <code>?symulacja=</code>. Zablokowane kliknięcia są liczone pod ramką i ogłaszane raz, jak na stronach przykładów.</li>
   <li><strong>Dwa dodatkowe commity refaktoryzacji (sekcja 10).</strong> Obsługa ramek przeszła do <code>useDemoFrame</code>, a dzielenie na sekcje <code>##</code> do <code>render.ts</code>, żeby strony i pliki wzorców z nich korzystały. <code>legend</code> czyta się teraz w liście czytania jako zwykły tekst.</li>
+  <li><strong>Partia 2: dziennik czyta opisy i popovery (sekcja 5).</strong> Wpis o fokusie kończy się opisem (<code>aria-describedby</code>), bo tak czytnik czyta treść dymka i komunikat okna alertu; kontener z opisem przy wejściu też go czyta. Przycisk z <code>popovertarget</code> mówi „rozwinięte” albo „zwinięte” na podstawie swojego popovera, który nie zmienia żadnego atrybutu.</li>
+  <li><strong>Partia 2: najpierw natywnie tam, gdzie to dziś możliwe (sekcja 3).</strong> Dymek z oknem to <code>popover</code> z <code>role="dialog"</code>; przeglądarka zamyka go klawiszem Esc i oddaje fokus. Oba okna to <code>dialog</code> z <code>showModal()</code>, okno alertu z <code>role="alertdialog"</code>. Oba akordeony trzymają przycisk w nagłówku, bo w <code>details</code> nagłówek w <code>summary</code> traci swoją rolę.</li>
 </ul>
 
 <ol class="toc">

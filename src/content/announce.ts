@@ -37,6 +37,7 @@ export const polishRoles: Record<string, string> = {
   tab: "karta",
   table: "tabela",
   textbox: "pole edycji",
+  tooltip: "dymek",
 };
 
 /**
