@@ -19,7 +19,7 @@ a11y playground is a learning app for people who build digital products in Polan
 The interface is in Polish. This README is in English.
 
 > [!NOTE]
-> The project is in phase 9 (ARIA widget patterns). The first nine patterns, the ones where HTML does most of the work, run in Praktyka with a live log of what a screen reader would say; the other 21 from the Deque University list follow batch by batch. Every criterion of WCAG 2.2, A to AAA, has a plain-language explanation, and `/wcag-3` tracks the WCAG 3.0 Working Draft with our mapping to today's criteria. Eleven common faults have a broken and a fixed example, each viewable through five simulators. Three Polish acts are in the app with the statute text and our summaries, and five learning paths walk through them lesson by lesson. All content is marked as a draft until a person has checked it. Phase 5 (accounts) is postponed, so progress is kept in the browser.
+> The project is in phase 9 (ARIA widget patterns). Sixteen patterns run in Praktyka with a live log of what a screen reader would say: the ones where HTML does most of the work, and the ones that show and hide content (accordions, dialogs, tooltips, navigation). The other 14 from the Deque University list follow batch by batch. Every criterion of WCAG 2.2, A to AAA, has a plain-language explanation, and `/wcag-3` tracks the WCAG 3.0 Working Draft with our mapping to today's criteria. Eleven common faults have a broken and a fixed example, each viewable through five simulators. Three Polish acts are in the app with the statute text and our summaries, and five learning paths walk through them lesson by lesson. All content is marked as a draft until a person has checked it. Phase 5 (accounts) is postponed, so progress is kept in the browser.
 
 ### What works today
 
@@ -256,7 +256,7 @@ status: szkic
 - `steps` is the exercise. `hear` must be exactly what the live log says after one of `keys`, and the first step starts with Tab, which enters the frame. `pnpm test` presses the keys of every step in a real browser and fails if a step does not tick off.
 - `aria` rows are the ARIA table; `selector` says which element the frame reads for the current value. `attr` must be one the frame can report.
 - `examples` (optional) names practice examples that show the same thing broken.
-- The live log is `src/content/pattern-log.ts`, bundled with `dom-accessibility-api` by a Vite plugin and inlined into every pattern document.
+- The live log is `src/content/pattern-log.ts`: it reads focus with the name, role, states and description, state changes of the focused element (attributes, native checkboxes, popovers) and live regions. It is bundled with `dom-accessibility-api` by a Vite plugin and inlined into every pattern document.
 
 ### WCAG 3.0
 
@@ -474,4 +474,4 @@ The full plan, with content scope, architecture and risks, is in [`docs/design/2
 - [x] **6. Paths and quizzes.** Five learning paths, 29 lessons with quizzes, progress in `localStorage`. Detailed plan: [`docs/design/2026-09-29-phase-6-paths`](docs/design/2026-09-29-phase-6-paths/phase-6-paths.en.html).
 - [x] **7. Impairment simulators.** Colour vision, low vision, keyboard only, screen reader and narrow screen on every example, each with a text alternative, and `/symulatory`. Detailed plan: [`docs/design/2026-09-29-phase-7-simulators`](docs/design/2026-09-29-phase-7-simulators/phase-7-simulators.en.html).
 - [x] **8. AAA criteria and WCAG 3.0 tracking.** Explanations for the 31 AAA criteria and 4.1.1, the comparison with the AA criterion each one tightens, and `/wcag-3` with the guideline mapping. Detailed plan: [`docs/design/2026-10-01-phase-8-aaa-wcag3`](docs/design/2026-10-01-phase-8-aaa-wcag3/phase-8-aaa-wcag3.en.html).
-- [ ] **9. ARIA widget patterns.** The 30 patterns of Deque University ARIA Examples, our own code, each with a live screen reader log, an ARIA table and a keyboard exercise. Done: the groundwork and batch 1 (nine native-first patterns). Next: showing and hiding, composite widgets, content that changes. Detailed plan: [`docs/design/2026-10-02-phase-9-aria-patterns`](docs/design/2026-10-02-phase-9-aria-patterns/phase-9-aria-patterns.en.html).
+- [ ] **9. ARIA widget patterns.** The 30 patterns of Deque University ARIA Examples, our own code, each with a live screen reader log, an ARIA table and a keyboard exercise. Done: the groundwork, batch 1 (nine native-first patterns) and batch 2 (seven patterns that show and hide content). Next: composite widgets, content that changes. Detailed plan: [`docs/design/2026-10-02-phase-9-aria-patterns`](docs/design/2026-10-02-phase-9-aria-patterns/phase-9-aria-patterns.en.html).
