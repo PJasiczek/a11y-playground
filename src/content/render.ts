@@ -49,3 +49,32 @@ export function createRenderer(fail: Fail) {
   });
   return { terms, render: (markdown: string) => renderer.parse(markdown, { async: false }) };
 }
+
+/**
+ * Splits a Markdown body into `## <title>` sections and renders each one. Titles must come from
+ * `allowed`, in its order, each at most once; text before the first section fails the file. An
+ * empty section is left out, so callers can tell written sections from missing ones.
+ */
+export function renderSections<const Key extends string>(
+  body: string,
+  allowed: readonly { key: Key; title: string }[],
+  fail: Fail,
+  render: (markdown: string) => string,
+) {
+  const [preamble = "", ...chunks] = body.split(/^## /m);
+  if (preamble.trim() !== "") throw fail("text before the first ## section");
+  const sections: Partial<Record<Key, string>> = {};
+  let lastIndex = -1;
+  for (const chunk of chunks) {
+    const newline = chunk.indexOf("\n");
+    const title = (newline === -1 ? chunk : chunk.slice(0, newline)).trim();
+    const index = allowed.findIndex((section) => section.title === title);
+    const section = allowed[index];
+    if (!section) throw fail(`unknown section "${title}", allowed: ${allowed.map((s) => s.title).join(", ")}`);
+    if (index <= lastIndex) throw fail(`section "${title}" is out of order or repeated`);
+    lastIndex = index;
+    const markdown = newline === -1 ? "" : chunk.slice(newline + 1).trim();
+    if (markdown !== "") sections[section.key] = render(markdown);
+  }
+  return sections;
+}

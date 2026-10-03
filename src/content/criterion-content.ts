@@ -1,6 +1,6 @@
 import { type } from "arktype";
 import { type Fail, IsoDate, readVerification, splitFrontmatter, Status, type Verification } from "./markdown";
-import { createRenderer } from "./render";
+import { createRenderer, renderSections } from "./render";
 import { contentSections, type Role, roles, type SectionKey } from "./sections";
 import { type CriterionId, isCriterionId } from "./wcag";
 
@@ -60,23 +60,8 @@ export function parseCriterionMarkdown(file: string, source: string): CriterionC
     throw fail(`enhances an unknown criterion: ${meta.enhances}`);
   }
 
-  const [preamble = "", ...chunks] = body.split(/^## /m);
-  if (preamble.trim() !== "") throw fail("text before the first ## section");
-
   const { terms, render } = createRenderer(fail);
-  const sections: CriterionContent["sections"] = {};
-  let lastIndex = -1;
-  for (const chunk of chunks) {
-    const newline = chunk.indexOf("\n");
-    const title = (newline === -1 ? chunk : chunk.slice(0, newline)).trim();
-    const index = contentSections.findIndex((section) => section.title === title);
-    const section = contentSections[index];
-    if (!section) throw fail(`unknown section "${title}", allowed: ${contentSections.map((s) => s.title).join(", ")}`);
-    if (index <= lastIndex) throw fail(`section "${title}" is out of order or repeated`);
-    lastIndex = index;
-    const markdown = newline === -1 ? "" : chunk.slice(newline + 1).trim();
-    if (markdown !== "") sections[section.key] = render(markdown);
-  }
+  const sections = renderSections(body, contentSections, fail, render);
 
   return {
     ...readVerification(meta, fail),
