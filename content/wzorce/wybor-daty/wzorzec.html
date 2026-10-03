@@ -1,0 +1,148 @@
+<div class="stage">
+  <label for="data">Data dostawy</label>
+  <div class="row">
+    <input id="data" aria-describedby="data-format" inputmode="numeric" autocomplete="off">
+    <button type="button" id="kalendarz-przycisk">Wybierz datę</button>
+  </div>
+  <p id="data-format" class="hint">Format: dd.mm.rrrr</p>
+</div>
+
+<dialog id="kalendarz" aria-labelledby="kalendarz-tytul">
+  <h2 id="kalendarz-tytul">Wybierz datę dostawy</h2>
+  <div class="month">
+    <button type="button" id="poprzedni" aria-label="Poprzedni miesiąc">‹</button>
+    <h3 id="miesiac" aria-live="polite"></h3>
+    <button type="button" id="nastepny" aria-label="Następny miesiąc">›</button>
+  </div>
+  <table role="grid" aria-labelledby="miesiac">
+    <thead>
+      <tr>
+        <th scope="col" abbr="poniedziałek">Pn</th><th scope="col" abbr="wtorek">Wt</th><th scope="col" abbr="środa">Śr</th>
+        <th scope="col" abbr="czwartek">Cz</th><th scope="col" abbr="piątek">Pt</th><th scope="col" abbr="sobota">So</th>
+        <th scope="col" abbr="niedziela">Nd</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <form method="dialog" class="actions"><button>Anuluj</button></form>
+</dialog>
+
+<script>
+  const input = document.getElementById("data");
+  const opener = document.getElementById("kalendarz-przycisk");
+  const dialog = document.getElementById("kalendarz");
+  const tbody = dialog.querySelector("tbody");
+  const heading = document.getElementById("miesiac");
+  // "Today" is fixed, so the exercise reads the same on every day.
+  const today = new Date(2026, 9, 15);
+  const longDate = new Intl.DateTimeFormat("pl-PL", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  const monthName = new Intl.DateTimeFormat("pl-PL", { month: "long", year: "numeric" });
+  const same = (a, b) => a && b && a.toDateString() === b.toDateString();
+  let selected = null;
+  let focused = today;
+
+  // One month as a grid, Monday first. Only the focused day is in the Tab order (roving tabindex).
+  const render = () => {
+    const year = focused.getFullYear();
+    const month = focused.getMonth();
+    const name = monthName.format(focused);
+    heading.textContent = name[0].toUpperCase() + name.slice(1);
+    tbody.replaceChildren();
+    const offset = (new Date(year, month, 1).getDay() + 6) % 7;
+    const days = new Date(year, month + 1, 0).getDate();
+    let row;
+    for (let cell = 0; cell < Math.ceil((offset + days) / 7) * 7; cell++) {
+      if (cell % 7 === 0) row = tbody.insertRow();
+      const td = row.insertCell();
+      const day = cell - offset + 1;
+      if (day < 1 || day > days) continue;
+      const date = new Date(year, month, day);
+      td.setAttribute("role", "gridcell");
+      td.textContent = String(day);
+      td.setAttribute("aria-label", longDate.format(date));
+      td.tabIndex = same(date, focused) ? 0 : -1;
+      // showModal focuses this day directly instead of the first button in the dialog.
+      td.autofocus = same(date, focused);
+      if (same(date, selected)) td.setAttribute("aria-selected", "true");
+      if (same(date, today)) td.setAttribute("aria-current", "date");
+      td.dataset.day = String(day);
+    }
+  };
+  const cellOf = (date) => tbody.querySelector(`[data-day="${date.getDate()}"]`);
+  const moveTo = (date) => {
+    const monthChanged = date.getMonth() !== focused.getMonth() || date.getFullYear() !== focused.getFullYear();
+    focused = date;
+    if (monthChanged) render();
+    else for (const td of tbody.querySelectorAll("[data-day]")) td.tabIndex = td === cellOf(date) ? 0 : -1;
+    cellOf(date).focus();
+  };
+  const addMonths = (date, n) => {
+    const target = new Date(date.getFullYear(), date.getMonth() + n, 1);
+    const last = new Date(target.getFullYear(), target.getMonth() + 1, 0).getDate();
+    return new Date(target.getFullYear(), target.getMonth(), Math.min(date.getDate(), last));
+  };
+  const choose = (date) => {
+    selected = date;
+    input.value = date.toLocaleDateString("pl-PL", { day: "2-digit", month: "2-digit", year: "numeric" });
+    dialog.close();
+  };
+
+  opener.addEventListener("click", () => {
+    const [d, m, y] = input.value.split(".").map(Number);
+    const typed = new Date(y, m - 1, d);
+    focused = selected ?? (d && m && y && typed.getDate() === d ? typed : today);
+    render();
+    dialog.showModal();
+  });
+  document.getElementById("poprzedni").addEventListener("click", () => { focused = addMonths(focused, -1); render(); });
+  document.getElementById("nastepny").addEventListener("click", () => { focused = addMonths(focused, 1); render(); });
+
+  tbody.addEventListener("keydown", (event) => {
+    const day = (n) => new Date(focused.getFullYear(), focused.getMonth(), focused.getDate() + n);
+    const weekday = (focused.getDay() + 6) % 7;
+    const moves = {
+      ArrowRight: () => day(1),
+      ArrowLeft: () => day(-1),
+      ArrowDown: () => day(7),
+      ArrowUp: () => day(-7),
+      Home: () => day(-weekday),
+      End: () => day(6 - weekday),
+      PageDown: () => addMonths(focused, 1),
+      PageUp: () => addMonths(focused, -1),
+    };
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      choose(focused);
+    } else if (moves[event.key]) {
+      event.preventDefault();
+      moveTo(moves[event.key]());
+    }
+  });
+  tbody.addEventListener("click", (event) => {
+    const td = event.target.closest("[data-day]");
+    if (td) choose(new Date(focused.getFullYear(), focused.getMonth(), Number(td.dataset.day)));
+  });
+</script>
+
+<style>
+  .stage { min-height: 31rem; }
+  label { display: block; font-weight: 600; margin-bottom: 0.25rem; }
+  .row { display: flex; gap: 0.5rem; }
+  input { width: 9rem; min-height: 44px; padding: 0 0.5rem; border: 1px solid #857f72; border-radius: 4px; font: inherit; }
+  button { min-height: 44px; min-width: 44px; padding: 0 0.9rem; border: 2px solid #14171a; border-radius: 4px; background: #fff; color: #14171a; font: inherit; font-weight: 600; cursor: pointer; }
+  .hint { margin: 0.25rem 0 0; color: #484d52; font-size: 0.9375rem; }
+  dialog { padding: 1rem; border: 2px solid #14171a; border-radius: 6px; }
+  dialog::backdrop { background: rgb(20 23 26 / 0.5); }
+  dialog h2 { margin: 0 0 0.5rem; font-size: 1.125rem; }
+  .month { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+  .month h3 { margin: 0; font-size: 1rem; }
+  table { border-collapse: collapse; margin-top: 0.5rem; }
+  th { width: 44px; height: 32px; font-size: 0.8125rem; }
+  td { width: 44px; height: 44px; padding: 0; text-align: center; border-radius: 4px; }
+  [role="gridcell"] { cursor: pointer; }
+  [role="gridcell"]:focus-visible { outline-offset: -3px; }
+  /* Today: a ring. Selected: filled. Both also carry an ARIA state, not colour alone. */
+  [aria-current="date"] { box-shadow: inset 0 0 0 2px #14171a; font-weight: 700; }
+  [aria-selected="true"] { background: #14171a; color: #fff; }
+  .actions { margin-top: 0.5rem; text-align: right; }
+</style>

@@ -45,9 +45,9 @@ function keyOf(event: KeyboardEvent): KeyName | null {
   return keys[event.key] ?? null;
 }
 
-// Containers a screen reader names when focus enters them. Group and region only when named.
+// Containers a screen reader names when focus enters them. All but these need a name to be named.
 const containerRoles = new Set(["group", "radiogroup", "dialog", "alertdialog", "navigation", "region", "tablist", "listbox", "tree", "grid"]);
-const namedOnly = new Set(["group", "region"]);
+const namedOrNot = new Set(["dialog", "alertdialog", "navigation"]);
 // Roles whose items a screen reader counts, "2 z 3", with the container they are counted in.
 const setContainers: Partial<Record<string, string>> = { radio: "radiogroup", tab: "tablist", option: "listbox" };
 const checkableRoles = new Set(["checkbox", "radio", "switch", "menuitemcheckbox", "menuitemradio"]);
@@ -98,6 +98,9 @@ export function startLog(win: Window & typeof globalThis, post: (message: Patter
   const roleOf = (el: Element) => getRole(el) ?? "";
 
   const roleWords = (el: Element, role: string) => {
+    // aria-roledescription replaces the role's name: "karuzela", "slajd".
+    const custom = el.getAttribute("aria-roledescription");
+    if (custom) return custom;
     if (role === "button" && el.hasAttribute("aria-pressed")) return "przycisk przełącznik";
     const words = polishRoles[role] ?? role;
     if (role === "heading") return `${words}, poziom ${el.getAttribute("aria-level") ?? el.localName.slice(1)}`;
@@ -161,6 +164,9 @@ export function startLog(win: Window & typeof globalThis, post: (message: Patter
       items = [...(el.form ?? document).querySelectorAll("input[type='radio']")].filter(
         (radio) => radio instanceof win.HTMLInputElement && radio.name === name,
       );
+    } else if (role === "treeitem") {
+      // Items count among their siblings on the same level of the tree.
+      items = [...(el.parentElement?.children ?? [])].filter((item) => roleOf(item) === "treeitem");
     } else {
       const container = setContainers[role];
       const owner = container ? el.closest(`[role="${container}"]`) : null;
@@ -169,6 +175,13 @@ export function startLog(win: Window & typeof globalThis, post: (message: Patter
     const visible = items.filter((item) => !hidden(item));
     const at = visible.indexOf(el);
     return at === -1 ? null : `${String(at + 1)} z ${String(visible.length)}`;
+  };
+
+  // How deep a tree item sits: one more than the groups around it.
+  const levelOf = (el: Element) => {
+    let level = 1;
+    for (let at = el.parentElement; at && roleOf(at) !== "tree"; at = at.parentElement) if (roleOf(at) === "group") level += 1;
+    return level;
   };
 
   const describe = (el: Element) => {
@@ -180,6 +193,7 @@ export function startLog(win: Window & typeof globalThis, post: (message: Patter
     }
     const at = position(el, role);
     if (at) parts.push(at);
+    if (role === "treeitem") parts.push(`poziom ${String(levelOf(el))}`);
     const description = descriptionOf(el);
     if (description) parts.push(description);
     return parts.join(", ");
@@ -196,7 +210,7 @@ export function startLog(win: Window & typeof globalThis, post: (message: Patter
     for (let at = el.parentElement; at && at !== document.body; at = at.parentElement) {
       const role = roleOf(at);
       if (!containerRoles.has(role) || at.contains(previous)) continue;
-      if (namedOnly.has(role) && !nameOf(at)) continue;
+      if (!namedOrNot.has(role) && !nameOf(at)) continue;
       entered.unshift(at);
     }
     return entered;
@@ -209,6 +223,7 @@ export function startLog(win: Window & typeof globalThis, post: (message: Patter
   let inside = false;
   const onKeyDown = (event: KeyboardEvent) => {
     lastKey = keyOf(event);
+    lastState = null;
   };
   const onPointerDown = () => {
     lastKey = "klik";
@@ -243,18 +258,28 @@ export function startLog(win: Window & typeof globalThis, post: (message: Patter
   };
 
   // --- State of the focused element --------------------------------------------------------------
+  // The last state line since the last key, so two reports of one change (a slider's input event
+  // and its aria-valuetext) make one line.
+  let lastState: { el: Element; words: string } | null = null;
   const sayState = (el: Element, group: StateGroup) => {
     // A focus line on its way will carry the new state already.
     if (pending?.el === el) return;
     const words = stateWords(el, roleOf(el), group);
-    if (words) say({ kind: "state", text: words, key: lastKey });
+    if (!words || (lastState?.el === el && lastState.words === words)) return;
+    lastState = { el, words };
+    say({ kind: "state", text: words, key: lastKey });
   };
   // Native state changes no attribute: a checkbox fires change, a range input fires input.
   const onInput = (event: Event) => {
     const el = event.target;
     if (!(el instanceof win.HTMLInputElement) || el !== document.activeElement) return;
     if (event.type === "change" && (el.type === "checkbox" || el.type === "radio")) sayState(el, "checked");
-    if (event.type === "input" && el.type === "range") sayState(el, "value");
+    // A tick late, so the pattern's own handler has updated aria-valuetext.
+    if (event.type === "input" && el.type === "range") {
+      win.setTimeout(() => {
+        sayState(el, "value");
+      }, 0);
+    }
     report();
   };
   // A popover opening or closing changes no attribute either; its invoker reads expanded.

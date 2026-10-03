@@ -72,6 +72,44 @@ describe("startLog", () => {
     ]);
   });
 
+  test("counts tree items on their level, says the level, and uses a role description", async () => {
+    const { lines } = run(
+      `<ul role="tree" aria-label="Pliki">
+        <li role="treeitem" aria-expanded="true" aria-labelledby="d"><span id="d">Dokumenty</span>
+          <ul role="group"><li role="treeitem" id="u" tabindex="-1">umowa.pdf</li><li role="treeitem">faktura.pdf</li></ul>
+        </li>
+        <li role="treeitem" aria-expanded="false">Zdjęcia</li>
+      </ul>
+      <section aria-roledescription="karuzela" aria-label="Promocje"><button id="p">Uruchom przewijanie</button></section>`,
+    );
+    byId("u").focus();
+    await tick();
+    byId("p").focus();
+    await tick();
+    expect(lines().map((line) => line.text)).toEqual([
+      "Pliki, drzewo",
+      "umowa.pdf, element drzewa, 1 z 2, poziom 2",
+      "Promocje, karuzela",
+      "Uruchom przewijanie, przycisk",
+    ]);
+  });
+
+  test("reads one change of a slider once, after its own script has updated the text", async () => {
+    const { lines } = run(
+      `<input type="range" id="r" aria-label="Cena" min="0" max="100" value="10" aria-valuetext="10 zł"
+        oninput="this.setAttribute('aria-valuetext', this.value + ' zł')">`,
+    );
+    const slider = byId("r");
+    slider.focus();
+    await tick();
+    slider.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }));
+    if (slider instanceof HTMLInputElement) slider.value = "20";
+    slider.dispatchEvent(new Event("input", { bubbles: true }));
+    await tick();
+    await tick();
+    expect(lines().map((line) => line.text)).toEqual(["Cena, suwak, 10 zł", "20 zł"]);
+  });
+
   test("reads text added to a live region that was already there, by its politeness", async () => {
     const { lines } = run(`<p role="status" id="s"></p><div aria-live="assertive" id="a"></div>`);
     byId("s").textContent = "Zapisano";

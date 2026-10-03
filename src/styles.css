@@ -336,6 +336,71 @@
       background: var(--ink);
       color: var(--paper);
     }
+    & .p-tabs {
+      display: inline-flex;
+      border-bottom: 2px solid var(--ink);
+      & > * {
+        padding: 0.3rem 0.7rem;
+        border: 1px solid var(--control);
+        border-bottom: 0;
+        margin-right: -1px;
+        background: var(--surface);
+        color: var(--ink);
+      }
+      & > b {
+        border: 2px solid var(--ink);
+        border-top-width: 4px;
+        border-bottom: 0;
+      }
+    }
+    & .p-tree {
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      line-height: 1.7;
+      color: var(--ink);
+    }
+    & .p-slider {
+      position: relative;
+      width: 9rem;
+      height: 6px;
+      border-radius: 3px;
+      background: var(--control);
+      & > b {
+        position: absolute;
+        top: -9px;
+        left: 30%;
+        width: 24px;
+        height: 24px;
+        border: 2px solid var(--ink);
+        border-radius: 50%;
+        background: var(--surface);
+      }
+      &.p-range > b:last-child {
+        left: 65%;
+      }
+    }
+    & .p-steps {
+      display: inline-flex;
+      gap: 0.75rem;
+      & > * {
+        display: inline-grid;
+        place-items: center;
+        width: 1.75rem;
+        height: 1.75rem;
+        border: 2px solid var(--control);
+        border-radius: 50%;
+        background: var(--surface);
+        color: var(--ink);
+      }
+      & > b:first-child {
+        border-color: var(--ink);
+        background: var(--ink);
+        color: var(--paper);
+      }
+      & > b + b {
+        border: 3px solid var(--ink);
+      }
+    }
     & .p-link {
       color: var(--accent);
       text-decoration: underline;

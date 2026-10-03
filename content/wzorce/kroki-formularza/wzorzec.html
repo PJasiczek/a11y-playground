@@ -1,0 +1,88 @@
+<form class="wizard" novalidate>
+  <ol class="steps" aria-label="Kroki wniosku">
+    <li id="krok-1-na-liscie" aria-current="step"><span class="dot" aria-hidden="true">1</span> Przedmiot<span class="done-word"> (zrobione)</span></li>
+    <li id="krok-2-na-liscie"><span class="dot" aria-hidden="true">2</span> Zakres<span class="done-word"> (zrobione)</span></li>
+    <li id="krok-3-na-liscie"><span class="dot" aria-hidden="true">3</span> Podsumowanie<span class="done-word"> (zrobione)</span></li>
+  </ol>
+
+  <section class="step" data-step="1">
+    <h2 id="naglowek-1" tabindex="-1">Krok 1 z 3. Przedmiot</h2>
+    <fieldset aria-describedby="blad-1">
+      <legend>Co chcesz ubezpieczyć?</legend>
+      <label class="radio"><input type="radio" name="przedmiot" id="mieszkanie"> Mieszkanie</label>
+      <label class="radio"><input type="radio" name="przedmiot"> Samochód</label>
+    </fieldset>
+    <p id="blad-1" class="error"></p>
+  </section>
+  <section class="step" data-step="2" hidden>
+    <h2 id="naglowek-2" tabindex="-1">Krok 2 z 3. Zakres</h2>
+    <label class="radio"><input type="checkbox" checked> Kradzież</label>
+    <label class="radio"><input type="checkbox"> Zalanie</label>
+  </section>
+  <section class="step" data-step="3" hidden>
+    <h2 id="naglowek-3" tabindex="-1">Krok 3 z 3. Podsumowanie</h2>
+    <p>Sprawdź odpowiedzi i wyślij wniosek.</p>
+  </section>
+
+  <div class="actions">
+    <button type="button" id="wstecz" hidden>Wstecz</button>
+    <button type="submit" id="dalej">Dalej</button>
+  </div>
+</form>
+
+<script>
+  const form = document.querySelector(".wizard");
+  const sections = [...form.querySelectorAll(".step")];
+  const items = [...form.querySelectorAll(".steps li")];
+  const error = document.getElementById("blad-1");
+  let current = 0;
+
+  const go = (next) => {
+    current = next;
+    sections.forEach((section, i) => (section.hidden = i !== current));
+    items.forEach((item, i) => {
+      if (i === current) item.setAttribute("aria-current", "step");
+      else item.removeAttribute("aria-current");
+      item.classList.toggle("done", i < current);
+    });
+    document.getElementById("wstecz").hidden = current === 0;
+    document.getElementById("dalej").textContent = current === sections.length - 1 ? "Wyślij" : "Dalej";
+    // Focus goes to the new step's heading, so a screen reader says where the reader is.
+    sections[current].querySelector("h2").focus();
+  };
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    if (current === 0 && !form.querySelector('[name="przedmiot"]:checked')) {
+      error.textContent = "Błąd. Wybierz, co chcesz ubezpieczyć.";
+      document.getElementById("mieszkanie").focus();
+      return;
+    }
+    error.textContent = "";
+    if (current < sections.length - 1) go(current + 1);
+  });
+  document.getElementById("wstecz").addEventListener("click", () => go(current - 1));
+</script>
+
+<style>
+  .wizard { max-width: 30rem; }
+  .steps { display: flex; gap: 1.25rem; margin: 0 0 1rem; padding: 0; list-style: none; font-size: 0.9375rem; }
+  .steps li { display: flex; align-items: center; gap: 0.4rem; }
+  .dot { display: inline-grid; place-items: center; width: 1.75rem; height: 1.75rem; border: 2px solid #857f72; border-radius: 50%; background: #fff; font-weight: 700; }
+  /* Current: a thick dark ring and bold text. Done: a tick. Not colour alone. */
+  .steps [aria-current="step"] { font-weight: 700; }
+  .steps [aria-current="step"] .dot { border: 3px solid #14171a; }
+  .steps .done .dot { border-color: #14171a; background: #14171a; color: #fff; font-size: 0; }
+  .steps .done .dot::after { content: "✓"; font-size: 0.9375rem; }
+  .done-word { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .steps li:not(.done) .done-word { display: none; }
+  h2 { margin: 0 0 0.5rem; font-size: 1.25rem; }
+  fieldset { margin: 0; padding: 0.5rem 1rem; border: 1px solid #857f72; border-radius: 4px; background: #fff; }
+  legend { padding: 0 0.25rem; font-weight: 600; }
+  .radio { display: flex; align-items: center; gap: 0.6rem; min-height: 44px; cursor: pointer; }
+  .radio input { width: 24px; height: 24px; margin: 0; accent-color: #14171a; }
+  .error { min-height: 1.5rem; margin: 0.5rem 0 0; color: #9a1b1b; font-weight: 600; }
+  .actions { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
+  .actions button { min-height: 44px; padding: 0 1rem; border: 2px solid #14171a; border-radius: 4px; background: #fff; color: #14171a; font: inherit; font-weight: 600; cursor: pointer; }
+  #dalej { background: #14171a; color: #fff; }
+</style>

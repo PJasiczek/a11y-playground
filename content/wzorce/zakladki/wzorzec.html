@@ -1,0 +1,44 @@
+<div class="tabs">
+  <div role="tablist" aria-label="Kubek termiczny">
+    <button type="button" role="tab" id="karta-opis" aria-selected="true" aria-controls="panel-opis">Opis</button>
+    <button type="button" role="tab" id="karta-wymiary" aria-selected="false" aria-controls="panel-wymiary" tabindex="-1">Wymiary</button>
+    <button type="button" role="tab" id="karta-opinie" aria-selected="false" aria-controls="panel-opinie" tabindex="-1">Opinie</button>
+  </div>
+  <div role="tabpanel" id="panel-opis" aria-labelledby="karta-opis" tabindex="0"><p>Stal nierdzewna, trzyma ciepło przez 6 godzin.</p></div>
+  <div role="tabpanel" id="panel-wymiary" aria-labelledby="karta-wymiary" tabindex="0" hidden><p>Wysokość 18 cm, pojemność 450 ml.</p></div>
+  <div role="tabpanel" id="panel-opinie" aria-labelledby="karta-opinie" tabindex="0" hidden><p>4,6 na 5 z 212 opinii.</p></div>
+</div>
+
+<script>
+  const tabs = [...document.querySelectorAll('[role="tab"]')];
+  const select = (tab) => {
+    for (const other of tabs) {
+      const selected = other === tab;
+      other.setAttribute("aria-selected", String(selected));
+      other.tabIndex = selected ? 0 : -1;
+      document.getElementById(other.getAttribute("aria-controls")).hidden = !selected;
+    }
+    tab.focus();
+  };
+  for (const tab of tabs) {
+    tab.addEventListener("click", () => select(tab));
+    tab.addEventListener("keydown", (event) => {
+      const at = tabs.indexOf(tab);
+      const next = { ArrowRight: at + 1, ArrowLeft: at - 1, Home: 0, End: tabs.length - 1 }[event.key];
+      if (next === undefined) return;
+      event.preventDefault();
+      select(tabs[(next + tabs.length) % tabs.length]);
+    });
+  }
+</script>
+
+<style>
+  .tabs { max-width: 30rem; }
+  [role="tablist"] { display: flex; border-bottom: 2px solid #14171a; }
+  [role="tab"] { min-height: 44px; padding: 0 1rem; border: 1px solid #857f72; border-bottom: 0; margin-right: -1px; background: #fff; color: #14171a; font: inherit; cursor: pointer; }
+  /* The selected tab: bold, a thick top border, and joined to its panel. Not colour alone. */
+  [role="tab"][aria-selected="true"] { border: 2px solid #14171a; border-top-width: 4px; border-bottom: 0; margin-bottom: -2px; padding-bottom: 2px; background: #fff; font-weight: 700; }
+  [role="tabpanel"] { padding: 0.75rem 1rem; border: 2px solid #14171a; border-top: 0; background: #fff; }
+  [role="tabpanel"] p { margin: 0; }
+  [role="tabpanel"]:focus-visible { outline-offset: -3px; }
+</style>
