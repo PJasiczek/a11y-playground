@@ -14,6 +14,8 @@ export const polishRoles: Record<string, string> = {
   dialog: "okno dialogowe",
   figure: "rycina",
   form: "formularz",
+  grid: "siatka",
+  gridcell: "komórka",
   group: "grupa",
   heading: "nagłówek",
   img: "grafika",
@@ -36,8 +38,12 @@ export const polishRoles: Record<string, string> = {
   switch: "przełącznik",
   tab: "karta",
   table: "tabela",
+  tablist: "lista kart",
+  tabpanel: "panel karty",
   textbox: "pole edycji",
   tooltip: "dymek",
+  tree: "drzewo",
+  treeitem: "element drzewa",
 };
 
 /**
@@ -74,6 +80,7 @@ export const reportedAttributes = [
   "aria-modal",
   "aria-pressed",
   "aria-relevant",
+  "aria-roledescription",
   "aria-selected",
   "aria-sort",
   "aria-valuemax",
