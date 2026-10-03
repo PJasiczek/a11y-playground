@@ -1,0 +1,94 @@
+<div class="stage">
+  <h2 id="koszyk-naglowek" tabindex="-1">Koszyk</h2>
+  <table>
+    <caption class="visually-hidden">Produkty w koszyku</caption>
+    <thead>
+      <tr><th scope="col">Produkt</th><th scope="col">Ilość</th><th scope="col">Cena</th><th scope="col"><span class="visually-hidden">Działania</span></th></tr>
+    </thead>
+    <tbody>
+      <tr data-price="49">
+        <th scope="row">Kubek termiczny</th>
+        <td class="qty"><button type="button" data-step="-1" aria-label="Zmniejsz ilość: Kubek termiczny">−</button> <span>1</span> <button type="button" data-step="1" aria-label="Zwiększ ilość: Kubek termiczny">+</button></td>
+        <td>49 zł</td>
+        <td><button type="button" class="remove" aria-label="Usuń: Kubek termiczny">Usuń</button></td>
+      </tr>
+      <tr data-price="79">
+        <th scope="row">Termos</th>
+        <td class="qty"><button type="button" data-step="-1" aria-label="Zmniejsz ilość: Termos">−</button> <span>1</span> <button type="button" data-step="1" aria-label="Zwiększ ilość: Termos">+</button></td>
+        <td>79 zł</td>
+        <td><button type="button" class="remove" aria-label="Usuń: Termos">Usuń</button></td>
+      </tr>
+    </tbody>
+  </table>
+  <p id="razem" class="total" aria-live="polite" aria-atomic="true">Razem: 2 produkty, 128 zł</p>
+</div>
+
+<dialog role="alertdialog" aria-labelledby="usun-pytanie">
+  <p id="usun-pytanie" class="question"></p>
+  <form method="dialog" class="actions">
+    <button value="anuluj" autofocus>Anuluj</button>
+    <button value="usun" class="danger">Usuń</button>
+  </form>
+</dialog>
+
+<script>
+  const tbody = document.querySelector("tbody");
+  const total = document.getElementById("razem");
+  const dialog = document.querySelector("dialog");
+  const word = (n) => (n === 1 ? "produkt" : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? "produkty" : "produktów");
+  let removing = null;
+
+  // The total is one atomic live region: every change reads the whole sentence, once.
+  const update = () => {
+    let items = 0;
+    let sum = 0;
+    for (const row of tbody.rows) {
+      const quantity = Number(row.querySelector(".qty span").textContent);
+      items += quantity;
+      sum += quantity * Number(row.dataset.price);
+    }
+    total.textContent = items ? `Razem: ${items} ${word(items)}, ${sum} zł` : "Koszyk jest pusty.";
+  };
+
+  tbody.addEventListener("click", (event) => {
+    const button = event.target.closest("button");
+    if (!button) return;
+    const row = button.closest("tr");
+    if (button.classList.contains("remove")) {
+      removing = row;
+      document.getElementById("usun-pytanie").textContent = `Usunąć „${row.querySelector("th").textContent}” z koszyka?`;
+      dialog.showModal();
+      return;
+    }
+    const quantity = row.querySelector(".qty span");
+    quantity.textContent = String(Math.max(1, Number(quantity.textContent) + Number(button.dataset.step)));
+    update();
+  });
+
+  dialog.addEventListener("close", () => {
+    if (dialog.returnValue !== "usun" || !removing) return;
+    removing.remove();
+    removing = null;
+    update();
+    // The button that opened the dialog is gone, so focus goes to the cart's heading.
+    document.getElementById("koszyk-naglowek").focus();
+  });
+</script>
+
+<style>
+  .stage { min-height: 18rem; }
+  h2 { margin: 0 0 0.5rem; font-size: 1.25rem; }
+  table { border-collapse: collapse; background: #fff; }
+  th, td { padding: 0.25rem 0.6rem; border-bottom: 1px solid #dfdbd1; text-align: left; }
+  thead th { font-size: 0.875rem; }
+  .qty { white-space: nowrap; }
+  .qty span { display: inline-block; min-width: 1.5rem; text-align: center; font-weight: 700; }
+  button { min-height: 44px; min-width: 44px; padding: 0 0.75rem; border: 2px solid #14171a; border-radius: 4px; background: #fff; color: #14171a; font: inherit; font-weight: 600; cursor: pointer; }
+  .total { margin: 0.75rem 0 0; font-weight: 700; }
+  dialog { width: min(22rem, 90vw); padding: 1.25rem; border: 2px solid #14171a; border-radius: 6px; }
+  dialog::backdrop { background: rgb(20 23 26 / 0.5); }
+  .question { margin: 0; font-weight: 700; font-size: 1.125rem; }
+  .actions { display: flex; gap: 0.5rem; margin-top: 1rem; }
+  .danger { border-color: #9a1b1b; background: #9a1b1b; color: #fff; }
+  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+</style>
