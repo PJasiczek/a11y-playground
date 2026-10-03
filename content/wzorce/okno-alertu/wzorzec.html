@@ -1,0 +1,37 @@
+<div class="stage">
+  <p class="address" id="adres">Adres dostawy: ul. Długa 5, Kraków</p>
+  <button type="button" id="usun-adres">Usuń adres</button>
+  <p role="status" id="wynik" class="status"></p>
+</div>
+
+<dialog role="alertdialog" aria-labelledby="pytanie" aria-describedby="skutek">
+  <h2 id="pytanie">Usunąć adres?</h2>
+  <p id="skutek">Adresu nie da się przywrócić, trzeba go wpisać od nowa.</p>
+  <form method="dialog" class="actions">
+    <button value="anuluj" autofocus>Anuluj</button>
+    <button value="usun" class="danger">Usuń</button>
+  </form>
+</dialog>
+
+<script>
+  const dialog = document.querySelector("dialog");
+  document.getElementById("usun-adres").addEventListener("click", () => dialog.showModal());
+  dialog.addEventListener("close", () => {
+    if (dialog.returnValue !== "usun") return;
+    document.getElementById("adres").textContent = "Adres dostawy: brak.";
+    document.getElementById("wynik").textContent = "Usunięto adres dostawy.";
+  });
+</script>
+
+<style>
+  .stage { min-height: 20rem; }
+  .address { margin: 0 0 0.5rem; }
+  .status { min-height: 1.5rem; margin: 0.5rem 0 0; }
+  button { min-height: 44px; padding: 0 1rem; border: 2px solid #14171a; border-radius: 4px; background: #fff; color: #14171a; font: inherit; font-weight: 600; cursor: pointer; }
+  dialog { width: min(24rem, 90vw); padding: 1.25rem; border: 2px solid #14171a; border-radius: 6px; }
+  dialog::backdrop { background: rgb(20 23 26 / 0.5); }
+  dialog h2 { margin: 0 0 0.5rem; font-size: 1.25rem; }
+  dialog p { margin: 0; }
+  .actions { display: flex; gap: 0.5rem; margin-top: 1rem; }
+  .danger { border-color: #9a1b1b; background: #9a1b1b; color: #fff; }
+</style>
