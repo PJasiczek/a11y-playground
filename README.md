@@ -27,6 +27,7 @@ The interface is in Polish. This README is in English.
 - Main navigation that wraps onto its own row on narrow screens instead of hiding behind a menu button.
 - Light and dark mode. It follows the operating system by default, and the header toggle stores an explicit choice.
 - Skip link, a stable landmark structure, and focus moved to the new `h1` with the page title announced after every client-side route change.
+- **Struktura strony**, a button in the bottom right corner of every page, after the W3C [landmarks example](https://www.w3.org/WAI/ARIA/apg/patterns/landmarks/examples/general-principles.html). Its panel has two switches, "Punkty orientacyjne" and "Nagłówki", which outline the landmarks and headings of the page you are on, each with a label naming its role or level. The panel lists the same as text, with what is wrong (no `main`, two navigations nobody can tell apart, a skipped heading level), and every row moves focus to its element, the way a screen reader jumps with D or H. The switches last for the browser tab.
 - **Criteria list** (`/kryteria`) with filters for WCAG version, level, principle and role. The filters are native radio buttons and checkboxes, their state lives in the URL, and the result count is announced to screen readers.
 - **Criterion pages** (`/kryteria/1.4.3`) with a fixed section order, a "nowe w 2.2" badge for the nine new criteria, and 4.1.1 marked as removed in 2.2. Every page is prerendered to static HTML.
 - **Explanations** for all 86 criteria of WCAG 2.2, A, AA and AAA: who it affects, how to meet it by role, typical errors, how to test it, common confusions. 4.1.1 gets a short page on why 2.2 removed it and why the 2019 act still lists it. Drafts carry a visible "szkic, czeka na weryfikację" badge.
@@ -61,6 +62,10 @@ The interface is in Polish. This README is in English.
 | Patterns | Pattern page |
 | --- | --- |
 | ![Pattern catalogue with a still of each pattern and the native element filter](docs/screenshots/patterns.png) | ![The expand and collapse pattern with the exercise half done and the screen reader log beside it](docs/screenshots/pattern-page.png) |
+
+| Struktura strony |
+| --- |
+| ![Landmarks of a criterion page outlined, with the panel listing them as a tree](docs/screenshots/structure.png) |
 
 | Colour vision | Screen reader | Simulators |
 | --- | --- | --- |

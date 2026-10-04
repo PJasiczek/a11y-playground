@@ -49,6 +49,11 @@
 }
 
 @layer base {
+  /* 2.4.11: the "Struktura strony" button is fixed to the bottom corner, so focus scrolled into view stops above it. */
+  html {
+    scroll-padding-bottom: 4.5rem;
+  }
+
   body {
     @apply bg-paper font-sans text-ink antialiased;
   }
