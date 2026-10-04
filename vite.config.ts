@@ -4,7 +4,7 @@ import viteReact from "@vitejs/plugin-react";
 import { nitro } from "nitro/vite";
 import { readdirSync } from "node:fs";
 import { defineConfig } from "vite";
-import { patternLogPlugin } from "./src/content/pattern-log.vite.ts";
+import { frameScriptPlugin } from "./src/content/frame-script.vite.ts";
 import { readingOrderPlugin } from "./src/content/reading-order.vite.ts";
 import { acts, legalUnits } from "./src/content/legal.gen.ts";
 import { criteria } from "./src/content/wcag.gen.ts";
@@ -19,7 +19,7 @@ export default defineConfig({
   // Nitro picks the Vercel preset automatically when the build runs on Vercel.
   plugins: [
     readingOrderPlugin(),
-    patternLogPlugin(),
+    frameScriptPlugin({ id: "virtual:pattern-log", entry: "src/content/pattern-log.entry.ts", name: "a11yPatternLog" }),
     tailwindcss(),
     tanstackStart({
       // Content is static, so every page is rendered to HTML at build time. Crawling finds the
