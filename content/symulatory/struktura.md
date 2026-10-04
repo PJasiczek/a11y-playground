@@ -2,7 +2,7 @@
 title: Struktura strony
 summary: Obrysy pokazują punkty orientacyjne i nagłówki, czyli to, między czym czytnik ekranu pozwala skakać.
 criteria: ["1.3.1", "2.4.1", "2.4.6"]
-examples: [tabela-z-naglowkami]
+examples: [punkty-orientacyjne-i-naglowki, tabela-z-naglowkami]
 limits: Pokazuje tylko punkty orientacyjne i nagłówki, nie listy, tabele ani łącza, po których czytnik też potrafi skakać. Przykład to zwykle fragment strony, więc uwagi o braku obszaru głównego albo H1 dotyczą fragmentu, nie całej strony.
 status: szkic
 ---

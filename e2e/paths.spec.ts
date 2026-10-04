@@ -30,7 +30,7 @@ test("the developer path can be completed from the keyboard and survives a reloa
   await press(page, page.getByRole("link", { name: /^Zacznij: 01/ }), "Enter");
 
   for (let lesson = 1; ; lesson++) {
-    await expect(page.getByText(`Lekcja ${String(lesson)} z 7`)).toBeVisible();
+    await expect(page.getByText(`Lekcja ${String(lesson)} z 8`)).toBeVisible();
     if (lesson === 1) await answerQuiz(page);
     const done = page.getByRole("button", { name: "Lekcja ukończona" });
     await press(page, done, "Space");
@@ -41,12 +41,12 @@ test("the developer path can be completed from the keyboard and survives a reloa
     if (end) break;
   }
 
-  await expect(page.getByText("Ścieżka ukończona: wszystkie 7 lekcji.")).toBeVisible();
+  await expect(page.getByText("Ścieżka ukończona: wszystkie 8 lekcji.")).toBeVisible();
   await expect(page.getByText(/^quiz \d z 3$/)).toBeVisible();
   await page.reload();
-  await expect(page.getByText("Ścieżka ukończona: wszystkie 7 lekcji.")).toBeVisible();
+  await expect(page.getByText("Ścieżka ukończona: wszystkie 8 lekcji.")).toBeVisible();
   await page.goto("/sciezki");
-  await expect(page.getByText("ukończono 7 z 7")).toBeVisible();
+  await expect(page.getByText("ukończono 8 z 8")).toBeVisible();
 });
 
 test("a lesson and its quiz have no axe violations before checking, after checking and on the summary", async ({ page }) => {

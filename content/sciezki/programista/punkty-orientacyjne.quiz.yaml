@@ -1,0 +1,44 @@
+- id: czego-brakuje
+  prompt: Włącz „Punkty orientacyjne” w przykładzie. Czego brakuje w wersji zepsutej?
+  options:
+    - text: Obszaru głównego (main)
+      correct: true
+      why: Treść leży w zwykłym div, więc czytnik nie ma skrótu, który prowadzi prosto do niej.
+    - text: Banera (header)
+      correct: true
+      why: Górny pasek z logo i menu to div. Tylko nawigacja w nim jest punktem orientacyjnym.
+    - text: Stopki (footer)
+      correct: true
+      why: Stopka to div, więc czytnik nie poda jej jako informacji o zawartości.
+    - text: Formularza wyszukiwania
+      why: Na tej stronie nie ma wyszukiwarki, więc nie ma czego oznaczać.
+- id: dwie-nawigacje
+  prompt: Na stronie są dwie nawigacje. Co z nimi zrobić?
+  options:
+    - text: Dać każdej inną nazwę w aria-label
+      correct: true
+      why: Wtedy czytnik powie „nawigacja Główna” i „nawigacja Aktualności”, a nie dwa razy to samo.
+    - text: Zamienić jedną z nich na div
+      why: Wtedy znika punkt orientacyjny, a z nim skrót do tych łączy.
+    - text: Dodać obu role="navigation"
+      why: Element nav ma już tę rolę. Atrybut niczego nie zmieni, nazw nadal nie będzie.
+- id: przeskok
+  prompt: Po h1 przychodzi h4, bo h4 ma rozmiar, który pasuje do projektu. Co poprawić?
+  options:
+    - text: Zmienić go na h2 i ustawić rozmiar w CSS
+      correct: true
+      why: Poziom mówi czytnikowi o strukturze, rozmiar to sprawa wyglądu.
+    - text: Nic, czytnik nie zwraca uwagi na poziomy
+      why: Czytnik podaje poziom każdego nagłówka, a lista nagłówków pokazuje go jako spis z wcięciami.
+    - text: Zamienić go na pogrubiony akapit
+      why: Wtedy nagłówek w ogóle znika z listy nagłówków czytnika.
+- id: pogrubiony-tekst
+  prompt: „Ulica Polna” to pogrubiony akapit, który wygląda jak nagłówek. Które kryterium to łamie?
+  options:
+    - criterion: "1.3.1"
+      correct: true
+      why: Struktura widoczna na ekranie, czyli nagłówek sekcji, nie jest zapisana w kodzie.
+    - criterion: "2.4.6"
+      why: To kryterium wymaga, by nagłówki dobrze opisywały treść. Tu nagłówka w kodzie w ogóle nie ma.
+    - criterion: "1.4.3"
+      why: Kontrast tekstu jest w porządku. Problem jest w kodzie, nie w kolorach.

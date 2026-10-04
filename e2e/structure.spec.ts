@@ -36,3 +36,19 @@ test.describe("Struktura strony", () => {
     await expect(page.locator("#a11y-structure-styles")).toHaveCount(0);
   });
 });
+
+test("the structure simulations outline both frames and list what each one is missing", async ({ page }) => {
+  await page.goto("/praktyka/punkty-orientacyjne-i-naglowki?symulacja=punkty-orientacyjne");
+  const good = page.frameLocator('iframe[data-variant="good"]');
+  // Findings are list items; the variant's own description says some of the same words.
+  const badFinding = (text: string) => page.getByRole("region", { name: "Zepsute" }).getByRole("listitem").filter({ hasText: text });
+  await expect(good.locator("main")).toHaveAttribute("data-a11y-landmark", "główny");
+  await expect(page.getByRole("region", { name: "Poprawne" }).getByText("Bez uwag.")).toBeVisible();
+  await expect(badFinding("Brak obszaru głównego")).toBeVisible();
+
+  await page.getByRole("radio", { name: /^Nagłówki/ }).check();
+  const bad = page.frameLocator('iframe[data-variant="bad"]');
+  await expect(bad.locator("h4")).toHaveAttribute("data-a11y-heading", "H4 · pominięte H2–H3");
+  await expect(bad.locator("[data-a11y-landmark]")).toHaveCount(0);
+  await expect(badFinding("Po H1 od razu H4")).toBeVisible();
+});
