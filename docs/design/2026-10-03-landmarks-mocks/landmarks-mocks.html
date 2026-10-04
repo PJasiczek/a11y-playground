@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Landmarks and headings mocks: the switch, the outlines, the list, the example</title>
+<style>
+  :root {
+    --paper: #FBFAF7; --paper-2: #F1EFE8; --surface: #FFFFFF;
+    --ink: #14171A; --ink-2: #484D52; --rule: #DFDBD1; --control: #857F72;
+    --accent: #2C36A8; --marker: #F4E75B; --good: #145537; --bad: #9A1B1B;
+    /* landmark hues: each at least 4.5:1 on --paper, never the only cue (label text + line style) */
+    --l-banner: #8A4B00; --l-nav: #0A6363; --l-main: #6A2C91; --l-region: #5E5300;
+    --l-search: #A3135A; --l-info: #3D4A5C;
+    --sans: "Inter var", Inter, "Segoe UI", -apple-system, system-ui, sans-serif;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, "SF Mono", monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 2.5rem 1rem 6rem; background: #000; color: #fff; font: 16px/1.6 var(--sans); }
+  .page { max-width: 1180px; margin: 0 auto; }
+  .page > h1 { font-size: 1.4rem; margin: 0 0 .35rem; letter-spacing: -.02em; }
+  .page > p, .note { color: #B8BDC2; font-size: .9rem; margin: 0 0 1rem; max-width: 76ch; }
+  .page > h2 { font: 600 .8rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; margin: 4rem 0 .6rem; }
+  .page code { font-family: var(--mono); font-size: .9em; }
+  .page a { color: #fff; }
+  .variant { margin: 0 0 3rem; }
+  .variant > h3 { font-size: 1.05rem; margin: 0 0 .25rem; }
+  .variant > h3 b { font-family: var(--mono); display: inline-block; min-width: 1.9rem; }
+  .frame { border: 1px solid #2A2D31; border-radius: 6px; overflow: hidden; }
+  .two { display: grid; grid-template-columns: 1fr 340px; gap: 0; align-items: stretch; }
+  @media (max-width: 900px) { .two { grid-template-columns: 1fr; } }
+
+  /* product surface, app tokens */
+  .s { background: var(--paper); color: var(--ink); font-size: 15px; }
+  .s a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+  .s h4, .s h5, .s h6 { margin: 0; }
+  .s p { margin: .35rem 0 0; }
+  .mono { font-family: var(--mono); }
+  .btn { display: inline-flex; align-items: center; gap: .4rem; min-height: 44px; padding: 0 .75rem; border: 1px solid var(--control); border-radius: 2px; background: var(--surface); color: var(--ink); font: 600 .875rem var(--sans); }
+  .btn[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .btn[aria-pressed="true"]::before { content: "✓" / ""; }
+  .focus { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+  /* mini app shell */
+  .hd { border-bottom: 1px solid var(--rule); padding: .4rem 1rem; display: flex; flex-wrap: wrap; align-items: center; gap: .25rem .9rem; }
+  .wm { font-weight: 700; min-height: 44px; display: inline-flex; align-items: center; }
+  .wm span { font-family: var(--mono); }
+  .nv { display: flex; flex-wrap: wrap; gap: 0 .1rem; margin-left: auto; font-size: .875rem; color: var(--ink-2); }
+  .nv span { min-height: 44px; display: inline-flex; align-items: center; padding: 0 .45rem; border-bottom: 2px solid transparent; }
+  .nv span.cur { color: var(--ink); font-weight: 600; border-color: var(--ink); }
+  .mn { padding: 1.25rem 1rem 1.5rem; }
+  .kick { font: .75rem var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 .5rem; }
+  .t1 { font-size: 1.75rem; line-height: 1.08; font-weight: 700; letter-spacing: -.03em; margin: 0; max-width: 22ch; }
+  .srch { margin: 1rem 0 0; max-width: 30rem; }
+  .srch label { display: block; font-weight: 600; font-size: .875rem; margin-bottom: .3rem; }
+  .srch div { display: flex; border: 2px solid var(--ink); background: var(--surface); border-radius: 2px; }
+  .srch div i { flex: 1; min-height: 44px; }
+  .srch div b { background: var(--marker); color: var(--ink); border-left: 2px solid var(--ink); padding: 0 .9rem; display: inline-flex; align-items: center; }
+  .sec { margin-top: 1.5rem; padding-top: .75rem; border-top: 2px solid var(--ink); }
+  .t2 { font-size: 1.25rem; font-weight: 700; letter-spacing: -.02em; margin: 0; }
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: .6rem; margin-top: .7rem; }
+  @media (max-width: 640px) { .cards { grid-template-columns: 1fr; } }
+  .card { border: 1px solid var(--rule); background: var(--surface); padding: .6rem .7rem; }
+  .card .t3 { font-size: .95rem; font-weight: 700; margin: 0; }
+  .card p { font-size: .8rem; color: var(--ink-2); }
+  .ft { border-top: 1px solid var(--rule); padding: .9rem 1rem; font-size: .8125rem; color: var(--ink-2); display: flex; flex-wrap: wrap; gap: .4rem 1.5rem; justify-content: space-between; }
+
+  /* outlines, style A: hue + line style + label tab (APG-like) */
+  .lm { position: relative; outline-offset: -3px; }
+  .lm::before { content: attr(data-l) / ""; position: absolute; top: 0; left: 0; z-index: 2; font: 700 .6875rem/1 var(--mono); padding: .22rem .4rem; color: #fff; letter-spacing: .02em; pointer-events: none; }
+  .A .banner { outline: 3px solid var(--l-banner); } .A .banner::before { background: var(--l-banner); }
+  .A .nav { outline: 3px dashed var(--l-nav); } .A .nav::before { background: var(--l-nav); }
+  .A .main { outline: 4px double var(--l-main); } .A .main::before { background: var(--l-main); }
+  .A .region { outline: 3px dotted var(--l-region); } .A .region::before { background: var(--l-region); }
+  .A .search { outline: 3px solid var(--l-search); } .A .search::before { background: var(--l-search); }
+  .A .info { outline: 3px solid var(--l-info); } .A .info::before { background: var(--l-info); }
+  .A .lm { padding-top: 1.6rem; }
+  .A .main.lm { padding-top: 2.1rem; }
+
+  /* style B: ink only, number tags, legend in the list */
+  .B .lm { outline: 2px dashed var(--ink); }
+  .B .lm::before { background: var(--ink); color: var(--paper); border-radius: 0 0 2px 0; }
+  .B .lm { padding-top: 1.5rem; }
+  .B .main.lm { outline-width: 3px; outline-style: solid; padding-top: 2rem; }
+
+  /* style C: tinted fill + hatch, label in the right corner */
+  .C .lm { outline: 2px solid var(--l); background-image: repeating-linear-gradient(135deg, color-mix(in srgb, var(--l) 9%, transparent) 0 6px, transparent 6px 12px); }
+  .C .lm::before { left: auto; right: 0; background: var(--paper); color: var(--l); border: 2px solid var(--l); border-top: 0; border-right: 0; }
+  .C .banner { --l: var(--l-banner); } .C .nav { --l: var(--l-nav); } .C .main { --l: var(--l-main); }
+  .C .region { --l: var(--l-region); } .C .search { --l: var(--l-search); } .C .info { --l: var(--l-info); }
+
+  /* heading badges */
+  .hb { display: inline-block; font: 700 .6875rem/1 var(--mono); background: var(--ink); color: var(--paper); padding: .2rem .35rem; margin-right: .4rem; vertical-align: .25em; border-radius: 2px; }
+  .hb.warn { background: var(--bad); }
+  .hdl { outline: 2px dotted var(--ink); outline-offset: 2px; }
+
+  /* side list */
+  .side { background: var(--surface); color: var(--ink); border-left: 1px solid var(--rule); padding: 1rem; font-size: .875rem; }
+  @media (max-width: 900px) { .side { border-left: 0; border-top: 1px solid var(--rule); } }
+  .side h4 { font: 600 .75rem var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 .5rem; }
+  .side .sw { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1rem; }
+  .tree, .tree ul { list-style: none; margin: 0; padding: 0; }
+  .tree ul { padding-left: 1rem; border-left: 1px solid var(--rule); margin-left: .5rem; }
+  .tree li { margin: 0; }
+  .go { display: flex; width: 100%; align-items: center; gap: .5rem; min-height: 44px; padding: .2rem .4rem; border: 0; background: none; text-align: left; font: inherit; color: var(--ink); border-bottom: 1px solid var(--rule); }
+  .go .r { font: 600 .75rem var(--mono); color: var(--ink-2); min-width: 6.5rem; }
+  .go .sw-c { width: .8rem; height: .8rem; flex: none; border: 2px solid var(--c, var(--ink)); }
+  .warns { margin: .9rem 0 0; padding: .6rem .7rem; border: 2px solid var(--bad); border-left-width: 6px; }
+  .warns p { margin: 0; font-weight: 700; color: var(--bad); }
+  .warns ul { margin: .3rem 0 0; padding-left: 1.1rem; }
+  .ok { margin: .9rem 0 0; padding: .6rem .7rem; border: 2px solid var(--good); border-left-width: 6px; color: var(--good); font-weight: 700; }
+  .ok::before, .warns p::before { font-family: var(--mono); }
+  .ok::before { content: "✓ " / ""; } .warns p::before { content: "! " / ""; }
+
+  /* bar variant */
+  .bar { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .75rem; padding: .5rem 1rem; background: var(--ink); color: var(--paper); font-size: .875rem; }
+  .bar strong { margin-right: auto; }
+  .bar .btn { background: transparent; color: var(--paper); border-color: #9AA0A6; }
+  .bar .btn[aria-pressed="true"] { background: var(--paper); color: var(--ink); }
+  .fab { position: absolute; right: 1rem; bottom: 1rem; }
+  .pop { position: absolute; right: 1rem; bottom: 4.25rem; width: min(320px, calc(100% - 2rem)); background: var(--surface); border: 2px solid var(--ink); box-shadow: 0 6px 24px rgba(0,0,0,.18); padding: .9rem; z-index: 5; }
+  .rel { position: relative; }
+
+  /* example page mock */
+  .ex { display: grid; grid-template-columns: 1fr 250px; gap: 1.25rem; padding: 1.25rem; }
+  @media (max-width: 900px) { .ex { grid-template-columns: 1fr; } }
+  .pane { background: var(--surface); padding: .8rem 1rem 1rem; margin-bottom: 1rem; border: 1px solid var(--rule); }
+  .pane > h4 { font-size: 1.05rem; margin: 0 0 .5rem; }
+  .pane > h4 .g { font-family: var(--mono); margin-right: .35rem; }
+  .bad { color: var(--bad); } .good { color: var(--good); }
+  .demo { background: #fff; border: 2px solid var(--control); font: 14px/1.45 "Segoe UI", system-ui, sans-serif; color: #14171A; }
+  .demo .dh { padding: .35rem .7rem; display: flex; flex-wrap: wrap; gap: .3rem 1rem; align-items: center; border-bottom: 1px solid #ddd; }
+  .demo .dm { padding: .6rem .7rem; }
+  .demo .dn { display: flex; gap: .8rem; color: #2C36A8; text-decoration: underline; font-size: .8rem; }
+  .demo .df { padding: .45rem .7rem; border-top: 1px solid #ddd; font-size: .75rem; color: #555; }
+  .demo .fake-h { font-weight: 700; font-size: 1.1rem; }
+  .rail fieldset { border: 0; padding: 0; margin: 0; }
+  .rail legend { font: 600 .75rem var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); margin-bottom: .4rem; }
+  .rail ul { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--ink); }
+  .rail li { border-bottom: 1px solid var(--rule); padding: .45rem 0; display: grid; grid-template-columns: 1.3rem 1fr; gap: .5rem; font-size: .875rem; }
+  .rail li small { display: block; color: var(--ink-2); font-size: .75rem; }
+  .rail li.on { font-weight: 700; }
+  .rail .grp { font: 600 .6875rem var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); padding: .7rem 0 .2rem; display: block; border-bottom: 1px solid var(--rule); }
+  .radio { width: 1.1rem; height: 1.1rem; border: 2px solid var(--ink); border-radius: 50%; margin-top: .15rem; }
+  .on .radio { box-shadow: inset 0 0 0 3px #fff; background: var(--ink); }
+  .simnote { border: 1px solid var(--rule); border-left: 4px solid var(--ink); background: var(--surface); padding: .6rem .9rem; margin: 0 0 1rem; font-size: .875rem; }
+  .task { list-style: none; margin: .5rem 0 0; padding: 0; counter-reset: t; }
+  .task li { display: grid; grid-template-columns: 1.6rem 1fr; gap: .5rem; padding: .45rem 0; border-bottom: 1px solid var(--rule); font-size: .875rem; }
+  .task li i { font-style: normal; font: 700 .9rem var(--mono); }
+  .task li.done { color: var(--good); }
+  .task li.done span { color: var(--ink); }
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+  @media (max-width: 640px) { .compare { grid-template-columns: 1fr; } }
+  .compare table { width: 100%; border-collapse: collapse; font-size: .8125rem; }
+  .compare th, .compare td { border-bottom: 1px solid var(--rule); padding: .3rem .25rem; text-align: left; vertical-align: top; }
+  .compare th { font: 600 .6875rem var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--ink-2); }
+  .compare .miss td { color: var(--bad); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="page">
+<h1>Landmarks and headings: mocks</h1>
+<p>Plan: <a href="../2026-10-03-phase-10-landmarks/phase-10-landmarks.en.html">phase-10-landmarks.en.html</a>. Pick one variant per section. Surfaces use the app's light tokens; the dark theme follows the same rules with the dark tokens. Interface copy is Polish, as in the app. The page shown is a simplified home page with the site footer from decision 1.</p>
+
+<!-- ============================================================ 1 -->
+<h2>1. Where the switches live</h2>
+<p class="note">The two switches are <code>aria-pressed</code> buttons, as on the APG page. The text list (section 3) is always shown next to the outlines, so the outlines are never the only way to get the information.</p>
+
+<section class="variant" aria-labelledby="v1a">
+  <h3 id="v1a"><b>1A</b> In the header, next to the theme toggle</h3>
+  <p class="note">Always one Tab away on every page. Costs header width: on narrow screens it wraps under the navigation with the theme toggle. Turning one on opens the list as a panel on the right.</p>
+  <div class="frame s">
+    <div class="hd">
+      <span class="wm"><span>a11y</span>&nbsp;playground</span>
+      <span class="nv"><span>Start</span><span>Kryteria</span><span>Praktyka</span><span class="cur">Symulatory</span><span>Słownik</span></span>
+      <span style="display:flex;gap:.35rem;flex-wrap:wrap">
+        <span class="btn" aria-pressed="true">Punkty orientacyjne</span>
+        <span class="btn">Nagłówki</span>
+        <span class="btn">☾ Motyw</span>
+      </span>
+    </div>
+    <div class="mn"><p class="kick">Struktura strony</p><p class="t1" style="font-size:1.3rem">Obrysy pokazują się na tej stronie, a lista z prawej mówi to samo słowami.</p></div>
+  </div>
+</section>
+
+<section class="variant" aria-labelledby="v1b">
+  <h3 id="v1b"><b>1B</b> A bar under the header, switched on from /symulatory</h3>
+  <p class="note">/symulatory gets a card "Struktura strony" with "Włącz na całej aplikacji". From then on a dark bar sits under the header on every page until "Wyłącz". The header stays as it is today; people who never use the tool never see it.</p>
+  <div class="frame s">
+    <div class="hd">
+      <span class="wm"><span>a11y</span>&nbsp;playground</span>
+      <span class="nv"><span>Start</span><span>Kryteria</span><span>Praktyka</span><span class="cur">Symulatory</span><span>Słownik</span></span>
+    </div>
+    <div class="bar">
+      <strong>Struktura strony</strong>
+      <span class="btn" aria-pressed="true">Punkty orientacyjne</span>
+      <span class="btn" aria-pressed="false">Nagłówki</span>
+      <span class="btn">Lista</span>
+      <span class="btn">Wyłącz</span>
+    </div>
+    <div class="mn"><p class="t1" style="font-size:1.3rem">Kryteria</p><p style="color:var(--ink-2)">Obrysy działają na każdej stronie, aż wyłączysz pasek.</p></div>
+  </div>
+</section>
+
+<section class="variant" aria-labelledby="v1c">
+  <h3 id="v1c"><b>1C</b> A floating button that opens a popover</h3>
+  <p class="note">One button in the bottom right corner, a native <code>popover</code> with the two switches and the list. Takes no layout space, but it covers content at 320 px and at 400% zoom it can hide what has focus (2.4.11). Shown for comparison; I would not pick it.</p>
+  <div class="frame s rel" style="min-height:330px">
+    <div class="hd">
+      <span class="wm"><span>a11y</span>&nbsp;playground</span>
+      <span class="nv"><span>Start</span><span class="cur">Kryteria</span><span>Praktyka</span><span>Słownik</span></span>
+    </div>
+    <div class="mn"><p class="t1" style="font-size:1.3rem">Kryteria</p></div>
+    <div class="pop">
+      <h4 style="font-size:1rem;margin:0 0 .5rem">Struktura strony</h4>
+      <div style="display:flex;gap:.4rem;flex-wrap:wrap"><span class="btn" aria-pressed="true">Punkty orientacyjne</span><span class="btn">Nagłówki</span></div>
+      <p style="font-size:.8125rem;color:var(--ink-2);margin-top:.6rem">4 punkty orientacyjne, 1 uwaga.</p>
+    </div>
+    <span class="btn fab focus" aria-pressed="true">◫ Struktura</span>
+  </div>
+</section>
+
+<!-- ============================================================ 2 -->
+<h2>2. How the outlines look</h2>
+<p class="note">All three draw on the real page: <code>header</code>, the "Główna" navigation, <code>main</code>, the search form, the two named sections (regions) and the footer. Every outline carries its label as text, so colour is never the only cue. Labels are drawn with <code>content: attr(...) / ""</code>, so screen readers skip them; the list carries the same text.</p>
+
+<section class="variant" aria-labelledby="v2a">
+  <h3 id="v2a"><b>2A</b> Hue, line style and a label tab, like the APG page</h3>
+  <p class="note">Each landmark type has a hue and a line style (solid, dashed, double, dotted) and a filled tab with role and name. Closest to the W3C page the brief points at.</p>
+  <div class="frame s A">
+    <div class="hd lm banner" data-l="baner">
+      <span class="wm"><span>a11y</span>&nbsp;playground</span>
+      <span class="nv lm nav" data-l="nawigacja: Główna" style="padding-top:1.5rem"><span class="cur">Start</span><span>Kryteria</span><span>Praktyka</span><span>Słownik</span></span>
+    </div>
+    <div class="mn lm main" data-l="główny">
+      <p class="kick">WCAG 2.1 · WCAG 2.2 · prawo polskie</p>
+      <p class="t1">Zacznij od tego, co psuje najwięcej.</p>
+      <div class="srch lm search" data-l="wyszukiwanie" style="padding:1.6rem .5rem .5rem"><label>Szukaj w kryteriach, przykładach i słowniku</label><div><i></i><b>Szukaj</b></div></div>
+      <div class="sec lm region" data-l="region: Napraw to najpierw">
+        <p class="t2">Napraw to najpierw</p>
+        <div class="cards"><div class="card"><p class="t3">Ikona jako przycisk</p><p>1 linia</p></div><div class="card"><p class="t3">Obraz dekoracyjny</p><p>1 linia</p></div><div class="card"><p class="t3">Kontrast stanów</p><p>1 token</p></div></div>
+      </div>
+    </div>
+    <div class="ft lm info" data-l="informacje o zawartości"><span>Treści są szkicami do sprawdzenia.</span><span>Kod na GitHubie</span></div>
+  </div>
+</section>
+
+<section class="variant" aria-labelledby="v2b">
+  <h3 id="v2b"><b>2B</b> Ink only, numbered tags, the list is the legend</h3>
+  <p class="note">One dashed ink line for every landmark, <code>main</code> solid. Tags carry a number and the role; the name is in the list under the same number. Calm in both themes and in forced colours, but you need the list to tell regions apart.</p>
+  <div class="frame s B">
+    <div class="hd lm banner" data-l="1 baner">
+      <span class="wm"><span>a11y</span>&nbsp;playground</span>
+      <span class="nv lm nav" data-l="2 nawigacja" style="padding-top:1.4rem"><span class="cur">Start</span><span>Kryteria</span><span>Praktyka</span><span>Słownik</span></span>
+    </div>
+    <div class="mn lm main" data-l="3 główny">
+      <p class="kick">WCAG 2.1 · WCAG 2.2 · prawo polskie</p>
+      <p class="t1">Zacznij od tego, co psuje najwięcej.</p>
+      <div class="srch lm search" data-l="4 wyszukiwanie" style="padding:1.5rem .5rem .5rem"><label>Szukaj w kryteriach, przykładach i słowniku</label><div><i></i><b>Szukaj</b></div></div>
+      <div class="sec lm region" data-l="5 region">
+        <p class="t2">Napraw to najpierw</p>
+        <div class="cards"><div class="card"><p class="t3">Ikona jako przycisk</p><p>1 linia</p></div><div class="card"><p class="t3">Obraz dekoracyjny</p><p>1 linia</p></div><div class="card"><p class="t3">Kontrast stanów</p><p>1 token</p></div></div>
+      </div>
+    </div>
+    <div class="ft lm info" data-l="7 informacje o zawartości" style="padding-top:1.6rem"><span>Treści są szkicami do sprawdzenia.</span><span>Kod na GitHubie</span></div>
+  </div>
+</section>
+
+<section class="variant" aria-labelledby="v2c">
+  <h3 id="v2c"><b>2C</b> Hatched fill, label in the corner</h3>
+  <p class="note">A faint hatch fills each landmark, so nesting reads as layers. The label sits top right, away from the content that starts top left. The hatch stays under 10% so text keeps its contrast, but it is the busiest of the three.</p>
+  <div class="frame s C">
+    <div class="hd lm banner" data-l="baner">
+      <span class="wm"><span>a11y</span>&nbsp;playground</span>
+      <span class="nv lm nav" data-l="nawigacja: Główna" style="margin-right:6rem"><span class="cur">Start</span><span>Kryteria</span><span>Praktyka</span><span>Słownik</span></span>
+    </div>
+    <div class="mn lm main" data-l="główny">
+      <p class="kick">WCAG 2.1 · WCAG 2.2 · prawo polskie</p>
+      <p class="t1">Zacznij od tego, co psuje najwięcej.</p>
+      <div class="srch lm search" data-l="wyszukiwanie" style="padding:1.4rem .5rem .5rem"><label>Szukaj w kryteriach, przykładach i słowniku</label><div><i></i><b>Szukaj</b></div></div>
+      <div class="sec lm region" data-l="region: Napraw to najpierw">
+        <p class="t2">Napraw to najpierw</p>
+        <div class="cards"><div class="card"><p class="t3">Ikona jako przycisk</p><p>1 linia</p></div><div class="card"><p class="t3">Obraz dekoracyjny</p><p>1 linia</p></div><div class="card"><p class="t3">Kontrast stanów</p><p>1 token</p></div></div>
+      </div>
+    </div>
+    <div class="ft lm info" data-l="informacje o zawartości"><span>Treści są szkicami do sprawdzenia.</span><span>Kod na GitHubie</span></div>
+  </div>
+</section>
+
+<section class="variant" aria-labelledby="v2h">
+  <h3 id="v2h"><b>2H</b> Headings (one style, goes with any of the above)</h3>
+  <p class="note">A badge with the level before each heading and a dotted outline around it. A skipped level gets a red badge with the word "pominięty", not only the colour.</p>
+  <div class="frame s">
+    <div class="mn">
+      <p class="t1 hdl"><span class="hb">H1</span>Zacznij od tego, co psuje najwięcej.</p>
+      <div class="sec"><p class="t2 hdl"><span class="hb">H2</span>Napraw to najpierw</p>
+        <div class="cards"><div class="card"><p class="t3 hdl"><span class="hb">H3</span>Ikona jako przycisk</p></div><div class="card"><p class="t3 hdl"><span class="hb warn">H5 · pominięty H4</span>Obraz dekoracyjny</p></div><div class="card"><p class="t3 hdl"><span class="hb">H3</span>Kontrast stanów</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ 3 -->
+<h2>3. The list: the same information as text</h2>
+<p class="note">Required, not optional: a blind or low-vision user gets nothing from the outlines. Each row is a button that moves focus to the landmark or heading, the way a screen reader jumps with D or H. The warnings come from the same scan.</p>
+
+<section class="variant" aria-labelledby="v3a">
+  <h3 id="v3a"><b>3A</b> Side panel, landmarks as a tree, headings as an indented outline</h3>
+  <div class="frame two s A">
+    <div>
+      <div class="hd lm banner" data-l="baner"><span class="wm"><span>a11y</span>&nbsp;playground</span><span class="nv lm nav" data-l="nawigacja: Główna" style="padding-top:1.5rem"><span class="cur">Kryteria</span><span>Praktyka</span></span></div>
+      <div class="mn lm main" data-l="główny">
+        <p class="mono" style="font-size:.8rem;color:var(--ink-2)">Kryteria / 1.4.3</p>
+        <p class="t1" style="font-size:1.4rem">1.4.3 Kontrast (minimum)</p>
+        <div class="sec lm region" data-l="region: Kogo to dotyczy"><p class="t2">Kogo to dotyczy</p><p>Osoby po czterdziestce…</p></div>
+        <div class="sec lm region" data-l="region: Jak to spełnić"><p class="t2">Jak to spełnić</p></div>
+      </div>
+    </div>
+    <aside class="side" aria-label="mock: Struktura strony">
+      <h4>Struktura strony</h4>
+      <div class="sw"><span class="btn" aria-pressed="true">Punkty orientacyjne</span><span class="btn">Nagłówki</span></div>
+      <ul class="tree">
+        <li><button class="go" style="--c:var(--l-banner)"><span class="sw-c"></span><span class="r">baner</span></button>
+          <ul><li><button class="go" style="--c:var(--l-nav)"><span class="sw-c"></span><span class="r">nawigacja</span>Główna</button></li></ul></li>
+        <li><button class="go" style="--c:var(--l-main)"><span class="sw-c"></span><span class="r">główny</span></button>
+          <ul>
+            <li><button class="go" style="--c:var(--l-nav)"><span class="sw-c"></span><span class="r">nawigacja</span>Okruszki</button></li>
+            <li><button class="go" style="--c:var(--l-nav)"><span class="sw-c"></span><span class="r">nawigacja</span>Na tej stronie</button></li>
+            <li><button class="go" style="--c:var(--l-region)"><span class="sw-c"></span><span class="r">region</span>Kogo to dotyczy</button></li>
+            <li><button class="go" style="--c:var(--l-region)"><span class="sw-c"></span><span class="r">region</span>Jak to spełnić</button></li>
+            <li><button class="go" style="--c:var(--l-region)"><span class="sw-c"></span><span class="r">region</span>… i 5 kolejnych</button></li>
+          </ul></li>
+      </ul>
+      <div class="warns"><p>2 uwagi</p><ul><li>Brak stopki (informacje o zawartości).</li><li>Każda sekcja to region. Region ma sens dla kilku miejsc, do których warto skakać.</li></ul></div>
+    </aside>
+  </div>
+</section>
+
+<section class="variant" aria-labelledby="v3b">
+  <h3 id="v3b"><b>3B</b> Under the page, two columns, numbered like the tags in 2B</h3>
+  <p class="note">The list sits after <code>main</code>, full width, landmarks left and headings right. Nothing is covered, it works at 320 px, but you scroll to read it.</p>
+  <div class="frame s" style="padding:1rem">
+    <div class="compare">
+      <div><h4 style="font:600 .75rem var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);margin:0 0 .3rem">Punkty orientacyjne · 7</h4>
+        <table><thead><tr><th>#</th><th>Rola</th><th>Nazwa</th></tr></thead><tbody>
+          <tr><td class="mono">1</td><td>baner</td><td>–</td></tr>
+          <tr><td class="mono">2</td><td>nawigacja</td><td>Główna</td></tr>
+          <tr><td class="mono">3</td><td>główny</td><td>–</td></tr>
+          <tr><td class="mono">4</td><td>wyszukiwanie</td><td>–</td></tr>
+          <tr><td class="mono">5</td><td>region</td><td>Napraw to najpierw</td></tr>
+          <tr><td class="mono">6</td><td>region</td><td>Pozostałe przykłady</td></tr>
+          <tr><td class="mono">7</td><td>informacje o zawartości</td><td>–</td></tr>
+        </tbody></table></div>
+      <div><h4 style="font:600 .75rem var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);margin:0 0 .3rem">Nagłówki · 9</h4>
+        <table><thead><tr><th>Poziom</th><th>Tekst</th></tr></thead><tbody>
+          <tr><td class="mono">H1</td><td>Zacznij od tego, co psuje najwięcej.</td></tr>
+          <tr><td class="mono">H2</td><td>Napraw to najpierw</td></tr>
+          <tr><td class="mono">&nbsp;&nbsp;H3</td><td>Ikona jako przycisk</td></tr>
+          <tr><td class="mono">&nbsp;&nbsp;H3</td><td>Obraz dekoracyjny i informacyjny</td></tr>
+          <tr><td class="mono">&nbsp;&nbsp;…</td><td>4 kolejne</td></tr>
+          <tr><td class="mono">H2</td><td>Pozostałe przykłady</td></tr>
+        </tbody></table>
+        <p class="ok" style="font-size:.875rem">Poziomy nagłówków bez przeskoków.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ 4 -->
+<h2>4. The exercise: a sample page in Praktyka</h2>
+<p class="note">A new example, "Punkty orientacyjne i nagłówki": a small municipal page, broken and fixed. Two new simulations, "Punkty orientacyjne" and "Nagłówki", join the rail as their own group and work on every example, like the colour and keyboard ones do today.</p>
+
+<section class="variant" aria-labelledby="v4a">
+  <h3 id="v4a"><b>4A</b> Plain example: outlines in both frames, the difference in a table</h3>
+  <p class="note">No new mechanics. The broken frame shows two outlines where the fixed one shows six; the table under the frames lists what is missing.</p>
+  <div class="frame s">
+    <div class="ex">
+      <div>
+        <div class="simnote"><strong>Punkty orientacyjne.</strong> Obrysy pokazują to, czym czytnik ekranu pozwala skakać po stronie. W wersji zepsutej nagłówek, menu i stopka to zwykłe <code>div</code>.</div>
+        <div class="pane"><h4><span class="g bad">✕</span>Zepsute</h4>
+          <div class="demo A">
+            <div class="dh"><strong>Gmina Zielonka</strong><span class="dn"><span>Aktualności</span><span>Urząd</span><span>Kontakt</span></span></div>
+            <div class="dm"><span class="fake-h">Wywóz odpadów 2026</span><p style="margin:.3rem 0 0">Harmonogram dla ul. Polnej…</p>
+              <div class="lm nav" data-l="nawigacja" style="padding:1.5rem .4rem .4rem;margin-top:.5rem"><span class="dn"><span>Wszystkie</span><span>Archiwum</span></span></div></div>
+            <div class="df">© Gmina Zielonka · Deklaracja dostępności</div>
+          </div></div>
+        <div class="pane"><h4><span class="g good">✓</span>Poprawne</h4>
+          <div class="demo A">
+            <div class="dh lm banner" data-l="baner"><strong>Gmina Zielonka</strong><span class="dn lm nav" data-l="nawigacja: Główna" style="padding-top:1.4rem"><span>Aktualności</span><span>Urząd</span><span>Kontakt</span></span></div>
+            <div class="dm lm main" data-l="główny" style="padding-top:2rem"><span class="fake-h">Wywóz odpadów 2026</span><p style="margin:.3rem 0 0">Harmonogram dla ul. Polnej…</p>
+              <div class="lm nav" data-l="nawigacja: Aktualności" style="padding:1.5rem .4rem .4rem;margin-top:.5rem"><span class="dn"><span>Wszystkie</span><span>Archiwum</span></span></div></div>
+            <div class="df lm info" data-l="informacje o zawartości">© Gmina Zielonka · Deklaracja dostępności</div>
+          </div></div>
+        <div class="compare">
+          <table><caption style="text-align:left;font-weight:700;color:var(--bad)">✕ Zepsute · 1</caption><tbody>
+            <tr class="miss"><td>brak banera</td></tr><tr class="miss"><td>brak obszaru głównego</td></tr><tr><td>nawigacja (bez nazwy)</td></tr><tr class="miss"><td>brak stopki</td></tr></tbody></table>
+          <table><caption style="text-align:left;font-weight:700;color:var(--good)">✓ Poprawne · 5</caption><tbody>
+            <tr><td>baner</td></tr><tr><td>nawigacja: Główna</td></tr><tr><td>główny</td></tr><tr><td>nawigacja: Aktualności</td></tr><tr><td>informacje o zawartości</td></tr></tbody></table>
+        </div>
+      </div>
+      <div class="rail"><fieldset><legend>Symulacja</legend><ul>
+        <li><span class="radio"></span><span>Bez symulacji<small>Tak, jak widzisz ty.</small></span></li>
+        <li><span class="radio"></span><span>Deuteranopia<small>Zieleń i czerwień wyglądają podobnie.</small></span></li>
+        <li><span class="radio"></span><span>Tylko klawiatura<small>Mysz nie działa, fokus dostaje numery.</small></span></li>
+        <li><span class="radio"></span><span>Czytnik ekranu<small>Co przeczyta czytnik, po kolei.</small></span></li>
+        <li style="display:block;padding:0;border:0"><span class="grp">Struktura</span></li>
+        <li class="on"><span class="radio"></span><span>Punkty orientacyjne<small>Obszary, między którymi skacze czytnik.</small></span></li>
+        <li><span class="radio"></span><span>Nagłówki<small>Spis treści, który słyszy czytnik.</small></span></li>
+      </ul></fieldset></div>
+    </div>
+  </div>
+</section>
+
+<section class="variant" aria-labelledby="v4b">
+  <h3 id="v4b"><b>4A + lesson quiz</b> 4A, plus a lesson in the developer path whose quiz is about this frame</h3>
+  <p class="note">The practice part without new mechanics: a lesson "Punkty orientacyjne i nagłówki" in Ścieżki links to the example with <code>?symulacja=punkty-orientacyjne</code>, and its quiz asks what the broken frame is missing. The existing quiz component does the checking and keeps the score. A self-ticking task list inside the example (like the pattern exercises) was considered and dropped: the tool cannot point at something that is missing, so "find the missing main" has nothing to click.</p>
+  <div class="frame s" style="padding:1.25rem">
+    <div style="max-width:640px">
+      <p class="mono" style="font-size:.8rem;color:var(--ink-2);margin:0">Pytanie 2 z 4</p>
+      <fieldset style="border:0;padding:0;margin:.3rem 0 0">
+        <legend style="font-weight:700;font-size:1.05rem">Włącz „Punkty orientacyjne” w przykładzie. Czego brakuje w wersji zepsutej? Zaznacz wszystkie poprawne.</legend>
+        <ul style="list-style:none;padding:0;margin:.6rem 0 0;display:grid;gap:.4rem">
+          <li class="btn" style="justify-content:flex-start;width:100%;font-weight:400"><span class="radio" style="border-radius:2px;background:var(--ink);box-shadow:inset 0 0 0 3px #fff"></span>Obszaru głównego (<code>main</code>)</li>
+          <li class="btn" style="justify-content:flex-start;width:100%;font-weight:400"><span class="radio" style="border-radius:2px"></span>Nazwy drugiej nawigacji</li>
+          <li class="btn" style="justify-content:flex-start;width:100%;font-weight:400"><span class="radio" style="border-radius:2px;background:var(--ink);box-shadow:inset 0 0 0 3px #fff"></span>Stopki (informacje o zawartości)</li>
+          <li class="btn" style="justify-content:flex-start;width:100%;font-weight:400"><span class="radio" style="border-radius:2px"></span>Formularza wyszukiwania</li>
+        </ul>
+      </fieldset>
+      <p style="margin-top:.8rem"><span class="btn" style="background:var(--marker);border:2px solid var(--ink)">Sprawdź</span></p>
+    </div>
+  </div>
+</section>
+
+</div>
+</body>
+</html>

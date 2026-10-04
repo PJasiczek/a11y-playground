@@ -9,7 +9,13 @@ declare module "virtual:reading-order" {
 }
 
 declare module "virtual:pattern-log" {
-  /** The live log of pattern frames as one classic script. See pattern-log.vite.ts. */
+  /** The live log of pattern frames as one classic script. See frame-script.vite.ts. */
+  const script: string;
+  export default script;
+}
+
+declare module "virtual:structure" {
+  /** The landmarks and headings simulations of example frames as one classic script. See frame-script.vite.ts. */
   const script: string;
   export default script;
 }

@@ -1,6 +1,7 @@
 import { createRootRoute, HeadContent, Link, Outlet, Scripts } from "@tanstack/react-router";
 import { RouteAnnouncer } from "~/components/route-announcer";
 import { SiteHeader } from "~/components/site-header";
+import { StructureTool } from "~/components/structure-tool";
 import { themeInitScript } from "~/components/theme-toggle";
 import stylesUrl from "~/styles.css?url";
 
@@ -47,6 +48,7 @@ function RootDocument() {
           <Outlet />
         </main>
         <RouteAnnouncer />
+        <StructureTool />
         <Scripts />
       </body>
     </html>

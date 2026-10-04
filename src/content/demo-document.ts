@@ -40,8 +40,10 @@ const colourFilters = `<svg aria-hidden="true" focusable="false" width="0" heigh
 // hydrates after the frame has already loaded.
 //
 // { a11ySimulation } from the page sets data-symulacja on <html>, which switches the filters
-// above. In "klawiatura" the frame blocks pointer clicks (a click with detail 0 comes from Enter
-// or Space, so it passes), and numbers every element that takes focus, telling the page each step.
+// above, and hands the simulation to a11yStructure, which example frames carry for the
+// structure simulations (see structure.entry.ts). In "klawiatura" the frame blocks pointer
+// clicks (a click with detail 0 comes from Enter or Space, so it passes), and numbers every
+// element that takes focus, telling the page each step.
 const frameScript = `
   const root = document.documentElement;
   const report = () => {
@@ -65,6 +67,7 @@ const frameScript = `
     steps = 0;
     for (const badge of document.querySelectorAll(".a11y-sim-badge")) badge.remove();
     notice.remove();
+    if (typeof a11yStructure !== "undefined") a11yStructure.show(next);
     report();
   };
 
@@ -116,6 +119,12 @@ const frameScript = `
   report();
 `;
 
+/** A bundled script as an inline script element. Nothing in it may close the element early. */
+function inlineScript(source: string) {
+  return `
+<script>${source.replace(/<\/script/gi, "<\\/script")}</script>`;
+}
+
 /** The document every demo frame loads: base styles, the fragment, the colour filters and the frame script. */
 function demoShell({ title, root, fragment, scripts = "" }: { title: string; root: string; fragment: string; scripts?: string }) {
   return `<!doctype html>
@@ -139,10 +148,16 @@ ${colourFilters}
 /**
  * The full HTML document one variant of an example renders in. Served by /demo/$slug/$variant
  * and loaded in a sandboxed iframe, so nothing in it reaches the page around it. The
- * data-example-root marker lets the isolation test prove that.
+ * data-example-root marker lets the isolation test prove that. `structureScript` is the bundle
+ * from virtual:structure, which draws the structure simulations.
  */
-export function demoDocument(example: Example, variant: VariantName) {
-  return demoShell({ title: `Przykład ${variantLabels[variant]}: ${example.title}`, root: variant, fragment: example[variant].source });
+export function demoDocument(example: Example, variant: VariantName, structureScript: string) {
+  return demoShell({
+    title: `Przykład ${variantLabels[variant]}: ${example.title}`,
+    root: variant,
+    fragment: example[variant].source,
+    scripts: inlineScript(structureScript),
+  });
 }
 
 /**
@@ -157,8 +172,7 @@ export function patternDocument(pattern: Pattern, logScript: string) {
     title: `Wzorzec: ${pattern.title}`,
     root: "wzorzec",
     fragment: pattern.source,
-    scripts: `
-<script>${logScript.replace(/<\/script/gi, "<\\/script")}</script>
+    scripts: `${inlineScript(logScript)}
 <script>a11yPatternLog.start(${rows});</script>`,
   });
 }

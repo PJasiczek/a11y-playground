@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan: phase 10, landmarks and headings</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1.25rem 6rem;
+    background: #000; color: #fff;
+    font: 16px/1.65 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  main { max-width: 82ch; margin: 0 auto; }
+  h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 .5rem; letter-spacing: -.02em; }
+  h2 { font-size: 1.2rem; margin: 3rem 0 .75rem; padding-top: 1rem; border-top: 1px solid #262626; letter-spacing: -.01em; }
+  h3 { font-size: 1rem; margin: 1.75rem 0 .5rem; }
+  p, li, dd { color: #e5e5e5; }
+  a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  ul, ol { padding-left: 1.3rem; }
+  li { margin: .3rem 0; }
+  code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .875em; background: #141414; border: 1px solid #262626; border-radius: 3px; padding: .08em .3em; }
+  pre { background: #0b0b0b; border: 1px solid #262626; border-radius: 4px; padding: .9rem 1rem; overflow-x: auto; }
+  pre code { background: none; border: 0; padding: 0; font-size: .82rem; line-height: 1.55; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; display: block; overflow-x: auto; }
+  th, td { border: 1px solid #262626; padding: .45rem .6rem; text-align: left; vertical-align: top; }
+  th { background: #101010; font-weight: 600; }
+  .meta { color: #a3a3a3; font-size: .85rem; margin: 0 0 1.5rem; }
+  .meta a { color: #fff; }
+  .flag { border-left: 2px solid #737373; padding: .1rem 0 .1rem .85rem; margin: 1rem 0; color: #d4d4d4; font-size: .93rem; }
+  .toc { border: 1px solid #262626; padding: 1rem 1rem 1rem 2.4rem; margin: 1.5rem 0 0; }
+  .toc li { margin: .15rem 0; }
+  @media (max-width: 40rem) { body { padding: 1.25rem .9rem 4rem; } h1 { font-size: 1.45rem; } }
+</style>
+</head>
+<body>
+<main>
+
+<p class="meta"><a href="phase-10-landmarks.pl.html" hreflang="pl">Wersja polska</a></p>
+
+<h1>Plan: phase 10, landmarks and headings</h1>
+<p class="meta">Brief: a simulator and a practical exercise after the W3C page <a href="https://www.w3.org/WAI/ARIA/apg/patterns/landmarks/examples/general-principles.html" target="_blank" rel="noopener noreferrer">Landmark Regions, General Principles</a> ("Show Landmarks", "Show Headings"). Mocks: <a href="../2026-10-03-landmarks-mocks/landmarks-mocks.html">landmarks-mocks.html</a>. Plan version: 2026-10-03.</p>
+
+<p class="flag">The app already has landmarks, so the tool outlines the real header, navigation and main content of every page, not a demo. It lacks a site footer: decision 1 proposes one, so the tool has a <code>contentinfo</code> to show. A sample page still comes in, as a broken and fixed example in Praktyka, because a page that is already correct teaches less than one that is not.</p>
+
+<h2 id="changes">Changes after work started</h2>
+<p>Picks: <strong>1C</strong> (floating button with a panel), <strong>2C</strong> (hatched fill, label in the corner), <strong>3A</strong> (landmarks as a tree, headings as an outline), <strong>4A with the lesson quiz</strong>. Where these conflict with the sections below, these win.</p>
+<ul>
+  <li><strong>One pull request, not four (section 9).</strong> Plan, code and content ship together, as in earlier phases.</li>
+  <li><strong>No site footer yet (decision 1).</strong> Still open, so on every page the tool reports the missing footer.</li>
+  <li><strong>The button lives in an <code>aside</code> named "Struktura strony".</strong> Content outside every landmark is itself a finding, so the tool sits in a landmark of its own, which the scan leaves out. The panel is a native <code>popover</code>: Esc and a click outside close it, and a list row closes it before moving focus, so it never covers the element that takes focus. The button says "włączona" while any outline is on.</li>
+  <li><strong>The lists sit under each frame, not in a shared table (mock 4A).</strong> Each frame posts its own scan, so the list goes where the keyboard steps already go.</li>
+  <li><strong>Labels stack.</strong> A landmark that starts in the corner of the one around it (breadcrumbs at the top of <code>main</code>) gets its label moved down, so no label hides another.</li>
+  <li><strong>A missing banner or footer is a finding</strong>, worded as advice, not a requirement.</li>
+  <li><strong>The lesson comes before "Tabele i struktura"</strong> on the developer path, which now has 8 lessons.</li>
+</ul>
+
+<ol class="toc">
+  <li><a href="#changes">Changes after work started</a></li>
+  <li><a href="#today">What the app has today</a></li>
+  <li><a href="#scope">What we build</a></li>
+  <li><a href="#scan">The scan</a></li>
+  <li><a href="#outlines">Outlines and the list</a></li>
+  <li><a href="#switch">The switch and its state</a></li>
+  <li><a href="#example">The example and the lesson</a></li>
+  <li><a href="#a11y">Accessibility of the tool itself</a></li>
+  <li><a href="#tests">Tests</a></li>
+  <li><a href="#prs">Pull requests and commits</a></li>
+  <li><a href="#decisions">Decisions</a></li>
+  <li><a href="#out">Out of scope</a></li>
+</ol>
+
+<h2 id="today">1. What the app has today</h2>
+<p>Read from the code (<code>__root.tsx</code>, <code>site-header.tsx</code> and the routes), not from a running page:</p>
+<table>
+  <thead><tr><th>Where</th><th>Landmarks</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Every page</td><td><code>header</code> → banner, <code>nav aria-label="Główna"</code>, <code>main#main</code></td><td>No site footer, so no <code>contentinfo</code>. The skip link targets <code>#main</code>.</td></tr>
+    <tr><td><code>/</code>, <code>/szukaj</code></td><td><code>form role="search"</code> without a name, two named <code>section</code>s → regions</td><td>Fine. One search per page needs no name.</td></tr>
+    <tr><td><code>/kryteria/$id</code></td><td>"Okruszki" nav, table of contents nav, a named <code>section</code> for every content section</td><td>Every section is a region. The <code>footer</code> inside the article is not a landmark (scoped), correctly.</td></tr>
+    <tr><td>Example, pattern, lesson, act pages</td><td>"Okruszki" nav, many named sections</td><td>Same region count question.</td></tr>
+    <tr><td><code>/wcag-3</code></td><td>Two <code>div role="region"</code> around scrolling tables</td><td>Needed: <code>tabindex="0"</code> scroll containers need a name.</td></tr>
+  </tbody>
+</table>
+<p>Two things the tool will show us on our own pages: the missing footer, and that <code>&lt;section aria-labelledby&gt;</code> makes every content section a region. A criterion page has a region for each section. APG says to use regions sparingly; a screen reader user pressing D on a criterion page walks through all of them. Decision 3.</p>
+
+<h2 id="scope">2. What we build</h2>
+<ol>
+  <li><strong>Site-wide "Struktura strony".</strong> Two switches, "Punkty orientacyjne" and "Nagłówki", which outline the landmarks and headings of whatever app page is open, with a text list next to the outlines. Where the switches live: mock section 1.</li>
+  <li><strong>Two simulations for examples.</strong> <code>punkty-orientacyjne</code> and <code>naglowki</code> join <code>src/content/simulations.ts</code> as a new kind <code>struktura</code>, with <code>content/symulatory/struktura.md</code>. They work in both frames of every example, through the same <code>postMessage</code> the other simulations use, and get a card on <code>/symulatory</code>.</li>
+  <li><strong>The sample page.</strong> A new example <code>punkty-orientacyjne-i-naglowki</code>: a small municipal page, broken (<code>div</code>s, an unnamed second nav, no <code>main</code>, a heading jump from H1 to H4, bold text as a heading) and fixed.</li>
+  <li><strong>The exercise.</strong> A lesson in the developer path with a quiz about that example (mock 4, second part). No new exercise mechanics.</li>
+</ol>
+
+<h2 id="scan">3. The scan</h2>
+<p>One module, <code>src/content/structure.ts</code>, free of imports from the app like <code>announce.ts</code>, so it runs on the page and inside a demo frame. It takes a root element and returns plain data:</p>
+<pre><code>type Landmark = { role: LandmarkRole; name: string; element: Element; children: Landmark[] };
+type Heading = { level: 1 | 2 | 3 | 4 | 5 | 6; text: string; element: Element };
+type Finding = { kind: FindingKind; element?: Element };
+type Structure = { landmarks: Landmark[]; headings: Heading[]; findings: Finding[] };
+
+const landmarkRoles = ["banner", "navigation", "main", "complementary", "contentinfo", "search", "form", "region"] as const;
+type LandmarkRole = (typeof landmarkRoles)[number];</code></pre>
+<ul>
+  <li>Roles and names come from <code>dom-accessibility-api</code> (<code>getRole</code>, <code>computeAccessibleName</code>), already a dependency and already bundled into the pattern frames.</li>
+  <li><code>getRole</code> 0.7 maps <code>header</code> to banner, <code>footer</code> to contentinfo and <code>section</code> to region unconditionally. The scan adds the HTML-AAM rules on top: <code>header</code> and <code>footer</code> inside <code>article</code>, <code>aside</code>, <code>main</code>, <code>nav</code> or <code>section</code> are not landmarks; <code>section</code> and <code>form</code> count only with a name. It also maps the <code>&lt;search&gt;</code> element. These rules get their own unit tests.</li>
+  <li>Hidden content (<code>hidden</code>, <code>display: none</code>, <code>aria-hidden</code>) is skipped, as a screen reader would.</li>
+  <li>Findings, in Polish on the page: no <code>main</code>; more than one <code>main</code>, banner or contentinfo at top level; two landmarks of the same role without distinct names; no H1 or more than one; a skipped heading level; an empty heading; text outside any landmark. Each has a <code>FindingKind</code> literal and a Polish sentence in one typed record, so a new kind without a sentence fails <code>tsc</code>.</li>
+  <li><code>polishRoles</code> in <code>announce.ts</code> gains banner (baner), main (główny), complementary (uzupełniający), contentinfo (informacje o zawartości) and search (wyszukiwanie), which also fixes their names in the screen reader tables.</li>
+</ul>
+
+<h2 id="outlines">4. Outlines and the list</h2>
+<ul>
+  <li>The scan writes one attribute per element, <code>data-a11y-landmark="nawigacja: Główna"</code> or <code>data-a11y-heading="H2"</code>, and one stylesheet draws them: <code>outline</code> (no layout shift) and a label from <code>content: attr(data-a11y-landmark) / ""</code>, empty alt text so screen readers do not read it twice. Turning off removes the attributes. No overlay layer to keep in position on scroll and resize.</li>
+  <li>The label needs <code>position: relative</code> on its host. The scan sets it only on elements whose computed position is <code>static</code>, so the skip link and anything sticky stay as they are.</li>
+  <li>Style: mock section 2 (2A, 2B or 2C). Headings: 2H.</li>
+  <li><strong>The list is part of the tool, not an extra.</strong> Landmarks as a tree, headings as an indented outline, findings at the bottom. Each row is a button that moves focus to the element (adding <code>tabindex="-1"</code> where needed), the way D and H jump in a screen reader. Layout: mock section 3.</li>
+  <li>Client-side navigation and content that changes (filters, quiz steps) rescan on a <code>MutationObserver</code> of <code>main</code>, throttled to one scan per animation frame. The list is updated quietly: no live region announces every rescan.</li>
+</ul>
+
+<h2 id="switch">5. The switch and its state</h2>
+<ul>
+  <li>Two <code>button</code>s with <code>aria-pressed</code>, as on the APG page. Mock section 1 decides where.</li>
+  <li>State in a small React context in <code>__root.tsx</code>, kept in <code>sessionStorage</code> so it survives a reload and a client-side navigation, not a new tab. No URL parameter: it would have to travel with every link. On example pages the frames use <code>?symulacja=</code> as today; the two are independent.</li>
+  <li>The scan module is loaded with a dynamic <code>import()</code> on the first press, so pages pay nothing until someone uses it.</li>
+</ul>
+
+<h2 id="example">6. The example and the lesson</h2>
+<ul>
+  <li><code>content/praktyka/punkty-orientacyjne-i-naglowki/</code> with <code>index.md</code>, <code>bad.html</code>, <code>good.html</code>. Effort: <code>15 minut</code>. Criteria: 1.3.1, 2.4.1, 2.4.6. <code>bad.axe</code>: <code>region</code>, <code>landmark-one-main</code>, <code>heading-order</code> (to confirm against axe while building).</li>
+  <li><code>simulations</code> in the frontmatter gives notes for both new simulations.</li>
+  <li>The frame script gets the scan, the same way the pattern frames get the log: a Vite plugin bundles <code>structure.ts</code> with <code>dom-accessibility-api</code> into a classic script, inlined into demo documents. The frame posts its <code>Structure</code> (roles, names, levels, findings; no elements) to the page, which renders the comparison table under the frames (mock 4A).</li>
+  <li>Lesson <code>content/sciezki/programista/punkty-orientacyjne.md</code> with a quiz of three to four questions, one of them on the example with the simulation on. Existing lesson and quiz code.</li>
+</ul>
+
+<h2 id="a11y">7. Accessibility of the tool itself</h2>
+<ul>
+  <li>Never colour alone (1.4.1): every outline has a text label and a line style per role; skipped levels say "pominięty".</li>
+  <li>Outline colours at least 3:1 against both themes' paper (1.4.11); label text on its fill at least 4.5:1. Checked for both themes while building.</li>
+  <li>Forced colours: outlines and labels fall back to <code>CanvasText</code> and <code>Canvas</code>, line styles keep roles apart.</li>
+  <li>Labels have <code>pointer-events: none</code> and sit inside the outline, so they never take a click. A label must not cover the focused element (2.4.11): the label sits at the edge of its landmark, and the focused element gets <code>scroll-margin</code> for its height.</li>
+  <li>Buttons in the switches and the list at least 44×44 (2.5.5). No animation, so nothing for <code>prefers-reduced-motion</code> to turn off.</li>
+  <li>The page passes axe with the tool on (it adds no landmarks of its own; the side panel from 3A is an <code>aside</code> with a name, which the scan leaves out of its own list).</li>
+</ul>
+
+<h2 id="tests">8. Tests</h2>
+<ul>
+  <li>Vitest on <code>structure.ts</code> with jsdom fixtures: header scoping, unnamed <code>section</code> and <code>form</code>, <code>&lt;search&gt;</code>, hidden content, each finding kind. One test per rule, no snapshot.</li>
+  <li>Playwright: turn on both switches on <code>/</code> and on a criterion page, check the list rows and that axe passes; press a row and check focus. The new example goes through the existing example tests (axe on the fixed fragment, <code>bad.axe</code> rules).</li>
+  <li>The content tests already fail on a role without a Polish name; the new roles go through them.</li>
+</ul>
+
+<h2 id="prs">9. Pull requests and commits</h2>
+<ol>
+  <li><strong>PR 1, site footer</strong> (if decision 1 is yes): <code>feat(web): add a site footer</code>. One commit with the README line.</li>
+  <li><strong>PR 2, the site-wide tool</strong>: <code>feat(web): show landmarks and headings on any page</code>. Commits: the Polish role names; <code>structure.ts</code> with its tests; the switch, the outlines and the list with the Playwright test; README and screenshots.</li>
+  <li><strong>PR 3, simulations in examples</strong>: the Vite plugin for the frame script; the two simulations, <code>struktura.md</code> and the <code>/symulatory</code> card; README.</li>
+  <li><strong>PR 4, the example and the lesson</strong>: the example; the lesson and quiz; README and screenshots.</li>
+  <li><strong>Later, separate</strong>: fewer regions on our pages (decision 3).</li>
+</ol>
+
+<h2 id="decisions">10. Decisions</h2>
+<ol>
+  <li><strong>Add a site footer?</strong> Recommendation: yes, short: the draft note ("Treści są szkicami do sprawdzenia"), the repository link and a link to <code>/symulatory</code>. It gives the tool a contentinfo to show, and a site that teaches landmarks should have the full set. Footer copy goes to chat as wording variants.</li>
+  <li><strong>Where the switches live:</strong> 1A, 1B or 1C. Recommendation: 1B. The header stays as it is for everyone else, and the bar makes it obvious the page is in a special mode.</li>
+  <li><strong>Regions on our own pages:</strong> recommendation: ship the tool first and let it show the count, then in a separate PR drop <code>aria-labelledby</code> from sections nobody needs to jump to, keeping regions only where the TOC does not already help.</li>
+  <li><strong>Outline style:</strong> 2A, 2B or 2C. Recommendation: 2A, closest to the brief and readable without the list.</li>
+  <li><strong>The list:</strong> 3A or 3B. Recommendation: 3A on wide screens, falling back to 3B under the content below 900 px.</li>
+  <li><strong>Exercise:</strong> 4A alone, or 4A with the lesson quiz. Recommendation: with the quiz.</li>
+</ol>
+
+<h2 id="out">11. Out of scope</h2>
+<ul>
+  <li>Keyboard shortcuts that imitate screen reader landmark navigation (D, H). They would clash with the browser and with real screen readers.</li>
+  <li>Outlines for other roles (lists, tables, forms without names). The tool shows what a screen reader lets you jump between, nothing else.</li>
+  <li>Editing the structure in the frame.</li>
+</ul>
+
+</main>
+</body>
+</html>

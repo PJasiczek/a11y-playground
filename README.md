@@ -19,7 +19,7 @@ a11y playground is a learning app for people who build digital products in Polan
 The interface is in Polish. This README is in English.
 
 > [!NOTE]
-> Phase 9 (ARIA widget patterns) is complete: all 30 patterns of the Deque University list run in Praktyka with a live log of what a screen reader would say, from the ones where HTML does most of the work to composite widgets, live regions and tables. Every criterion of WCAG 2.2, A to AAA, has a plain-language explanation, and `/wcag-3` tracks the WCAG 3.0 Working Draft with our mapping to today's criteria. Eleven common faults have a broken and a fixed example, each viewable through five simulators. Three Polish acts are in the app with the statute text and our summaries, and five learning paths walk through them lesson by lesson. All content is marked as a draft until a person has checked it. Phase 5 (accounts) is postponed, so progress is kept in the browser.
+> Phase 10 (landmarks and headings) is complete: a "Struktura strony" button on every page outlines its landmarks and headings and lists them as text, and two new simulations do the same inside the examples. All 30 patterns of the Deque University list run in Praktyka with a live log of what a screen reader would say. Every criterion of WCAG 2.2, A to AAA, has a plain-language explanation, and `/wcag-3` tracks the WCAG 3.0 Working Draft with our mapping to today's criteria. Twelve common faults have a broken and a fixed example, each viewable through six kinds of simulator. Three Polish acts are in the app with the statute text and our summaries, and five learning paths walk through them lesson by lesson. All content is marked as a draft until a person has checked it. Phase 5 (accounts) is postponed, so progress is kept in the browser.
 
 ### What works today
 
@@ -27,6 +27,7 @@ The interface is in Polish. This README is in English.
 - Main navigation that wraps onto its own row on narrow screens instead of hiding behind a menu button.
 - Light and dark mode. It follows the operating system by default, and the header toggle stores an explicit choice.
 - Skip link, a stable landmark structure, and focus moved to the new `h1` with the page title announced after every client-side route change.
+- **Struktura strony**, a button in the bottom right corner of every page, after the W3C [landmarks example](https://www.w3.org/WAI/ARIA/apg/patterns/landmarks/examples/general-principles.html). Its panel has two switches, "Punkty orientacyjne" and "Nagłówki", which outline the landmarks and headings of the page you are on, each with a label naming its role or level. The panel lists the same as text, with what is wrong (no `main`, two navigations nobody can tell apart, a skipped heading level), and every row moves focus to its element, the way a screen reader jumps with D or H. The switches last for the browser tab.
 - **Criteria list** (`/kryteria`) with filters for WCAG version, level, principle and role. The filters are native radio buttons and checkboxes, their state lives in the URL, and the result count is announced to screen readers.
 - **Criterion pages** (`/kryteria/1.4.3`) with a fixed section order, a "nowe w 2.2" badge for the nine new criteria, and 4.1.1 marked as removed in 2.2. Every page is prerendered to static HTML.
 - **Explanations** for all 86 criteria of WCAG 2.2, A, AA and AAA: who it affects, how to meet it by role, typical errors, how to test it, common confusions. 4.1.1 gets a short page on why 2.2 removed it and why the 2019 act still lists it. Drafts carry a visible "szkic, czeka na weryfikację" badge.
@@ -35,14 +36,14 @@ The interface is in Polish. This README is in English.
 - **Normative text** in Polish from the authorized W3C translation of WCAG 2.1, collapsed on each criterion page. The criteria new in 2.2 link to their sources until a licensed Polish text is available.
 - **Glossary** (`/slownik`) of about 30 terms, alphabetical, each with a plain explanation and, where WCAG defines the term, its normative wording. The first use of a term in a criterion links to it, with a small button that opens a short definition.
 - **Search** (`/szukaj`, also on the home page) over criteria, examples, patterns, provisions, lessons, WCAG 3.0 guidelines and the glossary. It finds criteria by number, name or symptom ("modal", "placeholder"), articles by topic ("deklaracja dostępności"), and ignores Polish diacritics.
-- **Practice** (`/praktyka`): eleven examples as cards ordered by the cost of the fix, each with what the user gains. An example page (`/praktyka/ikona-jako-przycisk`) shows the broken and the fixed variant one above the other, each running in a sandboxed iframe, with its code and what a screen reader says. Examples that move start only when the reader asks. Criterion pages link to their examples.
+- **Practice** (`/praktyka`): twelve examples as cards ordered by the cost of the fix, each with what the user gains. An example page (`/praktyka/ikona-jako-przycisk`) shows the broken and the fixed variant one above the other, each running in a sandboxed iframe, with its code and what a screen reader says. Examples that move start only when the reader asks. Criterion pages link to their examples.
 - **Patterns** (`/praktyka/wzorce`, the second half of Praktyka): working components built from the WAI-ARIA Authoring Practices, after the list of Deque University ARIA Examples. The catalogue shows a still of each, grouped by batch, and filters by whether HTML has the element for the job (`?natywnie=`). A pattern page (`/praktyka/wzorce/rozwin-zwin`) runs the pattern in a sandboxed iframe, logs beside it what a screen reader would say after every key (focus, state changes, live regions), shows its ARIA attributes with their current values, and turns its keyboard behaviour into an exercise that ticks itself off. Criterion pages and practice examples link to their patterns.
-- **Simulators** on every example page: a list beside the frames switches both variants to colour vision deficiency (four types), low vision, keyboard only, screen reader, 320 pixels wide or text at 200%. The choice lives in `?symulacja=`, and none is on by default. Each one puts text next to the frames, so no simulator is the only way to get the information: what the simulation shows and what it does not, the numbered focus steps and blocked mouse clicks, a table of what a screen reader reads in both variants (computed at build time), or whether the content fits in 320 pixels, measured in the frame.
+- **Simulators** on every example page: a list beside the frames switches both variants to colour vision deficiency (four types), low vision, keyboard only, screen reader, 320 pixels wide, text at 200%, or the outlines of their landmarks or headings. The choice lives in `?symulacja=`, and none is on by default. Each one puts text next to the frames, so no simulator is the only way to get the information: what the simulation shows and what it does not, the numbered focus steps and blocked mouse clicks, a table of what a screen reader reads in both variants (computed at build time), whether the content fits in 320 pixels, measured in the frame, or the landmarks or headings each frame has and what is missing.
 - **Simulators page** (`/symulatory`): what each simulator shows, its limits, the criteria it teaches, and links into the examples with the simulation already picked.
 - **Law** (`/prawo`): the 2019 digital accessibility act in full, the parts of the 2019 special needs act and the 2024 products and services act (the Polish EAA) that create digital obligations, and a page on EN 301 549. An article page (`/prawo/ustawa-2019-848/art-5`) shows each ustęp next to our summary. Every act says which consolidated text it comes from, when it was downloaded, and whether it was amended after that text.
 - **What applies to me** (`/mapowanie`): pick a website or app of a public body, or a product or service of a company, and every deadline appears on one timeline, with the ones for your situation highlighted and the criteria behind them in a table.
 - **Law on criterion pages:** the "Prawo" section says, for each situation, whether a provision requires the criterion, which one, and since when, or why nothing does (AAA, new in 2.2, excluded for apps).
-- **Paths** (`/sciezki`): five ordered sets of lessons, for the developer, the designer, the content author, the tester, and the legal minimum for a public body. 29 lessons, each with a "Zapamiętaj" box, links to the criteria, examples and provisions it covers, and a quiz at the end. Paths are ungated: the quiz never blocks the next lesson. Criterion pages link to the lessons that teach them.
+- **Paths** (`/sciezki`): five ordered sets of lessons, for the developer, the designer, the content author, the tester, and the legal minimum for a public body. 30 lessons, each with a "Zapamiętaj" box, links to the criteria, examples and provisions it covers, and a quiz at the end. Paths are ungated: the quiz never blocks the next lesson. Criterion pages link to the lessons that teach them.
 - **Quizzes** show one question at a time. "Sprawdź" explains every option, right or wrong, and announces the verdict to screen readers without moving focus; "Następne pytanie" moves focus to the next question. The score shows at the end.
 - **Progress** (lessons marked done, the last quiz score) is stored in `localStorage` under one key, in the shape planned for the Convex tables, so accounts can import it later. `/sciezki` says so and offers "Wyczyść postęp". With storage blocked, progress lasts until the tab closes.
 
@@ -61,6 +62,10 @@ The interface is in Polish. This README is in English.
 | Patterns | Pattern page |
 | --- | --- |
 | ![Pattern catalogue with a still of each pattern and the native element filter](docs/screenshots/patterns.png) | ![The expand and collapse pattern with the exercise half done and the screen reader log beside it](docs/screenshots/pattern-page.png) |
+
+| Struktura strony | Headings simulation |
+| --- | --- |
+| ![Landmarks of a criterion page outlined, with the panel listing them as a tree](docs/screenshots/structure.png) | ![The broken municipal page with its headings outlined and the skipped levels H2 to H3 flagged under the frame](docs/screenshots/simulation-structure.png) |
 
 | Colour vision | Screen reader | Simulators |
 | --- | --- | --- |
@@ -202,7 +207,7 @@ The tests check that every fixed fragment passes axe, that every page passes axe
 
 ### Simulators
 
-The simulation ids are code, in `src/content/simulations.ts`. What each kind of simulator shows is content, one file per kind in `content/symulatory/<kind>.md` (`barwy`, `slabe-widzenie`, `klawiatura`, `czytnik`, `waski-ekran`):
+The simulation ids are code, in `src/content/simulations.ts`. What each kind of simulator shows is content, one file per kind in `content/symulatory/<kind>.md` (`barwy`, `slabe-widzenie`, `klawiatura`, `czytnik`, `waski-ekran`, `struktura`):
 
 ```markdown
 ---
@@ -219,6 +224,7 @@ Opis ogólny, pokazywany przy przykładach bez własnej notatki.
 - `examples` become the "Wypróbuj na" links on `/symulatory`.
 - `limits` is shown as "Czego to nie pokazuje" next to every simulation of that kind.
 - The screen reader list is computed by a Vite plugin (`src/content/reading-order.vite.ts`) with jsdom and `dom-accessibility-api`, for each fragment after its script has run. A role without a Polish name fails `pnpm test`.
+- The structure simulations run `src/content/structure.ts` inside the frame: it finds landmarks and headings the way HTML-AAM defines them (a `header` inside `main` is not a banner, a `section` needs a name), draws the outlines and posts the list to the page. The same module powers "Struktura strony" on the app's own pages, loaded on the first press.
 
 ### ARIA patterns
 
@@ -475,3 +481,4 @@ The full plan, with content scope, architecture and risks, is in [`docs/design/2
 - [x] **7. Impairment simulators.** Colour vision, low vision, keyboard only, screen reader and narrow screen on every example, each with a text alternative, and `/symulatory`. Detailed plan: [`docs/design/2026-09-29-phase-7-simulators`](docs/design/2026-09-29-phase-7-simulators/phase-7-simulators.en.html).
 - [x] **8. AAA criteria and WCAG 3.0 tracking.** Explanations for the 31 AAA criteria and 4.1.1, the comparison with the AA criterion each one tightens, and `/wcag-3` with the guideline mapping. Detailed plan: [`docs/design/2026-10-01-phase-8-aaa-wcag3`](docs/design/2026-10-01-phase-8-aaa-wcag3/phase-8-aaa-wcag3.en.html).
 - [x] **9. ARIA widget patterns.** The 30 patterns of Deque University ARIA Examples, our own code, each with a live screen reader log, an ARIA table and a keyboard exercise, in four batches: native first, showing and hiding, composite widgets, content that changes. Detailed plan: [`docs/design/2026-10-02-phase-9-aria-patterns`](docs/design/2026-10-02-phase-9-aria-patterns/phase-9-aria-patterns.en.html).
+- [x] **10. Landmarks and headings.** "Struktura strony" on every page, the landmark and heading simulations, an example and a lesson on page structure. Detailed plan: [`docs/design/2026-10-03-phase-10-landmarks`](docs/design/2026-10-03-phase-10-landmarks/phase-10-landmarks.en.html).

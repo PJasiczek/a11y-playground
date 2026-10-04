@@ -27,6 +27,7 @@ const routes = [
   "/sciezki",
   "/sciezki/programista",
   "/sciezki/programista/klawiatura-i-fokus",
+  "/sciezki/programista/punkty-orientacyjne",
   "/slownik",
   "/szukaj",
 ];

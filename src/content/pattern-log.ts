@@ -12,7 +12,7 @@ import {
 /**
  * The live log of a pattern frame: what a screen reader would say as the reader operates the
  * pattern. Runs inside the sandboxed demo document, bundled with dom-accessibility-api by
- * pattern-log.vite.ts, and posts each line to the page. An approximation, not NVDA: it answers
+ * frame-script.vite.ts, and posts each line to the page. An approximation, not NVDA: it answers
  * "what does the code expose", one line per thing a screen reader would announce.
  *
  * - focus: the name, the role in Polish, the states and the description of whatever takes focus,

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan: faza 10, punkty orientacyjne i nagłówki</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1.25rem 6rem;
+    background: #000; color: #fff;
+    font: 16px/1.65 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  main { max-width: 82ch; margin: 0 auto; }
+  h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 .5rem; letter-spacing: -.02em; }
+  h2 { font-size: 1.2rem; margin: 3rem 0 .75rem; padding-top: 1rem; border-top: 1px solid #262626; letter-spacing: -.01em; }
+  h3 { font-size: 1rem; margin: 1.75rem 0 .5rem; }
+  p, li, dd { color: #e5e5e5; }
+  a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  ul, ol { padding-left: 1.3rem; }
+  li { margin: .3rem 0; }
+  code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .875em; background: #141414; border: 1px solid #262626; border-radius: 3px; padding: .08em .3em; }
+  pre { background: #0b0b0b; border: 1px solid #262626; border-radius: 4px; padding: .9rem 1rem; overflow-x: auto; }
+  pre code { background: none; border: 0; padding: 0; font-size: .82rem; line-height: 1.55; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; display: block; overflow-x: auto; }
+  th, td { border: 1px solid #262626; padding: .45rem .6rem; text-align: left; vertical-align: top; }
+  th { background: #101010; font-weight: 600; }
+  .meta { color: #a3a3a3; font-size: .85rem; margin: 0 0 1.5rem; }
+  .meta a { color: #fff; }
+  .flag { border-left: 2px solid #737373; padding: .1rem 0 .1rem .85rem; margin: 1rem 0; color: #d4d4d4; font-size: .93rem; }
+  .toc { border: 1px solid #262626; padding: 1rem 1rem 1rem 2.4rem; margin: 1.5rem 0 0; }
+  .toc li { margin: .15rem 0; }
+  @media (max-width: 40rem) { body { padding: 1.25rem .9rem 4rem; } h1 { font-size: 1.45rem; } }
+</style>
+</head>
+<body>
+<main>
+
+<p class="meta"><a href="phase-10-landmarks.en.html" hreflang="en">English version</a></p>
+
+<h1>Plan: faza 10, punkty orientacyjne i nagłówki</h1>
+<p class="meta">Punkt wyjścia: symulator i ćwiczenie praktyczne na wzór strony W3C <a href="https://www.w3.org/WAI/ARIA/apg/patterns/landmarks/examples/general-principles.html" target="_blank" rel="noopener noreferrer">Landmark Regions, General Principles</a> („Show Landmarks”, „Show Headings”). Makiety: <a href="../2026-10-03-landmarks-mocks/landmarks-mocks.html">landmarks-mocks.html</a>. Wersja planu: 2026-10-03.</p>
+
+<p class="flag">Aplikacja ma już punkty orientacyjne, więc narzędzie obrysowuje prawdziwy nagłówek, nawigację i treść główną każdej strony, a nie wersję demonstracyjną. Brakuje stopki serwisu: decyzja 1 proponuje ją dodać, żeby narzędzie miało co pokazać jako <code>contentinfo</code>. Przykładowa strona i tak powstaje, jako przykład zepsuty i poprawny w Praktyce, bo na stronie, która już jest poprawna, mniej widać.</p>
+
+<h2 id="changes">Zmiany po rozpoczęciu pracy</h2>
+<p>Wybrane warianty: <strong>1C</strong> (pływający przycisk z panelem), <strong>2C</strong> (kreskowane wypełnienie, etykieta w rogu), <strong>3A</strong> (punkty orientacyjne jako drzewo, nagłówki jako spis) i <strong>4A z quizem w lekcji</strong>. Tam, gdzie kłócą się z dalszymi częściami, obowiązuje to, co tutaj.</p>
+<ul>
+  <li><strong>Jeden pull request zamiast czterech (część 9).</strong> Plan, kod i treść idą razem, jak w poprzednich fazach.</li>
+  <li><strong>Stopki serwisu jeszcze nie ma (decyzja 1).</strong> Decyzja wciąż czeka, więc narzędzie na każdej stronie zgłasza brak stopki.</li>
+  <li><strong>Przycisk mieszka w <code>aside</code> o nazwie „Struktura strony”.</strong> Treść poza punktami orientacyjnymi sama jest uwagą, więc narzędzie ma własny punkt, który skanowanie pomija. Panel to natywny <code>popover</code>: zamyka go Esc i kliknięcie obok, a wiersz listy zamyka go przed przeniesieniem fokusu, więc panel nigdy nie zasłania elementu, który dostaje fokus. Gdy jakiś obrys jest włączony, przycisk mówi „włączona”.</li>
+  <li><strong>Listy są pod każdą ramką, a nie we wspólnej tabeli (makieta 4A).</strong> Każda ramka wysyła własny wynik, więc lista trafia tam, gdzie już stoją kroki klawiatury.</li>
+  <li><strong>Etykiety się układają.</strong> Punkt, który zaczyna się w rogu otaczającego go punktu (okruszki na górze <code>main</code>), dostaje etykietę niżej, więc żadna nie zasłania innej.</li>
+  <li><strong>Brak banera albo stopki to uwaga</strong>, sformułowana jako rada, nie wymóg.</li>
+  <li><strong>Lekcja stoi przed „Tabelami i strukturą”</strong> na ścieżce programisty, która ma teraz 8 lekcji.</li>
+</ul>
+
+<ol class="toc">
+  <li><a href="#changes">Zmiany po rozpoczęciu pracy</a></li>
+  <li><a href="#today">Co aplikacja ma dziś</a></li>
+  <li><a href="#scope">Co budujemy</a></li>
+  <li><a href="#scan">Skanowanie</a></li>
+  <li><a href="#outlines">Obrysy i lista</a></li>
+  <li><a href="#switch">Przełącznik i jego stan</a></li>
+  <li><a href="#example">Przykład i lekcja</a></li>
+  <li><a href="#a11y">Dostępność samego narzędzia</a></li>
+  <li><a href="#tests">Testy</a></li>
+  <li><a href="#prs">Pull requesty i commity</a></li>
+  <li><a href="#decisions">Decyzje</a></li>
+  <li><a href="#out">Poza zakresem</a></li>
+</ol>
+
+<h2 id="today">1. Co aplikacja ma dziś</h2>
+<p>Odczytane z kodu (<code>__root.tsx</code>, <code>site-header.tsx</code> i trasy), nie z działającej strony:</p>
+<table>
+  <thead><tr><th>Gdzie</th><th>Punkty orientacyjne</th><th>Uwagi</th></tr></thead>
+  <tbody>
+    <tr><td>Każda strona</td><td><code>header</code> → banner, <code>nav aria-label="Główna"</code>, <code>main#main</code></td><td>Nie ma stopki serwisu, więc nie ma <code>contentinfo</code>. Link „Przejdź do treści” prowadzi do <code>#main</code>.</td></tr>
+    <tr><td><code>/</code>, <code>/szukaj</code></td><td><code>form role="search"</code> bez nazwy, dwie nazwane sekcje <code>section</code> → regiony</td><td>W porządku. Jedna wyszukiwarka na stronie nie potrzebuje nazwy.</td></tr>
+    <tr><td><code>/kryteria/$id</code></td><td>nawigacja „Okruszki”, nawigacja spisu treści, nazwana <code>section</code> dla każdej części treści</td><td>Każda część to region. <code>footer</code> wewnątrz artykułu słusznie nie jest punktem orientacyjnym.</td></tr>
+    <tr><td>Strony przykładu, wzorca, lekcji, ustawy</td><td>nawigacja „Okruszki”, wiele nazwanych sekcji</td><td>To samo pytanie o liczbę regionów.</td></tr>
+    <tr><td><code>/wcag-3</code></td><td>Dwa <code>div role="region"</code> wokół przewijanych tabel</td><td>Potrzebne: przewijany kontener z <code>tabindex="0"</code> musi mieć nazwę.</td></tr>
+  </tbody>
+</table>
+<p>Narzędzie pokaże nam na naszych stronach dwie rzeczy: brak stopki oraz to, że <code>&lt;section aria-labelledby&gt;</code> robi region z każdej części treści. Strona kryterium ma region dla każdej sekcji. APG radzi używać regionów oszczędnie, a osoba z czytnikiem, która naciska D na stronie kryterium, przechodzi przez wszystkie. Decyzja 3.</p>
+
+<h2 id="scope">2. Co budujemy</h2>
+<ol>
+  <li><strong>„Struktura strony” w całej aplikacji.</strong> Dwa przełączniki, „Punkty orientacyjne” i „Nagłówki”, które obrysowują punkty orientacyjne i nagłówki otwartej strony aplikacji, z listą tekstową obok obrysów. Gdzie stoją przełączniki: część 1 makiet.</li>
+  <li><strong>Dwie symulacje dla przykładów.</strong> <code>punkty-orientacyjne</code> i <code>naglowki</code> trafiają do <code>src/content/simulations.ts</code> jako nowy rodzaj <code>struktura</code>, z plikiem <code>content/symulatory/struktura.md</code>. Działają w obu ramkach każdego przykładu przez ten sam <code>postMessage</code> co pozostałe symulacje i dostają kartę na <code>/symulatory</code>.</li>
+  <li><strong>Przykładowa strona.</strong> Nowy przykład <code>punkty-orientacyjne-i-naglowki</code>: mała strona gminy, zepsuta (same <code>div</code>y, druga nawigacja bez nazwy, brak <code>main</code>, skok z H1 do H4, pogrubiony tekst udający nagłówek) i poprawna.</li>
+  <li><strong>Ćwiczenie.</strong> Lekcja na ścieżce programisty z quizem o tym przykładzie (makieta 4, druga część). Bez nowej mechaniki ćwiczeń.</li>
+</ol>
+
+<h2 id="scan">3. Skanowanie</h2>
+<p>Jeden moduł, <code>src/content/structure.ts</code>, bez importów z aplikacji, tak jak <code>announce.ts</code>, więc działa i na stronie, i w ramce przykładu. Przyjmuje element główny i zwraca zwykłe dane:</p>
+<pre><code>type Landmark = { role: LandmarkRole; name: string; element: Element; children: Landmark[] };
+type Heading = { level: 1 | 2 | 3 | 4 | 5 | 6; text: string; element: Element };
+type Finding = { kind: FindingKind; element?: Element };
+type Structure = { landmarks: Landmark[]; headings: Heading[]; findings: Finding[] };
+
+const landmarkRoles = ["banner", "navigation", "main", "complementary", "contentinfo", "search", "form", "region"] as const;
+type LandmarkRole = (typeof landmarkRoles)[number];</code></pre>
+<ul>
+  <li>Role i nazwy daje <code>dom-accessibility-api</code> (<code>getRole</code>, <code>computeAccessibleName</code>). Ta biblioteka już jest w zależnościach i już trafia do ramek wzorców.</li>
+  <li><code>getRole</code> w wersji 0.7 zawsze zamienia <code>header</code> na banner, <code>footer</code> na contentinfo i <code>section</code> na region. Skanowanie dokłada reguły HTML-AAM: <code>header</code> i <code>footer</code> wewnątrz <code>article</code>, <code>aside</code>, <code>main</code>, <code>nav</code> lub <code>section</code> nie są punktami orientacyjnymi, a <code>section</code> i <code>form</code> liczą się tylko z nazwą. Rozpoznaje też element <code>&lt;search&gt;</code>. Każda z tych reguł ma własny test.</li>
+  <li>Ukryta treść (<code>hidden</code>, <code>display: none</code>, <code>aria-hidden</code>) jest pomijana, tak jak pominie ją czytnik.</li>
+  <li>Uwagi, na stronie po polsku: brak <code>main</code>; więcej niż jeden <code>main</code>, banner lub contentinfo na najwyższym poziomie; dwa punkty tej samej roli bez różnych nazw; brak H1 albo więcej niż jeden; pominięty poziom nagłówka; pusty nagłówek; treść poza punktami orientacyjnymi. Każda ma literał <code>FindingKind</code> i polskie zdanie w jednym typowanym rekordzie, więc nowy rodzaj bez zdania nie przejdzie <code>tsc</code>.</li>
+  <li><code>polishRoles</code> w <code>announce.ts</code> dostaje banner (baner), main (główny), complementary (uzupełniający), contentinfo (informacje o zawartości) i search (wyszukiwanie). Przy okazji te role dostaną polskie nazwy w tabelach czytnika.</li>
+</ul>
+
+<h2 id="outlines">4. Obrysy i lista</h2>
+<ul>
+  <li>Skanowanie zapisuje jeden atrybut na element, <code>data-a11y-landmark="nawigacja: Główna"</code> albo <code>data-a11y-heading="H2"</code>, a jeden arkusz stylów je rysuje: <code>outline</code> (nie przesuwa układu) i etykieta z <code>content: attr(data-a11y-landmark) / ""</code>. Pusty tekst alternatywny sprawia, że czytnik nie przeczyta jej drugi raz. Wyłączenie usuwa atrybuty. Nie ma osobnej warstwy, której pozycję trzeba by liczyć przy przewijaniu i zmianie rozmiaru.</li>
+  <li>Etykieta wymaga <code>position: relative</code> na elemencie. Skanowanie ustawia ją tylko tam, gdzie obliczona pozycja to <code>static</code>, więc link „Przejdź do treści” i elementy przyklejone zostają bez zmian.</li>
+  <li>Styl: część 2 makiet (2A, 2B albo 2C). Nagłówki: 2H.</li>
+  <li><strong>Lista jest częścią narzędzia, nie dodatkiem.</strong> Punkty orientacyjne jako drzewo, nagłówki jako spis z wcięciami, uwagi na dole. Każdy wiersz to przycisk, który przenosi fokus na element (w razie potrzeby z <code>tabindex="-1"</code>), tak jak klawisze D i H w czytniku. Układ: część 3 makiet.</li>
+  <li>Nawigacja po stronach i zmieniająca się treść (filtry, kolejne pytania quizu) uruchamiają ponowne skanowanie przez <code>MutationObserver</code> na <code>main</code>, najwyżej raz na klatkę. Lista zmienia się po cichu: żaden region na żywo nie ogłasza każdego skanowania.</li>
+</ul>
+
+<h2 id="switch">5. Przełącznik i jego stan</h2>
+<ul>
+  <li>Dwa elementy <code>button</code> z <code>aria-pressed</code>, jak na stronie APG. Gdzie stoją, rozstrzyga część 1 makiet.</li>
+  <li>Stan w małym kontekście Reacta w <code>__root.tsx</code>, zapisany w <code>sessionStorage</code>, więc przetrwa przeładowanie i przejście na inną stronę, ale nie nową kartę. Bez parametru w adresie, bo musiałby jechać z każdym linkiem. Na stronach przykładów ramki dalej używają <code>?symulacja=</code>; jedno nie zależy od drugiego.</li>
+  <li>Moduł skanowania ładuje się przez dynamiczny <code>import()</code> przy pierwszym naciśnięciu, więc strony nic nie tracą, dopóki nikt z niego nie korzysta.</li>
+</ul>
+
+<h2 id="example">6. Przykład i lekcja</h2>
+<ul>
+  <li><code>content/praktyka/punkty-orientacyjne-i-naglowki/</code> z plikami <code>index.md</code>, <code>bad.html</code>, <code>good.html</code>. Nakład: <code>15 minut</code>. Kryteria: 1.3.1, 2.4.1, 2.4.6. <code>bad.axe</code>: <code>region</code>, <code>landmark-one-main</code>, <code>heading-order</code> (do potwierdzenia z axe w trakcie pracy).</li>
+  <li>Pole <code>simulations</code> we frontmatterze daje notatki dla obu nowych symulacji.</li>
+  <li>Skrypt ramki dostaje skanowanie tak, jak ramki wzorców dostają dziennik: wtyczka Vite pakuje <code>structure.ts</code> z <code>dom-accessibility-api</code> w klasyczny skrypt, wstawiany do dokumentów przykładów. Ramka wysyła stronie swoją <code>Structure</code> (role, nazwy, poziomy, uwagi, bez elementów), a strona rysuje pod ramkami tabelę porównania (makieta 4A).</li>
+  <li>Lekcja <code>content/sciezki/programista/punkty-orientacyjne.md</code> z quizem na trzy, cztery pytania, w tym jednym o przykładzie z włączoną symulacją. Istniejący kod lekcji i quizów.</li>
+</ul>
+
+<h2 id="a11y">7. Dostępność samego narzędzia</h2>
+<ul>
+  <li>Nigdy sam kolor (1.4.1): każdy obrys ma etykietę tekstową i własny styl linii dla roli; pominięty poziom ma słowo „pominięty”.</li>
+  <li>Kolory obrysów co najmniej 3:1 do tła w obu motywach (1.4.11), tekst etykiety na jej wypełnieniu co najmniej 4,5:1. Sprawdzane dla obu motywów w trakcie pracy.</li>
+  <li>Wymuszone kolory: obrysy i etykiety przechodzą na <code>CanvasText</code> i <code>Canvas</code>, role rozróżnia styl linii.</li>
+  <li>Etykiety mają <code>pointer-events: none</code> i leżą wewnątrz obrysu, więc nigdy nie łapią kliknięcia. Etykieta nie może zasłonić elementu z fokusem (2.4.11): stoi na krawędzi swojego obszaru, a element z fokusem dostaje <code>scroll-margin</code> na jej wysokość.</li>
+  <li>Przyciski przełączników i listy mają co najmniej 44×44 (2.5.5). Bez animacji, więc <code>prefers-reduced-motion</code> nie ma czego wyłączać.</li>
+  <li>Strona przechodzi axe z włączonym narzędziem. Narzędzie nie dodaje własnych punktów orientacyjnych poza panelem z 3A, który jest nazwanym <code>aside</code> i nie trafia do listy.</li>
+</ul>
+
+<h2 id="tests">8. Testy</h2>
+<ul>
+  <li>Vitest dla <code>structure.ts</code> na fragmentach w jsdom: zasięg <code>header</code> i <code>footer</code>, <code>section</code> i <code>form</code> bez nazwy, <code>&lt;search&gt;</code>, ukryta treść, każdy rodzaj uwagi. Jeden test na regułę, bez snapshotów.</li>
+  <li>Playwright: oba przełączniki na <code>/</code> i na stronie kryterium, sprawdzenie wierszy listy i axe; naciśnięcie wiersza i sprawdzenie fokusu. Nowy przykład przechodzi przez istniejące testy przykładów (axe na poprawnym fragmencie, reguły z <code>bad.axe</code>).</li>
+  <li>Testy treści już padają na roli bez polskiej nazwy; nowe role przez nie przejdą.</li>
+</ul>
+
+<h2 id="prs">9. Pull requesty i commity</h2>
+<ol>
+  <li><strong>PR 1, stopka serwisu</strong> (jeśli decyzja 1 brzmi „tak”): <code>feat(web): add a site footer</code>. Jeden commit z linijką w README.</li>
+  <li><strong>PR 2, narzędzie w całej aplikacji</strong>: <code>feat(web): show landmarks and headings on any page</code>. Commity: polskie nazwy ról; <code>structure.ts</code> z testami; przełącznik, obrysy i lista z testem Playwright; README i zrzuty ekranu.</li>
+  <li><strong>PR 3, symulacje w przykładach</strong>: wtyczka Vite dla skryptu ramki; dwie symulacje, <code>struktura.md</code> i karta na <code>/symulatory</code>; README.</li>
+  <li><strong>PR 4, przykład i lekcja</strong>: przykład; lekcja z quizem; README i zrzuty ekranu.</li>
+  <li><strong>Później, osobno</strong>: mniej regionów na naszych stronach (decyzja 3).</li>
+</ol>
+
+<h2 id="decisions">10. Decyzje</h2>
+<ol>
+  <li><strong>Dodać stopkę serwisu?</strong> Rekomendacja: tak, krótką: informacja o szkicach („Treści są szkicami do sprawdzenia”), link do repozytorium i link do <code>/symulatory</code>. Narzędzie będzie miało co pokazać jako contentinfo, a serwis, który uczy punktów orientacyjnych, powinien mieć ich komplet. Warianty tekstu stopki podam w czacie.</li>
+  <li><strong>Gdzie stoją przełączniki:</strong> 1A, 1B albo 1C. Rekomendacja: 1B. Nagłówek zostaje bez zmian dla wszystkich innych, a pasek jasno mówi, że strona jest w specjalnym trybie.</li>
+  <li><strong>Regiony na naszych stronach:</strong> rekomendacja: najpierw wypuścić narzędzie i zobaczyć liczbę, potem w osobnym PR zdjąć <code>aria-labelledby</code> z sekcji, do których nikt nie skacze, i zostawić regiony tylko tam, gdzie nie pomaga już spis treści.</li>
+  <li><strong>Styl obrysów:</strong> 2A, 2B albo 2C. Rekomendacja: 2A, najbliżej pierwowzoru i czytelny bez listy.</li>
+  <li><strong>Lista:</strong> 3A albo 3B. Rekomendacja: 3A na szerokich ekranach, a poniżej 900 px układ 3B pod treścią.</li>
+  <li><strong>Ćwiczenie:</strong> samo 4A albo 4A z quizem w lekcji. Rekomendacja: z quizem.</li>
+</ol>
+
+<h2 id="out">11. Poza zakresem</h2>
+<ul>
+  <li>Skróty klawiszowe naśladujące nawigację czytnika po punktach orientacyjnych (D, H). Kłóciłyby się z przeglądarką i z prawdziwymi czytnikami.</li>
+  <li>Obrysy innych ról (listy, tabele, formularze bez nazwy). Narzędzie pokazuje to, między czym czytnik pozwala skakać, i nic więcej.</li>
+  <li>Edytowanie struktury w ramce.</li>
+</ul>
+
+</main>
+</body>
+</html>

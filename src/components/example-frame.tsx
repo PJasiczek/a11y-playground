@@ -1,12 +1,22 @@
 import { type } from "arktype";
 import { useState } from "react";
 import { type SimulationId, simulations } from "~/content/simulations";
+import type { StructureSummary } from "~/content/structure";
 import { useDemoFrame } from "./use-demo-frame";
 
 const narrowWidth = 320;
 
 // What the demo posts in keyboard mode, see frameScript in demo-document.ts.
 const KeyboardMessage = type({ a11yFocusStep: { n: "number", name: "string", role: "string" } }).or({ a11yBlockedClick: "true" });
+
+// What the demo posts in a structure simulation, see structure.entry.ts.
+const StructureMessage = type({
+  a11yStructure: {
+    landmarks: type({ label: "string", depth: "number" }).array(),
+    headings: type({ label: "string", text: "string" }).array(),
+    findings: "string[]",
+  },
+});
 
 type Step = { n: number; name: string; role: string };
 
@@ -19,7 +29,7 @@ type Step = { n: number; name: string; role: string };
  *
  * `simulation` is sent to the frame over postMessage, on every change and every load. What the
  * simulation shows goes under the frame as text: the focus steps and blocked clicks in keyboard
- * mode, the measured verdict at 320 pixels.
+ * mode, the measured verdict at 320 pixels, the landmarks or headings the frame found.
  */
 export function ExampleFrame({
   src,
@@ -36,11 +46,17 @@ export function ExampleFrame({
 }) {
   const [steps, setSteps] = useState<Step[]>([]);
   const [blocked, setBlocked] = useState(0);
+  const [structure, setStructure] = useState<StructureSummary | null>(null);
   const [started, setStarted] = useState(!motion);
   const { ref: frame, height, size, send } = useDemoFrame({
     simulation,
     active: started,
     onMessage: (message) => {
+      const outline = StructureMessage(message);
+      if (!(outline instanceof type.errors)) {
+        setStructure(outline.a11yStructure);
+        return;
+      }
       const data = KeyboardMessage(message);
       if (data instanceof type.errors) return;
       if ("a11yFocusStep" in data) {
@@ -58,6 +74,7 @@ export function ExampleFrame({
     setTraced(simulation);
     setSteps([]);
     setBlocked(0);
+    setStructure(null);
   }
 
   if (!started) {
@@ -120,6 +137,10 @@ export function ExampleFrame({
         </div>
       ) : null}
 
+      {structure && label && simulation && simulations[simulation].kind === "struktura" ? (
+        <StructureList title={label} summary={structure} />
+      ) : null}
+
       {narrow && size ? (
         size.width > size.viewport ? (
           <p className="mt-3 border-l-4 border-bad py-1 pl-3 text-[0.9375rem]">
@@ -137,6 +158,49 @@ export function ExampleFrame({
           </p>
         )
       ) : null}
+    </div>
+  );
+}
+
+/** The scan of one frame as text, under the frame: the same as its outlines, and what is wrong. */
+function StructureList({ title, summary }: { title: string; summary: StructureSummary }) {
+  const rows = [
+    ...summary.landmarks.map(({ label, depth }) => ({ label, depth, text: "" })),
+    ...summary.headings.map(({ label, text }) => ({ label, depth: 0, text })),
+  ];
+  return (
+    <div className="mt-3 text-[0.9375rem]">
+      <h3 className="font-semibold">{title}</h3>
+      {rows.length > 0 ? (
+        <ul className="mt-1">
+          {rows.map(({ label, depth, text }, index) => (
+            <li key={index} style={{ paddingInlineStart: `${String(depth * 1.25)}rem` }}>
+              <span className="font-mono text-[0.8125rem] font-semibold">{label}</span>
+              {text ? ` ${text}` : null}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mt-1 text-ink-2">Nic. Czytnik nie ma tu do czego skakać.</p>
+      )}
+      {summary.findings.length > 0 ? (
+        <ul className="mt-2 border-l-4 border-bad py-1 pl-3">
+          {summary.findings.map((finding) => (
+            <li key={finding}>
+              <span aria-hidden="true" className="font-bold text-bad">
+                ✕{" "}
+              </span>
+              {finding}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mt-2 border-l-4 border-good py-1 pl-3">
+          <strong className="text-good">
+            <span aria-hidden="true">✓ </span>Bez uwag.
+          </strong>
+        </p>
+      )}
     </div>
   );
 }
