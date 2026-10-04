@@ -20,6 +20,7 @@ export default defineConfig({
   plugins: [
     readingOrderPlugin(),
     frameScriptPlugin({ id: "virtual:pattern-log", entry: "src/content/pattern-log.entry.ts", name: "a11yPatternLog" }),
+    frameScriptPlugin({ id: "virtual:structure", entry: "src/content/structure.entry.ts", name: "a11yStructure" }),
     tailwindcss(),
     tanstackStart({
       // Content is static, so every page is rendered to HTML at build time. Crawling finds the

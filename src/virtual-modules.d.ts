@@ -13,3 +13,9 @@ declare module "virtual:pattern-log" {
   const script: string;
   export default script;
 }
+
+declare module "virtual:structure" {
+  /** The landmarks and headings simulations of example frames as one classic script. See frame-script.vite.ts. */
+  const script: string;
+  export default script;
+}

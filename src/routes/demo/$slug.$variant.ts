@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import structureScript from "virtual:structure";
 import { demoDocument, variants } from "~/content/demo-document";
 import { examples } from "~/content/examples";
 
@@ -11,7 +12,7 @@ export const Route = createFileRoute("/demo/$slug/$variant")({
         const example = examples.get(params.slug);
         const variant = variants.find((v) => v === params.variant);
         if (!example || !variant) return new Response("Nie ma takiego przykładu", { status: 404 });
-        return new Response(demoDocument(example, variant), {
+        return new Response(demoDocument(example, variant, structureScript), {
           headers: { "content-type": "text/html; charset=utf-8" },
         });
       },

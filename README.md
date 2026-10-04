@@ -38,7 +38,7 @@ The interface is in Polish. This README is in English.
 - **Search** (`/szukaj`, also on the home page) over criteria, examples, patterns, provisions, lessons, WCAG 3.0 guidelines and the glossary. It finds criteria by number, name or symptom ("modal", "placeholder"), articles by topic ("deklaracja dostępności"), and ignores Polish diacritics.
 - **Practice** (`/praktyka`): eleven examples as cards ordered by the cost of the fix, each with what the user gains. An example page (`/praktyka/ikona-jako-przycisk`) shows the broken and the fixed variant one above the other, each running in a sandboxed iframe, with its code and what a screen reader says. Examples that move start only when the reader asks. Criterion pages link to their examples.
 - **Patterns** (`/praktyka/wzorce`, the second half of Praktyka): working components built from the WAI-ARIA Authoring Practices, after the list of Deque University ARIA Examples. The catalogue shows a still of each, grouped by batch, and filters by whether HTML has the element for the job (`?natywnie=`). A pattern page (`/praktyka/wzorce/rozwin-zwin`) runs the pattern in a sandboxed iframe, logs beside it what a screen reader would say after every key (focus, state changes, live regions), shows its ARIA attributes with their current values, and turns its keyboard behaviour into an exercise that ticks itself off. Criterion pages and practice examples link to their patterns.
-- **Simulators** on every example page: a list beside the frames switches both variants to colour vision deficiency (four types), low vision, keyboard only, screen reader, 320 pixels wide or text at 200%. The choice lives in `?symulacja=`, and none is on by default. Each one puts text next to the frames, so no simulator is the only way to get the information: what the simulation shows and what it does not, the numbered focus steps and blocked mouse clicks, a table of what a screen reader reads in both variants (computed at build time), or whether the content fits in 320 pixels, measured in the frame.
+- **Simulators** on every example page: a list beside the frames switches both variants to colour vision deficiency (four types), low vision, keyboard only, screen reader, 320 pixels wide, text at 200%, or the outlines of their landmarks or headings. The choice lives in `?symulacja=`, and none is on by default. Each one puts text next to the frames, so no simulator is the only way to get the information: what the simulation shows and what it does not, the numbered focus steps and blocked mouse clicks, a table of what a screen reader reads in both variants (computed at build time), whether the content fits in 320 pixels, measured in the frame, or the landmarks or headings each frame has and what is missing.
 - **Simulators page** (`/symulatory`): what each simulator shows, its limits, the criteria it teaches, and links into the examples with the simulation already picked.
 - **Law** (`/prawo`): the 2019 digital accessibility act in full, the parts of the 2019 special needs act and the 2024 products and services act (the Polish EAA) that create digital obligations, and a page on EN 301 549. An article page (`/prawo/ustawa-2019-848/art-5`) shows each ustęp next to our summary. Every act says which consolidated text it comes from, when it was downloaded, and whether it was amended after that text.
 - **What applies to me** (`/mapowanie`): pick a website or app of a public body, or a product or service of a company, and every deadline appears on one timeline, with the ones for your situation highlighted and the criteria behind them in a table.
@@ -207,7 +207,7 @@ The tests check that every fixed fragment passes axe, that every page passes axe
 
 ### Simulators
 
-The simulation ids are code, in `src/content/simulations.ts`. What each kind of simulator shows is content, one file per kind in `content/symulatory/<kind>.md` (`barwy`, `slabe-widzenie`, `klawiatura`, `czytnik`, `waski-ekran`):
+The simulation ids are code, in `src/content/simulations.ts`. What each kind of simulator shows is content, one file per kind in `content/symulatory/<kind>.md` (`barwy`, `slabe-widzenie`, `klawiatura`, `czytnik`, `waski-ekran`, `struktura`):
 
 ```markdown
 ---
@@ -224,6 +224,7 @@ Opis ogólny, pokazywany przy przykładach bez własnej notatki.
 - `examples` become the "Wypróbuj na" links on `/symulatory`.
 - `limits` is shown as "Czego to nie pokazuje" next to every simulation of that kind.
 - The screen reader list is computed by a Vite plugin (`src/content/reading-order.vite.ts`) with jsdom and `dom-accessibility-api`, for each fragment after its script has run. A role without a Polish name fails `pnpm test`.
+- The structure simulations run `src/content/structure.ts` inside the frame: it finds landmarks and headings the way HTML-AAM defines them (a `header` inside `main` is not a banner, a `section` needs a name), draws the outlines and posts the list to the page. The same module powers "Struktura strony" on the app's own pages, loaded on the first press.
 
 ### ARIA patterns
 

@@ -143,4 +143,12 @@ const samples: Record<SimulationKind, ReactNode> = {
       <span className="absolute top-5 left-4 h-8 w-28 border-2 border-dashed border-bad" />
     </div>
   ),
+  struktura: (
+    <div className="relative h-20 w-40 border-2 border-[light-dark(#0a6363,#6fd3d3)] bg-surface">
+      <span className="absolute top-0 right-0 border-b-2 border-l-2 border-[light-dark(#0a6363,#6fd3d3)] bg-surface px-1.5 font-mono text-xs font-bold text-[light-dark(#0a6363,#6fd3d3)]">
+        nawigacja
+      </span>
+      <span className="absolute bottom-2.5 left-2.5 rounded-xs bg-ink px-1.5 font-mono text-xs font-bold text-paper">H2</span>
+    </div>
+  ),
 };

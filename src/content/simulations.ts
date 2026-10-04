@@ -5,7 +5,7 @@
  */
 
 /** A kind groups the ids that teach the same thing; each kind has one Markdown file. */
-export const simulationKinds = ["barwy", "slabe-widzenie", "klawiatura", "czytnik", "waski-ekran"] as const;
+export const simulationKinds = ["barwy", "slabe-widzenie", "klawiatura", "czytnik", "waski-ekran", "struktura"] as const;
 export type SimulationKind = (typeof simulationKinds)[number];
 
 /**
@@ -22,6 +22,8 @@ export const simulations = {
   czytnik: { kind: "czytnik", label: "Czytnik ekranu", hint: "Co przeczyta czytnik, po kolei." },
   "320px": { kind: "waski-ekran", label: "320 pikseli", hint: "Tyle, ile widać przy powiększeniu 400%." },
   "tekst-200": { kind: "waski-ekran", label: "Tekst 200%", hint: "Tekst dwa razy większy." },
+  "punkty-orientacyjne": { kind: "struktura", label: "Punkty orientacyjne", hint: "Obszary, między którymi skacze czytnik." },
+  naglowki: { kind: "struktura", label: "Nagłówki", hint: "Spis treści, który słyszy czytnik." },
 } as const satisfies Record<string, { kind: SimulationKind; label: string; hint: string }>;
 
 export type SimulationId = keyof typeof simulations;
@@ -40,4 +42,5 @@ export const firstOfKind = {
   klawiatura: "klawiatura",
   czytnik: "czytnik",
   "waski-ekran": "320px",
+  struktura: "punkty-orientacyjne",
 } as const satisfies Record<SimulationKind, SimulationId>;
