@@ -1,11 +1,41 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, type Page, test } from "@playwright/test";
+import { type } from "arktype";
+import { readdirSync, readFileSync } from "node:fs";
+import { parse } from "yaml";
 import { tags } from "./axe";
 
 // The whole-page demo: the KMW home page, broken and fixed, each in the whole window with the
 // app's demo bar in front of it.
 
 const fixed = "/demo/przed-i-po/po";
+
+// Only the part of the frontmatter this test needs; the app validates the rest.
+const Declared = type({ axe: "string[]" });
+const declared = readdirSync("content/przed-i-po/problemy").flatMap((file) => {
+  const source = readFileSync(`content/przed-i-po/problemy/${file}`, "utf8");
+  return Declared.assert(parse(source.split(/^---$/m)[1] ?? "")).axe;
+});
+
+test("the broken page fails axe exactly the way its problems say", async ({ page }) => {
+  await page.goto("/demo/przed-i-po/przed");
+  const { violations } = await new AxeBuilder({ page }).withTags(tags).exclude("#demo-pasek").analyze();
+  expect(violations.map((v) => v.id).toSorted()).toEqual([...new Set(declared)].toSorted());
+});
+
+test("the marked page puts a numbered link on every problem with a place", async ({ page }) => {
+  await page.goto("/demo/przed-i-po/przed-znaczniki");
+  const markers = page.locator("#demo-znaczniki a");
+  // Four problems belong to the whole page and are listed in the bar instead.
+  await expect(markers).toHaveCount(16);
+  await expect(page.getByRole("list", { name: "Problemy całej strony" }).getByRole("link")).toHaveCount(4);
+  await expect(page.getByRole("link", { name: "Problem 7: Podmenu otwiera się tylko pod myszą" })).toHaveAttribute(
+    "href",
+    "/praktyka/przed-i-po/7",
+  );
+  const { violations } = await new AxeBuilder({ page }).withTags(tags).include("#demo-pasek").include("#demo-znaczniki").analyze();
+  expect(violations).toEqual([]);
+});
 
 /** The fixed page opens its disruption notice on arrival; most checks start after it is closed. */
 async function openFixed(page: Page) {

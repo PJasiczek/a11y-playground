@@ -19,8 +19,9 @@ export function NativeVerdictBadge({ verdict }: { verdict: NativeVerdict }) {
 }
 
 /**
- * The two halves of Praktyka (mock 4B): broken and fixed examples, and the patterns. Links to
- * two URLs, not ARIA tabs, so no arrow keys are expected.
+ * The parts of Praktyka (mock 4B of phase 9, 1A of phase 11): broken and fixed examples, the
+ * patterns, and the whole page before and after. Links to URLs, not ARIA tabs, so no arrow keys
+ * are expected.
  */
 export function PracticeTabs() {
   const link =
@@ -36,6 +37,11 @@ export function PracticeTabs() {
         <li className="-mb-px">
           <Link to="/praktyka/wzorce" className={link}>
             Wzorce komponentów
+          </Link>
+        </li>
+        <li className="-mb-px">
+          <Link to="/praktyka/przed-i-po" className={link}>
+            Strona przed i po
           </Link>
         </li>
       </ul>

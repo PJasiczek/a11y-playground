@@ -26,6 +26,9 @@ import { Route as SciezkiIndexRouteImport } from './routes/sciezki/index'
 import { Route as DemoSlugVariantRouteImport } from './routes/demo/$slug.$variant'
 import { Route as DemoPrzedIPoViewRouteImport } from './routes/demo/przed-i-po.$view'
 import { Route as DemoWzorceSlugRouteImport } from './routes/demo/wzorce.$slug'
+import { Route as PraktykaPrzedIPoIndexRouteImport } from './routes/praktyka/przed-i-po/index'
+import { Route as PraktykaPrzedIPoProblemRouteImport } from './routes/praktyka/przed-i-po/$problem'
+import { Route as PraktykaPrzedIPoListaRouteImport } from './routes/praktyka/przed-i-po/lista'
 import { Route as PraktykaWzorceIndexRouteImport } from './routes/praktyka/wzorce/index'
 import { Route as PraktykaWzorceSlugRouteImport } from './routes/praktyka/wzorce/$slug'
 import { Route as PrawoActIndexRouteImport } from './routes/prawo/$act/index'
@@ -118,6 +121,21 @@ const DemoWzorceSlugRoute = DemoWzorceSlugRouteImport.update({
   path: '/demo/wzorce/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PraktykaPrzedIPoIndexRoute = PraktykaPrzedIPoIndexRouteImport.update({
+  id: '/praktyka/przed-i-po/',
+  path: '/praktyka/przed-i-po/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PraktykaPrzedIPoProblemRoute = PraktykaPrzedIPoProblemRouteImport.update({
+  id: '/praktyka/przed-i-po/$problem',
+  path: '/praktyka/przed-i-po/$problem',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PraktykaPrzedIPoListaRoute = PraktykaPrzedIPoListaRouteImport.update({
+  id: '/praktyka/przed-i-po/lista',
+  path: '/praktyka/przed-i-po/lista',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PraktykaWzorceIndexRoute = PraktykaWzorceIndexRouteImport.update({
   id: '/praktyka/wzorce/',
   path: '/praktyka/wzorce/',
@@ -167,9 +185,12 @@ export interface FileRoutesByFullPath {
   '/demo/$slug/$variant': typeof DemoSlugVariantRoute
   '/demo/przed-i-po/$view': typeof DemoPrzedIPoViewRoute
   '/demo/wzorce/$slug': typeof DemoWzorceSlugRoute
+  '/praktyka/przed-i-po/$problem': typeof PraktykaPrzedIPoProblemRoute
+  '/praktyka/przed-i-po/lista': typeof PraktykaPrzedIPoListaRoute
   '/praktyka/wzorce/$slug': typeof PraktykaWzorceSlugRoute
   '/prawo/$act/$unit': typeof PrawoActUnitRoute
   '/sciezki/$path/$lesson': typeof SciezkiPathLessonRoute
+  '/praktyka/przed-i-po/': typeof PraktykaPrzedIPoIndexRoute
   '/praktyka/wzorce/': typeof PraktykaWzorceIndexRoute
   '/prawo/$act/': typeof PrawoActIndexRoute
   '/sciezki/$path/': typeof SciezkiPathIndexRoute
@@ -192,9 +213,12 @@ export interface FileRoutesByTo {
   '/demo/$slug/$variant': typeof DemoSlugVariantRoute
   '/demo/przed-i-po/$view': typeof DemoPrzedIPoViewRoute
   '/demo/wzorce/$slug': typeof DemoWzorceSlugRoute
+  '/praktyka/przed-i-po/$problem': typeof PraktykaPrzedIPoProblemRoute
+  '/praktyka/przed-i-po/lista': typeof PraktykaPrzedIPoListaRoute
   '/praktyka/wzorce/$slug': typeof PraktykaWzorceSlugRoute
   '/prawo/$act/$unit': typeof PrawoActUnitRoute
   '/sciezki/$path/$lesson': typeof SciezkiPathLessonRoute
+  '/praktyka/przed-i-po': typeof PraktykaPrzedIPoIndexRoute
   '/praktyka/wzorce': typeof PraktykaWzorceIndexRoute
   '/prawo/$act': typeof PrawoActIndexRoute
   '/sciezki/$path': typeof SciezkiPathIndexRoute
@@ -218,9 +242,12 @@ export interface FileRoutesById {
   '/demo/$slug/$variant': typeof DemoSlugVariantRoute
   '/demo/przed-i-po/$view': typeof DemoPrzedIPoViewRoute
   '/demo/wzorce/$slug': typeof DemoWzorceSlugRoute
+  '/praktyka/przed-i-po/$problem': typeof PraktykaPrzedIPoProblemRoute
+  '/praktyka/przed-i-po/lista': typeof PraktykaPrzedIPoListaRoute
   '/praktyka/wzorce/$slug': typeof PraktykaWzorceSlugRoute
   '/prawo/$act/$unit': typeof PrawoActUnitRoute
   '/sciezki/$path/$lesson': typeof SciezkiPathLessonRoute
+  '/praktyka/przed-i-po/': typeof PraktykaPrzedIPoIndexRoute
   '/praktyka/wzorce/': typeof PraktykaWzorceIndexRoute
   '/prawo/$act/': typeof PrawoActIndexRoute
   '/sciezki/$path/': typeof SciezkiPathIndexRoute
@@ -245,9 +272,12 @@ export interface FileRouteTypes {
     | '/demo/$slug/$variant'
     | '/demo/przed-i-po/$view'
     | '/demo/wzorce/$slug'
+    | '/praktyka/przed-i-po/$problem'
+    | '/praktyka/przed-i-po/lista'
     | '/praktyka/wzorce/$slug'
     | '/prawo/$act/$unit'
     | '/sciezki/$path/$lesson'
+    | '/praktyka/przed-i-po/'
     | '/praktyka/wzorce/'
     | '/prawo/$act/'
     | '/sciezki/$path/'
@@ -270,9 +300,12 @@ export interface FileRouteTypes {
     | '/demo/$slug/$variant'
     | '/demo/przed-i-po/$view'
     | '/demo/wzorce/$slug'
+    | '/praktyka/przed-i-po/$problem'
+    | '/praktyka/przed-i-po/lista'
     | '/praktyka/wzorce/$slug'
     | '/prawo/$act/$unit'
     | '/sciezki/$path/$lesson'
+    | '/praktyka/przed-i-po'
     | '/praktyka/wzorce'
     | '/prawo/$act'
     | '/sciezki/$path'
@@ -295,9 +328,12 @@ export interface FileRouteTypes {
     | '/demo/$slug/$variant'
     | '/demo/przed-i-po/$view'
     | '/demo/wzorce/$slug'
+    | '/praktyka/przed-i-po/$problem'
+    | '/praktyka/przed-i-po/lista'
     | '/praktyka/wzorce/$slug'
     | '/prawo/$act/$unit'
     | '/sciezki/$path/$lesson'
+    | '/praktyka/przed-i-po/'
     | '/praktyka/wzorce/'
     | '/prawo/$act/'
     | '/sciezki/$path/'
@@ -321,9 +357,12 @@ export interface RootRouteChildren {
   DemoSlugVariantRoute: typeof DemoSlugVariantRoute
   DemoPrzedIPoViewRoute: typeof DemoPrzedIPoViewRoute
   DemoWzorceSlugRoute: typeof DemoWzorceSlugRoute
+  PraktykaPrzedIPoProblemRoute: typeof PraktykaPrzedIPoProblemRoute
+  PraktykaPrzedIPoListaRoute: typeof PraktykaPrzedIPoListaRoute
   PraktykaWzorceSlugRoute: typeof PraktykaWzorceSlugRoute
   PrawoActUnitRoute: typeof PrawoActUnitRoute
   SciezkiPathLessonRoute: typeof SciezkiPathLessonRoute
+  PraktykaPrzedIPoIndexRoute: typeof PraktykaPrzedIPoIndexRoute
   PraktykaWzorceIndexRoute: typeof PraktykaWzorceIndexRoute
   PrawoActIndexRoute: typeof PrawoActIndexRoute
   SciezkiPathIndexRoute: typeof SciezkiPathIndexRoute
@@ -450,6 +489,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoWzorceSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/praktyka/przed-i-po/': {
+      id: '/praktyka/przed-i-po/'
+      path: '/praktyka/przed-i-po'
+      fullPath: '/praktyka/przed-i-po/'
+      preLoaderRoute: typeof PraktykaPrzedIPoIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/praktyka/przed-i-po/$problem': {
+      id: '/praktyka/przed-i-po/$problem'
+      path: '/praktyka/przed-i-po/$problem'
+      fullPath: '/praktyka/przed-i-po/$problem'
+      preLoaderRoute: typeof PraktykaPrzedIPoProblemRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/praktyka/przed-i-po/lista': {
+      id: '/praktyka/przed-i-po/lista'
+      path: '/praktyka/przed-i-po/lista'
+      fullPath: '/praktyka/przed-i-po/lista'
+      preLoaderRoute: typeof PraktykaPrzedIPoListaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/praktyka/wzorce/': {
       id: '/praktyka/wzorce/'
       path: '/praktyka/wzorce'
@@ -513,9 +573,12 @@ const rootRouteChildren: RootRouteChildren = {
   DemoSlugVariantRoute: DemoSlugVariantRoute,
   DemoPrzedIPoViewRoute: DemoPrzedIPoViewRoute,
   DemoWzorceSlugRoute: DemoWzorceSlugRoute,
+  PraktykaPrzedIPoProblemRoute: PraktykaPrzedIPoProblemRoute,
+  PraktykaPrzedIPoListaRoute: PraktykaPrzedIPoListaRoute,
   PraktykaWzorceSlugRoute: PraktykaWzorceSlugRoute,
   PrawoActUnitRoute: PrawoActUnitRoute,
   SciezkiPathLessonRoute: SciezkiPathLessonRoute,
+  PraktykaPrzedIPoIndexRoute: PraktykaPrzedIPoIndexRoute,
   PraktykaWzorceIndexRoute: PraktykaWzorceIndexRoute,
   PrawoActIndexRoute: PrawoActIndexRoute,
   SciezkiPathIndexRoute: SciezkiPathIndexRoute,

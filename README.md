@@ -38,6 +38,7 @@ The interface is in Polish. This README is in English.
 - **Search** (`/szukaj`, also on the home page) over criteria, examples, patterns, provisions, lessons, WCAG 3.0 guidelines and the glossary. It finds criteria by number, name or symptom ("modal", "placeholder"), articles by topic ("deklaracja dostępności"), and ignores Polish diacritics.
 - **Practice** (`/praktyka`): twelve examples as cards ordered by the cost of the fix, each with what the user gains. An example page (`/praktyka/ikona-jako-przycisk`) shows the broken and the fixed variant one above the other, each running in a sandboxed iframe, with its code and what a screen reader says. Examples that move start only when the reader asks. Criterion pages link to their examples.
 - **Patterns** (`/praktyka/wzorce`, the second half of Praktyka): working components built from the WAI-ARIA Authoring Practices, after the list of Deque University ARIA Examples. The catalogue shows a still of each, grouped by batch, and filters by whether HTML has the element for the job (`?natywnie=`). A pattern page (`/praktyka/wzorce/rozwin-zwin`) runs the pattern in a sandboxed iframe, logs beside it what a screen reader would say after every key (focus, state changes, live regions), shows its ARIA attributes with their current values, and turns its keyboard behaviour into an exercise that ticks itself off. Criterion pages and practice examples link to their patterns.
+- **Whole page before and after** (`/praktyka/przed-i-po`, the third part of Praktyka): the home page of a fictional transport operator, Komunikacja Miejska Wrzosów, broken in 20 ways and fixed. Both versions open in the whole window (`/demo/przed-i-po/przed`, `/demo/przed-i-po/po`) under a bar that says which one it is and leads back. The broken page moves only after "Włącz ruch". The list of problems (`/praktyka/przed-i-po/lista`) filters by who a problem hurts (`?komu=`) and says which ones axe finds (6 of 20); each problem has a page with the fix and the code before and after, and `/demo/przed-i-po/przed-znaczniki` puts the numbers on the broken page. Criterion, example and pattern pages link to the problems they share.
 - **Simulators** on every example page: a list beside the frames switches both variants to colour vision deficiency (four types), low vision, keyboard only, screen reader, 320 pixels wide, text at 200%, or the outlines of their landmarks or headings. The choice lives in `?symulacja=`, and none is on by default. Each one puts text next to the frames, so no simulator is the only way to get the information: what the simulation shows and what it does not, the numbered focus steps and blocked mouse clicks, a table of what a screen reader reads in both variants (computed at build time), whether the content fits in 320 pixels, measured in the frame, or the landmarks or headings each frame has and what is missing.
 - **Simulators page** (`/symulatory`): what each simulator shows, its limits, the criteria it teaches, and links into the examples with the simulation already picked.
 - **Law** (`/prawo`): the 2019 digital accessibility act in full, the parts of the 2019 special needs act and the 2024 products and services act (the Polish EAA) that create digital obligations, and a page on EN 301 549. An article page (`/prawo/ustawa-2019-848/art-5`) shows each ustęp next to our summary. Every act says which consolidated text it comes from, when it was downloaded, and whether it was amended after that text.
@@ -264,6 +265,29 @@ status: szkic
 - `examples` (optional) names practice examples that show the same thing broken.
 - The live log is `src/content/pattern-log.ts`: it reads focus with the name, role, states and description, state changes of the focused element (attributes, native checkboxes, popovers) and live regions. It is bundled with `dom-accessibility-api` by a Vite plugin and inlined into every pattern document.
 
+### Whole page before and after
+
+`content/przed-i-po/` holds the two pages as complete HTML documents, `przed.html` and `po.html`, and one file per problem in `problemy/NN-slug.md`, numbered in page order.
+
+```markdown
+---
+title: Podmenu otwiera się tylko pod myszą
+criteria: ["2.1.1", "4.1.2"]
+marker: podmenu
+who: [klawiatura, czytnik, telefon]
+axe: []
+pattern: nawigacja-wielopoziomowa
+status: szkic
+---
+## Problem
+## Rozwiązanie
+```
+
+- `marker` names the element the problem sits on: `przed.html` carries it in a `data-problem` attribute (several, space-separated, on `<body>` for problems of the whole page). Every marker appears exactly once, and every `data-problem` belongs to a problem, or the build fails. The page served for checking has the attributes and comments stripped, so its source gives nothing away.
+- `who` comes from `src/content/before-after-labels.ts`. `example` and `pattern` (optional) name the practice example and the ARIA pattern that show the same thing alone.
+- `axe` lists the axe-core rules that report the problem. The e2e test fails unless the broken page reports exactly the rules all problems list together.
+- The body ends with one ` ```przed ` and one ` ```po ` code block, shown side by side.
+
 ### WCAG 3.0
 
 The tracking page reads `content/wcag3/`: `index.md` for the draft and the comparison, and one file per guideline group.
@@ -446,6 +470,7 @@ content/
   slownik/       one Markdown file per glossary term
   praktyka/      one folder per example: index.md, bad.html, good.html
   wzorce/        one folder per ARIA pattern: index.md, wzorzec.html
+  przed-i-po/    the KMW page broken and fixed, and one Markdown file per problem
   prawo/         one Markdown file per act: summaries and deadlines
   sciezki/       one folder per learning path: lessons and their quizzes
   symulatory/    one Markdown file per kind of simulator
@@ -460,7 +485,7 @@ src/
   routes/        file-based routes (__root.tsx holds the layout)
   components/    header, theme toggle, route announcer, badges, filter chips, the AAA comparison, glossary previews, example and pattern frames and cards, the screen reader log, the simulator list, the quiz
   styles.css     Tailwind setup, colour tokens, styles for rendered Markdown
-e2e/             Playwright tests: axe, target size, animations, keyboard, example isolation, simulators, a whole path from the keyboard, WCAG 3.0, every pattern exercise
+e2e/             Playwright tests: axe, target size, animations, keyboard, example isolation, simulators, a whole path from the keyboard, WCAG 3.0, every pattern exercise, the before and after page
 docs/
   accessibility.md   the accessibility checklist
   design/            dated plans and mocks

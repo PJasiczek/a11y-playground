@@ -1,4 +1,5 @@
 import MiniSearch from "minisearch";
+import { problems } from "~/content/before-after";
 import { criterionContent } from "~/content/criterion-content";
 import { examples } from "~/content/examples";
 import { glossary } from "~/content/glossary";
@@ -16,7 +17,7 @@ import { type SearchDoc, searchOptions } from "./options";
 
 const text = (html: string) => html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 
-/** Every criterion, glossary term, example, pattern, article, lesson and WCAG 3.0 guideline, as search documents. */
+/** Every criterion, glossary term, example, pattern, article, lesson, WCAG 3.0 guideline and demo problem, as search documents. */
 export function buildSearchDocs(): SearchDoc[] {
   const criterionDocs = criteria.map((c): SearchDoc => {
     const content = criterionContent.get(c.id);
@@ -111,7 +112,19 @@ export function buildSearchDocs(): SearchDoc[] {
       }),
     ),
   );
-  return [...criterionDocs, ...termDocs, ...exampleDocs, ...patternDocs, ...provisionDocs, ...lessonDocs, ...wcag3Docs];
+  // Problems by their title and both sections, so "captcha" or "menu" finds them.
+  const problemDocs = problems.map(
+    (problem): SearchDoc => ({
+      id: `problem:${String(problem.number)}`,
+      kind: "problem",
+      ref: String(problem.number),
+      title: problem.title,
+      summary: "Strona przed i po, Komunikacja Miejska Wrzosów",
+      keywords: problem.criteria.join(" "),
+      body: text(`${problem.problemHtml} ${problem.solutionHtml}`),
+    }),
+  );
+  return [...criterionDocs, ...termDocs, ...exampleDocs, ...patternDocs, ...provisionDocs, ...lessonDocs, ...wcag3Docs, ...problemDocs];
 }
 
 export function buildSearchIndex() {

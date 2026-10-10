@@ -73,7 +73,7 @@
   .cookies { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: #2c2433; color: #fff; padding: .8rem 1.25rem; display: flex; align-items: center; gap: 1rem; }
   .cookies button { margin-left: auto; font: 700 .9rem "Segoe UI", system-ui, sans-serif; background: #ffc93c; color: #17141c; border: 0; padding: .45rem .9rem; cursor: pointer; }
   .zaslona { display: none; position: fixed; inset: 0; z-index: 30; background: rgb(23 20 28 / .55); }
-  .okno { display: none; position: fixed; z-index: 31; left: 50%; top: 5rem; transform: translateX(-50%); width: 28rem; background: #fff; border-top: 6px solid #ffc93c; padding: 1.2rem 1.4rem; }
+  .okno { display: none; position: fixed; z-index: 31; left: 50%; top: 10rem; transform: translateX(-50%); width: 28rem; background: #fff; border-top: 6px solid #ffc93c; padding: 1.2rem 1.4rem; }
   .zaslona.otwarta, .okno.otwarte { display: block; }
   .okno .zamknij { position: absolute; right: .7rem; top: .4rem; font-size: 1.3rem; cursor: pointer; color: #5c5260; }
   .okno .naglowek { margin: 0 0 .4rem; }
@@ -174,7 +174,7 @@
 
   <div class="zgloszenie">
     <div class="naglowek">Zgłoś uwagę</div>
-    <div class="bledy" data-problem="walidacja">Formularz zawiera błędy.</div>
+    <div class="bledy">Formularz zawiera błędy.</div>
     <form class="formularz" novalidate>
       <div class="siatka" data-problem="formularz">
         <div class="pole"><div class="etykieta wymagane">Imię i nazwisko</div><input type="text" name="imie"></div>
@@ -197,7 +197,7 @@
         <img width="130" height="44" alt="kod" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 130 44'%3E%3Cdefs%3E%3Cpattern id='p' width='9' height='9' patternUnits='userSpaceOnUse' patternTransform='rotate(-30)'%3E%3Crect width='4' height='9' fill='%23dcd3e1'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='130' height='44' fill='%23fff'/%3E%3Crect width='130' height='44' fill='url(%23p)'/%3E%3Ctext x='14' y='31' font-family='Georgia,serif' font-style='italic' font-weight='700' font-size='24' fill='%235c5260' transform='skewX(-14) translate(8 0)' letter-spacing='5'%3Ex7Kp2%3C/text%3E%3Cpath d='M4 30C40 10 80 40 126 14' stroke='%235c5260' stroke-width='1.5' fill='none'/%3E%3C/svg%3E">
         <input type="text" name="kod">
       </div>
-      <button class="wyslij" type="submit">Wyślij</button>
+      <button class="wyslij" type="submit" data-problem="walidacja">Wyślij</button>
     </form>
   </div>
 

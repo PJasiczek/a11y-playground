@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { type } from "arktype";
+import { problemsForPattern } from "./before-after";
 import { examples } from "./examples";
 import { glossary } from "./glossary";
 import { patterns } from "./patterns";
@@ -9,7 +10,8 @@ import { patterns } from "./patterns";
 
 /**
  * One pattern, or null for an unknown slug, with the short definitions of the glossary terms
- * its sections mark and the practice examples that show the same thing broken.
+ * its sections mark, the practice examples that show the same thing broken, and the problems of
+ * the whole-page demo it fixes.
  */
 export const getPattern = createServerFn({ method: "GET" })
   .validator(type("string"))
@@ -25,7 +27,7 @@ export const getPattern = createServerFn({ method: "GET" })
       const example = examples.get(slug);
       return example ? [{ slug, title: example.title, summary: example.summary }] : [];
     });
-    return { pattern, terms, examples: related };
+    return { pattern, terms, examples: related, beforeAfter: problemsForPattern(data) };
   });
 
 /** Every pattern as a catalogue card, in batch order. */

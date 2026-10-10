@@ -22,7 +22,8 @@ function isHit(result: SearchResult): result is Hit {
       kind === "wzorzec" ||
       kind === "przepis" ||
       kind === "lekcja" ||
-      kind === "wcag3") &&
+      kind === "wcag3" ||
+      kind === "problem") &&
     typeof ref === "string" &&
     typeof title === "string" &&
     typeof summary === "string"
@@ -73,6 +74,7 @@ function SearchPage() {
   const patterns = hits?.filter((hit) => hit.kind === "wzorzec") ?? [];
   const law = hits?.filter((hit) => hit.kind === "przepis") ?? [];
   const lessons = hits?.filter((hit) => hit.kind === "lekcja") ?? [];
+  const problems = hits?.filter((hit) => hit.kind === "problem") ?? [];
   const wcag3 = hits?.filter((hit) => hit.kind === "wcag3") ?? [];
   const status = !q ? "" : hits ? `${countOf(hits.length, ["wynik", "wyniki", "wyników"])} dla „${q}”` : "Szukam…";
 
@@ -193,6 +195,26 @@ function SearchPage() {
                 className="grid grid-cols-[5.5rem_1fr] gap-x-4 gap-y-1 px-1 py-3.5 hover:bg-surface max-sm:grid-cols-1"
               >
                 <span className="font-mono text-[0.8125rem] font-semibold text-ink-2">wzorzec</span>
+                <span className="text-[1.0625rem] font-semibold">
+                  {hit.title}
+                  <span className="mt-1 block text-[0.9375rem] font-normal text-ink-2">{hit.summary}</span>
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ResultGroup>
+      ) : null}
+
+      {problems.length > 0 ? (
+        <ResultGroup title="Strona przed i po">
+          {problems.map((hit) => (
+            <li key={hit.ref} className="border-t border-rule last:border-b">
+              <Link
+                to="/praktyka/przed-i-po/$problem"
+                params={{ problem: hit.ref }}
+                className="grid grid-cols-[5.5rem_1fr] gap-x-4 gap-y-1 px-1 py-3.5 hover:bg-surface max-sm:grid-cols-1"
+              >
+                <span className="font-mono text-[0.8125rem] font-semibold text-ink-2">problem {hit.ref}</span>
                 <span className="text-[1.0625rem] font-semibold">
                   {hit.title}
                   <span className="mt-1 block text-[0.9375rem] font-normal text-ink-2">{hit.summary}</span>

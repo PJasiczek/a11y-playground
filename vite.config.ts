@@ -13,6 +13,8 @@ import { criteria } from "./src/content/wcag.gen.ts";
 const exampleSlugs = readdirSync("content/praktyka");
 // One folder per pattern; each has a page and a demo document with the live log.
 const patternSlugs = readdirSync("content/wzorce");
+// One file per problem of the whole-page demo, numbered from 01.
+const problemCount = readdirSync("content/przed-i-po/problemy").length;
 
 export default defineConfig({
   resolve: { tsconfigPaths: true },
@@ -47,8 +49,12 @@ export default defineConfig({
           { path: `/demo/${slug}/good` },
         ]),
         ...patternSlugs.flatMap((slug) => [{ path: `/praktyka/wzorce/${slug}` }, { path: `/demo/wzorce/${slug}` }]),
-        // The whole-page demo, broken and fixed.
+        // The whole-page demo: its pages in the app, and the broken, marked and fixed documents.
+        { path: "/praktyka/przed-i-po" },
+        { path: "/praktyka/przed-i-po/lista" },
+        ...Array.from({ length: problemCount }, (_, i) => ({ path: `/praktyka/przed-i-po/${String(i + 1)}` })),
         { path: "/demo/przed-i-po/przed" },
+        { path: "/demo/przed-i-po/przed-znaczniki" },
         { path: "/demo/przed-i-po/po" },
         // Written as a plain file, not /search-index.json/index.html.
         { path: "/search-index.json", prerender: { autoSubfolderIndex: false } },
