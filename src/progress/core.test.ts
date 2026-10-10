@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { createProgressStore } from "./store";
+import { createProgressStore } from "./core";
 
 /** An in-memory stand-in for localStorage. */
 function memoryStorage(initial: Record<string, string> = {}) {
