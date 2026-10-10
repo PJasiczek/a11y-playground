@@ -11,7 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MapowanieRouteImport } from './routes/mapowanie'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as SearchIndexDotjsonRouteImport } from './routes/search-index[.]json'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SlownikRouteImport } from './routes/slownik'
 import { Route as SymulatoryRouteImport } from './routes/symulatory'
 import { Route as SzukajRouteImport } from './routes/szukaj'
@@ -46,9 +48,19 @@ const MapowanieRoute = MapowanieRouteImport.update({
   path: '/mapowanie',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SearchIndexDotjsonRoute = SearchIndexDotjsonRouteImport.update({
   id: '/search-index.json',
   path: '/search-index.json',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SlownikRoute = SlownikRouteImport.update({
@@ -170,7 +182,9 @@ const SciezkiPathLessonRoute = SciezkiPathLessonRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/mapowanie': typeof MapowanieRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/search-index.json': typeof SearchIndexDotjsonRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/slownik': typeof SlownikRoute
   '/symulatory': typeof SymulatoryRoute
   '/szukaj': typeof SzukajRoute
@@ -198,7 +212,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/mapowanie': typeof MapowanieRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/search-index.json': typeof SearchIndexDotjsonRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/slownik': typeof SlownikRoute
   '/symulatory': typeof SymulatoryRoute
   '/szukaj': typeof SzukajRoute
@@ -227,7 +243,9 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/mapowanie': typeof MapowanieRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/search-index.json': typeof SearchIndexDotjsonRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/slownik': typeof SlownikRoute
   '/symulatory': typeof SymulatoryRoute
   '/szukaj': typeof SzukajRoute
@@ -257,7 +275,9 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/mapowanie'
+    | '/robots.txt'
     | '/search-index.json'
+    | '/sitemap.xml'
     | '/slownik'
     | '/symulatory'
     | '/szukaj'
@@ -285,7 +305,9 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/mapowanie'
+    | '/robots.txt'
     | '/search-index.json'
+    | '/sitemap.xml'
     | '/slownik'
     | '/symulatory'
     | '/szukaj'
@@ -313,7 +335,9 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/mapowanie'
+    | '/robots.txt'
     | '/search-index.json'
+    | '/sitemap.xml'
     | '/slownik'
     | '/symulatory'
     | '/szukaj'
@@ -342,7 +366,9 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   MapowanieRoute: typeof MapowanieRoute
+  RobotsDottxtRoute: typeof RobotsDottxtRoute
   SearchIndexDotjsonRoute: typeof SearchIndexDotjsonRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SlownikRoute: typeof SlownikRoute
   SymulatoryRoute: typeof SymulatoryRoute
   SzukajRoute: typeof SzukajRoute
@@ -384,11 +410,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MapowanieRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/search-index.json': {
       id: '/search-index.json'
       path: '/search-index.json'
       fullPath: '/search-index.json'
       preLoaderRoute: typeof SearchIndexDotjsonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/slownik': {
@@ -558,7 +598,9 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   MapowanieRoute: MapowanieRoute,
+  RobotsDottxtRoute: RobotsDottxtRoute,
   SearchIndexDotjsonRoute: SearchIndexDotjsonRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   SlownikRoute: SlownikRoute,
   SymulatoryRoute: SymulatoryRoute,
   SzukajRoute: SzukajRoute,

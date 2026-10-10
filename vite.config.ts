@@ -2,18 +2,11 @@ import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { nitro } from "nitro/vite";
-import { readdirSync } from "node:fs";
 import { defineConfig } from "vite";
 import { frameScriptPlugin } from "./src/content/frame-script.vite.ts";
 import { readingOrderPlugin } from "./src/content/reading-order.vite.ts";
 import { sitePages } from "./src/content/site-pages.ts";
-
-const pages = sitePages({
-  examples: readdirSync("content/praktyka"),
-  patterns: readdirSync("content/wzorce"),
-  // One file per problem, numbered from 01.
-  problemCount: readdirSync("content/przed-i-po/problemy").length,
-});
+import { siteContentFromDisk } from "./src/content/site-pages.node.ts";
 
 export default defineConfig({
   resolve: { tsconfigPaths: true },
@@ -25,8 +18,8 @@ export default defineConfig({
     frameScriptPlugin({ id: "virtual:demo-bar", entry: "src/content/demo-bar.entry.ts", name: "a11yDemoBar" }),
     tailwindcss(),
     tanstackStart({
-      // Content is static, so every page is rendered to HTML at build time: the pages crawling
-      // finds, the ones in site-pages.ts, and the search index, because nothing links to it.
+      // Content is static, so every page is rendered to HTML at build time: every page in
+      // site-pages.ts, anything else crawling finds, and the files nothing links to.
       prerender: {
         enabled: true,
         crawlLinks: true,
@@ -37,9 +30,9 @@ export default defineConfig({
         filter: ({ path }) => !path.includes("#") && !path.includes("?"),
       },
       pages: [
-        ...pages.map((path) => ({ path })),
-        // Written as a plain file, not /search-index.json/index.html.
-        { path: "/search-index.json", prerender: { autoSubfolderIndex: false } },
+        ...sitePages(siteContentFromDisk()).map(({ path }) => ({ path })),
+        // Written as plain files, not /search-index.json/index.html.
+        ...["/search-index.json", "/robots.txt", "/sitemap.xml"].map((path) => ({ path, prerender: { autoSubfolderIndex: false } })),
       ],
     }),
     nitro(),
