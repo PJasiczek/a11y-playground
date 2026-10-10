@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan: faza 11, cała strona przed i po</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1.25rem 6rem;
+    background: #000; color: #fff;
+    font: 16px/1.65 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  main { max-width: 82ch; margin: 0 auto; }
+  h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 .5rem; letter-spacing: -.02em; }
+  h2 { font-size: 1.2rem; margin: 3rem 0 .75rem; padding-top: 1rem; border-top: 1px solid #262626; letter-spacing: -.01em; }
+  h3 { font-size: 1rem; margin: 1.75rem 0 .5rem; }
+  p, li, dd { color: #e5e5e5; }
+  a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  ul, ol { padding-left: 1.3rem; }
+  li { margin: .3rem 0; }
+  code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .875em; background: #141414; border: 1px solid #262626; border-radius: 3px; padding: .08em .3em; }
+  pre { background: #0b0b0b; border: 1px solid #262626; border-radius: 4px; padding: .9rem 1rem; overflow-x: auto; }
+  pre code { background: none; border: 0; padding: 0; font-size: .82rem; line-height: 1.55; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; display: block; overflow-x: auto; }
+  th, td { border: 1px solid #262626; padding: .45rem .6rem; text-align: left; vertical-align: top; }
+  th { background: #101010; font-weight: 600; }
+  .meta { color: #a3a3a3; font-size: .85rem; margin: 0 0 1.5rem; }
+  .meta a { color: #fff; }
+  .flag { border-left: 2px solid #737373; padding: .1rem 0 .1rem .85rem; margin: 1rem 0; color: #d4d4d4; font-size: .93rem; }
+  .toc { border: 1px solid #262626; padding: 1rem 1rem 1rem 2.4rem; margin: 1.5rem 0 0; }
+  .toc li { margin: .15rem 0; }
+  @media (max-width: 40rem) { body { padding: 1.25rem .9rem 4rem; } h1 { font-size: 1.45rem; } }
+</style>
+</head>
+<body>
+<main>
+
+<p class="meta"><a href="phase-11-before-after.en.html" hreflang="en">English version</a></p>
+
+<h1>Plan: faza 11, cała strona przed i po</h1>
+<p class="meta">Zlecenie: demo całej strony w wersji przed i po, w formacie Accessible University 3.0 (University of Washington), z treścią po polsku i na inny temat niż uczelnia. Makiety: <a href="../2026-10-04-before-after-mocks/before-after-mocks.html">before-after-mocks.html</a>. Wersja planu: 2026-10-04.</p>
+
+<p class="flag">Poprawka z 2026-10-04: czytelnik dostaje notatki na czas sprawdzania strony zepsutej, odpowiedzi (lista, znaczniki, strona poprawiona) są schowane, dopóki nie skończy, a strona poprawiona to tylko efekt końcowy. Nowa sekcja 5; sekcje 1–3 makiet zmienione pod to.</p>
+
+<p class="flag">Accessible University jest na licencji CC BY-NC-SA 4.0. Bierzemy od niego format (strona zepsuta, lista problemów, strona poprawiona), a temat, tekst i kod piszemy sami, więc nic z AU nie trafia do aplikacji. Strona wejściowa nie wspomina o AU.</p>
+
+<h2 id="changes">Zmiany po rozpoczęciu pracy</h2>
+<p>Wybory: <strong>1A</strong> (trzecia zakładka w Praktyce), <strong>2A</strong> (całe okno, notatki w szufladzie z paska demonstracji), <strong>3A</strong> (notatki nad listą), <strong>4B</strong> (tabela z filtrem „komu szkodzi”), <strong>5B</strong> (nowoczesna strona). Pozostałe decyzje poszły za rekomendacją: temat KMW, własny kod poprawionych widżetów, dwadzieścia problemów, bez CAPTCHA w wersji poprawionej, lekcja później, notatki pod <code>reviews</code> w magazynie postępu i „Kopiuj notatki”. Tam, gdzie to się kłóci z sekcjami poniżej, wygrywa to.</p>
+<ul>
+  <li><strong>Sześć commitów, nie pięć (sekcja 10).</strong> Najpierw magazyn przechodzi do modułu bez Reacta, żeby strona zepsuta mogła z niego korzystać; osobno idzie mała poprawka identyfikatorów grup wyników wyszukiwania (miały spacje, co psuło <code>aria-labelledby</code>).</li>
+  <li><strong>Bez <code>index.md</code> (sekcja 6).</strong> Kilka zdań strony wejściowej siedzi w jej trasie.</li>
+  <li><strong>axe dalej znajduje 6 z 20, ale nie te same 6 (sekcja 3).</strong> Problemu 2 nie zgłasza: <code>region</code> to reguła dobrych praktyk i przy tagach WCAG się nie uruchamia. Zgłasza za to problem 12 (<code>link-in-text-block</code>). Przy problemie 4 zgłasza też <code>link-name</code>, za strzałki karuzeli. Kontrast menu to 1,35:1.</li>
+  <li><strong>Znaczniki to strona, a nie przełącznik.</strong> „Pokaż znaczniki problemów” i „Ukryj znaczniki” prowadzą między <code>przed</code> a <code>przed-znaczniki</code>, bo tylko ta druga ma podpowiedzi. Problemy całej strony (1, 2, 8, 20) są wypisane w pasku.</li>
+  <li><strong>Szuflada notatek siedzi w pasku demonstracji</strong> i nie ma nagłówka, więc strona zepsuta nie dostaje żadnego nagłówka ani punktu orientacyjnego poza samym paskiem.</li>
+  <li><strong>Strony problemów stoją za tym samym przypomnieniem co lista.</strong> „Zacznij od nowa” jest na liście. Na stronie wejściowej „Kończę sprawdzanie” pojawia się, gdy jest już jakaś notatka.</li>
+  <li><strong>Strona poprawiona</strong> otwiera okno utrudnień przy wejściu i ponownie z przycisku „Szczegóły utrudnień”; pasek cookies jest częścią strony, na dole.</li>
+  <li><strong>Problem 15</strong> ma trzy ozdobne ikony, nie sześć.</li>
+</ul>
+
+<ol class="toc">
+  <li><a href="#changes">Zmiany po rozpoczęciu pracy</a></li>
+  <li><a href="#au">Co robi AU i co od niego bierzemy</a></li>
+  <li><a href="#topic">Temat</a></li>
+  <li><a href="#problems">Dwadzieścia problemów</a></li>
+  <li><a href="#scope">Co budujemy</a></li>
+  <li><a href="#selfcheck">Samodzielne sprawdzanie: notatki i schowane odpowiedzi</a></li>
+  <li><a href="#content">Format treści</a></li>
+  <li><a href="#motion">Ruch i strona zepsuta celowo</a></li>
+  <li><a href="#a11y">Dostępność wszystkiego wokół zepsutej strony</a></li>
+  <li><a href="#tests">Testy</a></li>
+  <li><a href="#prs">Pull request i commity</a></li>
+  <li><a href="#decisions">Decyzje</a></li>
+  <li><a href="#out">Poza zakresem</a></li>
+</ol>
+
+<h2 id="au">1. Co robi AU i co od niego bierzemy</h2>
+<p>AU 3.0 to cztery strony: spis, niedostępna strona główna fikcyjnej uczelni, lista 18 problemów z rozwiązaniem każdego i dostępna strona główna. Obie strony główne wyglądają prawie tak samo. Większość poprawek siedzi w kodzie i właśnie o to chodzi.</p>
+<p>Spis każe iść w kolejności: najpierw sam znajdź jak najwięcej problemów, potem porównaj z listą, na końcu obejrzyj stronę poprawioną. Tę kolejność zostawiamy.</p>
+<p>18 problemów AU to nagłówki, teksty alternatywne, obrazy dekoracyjne, kontrast, menu rozwijane tylko myszą, fokus, łącza „kliknij tutaj”, kolor, język, etykiety formularza, CAPTCHA, walidacja, punkty orientacyjne, okno modalne, karuzela, tabela danych, skróty i poprawność HTML. Dwa odpadają. Poprawność HTML to było 4.1.1, które WCAG 2.2 usunęło, a skróty to 3.1.4 na poziomie AAA. Dochodzą trzy z WCAG 2.1 i 2.2: dopasowanie do szerokości (1.4.10), rozmiar celu (2.5.8) i niezasłonięty fokus (2.4.11).</p>
+<p>Aplikacja ma już dwanaście przykładów, każdy z jednym błędem w izolacji, i 30 wzorców. Brakuje strony, na której błędy występują razem, tak jak na prawdziwej witrynie, i na której można ich poszukać, zanim przeczyta się odpowiedź.</p>
+
+<h2 id="topic">2. Temat</h2>
+<p><strong>Komunikacja Miejska Wrzosów (KMW)</strong>: strona główna przewoźnika z fikcyjnego miasta. Z komunikacji miejskiej korzysta każdy, także ludzie, którzy nie mogą prowadzić samochodu, więc łatwo wytłumaczyć, o co toczy się gra. Temat sam przynosi potrzebne elementy: tabelę rozkładu, tablicę odjazdów na żywo, komunikaty o utrudnieniach, formularz zgłoszenia i ramkę po ukraińsku, którą polscy przewoźnicy naprawdę publikują. AU to uczelnia, przykład z fazy 10 to strona gminy, więc nic się nie powtarza. Inne tematy są w decyzji 1.</p>
+<p>Strona od góry do dołu:</p>
+<ol>
+  <li>Okno „Utrudnienia w ruchu”, które otwiera się przy wejściu.</li>
+  <li>Nagłówek: logo, ikony mediów społecznościowych, łącze „Українською”.</li>
+  <li>Menu główne z podmenu: Rozkłady, Bilety, Utrudnienia, O nas.</li>
+  <li>Karuzela komunikatów.</li>
+  <li>„Odjazdy z przystanku Rynek”, tablica, która sama się odświeża.</li>
+  <li>„Aktualności”, trzy wiadomości.</li>
+  <li>Obraz ze schematem sieci.</li>
+  <li>„Інформація для пасажирів”, ramka po ukraińsku.</li>
+  <li>Formularz „Zgłoś uwagę”: imię, e-mail, linia, data, rodzaj zgłoszenia (przyciski opcji), treść, zgoda, CAPTCHA.</li>
+  <li>Stopka i pasek cookies przyklejony do dołu okna.</li>
+</ol>
+
+<h2 id="problems">3. Dwadzieścia problemów</h2>
+<p>Numeracja idzie w kolejności na stronie, więc znacznik na stronie i pozycja na liście mają ten sam numer. Kolumna „axe” mówi, czy axe-core zgłasza problem. Zgłasza sześć z dwudziestu. Lista o tym mówi, bo pokazuje, czemu automatyczny skan to nie audyt.</p>
+<table>
+  <thead><tr><th>#</th><th>Problem (wersja zepsuta)</th><th>Kryteria</th><th>Poprawka</th><th>axe</th><th>W izolacji</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>Brak <code>lang</code> na <code>html</code>, ramka po ukraińsku też nieoznaczona</td><td>3.1.1, 3.1.2</td><td><code>lang="pl"</code>, <code>lang="uk"</code> na ramce</td><td>tak</td><td>brak</td></tr>
+    <tr><td>2</td><td>Brak punktów orientacyjnych i łącza do treści</td><td>1.3.1, 2.4.1</td><td><code>header</code>, <code>nav</code>, <code>main</code>, <code>footer</code>, łącze „Przejdź do treści”</td><td>częściowo (<code>region</code>)</td><td>przykład <code>punkty-orientacyjne-i-naglowki</code></td></tr>
+    <tr><td>3</td><td>Okno utrudnień nie przejmuje fokusu, przycisk zamknięcia to <code>div</code>, Esc nic nie robi</td><td>2.1.1, 2.4.3</td><td><code>dialog</code> z <code>showModal()</code>, fokus wraca</td><td>nie</td><td>przykład <code>okno-modalne-i-fokus</code>, wzorzec <code>okno-dialogowe</code></td></tr>
+    <tr><td>4</td><td>Logo, strzałki karuzeli i schemat sieci bez tekstu alternatywnego</td><td>1.1.1</td><td>Teksty alternatywne, obok schematu lista linii</td><td>tak</td><td>przykład <code>obraz-dekoracyjny-i-informacyjny</code></td></tr>
+    <tr><td>5</td><td>Ikony mediów społecznościowych 16 na 16 pikseli, jedna przy drugiej</td><td>2.5.8</td><td>Cele 44 na 44 piksele</td><td>tak</td><td>przykład <code>cel-24-na-24</code></td></tr>
+    <tr><td>6</td><td>Menu jasnoszare na żółtym</td><td>1.4.3</td><td>Ciemny tekst, co najmniej 4,5:1</td><td>tak</td><td>przykład <code>kontrast-stanow</code></td></tr>
+    <tr><td>7</td><td>Podmenu otwiera się tylko po najechaniu myszą</td><td>2.1.1, 4.1.2</td><td>Przyciski rozwijania z <code>aria-expanded</code></td><td>nie</td><td>wzorzec <code>nawigacja-wielopoziomowa</code></td></tr>
+    <tr><td>8</td><td><code>outline: none</code> wszędzie</td><td>2.4.7</td><td>Widoczny styl <code>:focus-visible</code></td><td>nie</td><td>brak</td></tr>
+    <tr><td>9</td><td>Karuzela przewija się co 5 sekund bez pauzy</td><td>2.2.2</td><td>Startuje zatrzymana, ma przycisk pauzy</td><td>nie</td><td>przykład <code>karuzela-automatyczna</code>, wzorzec <code>karuzela</code></td></tr>
+    <tr><td>10</td><td>Nagłówki to pogrubione <code>div</code></td><td>1.3.1, 2.4.6</td><td>H1 do H3 po kolei</td><td>nie</td><td>przykład <code>punkty-orientacyjne-i-naglowki</code></td></tr>
+    <tr><td>11</td><td>Tablica odjazdów to siatka z <code>div</code></td><td>1.3.1</td><td><code>table</code> z <code>caption</code> i <code>th scope</code></td><td>nie</td><td>przykład <code>tabela-z-naglowkami</code></td></tr>
+    <tr><td>12</td><td>Opóźnienie tylko jako czerwona albo zielona kropka; łącza w tekście bez podkreślenia</td><td>1.4.1</td><td>„opóźniony 4 min” tekstem; podkreślenia</td><td>częściowo (<code>link-in-text-block</code>)</td><td>brak</td></tr>
+    <tr><td>13</td><td>Tablica przebudowuje się co 15 sekund i nie da się jej zatrzymać</td><td>2.2.2</td><td>Przycisk „Odśwież”, godzina ostatniej aktualizacji, grzeczny komunikat stanu</td><td>nie</td><td>wzorzec <code>regiony-na-zywo</code></td></tr>
+    <tr><td>14</td><td>Trzy razy „Więcej” i „kliknij tutaj”</td><td>2.4.4</td><td>Tekst łącza, który mówi, dokąd prowadzi</td><td>nie</td><td>wzorzec <code>lacze</code></td></tr>
+    <tr><td>15</td><td>Ozdobne ikony autobusu z <code>alt="ikona autobusu"</code>, sześć razy</td><td>1.1.1</td><td><code>alt=""</code></td><td>nie</td><td>przykład <code>obraz-dekoracyjny-i-informacyjny</code></td></tr>
+    <tr><td>16</td><td>Pola z tekstem nad sobą, ale bez <code>label</code>; przyciski opcji bez <code>fieldset</code>; pola wymagane oznaczone tylko na niebiesko</td><td>1.3.1, 3.3.2, 1.4.1</td><td><code>label</code>, <code>fieldset</code> z <code>legend</code>, „(wymagane)” i <code>required</code></td><td>tak (<code>label</code>)</td><td>wzorce <code>przyciski-opcji</code>, <code>pole-wyboru</code></td></tr>
+    <tr><td>17</td><td>CAPTCHA jako obrazek bez alternatywy</td><td>1.1.1</td><td>Bez CAPTCHA, decyzja 9</td><td>nie</td><td>brak</td></tr>
+    <tr><td>18</td><td>Po wysłaniu: „Formularz zawiera błędy” na górze, nic nie jest ogłaszane, fokus zostaje na przycisku</td><td>3.3.1, 3.3.3, 4.1.3</td><td>Podsumowanie błędów, które dostaje fokus i linkuje do pól, komunikaty pod polami</td><td>nie</td><td>przykład <code>formularz-z-bledami</code></td></tr>
+    <tr><td>19</td><td>Przyklejony pasek cookies zasłania element z fokusem na dole okna</td><td>2.4.11</td><td><code>scroll-padding-bottom</code> równy wysokości paska, pasek da się zamknąć</td><td>nie</td><td>brak</td></tr>
+    <tr><td>20</td><td>Strona ma 1000 pikseli szerokości</td><td>1.4.10</td><td>Układ płynny do 320 pikseli</td><td>nie</td><td>przykład <code>sztywna-szerokosc</code></td></tr>
+  </tbody>
+</table>
+<p>Kolumna „axe” to prognoza. Test z sekcji 9 ją sprawdza, a lista pokazuje to, co znalazł test, a nie to, czego się spodziewaliśmy.</p>
+
+<h2 id="scope">4. Co budujemy</h2>
+<ol>
+  <li><strong>Dwie strony</strong>, zepsuta i poprawiona, jako osobne dokumenty pod <code>/demo/przed-i-po/przed</code> i <code>/demo/przed-i-po/po</code>, prerenderowane tak jak dema przykładów. Jak czytelnik je ogląda: sekcja 2 makiet.</li>
+  <li><strong>Strona wejściowa</strong> pod <code>/praktyka/przed-i-po</code>, z trzema krokami w kolejności AU. Kroki 2 i 3 otwierają się, gdy czytelnik skończy sprawdzanie. Gdzie leży w aplikacji: sekcja 1 makiet.</li>
+  <li><strong>Notatki</strong>, które czytelnik robi, sprawdzając stronę zepsutą, zapisane w przeglądarce (sekcja 5, sekcja 2 makiet).</li>
+  <li><strong>Lista problemów</strong>, widoczna po sprawdzeniu, z notatkami czytelnika obok: przy każdym problemie co jest nie tak, komu szkodzi, jak to naprawić, kod przed i po oraz łącza do kryteriów i do przykładu albo wzorca, który pokazuje ten błąd osobno. Sekcje 3 i 4 makiet.</li>
+  <li><strong>Znaczniki</strong>: po sprawdzeniu przełącznik „Znaczniki problemów” kładzie na zepsutej stronie ponumerowane plakietki, każda prowadzi do swojej pozycji na liście. W trakcie sprawdzania tego przełącznika nie ma.</li>
+  <li><strong>Łącza zwrotne</strong>: strona kryterium, które ma problem na tej stronie, mówi „Na stronie przed i po: problem 7”. Tak samo przykłady i wzorce z ostatniej kolumny sekcji 3.</li>
+  <li><strong>Wyszukiwarka</strong> indeksuje stronę wejściową i dwadzieścia problemów.</li>
+</ol>
+
+<h2 id="selfcheck">5. Samodzielne sprawdzanie: notatki i schowane odpowiedzi</h2>
+<p>Czytelnik sprawdza stronę zepsutą sam. Wszystko, co zdradza odpowiedzi, zostaje schowane, dopóki nie powie, że skończył, a jego notatki czekają potem obok listy.</p>
+
+<h3>Dwa etapy</h3>
+<table>
+  <thead><tr><th>Etap</th><th>Czytelnik ma</th><th>Schowane</th></tr></thead>
+  <tbody>
+    <tr><td>Sprawdzanie (domyślnie)</td><td>Stronę zepsutą, notatki, przełącznik ruchu, liczbę 20 jako cel</td><td>Lista, znaczniki, strona poprawiona, każda podpowiedź, gdzie są problemy</td></tr>
+    <tr><td>Po sprawdzeniu</td><td>Wszystko: listę z notatkami obok, znaczniki na stronie zepsutej, stronę poprawioną</td><td>Nic</td></tr>
+  </tbody>
+</table>
+<p>„Kończę sprawdzanie”, w panelu notatek i na stronie wejściowej, przechodzi do drugiego etapu. „Zacznij od nowa” usuwa notatki i znowu wszystko chowa, po potwierdzeniu, które mówi, że notatki znikną.</p>
+<p>Blokada jest miękka. Lista i strona poprawiona mają publiczne adresy, a strona wejściowa i pasek demonstracji po prostu nie linkują do nich w trakcie sprawdzania. Kto otworzy listę wprost, zobaczy „Najpierw sprawdź stronę sam” i łącze „Pokaż listę mimo to”, które kończy sprawdzanie. Na oszukiwaniu nikt nic nie zyskuje, więc więcej nie trzeba.</p>
+<p>Łącza zwrotne ze stron kryteriów, przykładów i wzorców („Na stronie przed i po: problem 7”) są widoczne zawsze. Leżą na innych stronach, poza drogą osoby, która sprawdza, a ich chowanie wymagałoby stanu po stronie klienta na stronach prerenderowanych.</p>
+
+<h3>Bez odpowiedzi w kodzie źródłowym</h3>
+<p>Czytelnik, który otworzy narzędzia deweloperskie na stronie zepsutej, też nie powinien tam znaleźć odpowiedzi. <code>przed.html</code> ma atrybuty <code>data-problem</code> potrzebne znacznikom, więc build serwuje z niego dwa dokumenty:</p>
+<ul>
+  <li><code>/demo/przed-i-po/przed</code>, bez <code>data-problem</code> i bez komentarzy HTML, do sprawdzania;</li>
+  <li><code>/demo/przed-i-po/przed-znaczniki</code>, z jednym i drugim oraz ze skryptem znaczników, linkowany dopiero po sprawdzeniu.</li>
+</ul>
+<p>Klasy i identyfikatory w <code>przed.html</code> są neutralne (<code>.menu</code>, a nie <code>.menu-hover-only</code>), tytuł strony też. Test szuka w dokumencie do sprawdzania słów takich jak „problem”, „błąd” i „a11y”.</p>
+
+<h3>Notatki</h3>
+<ul>
+  <li>Wolny tekst, jedna notatka na jedną zauważoną rzecz: pole „Co nie działa?” i przycisk „Dodaj notatkę”, a pod nimi lista notatek, każda z „Edytuj” i „Usuń”. Bez wyboru obszaru strony ani kryterium, bo jedno i drugie podpowiadałoby odpowiedź.</li>
+  <li>Notatki zachowują kolejność i godzinę dodania.</li>
+  <li>Siedzą w przeglądarce obok postępu (decyzja 11), więc przetrwają zamknięcie karty. Gdy zapis jest zablokowany, żyją do zamknięcia karty, a panel o tym mówi, tak jak <code>/sciezki</code>.</li>
+  <li>„Kopiuj notatki” kopiuje je do schowka jako zwykły tekst, dla prowadzącego, który zbiera wyniki (decyzja 12).</li>
+  <li>Gdzie leży panel w trakcie sprawdzania: sekcja 2 makiet. Jak notatki spotykają się potem z listą: sekcja 3 makiet, decyzja 4.</li>
+</ul>
+<pre><code>// Added to Progress in src/progress/store.ts. Optional, so stored v1 objects still parse.
+reviews?: {
+  "przed-i-po"?: {
+    notes: { id: string; text: string; createdAt: string }[];
+    revealedAt?: string; // set by "Kończę sprawdzanie", removed by "Zacznij od nowa"
+  };
+};</code></pre>
+
+<h3>Strona poprawiona to efekt końcowy</h3>
+<p><code>po</code> nie ma znaczników, notatek ani przełącznika ruchu. Jej karuzela startuje zatrzymana i ma własny przycisk pauzy, tak jak powinna mieć poprawna strona. Pasek demonstracji mówi na niej „Wersja poprawiona: tak ta strona powinna wyglądać” i linkuje do listy oraz z powrotem do aplikacji. Łącze do niej pojawia się dopiero po sprawdzeniu.</p>
+
+<h2 id="content">6. Format treści</h2>
+<pre><code>content/przed-i-po/
+  index.md                  wstęp strony wejściowej, status, lastVerified
+  przed.html                strona zepsuta: znaczniki, &lt;style&gt;, &lt;script&gt;
+  po.html                   strona poprawiona
+  problemy/
+    01-jezyk.md
+    02-punkty-orientacyjne.md
+    ...
+    20-stala-szerokosc.md</code></pre>
+<p>Jeden plik na problem to czytelny diff i możliwość zweryfikowania problemu osobno, tak jak przy kryteriach. Frontmatter:</p>
+<pre><code>title: Menu rozwija się tylko pod myszą
+criteria: ["2.1.1", "4.1.2"]
+marker: menu            # data-problem="menu" w przed.html
+who: [klawiatura, czytnik]
+axe: []                 # reguły, które axe musi zgłosić na przed.html
+example: null
+pattern: nawigacja-wielopoziomowa
+status: szkic</code></pre>
+<p>Treść ma <code>## Problem</code> i <code>## Rozwiązanie</code>, a bloki kodu są oznaczone <code>przed</code> i <code>po</code>. Nowy moduł <code>src/content/before-after.ts</code> czyta to schematem ArkType, w kształcie <code>examples.ts</code>: numer bierze z nazwy pliku, typy wyprowadza ze schematu, a błąd parsowania podaje plik i powód.</p>
+<p>Sprawdzenia przy budowaniu, każde z testem:</p>
+<ul>
+  <li>Numery idą od 1 bez dziur.</li>
+  <li>Każdy <code>marker</code> występuje dokładnie raz jako <code>data-problem</code> w <code>przed.html</code> i żaden <code>data-problem</code> nie zostaje bez problemu.</li>
+  <li>Kryteria, przykłady i wzorce istnieją.</li>
+</ul>
+
+<h2 id="motion">7. Ruch i strona zepsuta celowo</h2>
+<p>Problemy 9 i 13 to ruch: karuzela, która się kręci, i tablica, która sama się odświeża. Aplikacja zobowiązuje się do 2.3.3 i uruchamia ruchome dema dopiero na prośbę czytelnika. Zepsuta strona ładuje się więc nieruchoma, a przełącznik „Włącz ruch” uruchamia oba elementy. To obecna zasada dla przykładów, przeniesiona na całą stronę. Przy <code>prefers-reduced-motion</code> przełącznik dalej działa, bo czytelnik sam go wybrał, ale slajdy zmieniają się bez animacji.</p>
+<p>Okno (problem 3) otwiera się przy wejściu, bo na tym polega błąd. Nie jest pułapką klawiaturową: fokus ucieka pod okno i to jest błąd, który pokazujemy. Prawdziwa pułapka (2.1.2) zamknęłaby użytkownika klawiatury w demie, więc jej nie budujemy.</p>
+
+<h2 id="a11y">8. Dostępność wszystkiego wokół zepsutej strony</h2>
+<ul>
+  <li>Obie strony zaczynają się paskiem demonstracji, który nie należy do KMW, i Tab trafia najpierw do niego. Na stronie zepsutej w trakcie sprawdzania mówi „Wersja zepsuta: ta strona celowo łamie zasady dostępności. Część rzeczy nie zadziała z klawiatury ani z czytnikiem ekranu.” i daje notatki, przełącznik ruchu, „Kończę sprawdzanie” oraz powrót do aplikacji. Po sprawdzeniu dochodzą lista, przełącznik znaczników i strona poprawiona. Na stronie poprawionej pasek daje listę i powrót. Jest dostępny w obu wersjach.</li>
+  <li>Panel notatek to pole z etykietą, prawdziwy przycisk i lista z ogłaszaną liczbą („3 notatki”). Po dodaniu notatki fokus zostaje w polu, więc można od razu pisać następną; po usunięciu przechodzi do kolejnej notatki albo do pola, gdy żadnej nie zostało.</li>
+  <li>Pasek to nazwany <code>aside</code>, nieprzyklejony, więc nigdy nie zasłania fokusu tak jak w problemie 19.</li>
+  <li>Strona wejściowa i lista to strony aplikacji i trzymają się <code>docs/accessibility.md</code> jak każda inna.</li>
+  <li>Strona wejściowa ostrzega przed łączem do zepsutej strony, tak jak AU, żeby nikt nie trafił tam nieprzygotowany.</li>
+</ul>
+
+<h2 id="tests">9. Testy</h2>
+<ul>
+  <li><strong>Jednostkowe</strong> (Vitest): parser odrzuca zły frontmatter, do tego sprawdzenia z sekcji 6. Magazyn trzyma notatki i <code>revealedAt</code>, czyta zapisany obiekt bez <code>reviews</code>, a „Zacznij od nowa” czyści jedno i drugie.</li>
+  <li><strong>Bez odpowiedzi w kodzie</strong>: dokument do sprawdzania nie ma <code>data-problem</code>, komentarzy ani zdradzających słów.</li>
+  <li><strong>Dwa etapy</strong> (Playwright): w trakcie sprawdzania żadne łącze na stronie wejściowej ani w pasku demonstracji nie prowadzi do listy, znaczników ani strony poprawionej; notatka przetrwa przeładowanie; „Kończę sprawdzanie” pokazuje listę z notatkami obok.</li>
+  <li><strong>axe</strong> (Playwright): <code>przed</code> zgłasza każdą regułę, którą wymieniają jej problemy, i tylko je; <code>po</code> nie zgłasza nic; pasek demonstracji nie zgłasza nic w żadnej wersji.</li>
+  <li><strong>Klawiatura na <code>po</code></strong>: menu otwiera się Enterem i zamyka Esc; okno przejmuje fokus i go oddaje; karuzelę da się zatrzymać; po złym wysłaniu fokus jest na podsumowaniu błędów, a jego łącza prowadzą do pól; element z fokusem nigdy nie leży pod paskiem cookies; przy 320 pikselach nie ma przewijania w poziomie.</li>
+</ul>
+<p>Nic nie sprawdza, czy błędy w <code>przed</code> dalej działają, poza tym, co widzi axe. Takie testy chroniłyby tylko przed poprawką, której nikt nie planuje.</p>
+
+<h2 id="prs">10. Pull request i commity</h2>
+<p>Jedna gałąź, <code>feat/before-after-page</code>, jeden pull request, tak jak w poprzednich fazach.</p>
+<ol>
+  <li><code>docs(design): add the plan and mocks for the before and after page</code></li>
+  <li><code>feat(practice): add the before and after content model</code>: parser, typy, sprawdzenia i ich testy.</li>
+  <li><code>feat(practice): add the broken and fixed KMW pages</code>: <code>przed.html</code>, <code>po.html</code>, pasek demonstracji, trasy demo z dokumentem do sprawdzania oczyszczonym z odpowiedzi, testy axe i klawiatury.</li>
+  <li><code>feat(practice): add the before and after entry page and problem list</code>: trasa, dwadzieścia problemów, znaczniki, łącza zwrotne, wyszukiwarka.</li>
+  <li><code>feat(practice): add self-check notes and hide the answers until the check ends</code>: <code>reviews</code> w magazynie postępu, panel notatek, dwa etapy, ich testy, README i zrzuty ekranu.</li>
+</ol>
+
+<h2 id="decisions">11. Decyzje</h2>
+<ol>
+  <li><strong>Temat.</strong> Komunikacja Miejska Wrzosów (polecam). Inne: biblioteka publiczna (wyszukiwanie w katalogu, formularz karty czytelnika, wydarzenia) albo rejestracja online w przychodni (zapis na wizytę, godziny przyjęć).</li>
+  <li><strong>Gdzie to leży.</strong> Sekcja 1 makiet: trzecia zakładka w Praktyce albo karta nad przykładami.</li>
+  <li><strong>Jak otwiera się strona zepsuta i gdzie są notatki.</strong> Sekcja 2 makiet: całe okno z szufladą notatek w pasku demonstracji, ramka w aplikacji z notatkami pod paskiem narzędzi albo ramka z notatkami w kolumnie obok. Polecam 2C. Notatki są cały czas na widoku, wszystko żyje w React, a ramka daje symulatory prawie za darmo. 2A wymaga osobnego bundla magazynu w dokumencie demo, zsynchronizowanego z aplikacją przez zdarzenia <code>storage</code>.</li>
+  <li><strong>Jak notatki spotykają się z listą.</strong> Sekcja 3 makiet: notatki nad listą (3A) albo obok niej, z „Znalazłem” przy każdym problemie i „Znalazłeś 7 z 20” (3B). Polecam 3A. Czytelnik porównuje sam, a wynik punktowy prowokuje spory o to, co liczy się jako trafienie.</li>
+  <li><strong>Układ listy.</strong> Sekcja 4 makiet: długa lista jak w AU, tabela z filtrem „komu szkodzi” albo mapa strony z listą pogrupowaną po obszarach.</li>
+  <li><strong>Wygląd KMW.</strong> Sekcja 5 makiet: portal miejski z okolic 2012 roku albo nowoczesna strona. Nowoczesna pokazuje coś, czego AU nie pokaże: strona może wyglądać świeżo i dalej nie działać.</li>
+  <li><strong>Poprawione widżety.</strong> Krótki własny kod w <code>po.html</code> według wzorców z fazy 9, z łączami do nich (polecam), albo pliki wzorców wczytane wprost. Pliki wzorców mają zaczepy dla dziennika na żywo, których ta strona nie potrzebuje.</li>
+  <li><strong>Ile problemów.</strong> Dwadzieścia (polecam) albo czternaście, bez 5, 8, 12, 15, 19 i 20, które przykłady już pokazują osobno.</li>
+  <li><strong>CAPTCHA w wersji poprawionej.</strong> Usunąć i wyjaśnić alternatywy (pole-pułapka, limity po stronie serwera), co polecam, albo zastąpić pytaniem tekstowym, jak w AU.</li>
+  <li><strong>Lekcja.</strong> „Przegląd całej strony” na ścieżce testera z quizem na tej stronie. Polecam: w późniejszej fazie.</li>
+  <li><strong>Gdzie zapisywać notatki.</strong> W obiekcie postępu pod <code>reviews</code> (polecam: faza 5 zaimportuje je razem z resztą) albo pod osobnym kluczem.</li>
+  <li><strong>„Kopiuj notatki”.</strong> Tak, jeden przycisk (polecam), albo nie.</li>
+</ol>
+
+<h2 id="out">12. Poza zakresem</h2>
+<ul>
+  <li>Druga witryna i podstrony KMW. Łącza w menu nigdzie nie prowadzą i to mówią.</li>
+  <li>Wideo i napisy. AU ma je na osobnej stronie, u nas to byłaby osobna faza.</li>
+  <li>Angielska wersja KMW.</li>
+  <li>Symulatory w wersji na całe okno (decyzja 3 daje je w wariantach z ramką).</li>
+</ul>
+
+</main>
+</body>
+</html>
