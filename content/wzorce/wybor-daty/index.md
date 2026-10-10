@@ -52,7 +52,6 @@ aria:
 sources:
   apg: https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/examples/datepicker-dialog/
   deque: https://dequeuniversity.com/library/aria/date-picker
-status: szkic
 ---
 ## Kiedy używać
 

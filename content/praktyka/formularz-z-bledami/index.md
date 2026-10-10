@@ -11,7 +11,6 @@ simulations:
   tritanopia: 'Wpisz adres bez małpy i wyślij formularz. Czerwień zostaje czerwona, więc tutaj różnica jest niewielka. Tritanopia to rzadki typ i ten przykład niewiele o niej mówi.'
   achromatopsja: 'Wpisz adres bez małpy i wyślij formularz. Bez barw ramka błędu w wersji zepsutej różni się od zwykłej tylko grubością. W wersji poprawnej komunikat tekstowy działa i bez koloru.'
   slabe-widzenie: 'Szary placeholder „E-mail” w wersji zepsutej rozmywa się pierwszy, a po wpisaniu znaku znika. Etykieta nad polem w wersji poprawnej zostaje czytelna.'
-status: szkic
 bad:
   why: Placeholder zamiast etykiety znika po wpisaniu pierwszego znaku. Błąd to tylko czerwona ramka, bez słowa wyjaśnienia.
   announces: „E-mail, pole edycji”, a po wysłaniu nic. Czytnik nie wie, że pole jest błędne ani dlaczego.

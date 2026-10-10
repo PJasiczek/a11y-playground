@@ -1,7 +1,6 @@
 ---
 term: tekst jednolity
 also: [tekst ujednolicony]
-status: szkic
 ---
 Urzędowa wersja ustawy ze wszystkimi zmianami wprowadzonymi do określonego dnia, ogłaszana w Dzienniku Ustaw obwieszczeniem Marszałka Sejmu.
 

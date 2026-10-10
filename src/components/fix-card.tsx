@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { DraftBadge } from "./level-badge";
 
 export type FixCardData = {
   slug: string;
@@ -10,7 +9,6 @@ export type FixCardData = {
   effort: string;
   gain: string;
   preview: string;
-  status: "szkic" | "zweryfikowane";
 };
 
 /** The card grid shared by /praktyka and the home page. */
@@ -52,7 +50,6 @@ export function FixCard({ card, headingLevel }: { card: FixCardData; headingLeve
             {id}
           </span>
         ))}
-        {card.status === "szkic" ? <DraftBadge /> : null}
         <span className="ml-auto font-mono text-xs text-ink-2">
           <span className="sr-only">Nakład pracy: </span>
           {card.effort}

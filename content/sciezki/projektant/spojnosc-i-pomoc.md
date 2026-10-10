@@ -6,7 +6,6 @@ keep:
   - Nawigacja jest w tej samej kolejności na każdej stronie.
   - To samo działanie ma tę samą nazwę i ikonę wszędzie.
   - Kontakt i pomoc są zawsze w tym samym miejscu.
-status: szkic
 ---
 Przewidywalność pomaga wszystkim, ale dla osób z niepełnosprawnością poznawczą, z czytnikiem ekranu albo z dużym powiększeniem jest warunkiem korzystania ze strony. Uczą się jej raz i potem polegają na tym, co zapamiętały.
 

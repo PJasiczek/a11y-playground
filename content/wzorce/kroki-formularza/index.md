@@ -44,7 +44,6 @@ aria:
     meaning: Wartość -1 pozwala przenieść na nagłówek fokus, ale nie dodaje go do kolejności Tab.
 sources:
   deque: https://dequeuniversity.com/library/aria/stepper
-status: szkic
 ---
 ## Kiedy używać
 

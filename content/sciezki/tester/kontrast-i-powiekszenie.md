@@ -7,7 +7,6 @@ keep:
   - Automat mierzy kontrast tekstu na jednolitym tle. Resztę zmierz pipetą.
   - Powiększ do 200 procent i szukaj uciętego tekstu.
   - Ustaw szerokość 320 pikseli i szukaj przewijania w poziomie.
-status: szkic
 ---
 Kontrast i powiększenie wydają się łatwe do automatyzacji, ale narzędzia sprawdzają tylko część przypadków.
 

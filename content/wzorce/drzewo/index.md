@@ -45,7 +45,6 @@ aria:
 sources:
   apg: https://www.w3.org/WAI/ARIA/apg/patterns/treeview/
   deque: https://dequeuniversity.com/library/aria/tree-view
-status: szkic
 ---
 ## Kiedy używać
 

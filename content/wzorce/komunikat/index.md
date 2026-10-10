@@ -21,7 +21,6 @@ aria:
 sources:
   apg: https://www.w3.org/WAI/ARIA/apg/patterns/alert/
   deque: https://dequeuniversity.com/library/aria/alert
-status: szkic
 ---
 ## Kiedy używać
 

@@ -4,7 +4,6 @@ criteria: ["1.4.1"]
 marker: kolor
 who: [daltonizm, czytnik]
 axe: [link-in-text-block]
-status: szkic
 ---
 ## Problem
 

@@ -6,7 +6,6 @@ keep:
   - Komunikat o stanie idzie przez region na żywo, bez przenoszenia fokusu.
   - Fokus i wybór w polu nie zmieniają kontekstu same z siebie.
   - Region na żywo jest w DOM, zanim wpiszesz do niego tekst.
-status: szkic
 ---
 Strona, która zmienia się bez przeładowania, pokazuje osobom widzącym, że coś się stało. Czytnik ekranu nic nie powie, dopóki mu tego nie przekażesz.
 

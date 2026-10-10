@@ -2,7 +2,6 @@
 num: "2.7"
 title: Układ
 en: Layout
-status: szkic
 guidelines:
   - num: "2.7.1"
     en: Recognizable layouts

@@ -4,7 +4,6 @@ criteria: ["2.4.7"]
 marker: fokus
 who: [klawiatura]
 axe: []
-status: szkic
 ---
 ## Problem
 

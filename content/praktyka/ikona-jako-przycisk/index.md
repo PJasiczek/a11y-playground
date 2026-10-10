@@ -7,7 +7,6 @@ gain: Czytnik mówi „Zamknij komunikat, przycisk” zamiast milczeć, a klawia
 preview: <span class="p-x">×</span>
 simulations:
   klawiatura: 'W wersji zepsutej Tab przeskakuje znak ×, więc lista kroków zostaje pusta, a komunikatu nie da się zamknąć. W wersji poprawnej przycisk dostaje numer 1 i zamyka komunikat Enterem.'
-status: szkic
 bad:
   why: Znak × w elemencie div z obsługą kliknięcia. Nie ma roli, nazwy ani miejsca w kolejności Tab. Cel ma 20 na 20 pikseli.
   announces: Nic sensownego. Tab pomija element, a przy czytaniu po kolei czytnik mówi „razy” albo „iks” jako zwykły tekst.

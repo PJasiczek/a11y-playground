@@ -42,7 +42,6 @@ aria:
 sources:
   apg: https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/examples/disclosure-navigation/
   deque: https://dequeuniversity.com/library/aria/navigation
-status: szkic
 ---
 ## Kiedy używać
 

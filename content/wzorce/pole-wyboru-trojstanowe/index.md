@@ -42,7 +42,6 @@ aria:
 sources:
   apg: https://www.w3.org/WAI/ARIA/apg/patterns/checkbox/
   deque: https://dequeuniversity.com/library/aria/checkbox-tri
-status: szkic
 ---
 ## Kiedy używać
 

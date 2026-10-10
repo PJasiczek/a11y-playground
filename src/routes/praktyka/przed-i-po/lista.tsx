@@ -1,7 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { CheckGate, focusTitle, NotesBox, useReview } from "~/components/before-after";
 import { Chip, FilterGroup } from "~/components/filters";
-import { DraftBadge } from "~/components/level-badge";
 import { type Harmed, harmedIds, harmedLabels, isHarmed, reviewKey } from "~/content/before-after-labels";
 import { getProblemRows } from "~/content/before-after.functions";
 import { countOf } from "~/lib/plural";
@@ -157,11 +156,6 @@ function ProblemListPage() {
           </tbody>
         </table>
       </div>
-      {rows.some((row) => row.status === "szkic") ? (
-        <p className="mt-4 flex flex-wrap items-center gap-2 text-[0.9375rem] text-ink-2">
-          <DraftBadge /> Opisy czekają na weryfikację.
-        </p>
-      ) : null}
     </>
   );
 }

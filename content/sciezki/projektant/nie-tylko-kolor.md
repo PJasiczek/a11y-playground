@@ -7,7 +7,6 @@ keep:
   - Kolor może wzmacniać informację, ale nie może jej nieść sam.
   - Dodaj tekst, ikonę, wzór albo podkreślenie.
   - Sprawdź projekt w odcieniach szarości.
-status: szkic
 ---
 Około 8 procent mężczyzn nie rozróżnia części kolorów, najczęściej czerwieni i zieleni. Do tego dochodzą słabowidzący, monochromatyczne czytniki e-booków i tryb wysokiego kontrastu. Kryterium 1.4.1 mówi, że kolor nie może być jedynym sposobem przekazania informacji.
 

@@ -5,7 +5,6 @@ marker: ozdobniki
 who: [czytnik]
 axe: []
 example: obraz-dekoracyjny-i-informacyjny
-status: szkic
 ---
 ## Problem
 

@@ -2,7 +2,6 @@
 term: cel
 also: [cel dotykowy, target, obszar kliknięcia]
 normative: cel
-status: szkic
 ---
 Obszar ekranu, który reaguje na kliknięcie albo dotyk: przycisk, łącze, pole wyboru razem z jego klikalną etykietą.
 

@@ -1,5 +1,5 @@
 import { type } from "arktype";
-import { type Fail, IsoDate, readVerification, splitFrontmatter, Status, type Verification } from "./markdown";
+import { type Fail, IsoDate, splitFrontmatter } from "./markdown";
 import { createRenderer } from "./render";
 import { type CriterionId, isCriterionId } from "./wcag";
 
@@ -13,14 +13,12 @@ import { type CriterionId, isCriterionId } from "./wcag";
 export const maxCheckedAgeMonths = 6;
 
 const IndexFrontmatter = type({
-  status: Status,
   /** Date of the W3C Working Draft the module describes. */
   draft: IsoDate,
   draftUrl: /^https:\/\/www\.w3\.org\/TR\//,
   /** The day we last compared the content with the current draft on w3.org. */
   checked: IsoDate,
   compare: type({ topic: "string > 0", wcag2: "string > 0", wcag3: "string > 0", "+": "reject" }).array().atLeastLength(1),
-  "lastVerified?": IsoDate,
   "+": "reject",
 });
 
@@ -37,8 +35,6 @@ const GroupFrontmatter = type({
   num: /^2\.\d+$/,
   title: "string > 0",
   en: "string > 0",
-  status: Status,
-  "lastVerified?": IsoDate,
   guidelines: GuidelineFrontmatter.array().atLeastLength(1),
   "+": "reject",
 });
@@ -56,14 +52,14 @@ export type Wcag3Guideline = {
   anchor: string;
 };
 
-export type Wcag3Group = Verification & {
+export type Wcag3Group = {
   num: string;
   title: string;
   en: string;
   guidelines: Wcag3Guideline[];
 };
 
-export type Wcag3Overview = Verification & {
+export type Wcag3Overview = {
   draft: string;
   draftUrl: string;
   checked: string;
@@ -90,7 +86,6 @@ export function parseWcag3Index(file: string, source: string): Wcag3Overview {
   if (meta instanceof type.errors) throw fail(meta.summary);
   if (meta.checked < meta.draft) throw fail("checked is earlier than the draft it describes");
   return {
-    ...readVerification(meta, fail),
     draft: meta.draft,
     draftUrl: meta.draftUrl,
     checked: meta.checked,
@@ -125,7 +120,6 @@ export function parseWcag3Group(file: string, source: string): Wcag3Group {
   });
 
   return {
-    ...readVerification(meta, fail),
     num: meta.num,
     title: meta.title,
     en: meta.en,

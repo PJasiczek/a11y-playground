@@ -1,20 +1,17 @@
 import { describe, expect, test } from "vitest";
 import { criterionContent } from "./criterion-content";
 import { glossary, parseGlossaryMarkdown } from "./glossary";
-import { staleEntries } from "./markdown";
 
 const entry = `---
 term: nazwa
 normative: nazwa
-status: szkic
 ---
 Wyjaśnienie.
 `;
 
 describe("glossary files", () => {
-  test("all parse, and verified ones are fresh", () => {
+  test("all parse", () => {
     expect(glossary.size).toBeGreaterThan(0);
-    expect(staleEntries(glossary)).toEqual([]);
   });
 
   test("every term marked in criteria exists", () => {
@@ -33,7 +30,7 @@ describe("parseGlossaryMarkdown", () => {
   test.each([
     ["a normative term missing from WCAG", entry.replace("normative: nazwa", "normative: coś"), /not a term in the WCAG 2.1 glossary/],
     ["an empty explanation", entry.replace("Wyjaśnienie.\n", ""), /empty/],
-    ["an unknown key", entry.replace("status:", "topic: x\nstatus:"), /topic/],
+    ["an unknown key", entry.replace("normative:", "topic: x\nnormative:"), /topic/],
   ])("rejects %s", (_, source, message) => {
     expect(() => parseGlossaryMarkdown("x.md", "x", source)).toThrow(message);
   });

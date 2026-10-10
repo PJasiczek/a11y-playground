@@ -7,7 +7,6 @@ gain: Lista działa z klawiatury, strzałkami i na telefonie, a czytnik podaje, 
 preview: <span class="p-select">Wybierz miasto ▾</span>
 simulations:
   klawiatura: 'W wersji zepsutej lista nie przyjmuje fokusu, więc Tab jej nie zauważa i miasta nie da się wybrać. W wersji poprawnej pole dostaje numer i reaguje na strzałki.'
-status: szkic
 bad:
   why: Div wyglądający jak pole, który rozwija listę po kliknięciu. Nie ma roli, nazwy ani stanu. Tab go pomija, a strzałki nic nie robią.
   announces: „Wybierz miasto”, jak zwykły tekst. Osoba z czytnikiem nie wie, że to pole wyboru, i nie ma jak go otworzyć.

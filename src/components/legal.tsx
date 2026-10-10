@@ -31,17 +31,14 @@ export function ProvisionLink({ id, children, className }: { id: LegalUnitId; ch
 }
 
 /**
- * The line at the end of every legal page: this is not legal advice, and when the content was
- * last checked by a person. Drafts say they are drafts instead of showing a date.
+ * The line at the end of every legal page: this is not legal advice, and when the statute text
+ * was retrieved.
  */
-export function LegalFooter({ verified, retrieved }: { verified: string | null; retrieved?: string }) {
+export function LegalFooter({ retrieved }: { retrieved?: string }) {
   return (
     <footer className="mt-10 flex flex-wrap justify-between gap-x-8 gap-y-2 border-t border-rule pt-4 text-sm text-ink-2">
       <p>Materiał edukacyjny, nie porada prawna. Wiążące jest brzmienie z Dziennika Ustaw.</p>
-      <p className="font-mono text-[0.8125rem]">
-        {retrieved ? <>Tekst pobrano {formatDate(retrieved)} · </> : null}
-        {verified ? <>Zweryfikowano: {formatDate(verified)}</> : "Streszczenia są szkicem i czekają na weryfikację."}
-      </p>
+      {retrieved ? <p className="font-mono text-[0.8125rem]">Tekst pobrano {formatDate(retrieved)}</p> : null}
     </footer>
   );
 }

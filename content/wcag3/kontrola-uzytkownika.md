@@ -2,7 +2,6 @@
 num: "2.12"
 title: Kontrola użytkownika
 en: User control
-status: szkic
 guidelines:
   - num: "2.12.1"
     en: Assistive technology control

@@ -1,7 +1,6 @@
 ---
 term: wskaźnik fokusu
 also: [obrys fokusu, focus ring, focus indicator]
-status: szkic
 ---
 Widoczny znak, który pokazuje, który element ma teraz [fokus](/slownik#fokus): zwykle obrys, czasem zmiana tła albo podkreślenie.
 

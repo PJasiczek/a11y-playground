@@ -2,7 +2,7 @@ import { type } from "arktype";
 import { type ActSlug, findAct, findUnit, type LegalUnitId, type SituationId, situationIds, situations } from "./legal";
 import { edgesFor, type Strength, whyNotRequired } from "./legal-map";
 import { type LegalLine, legalTexts } from "./legal-text.gen";
-import { type Fail, IsoDate, readVerification, splitFrontmatter, Status, type Verification } from "./markdown";
+import { type Fail, IsoDate, splitFrontmatter } from "./markdown";
 import { createRenderer } from "./render";
 import type { CriterionId } from "./wcag";
 
@@ -30,14 +30,12 @@ const Deadline = type({
 });
 
 const Frontmatter = type({
-  status: Status,
   /** How the act is called in running text and headings: "Ustawa o dostępności cyfrowej". */
   short: "string > 0",
   summary: "0 < string <= 200",
   /** Who the act binds, one line. */
   binds: "string > 0",
   "deadlines?": Deadline.array(),
-  "lastVerified?": IsoDate,
   "+": "reject",
 });
 
@@ -60,7 +58,7 @@ export type ArticleSummary = {
   ust: Record<string, string>;
 };
 
-export type ActContent = Verification & {
+export type ActContent = {
   short: string;
   summary: string;
   binds: string;
@@ -137,7 +135,6 @@ export function parseActMarkdown(file: string, act: ActSlug, source: string): Ac
   );
 
   return {
-    ...readVerification(meta, fail),
     short: meta.short,
     summary: meta.summary,
     binds: meta.binds,

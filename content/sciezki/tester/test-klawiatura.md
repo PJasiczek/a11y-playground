@@ -7,7 +7,6 @@ keep:
   - Każdy element, który działa myszą, osiągniesz Tabem i uruchomisz klawiszem.
   - Zawsze widzisz, gdzie jest fokus.
   - Z każdego miejsca wyjdziesz klawiaturą.
-status: szkic
 ---
 To najtańszy test ręczny i znajduje najwięcej. Nie potrzebujesz żadnego narzędzia.
 

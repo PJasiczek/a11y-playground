@@ -7,7 +7,6 @@ keep:
   - Najpierw sprawdź, czy istnieje element HTML, który robi to, czego potrzebujesz.
   - Rola, nazwa i stan muszą być dostępne dla czytnika, nie tylko widoczne na ekranie.
   - ARIA niczego nie naprawia sama. Zmienia tylko to, co czytnik usłyszy.
-status: szkic
 ---
 [Czytnik ekranu](slownik:czytnik-ekranu) nie widzi pikseli. Czyta [drzewo dostępności](slownik:drzewo-dostepnosci), które przeglądarka buduje z HTML. Dla każdego elementu zapisuje w nim [rolę](slownik:rola) („przycisk”, „pole wyboru”, „nagłówek”), [nazwę](slownik:nazwa) i [stan](slownik:stan), na przykład „zaznaczone” albo „rozwinięte”.
 

@@ -32,7 +32,7 @@ export const getPattern = createServerFn({ method: "GET" })
 
 /** Every pattern as a catalogue card, in batch order. */
 export const getPatternCards = createServerFn({ method: "GET" }).handler(() =>
-  [...patterns.values()].map(({ slug, title, en, batch, native, summary, criteria, preview, status }) => ({
+  [...patterns.values()].map(({ slug, title, en, batch, native, summary, criteria, preview }) => ({
     slug,
     title,
     en,
@@ -41,6 +41,5 @@ export const getPatternCards = createServerFn({ method: "GET" }).handler(() =>
     summary,
     criteria,
     preview,
-    status,
   })),
 );

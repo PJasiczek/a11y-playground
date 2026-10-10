@@ -1,6 +1,5 @@
 import { describe, expect, test } from "vitest";
 import { examples, parseExample } from "./examples";
-import { staleEntries } from "./markdown";
 
 const index = `---
 title: Przykład
@@ -9,7 +8,6 @@ criteria: ["1.1.1"]
 effort: 1 linia
 gain: Zysk.
 preview: <span>×</span>
-status: szkic
 bad:
   why: Źle.
   announces: Nic.
@@ -23,9 +21,8 @@ const files = { index, bad: "<p>zły</p>", good: "<p>dobry</p>" };
 
 describe("example files", () => {
   // Loading the module parses every folder in content/praktyka and throws on the first bad one.
-  test("all parse, and verified ones are fresh", () => {
+  test("all parse", () => {
     expect(examples.size).toBeGreaterThan(0);
-    expect(staleEntries(examples)).toEqual([]);
   });
 });
 
@@ -39,8 +36,8 @@ describe("parseExample", () => {
   });
 
   test("keeps the simulation notes by id", () => {
-    const notes = "simulations:\n  deuteranopia: Ramka znika.\nstatus: szkic";
-    const example = parseExample("x", { ...files, index: index.replace("status: szkic", notes) });
+    const notes = "simulations:\n  deuteranopia: Ramka znika.\nbad:";
+    const example = parseExample("x", { ...files, index: index.replace("bad:", notes) });
     expect(example.simulations).toEqual({ deuteranopia: "Ramka znika." });
   });
 
@@ -49,7 +46,7 @@ describe("parseExample", () => {
     ["a missing good.html", { ...files, good: undefined }, /good.html is missing/],
     ["an unknown criterion", { ...files, index: index.replace('"1.1.1"', '"9.9.9"') }, /9\.9\.9/],
     ["an effort off the scale", { ...files, index: index.replace("1 linia", "chwila") }, /effort/],
-    ["an unknown simulation", { ...files, index: index.replace("status: szkic", "simulations:\n  mgla: Nic.\nstatus: szkic") }, /mgla/],
+    ["an unknown simulation", { ...files, index: index.replace("bad:", "simulations:\n  mgla: Nic.\nbad:") }, /mgla/],
     ["an unknown key in a variant", { ...files, index: index.replace("  why: Dobrze.", "  why: Dobrze.\n  axe: [x]") }, /axe/],
   ])("rejects %s", (_, input, message) => {
     expect(() => parseExample("x", input)).toThrow(message);

@@ -67,8 +67,8 @@ export const getGlossary = createServerFn({ method: "GET" }).handler(() => {
 
 /** What the criteria list shows per criterion, keyed by id. Criteria without content are absent. */
 export const getCriteriaOverview = createServerFn({ method: "GET" }).handler(() => {
-  const overview: Partial<Record<CriterionId, Pick<CriterionContent, "summary" | "status" | "roles">>> = {};
-  for (const [id, { summary, status, roles }] of criterionContent) overview[id] = { summary, status, roles };
+  const overview: Partial<Record<CriterionId, Pick<CriterionContent, "summary" | "roles">>> = {};
+  for (const [id, { summary, roles }] of criterionContent) overview[id] = { summary, roles };
   return overview;
 });
 
@@ -106,7 +106,7 @@ export const getExample = createServerFn({ method: "GET" })
 
 /** Every example as a catalogue card, cheapest fix first. */
 export const getExampleCards = createServerFn({ method: "GET" }).handler(() =>
-  [...examples.values()].map(({ slug, title, summary, criteria, effort, gain, preview, status }) => ({
+  [...examples.values()].map(({ slug, title, summary, criteria, effort, gain, preview }) => ({
     slug,
     title,
     summary,
@@ -114,6 +114,5 @@ export const getExampleCards = createServerFn({ method: "GET" }).handler(() =>
     effort,
     gain,
     preview,
-    status,
   })),
 );

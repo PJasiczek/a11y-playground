@@ -6,7 +6,6 @@ effort: 15 minut
 gain: Każdy przeczyta slajd we własnym tempie, a czytnik nie jest przerywany w pół zdania.
 preview: <span class="p-slides">● ○ ○</span>
 motion: true
-status: szkic
 bad:
   why: Slajd zmienia się co 3 sekundy, bez przycisku pauzy i bez przycisków przewijania. Zmiana następuje też wtedy, gdy ktoś właśnie czyta.
   announces: Czytnik zaczyna czytać slajd, a w połowie zdania treść znika i pojawia się następny. Nie ma kontrolki, która to zatrzyma.

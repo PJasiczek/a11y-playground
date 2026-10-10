@@ -24,7 +24,6 @@ aria:
 sources:
   apg: https://www.w3.org/WAI/ARIA/apg/patterns/checkbox/
   deque: https://dequeuniversity.com/library/aria/checkbox-single
-status: szkic
 ---
 ## Kiedy używać
 

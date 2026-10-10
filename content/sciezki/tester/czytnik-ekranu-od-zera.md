@@ -7,7 +7,6 @@ keep:
   - Testuj na parze czytnik i przeglądarka, której ludzie używają.
   - Sprawdzaj, co czytnik mówi, a nie co widać.
   - Nazwa, rola, stan. Przy każdym elemencie.
-status: szkic
 ---
 [Czytnik ekranu](slownik:czytnik-ekranu) zamienia stronę w mowę albo brajla. Test czytnikiem pokazuje, czy w kodzie są informacje, które widać na ekranie. Na Windows najczęściej używa się bezpłatnego NVDA z Firefoksem albo Chrome, na komputerach Apple wbudowanego VoiceOvera z Safari.
 

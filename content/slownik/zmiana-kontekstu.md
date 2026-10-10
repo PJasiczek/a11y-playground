@@ -1,7 +1,6 @@
 ---
 term: zmiana kontekstu
 normative: zmiany kontekstu
-status: szkic
 ---
 Duża zmiana, która może zdezorientować: otwarcie nowego okna, przejście na inną stronę, przeniesienie fokusu, wyraźna przebudowa treści.
 

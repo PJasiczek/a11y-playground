@@ -1,7 +1,6 @@
 ---
 term: kolejność fokusu
 also: [kolejność tabulacji]
-status: szkic
 ---
 Porządek, w jakim fokus przechodzi przez elementy strony po kolejnych naciśnięciach klawisza Tab.
 

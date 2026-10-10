@@ -6,7 +6,6 @@ who: [poznawcze, slabe-widzenie, czytnik]
 axe: []
 example: karuzela-automatyczna
 pattern: karuzela
-status: szkic
 ---
 ## Problem
 

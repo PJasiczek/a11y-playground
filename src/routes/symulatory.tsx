@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { DraftBadge } from "~/components/level-badge";
 import { TermTips } from "~/components/term-tips";
 import { firstOfKind, type SimulationKind } from "~/content/simulations";
 import { getSimulators } from "~/content/simulators.functions";
@@ -60,7 +59,6 @@ function SimulatorsPage() {
         <section key={simulator.kind} id={simulator.kind} aria-labelledby={`${simulator.kind}-title`} className="mt-12 scroll-mt-4">
           <h2 id={`${simulator.kind}-title`} className="flex flex-wrap items-center gap-3 text-xl font-bold tracking-tight">
             {simulator.title}
-            {simulator.status === "szkic" ? <DraftBadge /> : null}
           </h2>
           <TermTips terms={terms}>
             <div className="prose mt-2" dangerouslySetInnerHTML={{ __html: simulator.html }} />

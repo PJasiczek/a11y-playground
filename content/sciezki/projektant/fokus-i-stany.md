@@ -7,7 +7,6 @@ keep:
   - Wskaźnik fokusu to element systemu projektowego, nie domyślny obrys przeglądarki.
   - Co najmniej 3 do 1 wobec tła, na każdym tle w aplikacji.
   - Przyklejony nagłówek i baner nie mogą zasłonić elementu z fokusem.
-status: szkic
 ---
 Projekt zwykle pokazuje stan domyślny i najechanie myszą. Stanu [fokusu](slownik:fokus) często nie ma w ogóle, więc programista zostawia domyślny obrys albo go usuwa, bo „nie pasuje”.
 

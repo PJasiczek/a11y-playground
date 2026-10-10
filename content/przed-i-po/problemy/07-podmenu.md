@@ -5,7 +5,6 @@ marker: podmenu
 who: [klawiatura, czytnik, telefon]
 axe: []
 pattern: nawigacja-wielopoziomowa
-status: szkic
 ---
 ## Problem
 

@@ -5,7 +5,6 @@ marker: obrazy
 who: [czytnik]
 axe: [image-alt, link-name]
 example: obraz-dekoracyjny-i-informacyjny
-status: szkic
 ---
 ## Problem
 

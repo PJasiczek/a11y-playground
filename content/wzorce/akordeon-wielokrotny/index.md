@@ -48,7 +48,6 @@ aria:
 sources:
   apg: https://www.w3.org/WAI/ARIA/apg/patterns/accordion/
   deque: https://dequeuniversity.com/library/aria/accordion-multi
-status: szkic
 ---
 ## Kiedy używać
 

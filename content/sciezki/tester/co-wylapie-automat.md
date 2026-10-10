@@ -6,7 +6,6 @@ keep:
   - Automat to pierwszy krok, nie cały test.
   - Zero błędów w axe nie znaczy, że strona jest dostępna.
   - To, co automat zgłasza, zwykle jest prawdziwym błędem. Nie ignoruj go.
-status: szkic
 ---
 Narzędzia takie jak axe, Lighthouse czy WAVE sprawdzają kod strony według reguł. Są szybkie i powtarzalne, więc warto je uruchamiać przy każdej zmianie, także w ciągłej integracji. Znajdują jednak tylko to, co da się rozstrzygnąć bez zrozumienia treści.
 

@@ -7,7 +7,6 @@ keep:
   - Cel ma co najmniej 24 na 24 piksele, a lepiej 44.
   - Gest dwoma palcami albo po ścieżce ma odpowiednik jednym dotknięciem.
   - Przeciąganie ma odpowiednik w przyciskach.
-status: szkic
 ---
 Drżenie rąk, sztywne palce, duże palce, telefon w jadącym tramwaju: mały [cel](slownik:cel) i precyzyjny gest wykluczają więcej osób, niż się wydaje.
 

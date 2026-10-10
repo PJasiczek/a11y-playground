@@ -1,10 +1,8 @@
 import { describe, expect, test } from "vitest";
 import { criterionContent, parseCriterionMarkdown, strongerVersionsOf } from "./criterion-content";
-import { maxVerifiedAgeMonths, staleEntries } from "./markdown";
 import { criteria, findCriterion, isObsolete, levels } from "./wcag";
 
 const frontmatter = `---
-status: szkic
 summary: Krótkie zdanie.
 roles: [programista]
 ---
@@ -14,10 +12,6 @@ describe("content files", () => {
   // Loading the module parses every file in content/kryteria and throws on the first bad one.
   test("all parse and are keyed by an existing criterion", () => {
     expect(criterionContent.size).toBeGreaterThan(0);
-  });
-
-  test(`verified content is at most ${String(maxVerifiedAgeMonths)} months old`, () => {
-    expect(staleEntries(criterionContent)).toEqual([]);
   });
 });
 
@@ -45,10 +39,7 @@ describe("parseCriterionMarkdown", () => {
     ["a related criterion that does not exist", frontmatter.replace("roles:", 'related: ["9.9.9"]\nroles:'), /9\.9\.9/],
     ["a summary over 200 characters", frontmatter.replace("Krótkie zdanie.", "a".repeat(201)), /summary/],
     ["an unknown frontmatter key", frontmatter.replace("roles:", "autor: ktoś\nroles:"), /autor/],
-    ["a draft with lastVerified", frontmatter.replace("roles:", "lastVerified: 2026-09-27\nroles:"), /draft/],
-    ["verified content without lastVerified", frontmatter.replace("status: szkic", "status: zweryfikowane"), /needs lastVerified/],
     ["an unknown glossary term", `${frontmatter}## Kogo to dotyczy\n\n[x](slownik:nie-ma)`, /unknown glossary term "nie-ma"/],
-    ["an unknown status", frontmatter.replace("status: szkic", "status: gotowe"), /status/],
     ["enhances without difference", frontmatter.replace("roles:", 'enhances: "1.4.3"\nroles:'), /go together/],
     ["difference without enhances", frontmatter.replace("roles:", "difference: Więcej.\nroles:"), /go together/],
     [

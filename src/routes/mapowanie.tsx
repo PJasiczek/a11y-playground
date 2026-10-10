@@ -133,7 +133,7 @@ function ObligationsPage() {
         </div>
       </details>
 
-      <LegalFooter verified={null} retrieved={asOf} />
+      <LegalFooter retrieved={asOf} />
     </>
   );
 }

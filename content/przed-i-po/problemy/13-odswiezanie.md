@@ -5,7 +5,6 @@ marker: odswiezanie
 who: [czytnik, poznawcze, slabe-widzenie]
 axe: []
 pattern: regiony-na-zywo
-status: szkic
 ---
 ## Problem
 

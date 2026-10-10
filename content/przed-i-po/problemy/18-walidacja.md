@@ -5,7 +5,6 @@ marker: walidacja
 who: [czytnik, poznawcze, klawiatura]
 axe: []
 example: formularz-z-bledami
-status: szkic
 ---
 ## Problem
 

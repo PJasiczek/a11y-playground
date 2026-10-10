@@ -5,7 +5,6 @@ keep:
   - Jedno zgłoszenie, jeden problem, jedno kryterium.
   - Kroki do odtworzenia z nazwą narzędzia, przeglądarki i czytnika.
   - Oczekiwane i faktyczne zachowanie, najlepiej z tym, co powiedział czytnik.
-status: szkic
 ---
 Zgłoszenie „strona jest niedostępna” trafi na koniec kolejki. Zgłoszenie, które mówi, co, gdzie i jak odtworzyć, zostanie naprawione.
 

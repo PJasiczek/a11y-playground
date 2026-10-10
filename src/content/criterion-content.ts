@@ -1,5 +1,5 @@
 import { type } from "arktype";
-import { type Fail, IsoDate, readVerification, splitFrontmatter, Status, type Verification } from "./markdown";
+import { type Fail, splitFrontmatter } from "./markdown";
 import { createRenderer, renderSections } from "./render";
 import { contentSections, type Role, roles, type SectionKey } from "./sections";
 import { type CriterionId, isCriterionId } from "./wcag";
@@ -11,18 +11,16 @@ import { type CriterionId, isCriterionId } from "./wcag";
  */
 
 const Frontmatter = type({
-  status: Status,
   summary: "0 < string <= 200",
   roles: type.enumerated(...roles).array(),
   "related?": "string[]",
   "keywords?": "string[]",
   "enhances?": "string",
   "difference?": "0 < string <= 160",
-  "lastVerified?": IsoDate,
   "+": "reject",
 });
 
-export type CriterionContent = Verification & {
+export type CriterionContent = {
   summary: string;
   roles: Role[];
   related: CriterionId[];
@@ -64,7 +62,6 @@ export function parseCriterionMarkdown(file: string, source: string): CriterionC
   const sections = renderSections(body, contentSections, fail, render);
 
   return {
-    ...readVerification(meta, fail),
     summary: meta.summary,
     roles: meta.roles,
     related: related.filter(isCriterionId),

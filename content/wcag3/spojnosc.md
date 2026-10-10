@@ -2,7 +2,6 @@
 num: "2.8"
 title: Spójność między widokami
 en: Consistency across views
-status: szkic
 guidelines:
   - num: "2.8.1"
     en: Consistency

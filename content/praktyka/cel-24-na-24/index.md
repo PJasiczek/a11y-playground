@@ -5,7 +5,6 @@ criteria: ["2.5.8"]
 effort: 1 token
 gain: Mniej kliknięć w nie ten przycisk, zwłaszcza dla osób z drżeniem rąk i na telefonie.
 preview: <span class="p-tiny">✎ ⧉ ✕</span>
-status: szkic
 bad:
   why: Trzy przyciski z ikonami po 16 na 16 pikseli, bez odstępów. Łatwo usunąć wiersz, chcąc go skopiować.
   announces: „Edytuj, przycisk”, „Kopiuj, przycisk”, „Usuń, przycisk”. Czytnik działa dobrze, problem jest w trafianiu palcem i myszą.

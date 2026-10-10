@@ -7,7 +7,6 @@ keep:
   - Każde pole ma widoczną etykietę powiązaną w kodzie.
   - Błąd opisany tekstem, przy polu, z podpowiedzią, jak go poprawić.
   - Nie każ wpisywać drugi raz tego, co ktoś już podał.
-status: szkic
 ---
 Formularz to miejsce, w którym dostępność najczęściej decyduje o tym, czy ktoś w ogóle załatwi sprawę.
 

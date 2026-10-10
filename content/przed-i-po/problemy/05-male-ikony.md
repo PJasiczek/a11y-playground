@@ -5,7 +5,6 @@ marker: ikony
 who: [telefon]
 axe: [target-size]
 example: cel-24-na-24
-status: szkic
 ---
 ## Problem
 

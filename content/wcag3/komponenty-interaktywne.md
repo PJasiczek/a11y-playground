@@ -2,7 +2,6 @@
 num: "2.3"
 title: Komponenty interaktywne
 en: Interactive components
-status: szkic
 guidelines:
   - num: "2.3.1"
     en: Keyboard focus appearance

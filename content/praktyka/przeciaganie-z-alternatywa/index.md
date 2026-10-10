@@ -5,7 +5,6 @@ criteria: ["2.5.7", "2.1.1", "4.1.3"]
 effort: 15 minut
 gain: Kolejność zmieni każdy, także bez przytrzymywania przycisku myszy i bez myszy w ogóle.
 preview: <span class="p-drag">⠿ Zadanie 1</span>
-status: szkic
 bad:
   why: Elementy mają atrybut draggable i obsługę przeciągania, nic więcej. Bez przytrzymania przycisku myszy i ruchu nie da się zmienić kolejności.
   announces: Lista z trzema elementami. Czytnik je przeczyta, ale nie ma żadnej kontrolki do zmiany kolejności.

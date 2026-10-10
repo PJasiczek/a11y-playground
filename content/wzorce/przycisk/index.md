@@ -25,7 +25,6 @@ aria:
 sources:
   apg: https://www.w3.org/WAI/ARIA/apg/patterns/button/
   deque: https://dequeuniversity.com/library/aria/button
-status: szkic
 ---
 ## Kiedy używać
 

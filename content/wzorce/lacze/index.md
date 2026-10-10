@@ -28,7 +28,6 @@ aria:
 sources:
   apg: https://www.w3.org/WAI/ARIA/apg/patterns/link/
   deque: https://dequeuniversity.com/library/aria/link
-status: szkic
 ---
 ## Kiedy używać
 

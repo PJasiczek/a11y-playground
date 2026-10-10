@@ -6,7 +6,6 @@ keep:
   - Na żądanie zapewnienia dostępności masz 7 dni, najwyżej dwa miesiące z uzasadnieniem.
   - Każdy może złożyć żądanie, bez podawania powodu.
   - Organ władzy publicznej wyznacza koordynatora do spraw dostępności.
-status: szkic
 ---
 Ustawa daje każdemu prawo zażądać dostępności. To najczęstsza droga, którą problem z dostępnością trafia do urzędu.
 

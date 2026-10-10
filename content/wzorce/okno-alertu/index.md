@@ -35,7 +35,6 @@ aria:
 sources:
   apg: https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/
   deque: https://dequeuniversity.com/library/aria/simple-alert-dialog
-status: szkic
 ---
 ## Kiedy używać
 

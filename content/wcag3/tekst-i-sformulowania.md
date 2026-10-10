@@ -2,7 +2,6 @@
 num: "2.2"
 title: Tekst i sformułowania
 en: Text and wording
-status: szkic
 guidelines:
   - num: "2.2.1"
     en: Text appearance

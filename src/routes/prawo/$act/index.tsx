@@ -1,5 +1,4 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { DraftBadge } from "~/components/level-badge";
 import { LegalFooter, ProvisionLink } from "~/components/legal";
 import { TermTips } from "~/components/term-tips";
 import { formatDate } from "~/content/legal";
@@ -33,7 +32,7 @@ export const Route = createFileRoute("/prawo/$act/")({
 
 /** One act: our introduction, the source text it comes from, deadlines, and its articles by chapter. */
 function ActPage() {
-  const { act, introHtml, deadlines, toc, terms, draft } = Route.useLoaderData();
+  const { act, introHtml, deadlines, toc, terms } = Route.useLoaderData();
 
   return (
     <article>
@@ -55,7 +54,6 @@ function ActPage() {
         <h1 className="text-[clamp(1.5rem,4vw,2.125rem)] leading-tight font-bold tracking-tight">{act.short}</h1>
         <p className="mt-2 max-w-[70ch] text-ink-2">{act.title}</p>
         <p className="mt-3 flex flex-wrap items-center gap-2 font-mono text-[0.8125rem] text-ink-2">
-          {draft ? <DraftBadge long /> : null}
           <span>{act.address}</span>
           <span aria-hidden="true">·</span>
           <span>
@@ -142,7 +140,7 @@ function ActPage() {
         ))}
       </section>
 
-      <LegalFooter verified={act.verification} retrieved={act.retrieved} />
+      <LegalFooter retrieved={act.retrieved} />
     </article>
   );
 }

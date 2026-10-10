@@ -6,7 +6,6 @@ who: [klawiatura, czytnik]
 axe: []
 example: okno-modalne-i-fokus
 pattern: okno-dialogowe
-status: szkic
 ---
 ## Problem
 

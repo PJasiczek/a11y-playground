@@ -40,7 +40,6 @@ aria:
 sources:
   apg: https://www.w3.org/WAI/ARIA/apg/patterns/combobox/
   deque: https://dequeuniversity.com/library/aria/predictive-text
-status: szkic
 ---
 ## Kiedy używać
 

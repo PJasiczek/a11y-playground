@@ -2,7 +2,6 @@
 term: idiom
 also: [związek frazeologiczny]
 normative: idiom
-status: szkic
 ---
 Wyrażenie, którego znaczenia nie da się złożyć ze znaczeń słów: „rzucić okiem”, „mieć muchy w nosie”, „to nie moja bajka”.
 

@@ -1,7 +1,6 @@
 ---
 term: fokus
 also: [focus]
-status: szkic
 ---
 Miejsce na stronie, do którego trafią naciśnięcia klawiszy. W danej chwili ma go tylko jeden element.
 

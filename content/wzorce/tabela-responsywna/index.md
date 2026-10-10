@@ -44,7 +44,6 @@ aria:
     meaning: Nazwa regionu z podpisu tabeli.
 sources:
   deque: https://dequeuniversity.com/library/aria/table-responsive
-status: szkic
 ---
 ## Kiedy używać
 

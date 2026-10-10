@@ -2,7 +2,6 @@
 num: "2.11"
 title: Pomoc i informacja zwrotna
 en: Help and feedback
-status: szkic
 guidelines:
   - num: "2.11.1"
     en: Help available

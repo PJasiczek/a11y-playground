@@ -4,7 +4,6 @@ criteria: ["3.1.1", "3.1.2"]
 marker: jezyk
 who: [czytnik]
 axe: [html-has-lang]
-status: szkic
 ---
 ## Problem
 

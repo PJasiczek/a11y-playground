@@ -6,7 +6,6 @@ keep:
   - Nagłówek to styl akapitu w edytorze, nie pogrubienie.
   - Poziomy po kolei, bez przeskakiwania.
   - Z samych nagłówków da się zrozumieć, o czym jest strona.
-status: szkic
 ---
 Osoby z czytnikiem ekranu często zaczynają od listy nagłówków. To dla nich spis treści, z którego wybierają, co przeczytać. Osoby widzące robią to samo wzrokiem.
 

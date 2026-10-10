@@ -28,7 +28,6 @@ aria:
     meaning: Region stanu. Mówi „Szukam kurtek.” i „Znaleziono 3 kurtki.”, bez przenoszenia fokusu.
 sources:
   deque: https://dequeuniversity.com/library/aria/progress-bar-unbounded
-status: szkic
 ---
 ## Kiedy używać
 

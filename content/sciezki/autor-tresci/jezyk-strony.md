@@ -6,7 +6,6 @@ keep:
   - Strona ma ustawiony język główny.
   - Cytat albo akapit w innym języku ma ustawiony swój język.
   - Pojedyncze obce słowa, które weszły do polszczyzny, zostają bez oznaczenia.
-status: szkic
 ---
 Czytnik ekranu wybiera głos i zasady wymowy na podstawie języka tekstu. Polski tekst przeczytany angielskim głosem jest prawie niezrozumiały.
 

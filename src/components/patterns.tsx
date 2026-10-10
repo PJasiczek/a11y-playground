@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { type Announcement, announceKinds } from "~/content/announce";
 import { type NativeVerdict, nativeVerdicts } from "~/content/pattern-labels";
-import { DraftBadge } from "./level-badge";
 
 // Pieces of /praktyka/wzorce and the pattern pages (variants 1C, 2C and 4B of the phase 9 mocks).
 
@@ -56,7 +55,6 @@ export type PatternCardData = {
   native: NativeVerdict;
   criteria: string[];
   preview: string;
-  status: "szkic" | "zweryfikowane";
 };
 
 /**
@@ -93,7 +91,6 @@ export function PatternCard({ card }: { card: PatternCardData }) {
               {id}
             </span>
           ))}
-          {card.status === "szkic" ? <DraftBadge /> : null}
         </p>
       </div>
     </li>

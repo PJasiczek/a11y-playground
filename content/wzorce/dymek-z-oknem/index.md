@@ -35,7 +35,6 @@ aria:
 sources:
   apg: https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/
   deque: https://dequeuniversity.com/library/aria/tooltip-dialog
-status: szkic
 ---
 ## Kiedy używać
 

@@ -4,7 +4,6 @@ summary: Przykład w ramce szerokiej na 320 pikseli albo z tekstem powiększonym
 criteria: ["1.4.4", "1.4.10"]
 examples: [sztywna-szerokosc]
 limits: Nie pokazuje powiększenia całego systemu, lupy ekranowej ani zmiany odstępów w tekście. Tekst 200% powiększa tylko tekst ustawiony w jednostkach względnych, jak ustawienie rozmiaru czcionki w przeglądarce.
-status: szkic
 ---
 Osoby słabowidzące powiększają stronę. Przy powiększeniu 400% okno szerokie na 1280 pikseli pokazuje tyle, co ekran szeroki na 320, więc treść musi się ułożyć w jednej kolumnie bez przewijania w poziomie.
 

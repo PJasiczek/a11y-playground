@@ -5,7 +5,6 @@ marker: kontrast
 who: [slabe-widzenie, telefon]
 axe: [color-contrast]
 example: kontrast-stanow
-status: szkic
 ---
 ## Problem
 

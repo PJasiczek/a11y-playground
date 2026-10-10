@@ -7,7 +7,6 @@ keep:
   - Opis mówi to, co obrazek przekazuje w tym miejscu, nie co na nim widać.
   - Obrazek ozdobny dostaje pusty opis.
   - Wykres i infografika potrzebują danych także w tekście.
-status: szkic
 ---
 [Tekst alternatywny](slownik:tekst-alternatywny) zastępuje obrazek osobom, które go nie widzą. Czytnik ekranu przeczyta go w miejscu obrazka, a przeglądarka pokaże go, gdy obrazek się nie wczyta.
 

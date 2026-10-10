@@ -7,7 +7,6 @@ keep:
   - Jeden header, jeden main i jeden footer na stronę. Treść główna zawsze w main.
   - Dwie nawigacje na stronie potrzebują dwóch różnych nazw w aria-label.
   - Poziom nagłówka wynika ze struktury, a rozmiar ustawiasz w CSS.
-status: szkic
 ---
 [Czytnik ekranu](slownik:czytnik-ekranu) pozwala skakać po stronie na dwa sposoby. Klawiszem D w NVDA przechodzi między punktami orientacyjnymi: banerem, nawigacją, treścią główną, stopką. Klawiszem H idzie po nagłówkach, jak po spisie treści. Oba skróty działają tylko wtedy, gdy strona ma te elementy w kodzie, a nie tylko na ekranie.
 

@@ -1,7 +1,7 @@
 import { type } from "arktype";
 import { keyNames, reportedAttributes } from "./announce";
 import { examples } from "./examples";
-import { type Fail, IsoDate, readVerification, splitFrontmatter, Status, type Verification } from "./markdown";
+import { type Fail, splitFrontmatter } from "./markdown";
 import {
   nativeVerdictIds,
   patternBatchIds,
@@ -52,15 +52,13 @@ const Frontmatter = type({
   steps: Step.array(),
   aria: AriaRow.array(),
   sources: { "apg?": "string.url", deque: "string.url", "+": "reject" },
-  status: Status,
-  "lastVerified?": IsoDate,
   "+": "reject",
 });
 
 export type PatternStep = typeof Step.infer;
 export type AriaRow = typeof AriaRow.infer;
 
-export type Pattern = Verification & {
+export type Pattern = {
   slug: string;
   title: string;
   en: string;
@@ -102,7 +100,6 @@ export function parsePattern(slug: string, files: { index: string; source: strin
   }
 
   return {
-    ...readVerification(meta, fail),
     slug,
     title: meta.title,
     en: meta.en,

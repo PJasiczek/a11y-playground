@@ -1,7 +1,6 @@
 ---
 term: domniemanie zgodności
 also: [presumption of conformity]
-status: szkic
 ---
 Reguła, która mówi: jeśli spełniasz określoną normę, uznaje się, że spełniasz wymagania ustawy. Nie trzeba wtedy wykazywać zgodności z każdym wymaganiem osobno.
 

@@ -46,7 +46,6 @@ aria:
 sources:
   apg: https://www.w3.org/WAI/ARIA/apg/patterns/tabs/
   deque: https://dequeuniversity.com/library/aria/tabpanel
-status: szkic
 ---
 ## Kiedy używać
 

@@ -2,7 +2,6 @@
 num: "2.1"
 title: Obrazy i multimedia
 en: Images and media
-status: szkic
 guidelines:
   - num: "2.1.1"
     en: Image alternatives

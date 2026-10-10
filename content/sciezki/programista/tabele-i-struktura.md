@@ -7,7 +7,6 @@ keep:
   - Nagłówki od h1 do h6 w kolejności, bez przeskakiwania poziomów.
   - Tabela danych ma th ze scope i podpis w caption.
   - Kolejność w HTML to kolejność czytania. CSS jej nie zmienia.
-status: szkic
 ---
 Osoby z czytnikiem rzadko czytają stronę od góry do dołu. Skaczą po nagłówkach, listach i obszarach, a w tabeli poruszają się strzałkami między komórkami.
 

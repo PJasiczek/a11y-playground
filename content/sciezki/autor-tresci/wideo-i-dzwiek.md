@@ -6,7 +6,6 @@ keep:
   - Nagranie z dźwiękiem ma napisy, poprawione przez człowieka.
   - Podcast ma transkrypcję.
   - To, co widać, a czego nie słychać, trzeba opisać w audiodeskrypcji.
-status: szkic
 ---
 Osoby głuche i słabosłyszące potrzebują tekstu zamiast dźwięku. Osoby niewidome potrzebują dźwięku albo tekstu zamiast obrazu. Każdy rodzaj nagrania ma swój zestaw wymagań.
 

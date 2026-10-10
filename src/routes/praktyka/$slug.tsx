@@ -2,7 +2,6 @@ import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-ro
 import { useState } from "react";
 import { ProblemLinks } from "~/components/before-after";
 import { ExampleFrame } from "~/components/example-frame";
-import { DraftBadge } from "~/components/level-badge";
 import { ReadingTables } from "~/components/reading-table";
 import { SimulationPicker } from "~/components/simulation-picker";
 import { TermTips } from "~/components/term-tips";
@@ -92,11 +91,6 @@ function ExamplePage() {
               </Link>
             </li>
           ))}
-          {example.status === "szkic" ? (
-            <li>
-              <DraftBadge />
-            </li>
-          ) : null}
         </ul>
         {patterns.length > 0 ? (
           <p className="mt-3 flex flex-wrap items-center gap-x-3 text-[0.9375rem]">

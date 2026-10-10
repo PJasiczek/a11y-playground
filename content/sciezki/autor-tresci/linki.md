@@ -6,7 +6,6 @@ keep:
   - Tekst linku mówi, dokąd prowadzi albo co się stanie.
   - Link do pliku podaje format i rozmiar.
   - Adres URL jako tekst linku zostaw tylko tam, gdzie ktoś ma go przepisać.
-status: szkic
 ---
 Czytnik ekranu potrafi pokazać listę wszystkich linków na stronie. Lista złożona z „kliknij tutaj”, „więcej” i „tutaj” nie mówi nic.
 

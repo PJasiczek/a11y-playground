@@ -7,7 +7,6 @@ keep:
   - Wyślij pusty formularz i formularz ze złymi danymi.
   - Błąd musi być w tekście, przy polu, z podpowiedzią.
   - Komunikaty bez przeładowania strony muszą dotrzeć do czytnika.
-status: szkic
 ---
 Formularze mają najwięcej stanów do sprawdzenia, a automat zobaczy tylko stan początkowy.
 

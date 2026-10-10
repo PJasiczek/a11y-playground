@@ -1,10 +1,8 @@
 import { describe, expect, test } from "vitest";
 import { acts } from "./legal";
 import { actContent, deadlines, parseActMarkdown } from "./legal-content";
-import { staleEntries } from "./markdown";
 
 const frontmatter = `---
-status: szkic
 short: Ustawa
 summary: Krótko.
 binds: Podmioty publiczne.
@@ -17,10 +15,6 @@ describe("act files", () => {
   // Loading the module parses every file in content/prawo and throws on the first bad one.
   test("every imported act has a summary file", () => {
     expect([...actContent.keys()].toSorted()).toEqual(acts.map((a) => a.slug).toSorted());
-  });
-
-  test("verified acts are at most 12 months old", () => {
-    expect(staleEntries(actContent)).toEqual([]);
   });
 
   test("deadlines are sorted and every situation has a start date", () => {

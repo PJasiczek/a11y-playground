@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { AaaNote, AppMeets, EnhancesStrip } from "~/components/aaa";
 import { ProblemLinks } from "~/components/before-after";
 import { ProvisionLink, StrengthLabel } from "~/components/legal";
-import { DraftBadge, LevelBadge, NewBadge, WorkingDraftBadge } from "~/components/level-badge";
+import { LevelBadge, NewBadge, WorkingDraftBadge } from "~/components/level-badge";
 import { TermTips } from "~/components/term-tips";
 import { appMeets } from "~/content/app-meets";
 import { getCriterionPage } from "~/content/content.functions";
@@ -301,7 +301,6 @@ function CriterionPage() {
         <p className="mt-4 flex flex-wrap items-center gap-2 font-mono text-[0.8125rem] text-ink-2">
           <LevelBadge level={criterion.level} />
           {isNewIn22(criterion) ? <NewBadge /> : null}
-          {content?.status === "szkic" ? <DraftBadge long /> : null}
           {isObsolete(criterion) ? <span>wycofane w WCAG 2.2</span> : <span>od WCAG {criterion.versions[0]}</span>}
           <span aria-hidden="true">·</span>
           <span>
@@ -366,8 +365,6 @@ function CriterionPage() {
               </a>
               .
             </p>
-            {content?.status === "zweryfikowane" ? <p className="mt-1">Treść zweryfikowana: {content.lastVerified}</p> : null}
-            {content?.status === "szkic" ? <p className="mt-1">Treść jest szkicem i czeka na weryfikację.</p> : null}
           </footer>
         </div>
       </div>

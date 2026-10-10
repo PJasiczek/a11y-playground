@@ -40,7 +40,6 @@ aria:
 sources:
   apg: https://www.w3.org/WAI/ARIA/apg/patterns/carousel/
   deque: https://dequeuniversity.com/library/aria/carousel
-status: szkic
 ---
 ## Kiedy używać
 

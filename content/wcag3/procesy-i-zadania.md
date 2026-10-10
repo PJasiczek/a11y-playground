@@ -2,7 +2,6 @@
 num: "2.9"
 title: Procesy i wykonanie zadań
 en: Process and task completion
-status: szkic
 guidelines:
   - num: "2.9.1"
     en: Avoid exclusionary cognitive tasks

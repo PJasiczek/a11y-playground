@@ -6,7 +6,6 @@ who: [czytnik]
 axe: []
 example: tabela-z-naglowkami
 pattern: tabela-responsywna
-status: szkic
 ---
 ## Problem
 

@@ -2,7 +2,6 @@
 num: "2.5"
 title: Obsługa błędów
 en: Error handling
-status: szkic
 guidelines:
   - num: "2.5.1"
     en: Correct errors

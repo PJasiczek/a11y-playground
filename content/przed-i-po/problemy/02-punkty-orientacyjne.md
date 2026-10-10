@@ -5,7 +5,6 @@ marker: punkty
 who: [czytnik, klawiatura]
 axe: []
 example: punkty-orientacyjne-i-naglowki
-status: szkic
 ---
 ## Problem
 

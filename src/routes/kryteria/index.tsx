@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { type } from "arktype";
 import { Chip, FilterGroup } from "~/components/filters";
-import { DraftBadge, LevelBadge, NewBadge } from "~/components/level-badge";
+import { LevelBadge, NewBadge } from "~/components/level-badge";
 import { getCriteriaOverview } from "~/content/content.functions";
 import { type Role, roles } from "~/content/sections";
 import {
@@ -147,7 +147,6 @@ function CriteriaPage() {
                 </span>
                 <span className="col-start-2 flex flex-wrap items-center gap-1.5 sm:col-start-auto">
                   {isNewIn22(c) ? <NewBadge /> : null}
-                  {overview[c.id]?.status === "szkic" ? <DraftBadge /> : null}
                   {isObsolete(c) ? <span className="font-mono text-xs text-ink-2">wycofane w 2.2</span> : null}
                   <LevelBadge level={c.level} />
                 </span>

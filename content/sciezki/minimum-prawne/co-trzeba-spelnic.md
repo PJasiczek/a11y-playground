@@ -7,7 +7,6 @@ keep:
   - Wymagania to 49 kryteriów WCAG 2.1 z załącznika, na poziomach A i AA.
   - Poziom AAA i kryteria nowe w WCAG 2.2 nie są wymagane przez ustawę.
   - Kto spełnia normę EN 301 549 w zakresie WCAG, spełnia załącznik.
-status: szkic
 ---
 [Art. 5](prawo:ustawa-2019-848/art-5) mówi krótko: strona i aplikacja podmiotu publicznego spełniają wymagania z [załącznika](prawo:ustawa-2019-848/zal). Załącznik to tabela 49 kryteriów WCAG 2.1: wszystkie na poziomach A i AA poza 1.2.4 Napisy (na żywo). Siedem z nich nie dotyczy aplikacji mobilnych, więc aplikacja musi spełnić 42.
 

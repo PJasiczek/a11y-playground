@@ -6,7 +6,6 @@ keep:
   - Tekst da się powiększyć do 200 procent bez utraty treści.
   - Przy szerokości 320 pikseli nie ma przewijania w poziomie.
   - Kontenery rosną razem z tekstem, zamiast go ucinać.
-status: szkic
 ---
 Wiele osób powiększa stronę na stałe. Projekt, który wygląda dobrze tylko w jednym rozmiarze, dla nich się rozsypuje.
 

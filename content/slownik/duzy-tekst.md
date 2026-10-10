@@ -1,7 +1,6 @@
 ---
 term: duży tekst
 normative: duży tekst
-status: szkic
 ---
 Tekst o wielkości co najmniej 18 punktów albo co najmniej 14 punktów pogrubiony. W CSS to w przybliżeniu 24 piksele albo 18,67 piksela pogrubione.
 

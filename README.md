@@ -19,7 +19,7 @@ a11y playground is a learning app for people who build digital products in Polan
 The interface is in Polish. This README is in English.
 
 > [!NOTE]
-> Phase 11 (a whole page before and after) is complete: the home page of a fictional transport operator, broken in 20 ways and fixed, with notes for checking it yourself and the answers hidden until you are done. Phase 10 added a "Struktura strony" button on every page that outlines its landmarks and headings. All 30 patterns of the Deque University list run in Praktyka with a live log of what a screen reader would say. Every criterion of WCAG 2.2, A to AAA, has a plain-language explanation, and `/wcag-3` tracks the WCAG 3.0 Working Draft with our mapping to today's criteria. Twelve common faults have a broken and a fixed example, each viewable through six kinds of simulator. Three Polish acts are in the app with the statute text and our summaries, and five learning paths walk through them lesson by lesson. All content is marked as a draft until a person has checked it. Phase 5 (accounts) is postponed, so progress is kept in the browser.
+> Phase 11 (a whole page before and after) is complete: the home page of a fictional transport operator, broken in 20 ways and fixed, with notes for checking it yourself and the answers hidden until you are done. Phase 10 added a "Struktura strony" button on every page that outlines its landmarks and headings. All 30 patterns of the Deque University list run in Praktyka with a live log of what a screen reader would say. Every criterion of WCAG 2.2, A to AAA, has a plain-language explanation, and `/wcag-3` tracks the WCAG 3.0 Working Draft with our mapping to today's criteria. Twelve common faults have a broken and a fixed example, each viewable through six kinds of simulator. Three Polish acts are in the app with the statute text and our summaries, and five learning paths walk through them lesson by lesson. Phase 5 (accounts) is postponed, so progress is kept in the browser.
 
 ### What works today
 
@@ -30,7 +30,7 @@ The interface is in Polish. This README is in English.
 - **Struktura strony**, a button in the bottom right corner of every page, after the W3C [landmarks example](https://www.w3.org/WAI/ARIA/apg/patterns/landmarks/examples/general-principles.html). Its panel has two switches, "Punkty orientacyjne" and "Nagłówki", which outline the landmarks and headings of the page you are on, each with a label naming its role or level. The panel lists the same as text, with what is wrong (no `main`, two navigations nobody can tell apart, a skipped heading level), and every row moves focus to its element, the way a screen reader jumps with D or H. The switches last for the browser tab.
 - **Criteria list** (`/kryteria`) with filters for WCAG version, level, principle and role. The filters are native radio buttons and checkboxes, their state lives in the URL, and the result count is announced to screen readers.
 - **Criterion pages** (`/kryteria/1.4.3`) with a fixed section order, a "nowe w 2.2" badge for the nine new criteria, and 4.1.1 marked as removed in 2.2. Every page is prerendered to static HTML.
-- **Explanations** for all 86 criteria of WCAG 2.2, A, AA and AAA: who it affects, how to meet it by role, typical errors, how to test it, common confusions. 4.1.1 gets a short page on why 2.2 removed it and why the 2019 act still lists it. Drafts carry a visible "szkic, czeka na weryfikację" badge.
+- **Explanations** for all 86 criteria of WCAG 2.2, A, AA and AAA: who it affects, how to meet it by role, typical errors, how to test it, common confusions. 4.1.1 gets a short page on why 2.2 removed it and why the 2019 act still lists it.
 - **AAA criteria** say "Poziom AAA: cel, nie obowiązek" under the summary, and each one's "Jak to spełnić" says when it pays off. Thirteen of them tighten an AA criterion, and their page compares the two side by side with the difference in one line (`/kryteria/1.4.6` against 1.4.3); the AA page links to its stronger version. Where this app meets an AAA criterion (1.4.6, 2.3.3, 2.4.13, 2.5.5), the page says so and how a test checks it.
 - **WCAG 3.0** (`/wcag-3`, in the main navigation): the status of the Working Draft of 10 September 2026 under a "wersja robocza W3C" badge, with the date we last compared it with w3.org, a table of how 3.0 differs from 2.2, and one table of all 46 guidelines in 12 groups with the 2.2 criteria that correspond to them today, or "Nowe w 3.0". The mapping is ours and the page says so. A filter (`?pokaz=nowe`) shows only what is new in 3.0, and every criterion page links to its guidelines.
 - **Normative text** in Polish from the authorized W3C translation of WCAG 2.1, collapsed on each criterion page. The criteria new in 2.2 link to their sources until a licensed Polish text is available.
@@ -55,7 +55,7 @@ The interface is in Polish. This README is in English.
 
 | Criteria list | Criterion page |
 | --- | --- |
-| ![Criteria list with version, level, principle and role filters](docs/screenshots/criteria-list.png) | ![Criterion page for 1.4.3 Kontrast (minimum) with a draft badge](docs/screenshots/criterion-page.png) |
+| ![Criteria list with version, level, principle and role filters](docs/screenshots/criteria-list.png) | ![Criterion page for 1.4.3 Kontrast (minimum)](docs/screenshots/criterion-page.png) |
 
 | Practice | Example page |
 | --- | --- |
@@ -118,7 +118,6 @@ Criterion names, levels, versions and normative text are generated. The explanat
 
 ```markdown
 ---
-status: szkic
 summary: Tekst musi odcinać się od tła w stosunku co najmniej 4,5 do 1.
 roles: [projektant, programista]
 related: ["1.4.6", "1.4.11"]
@@ -137,18 +136,14 @@ Osoby po czterdziestce, którym spada wrażliwość na kontrast. Kryterium mierz
 ```
 
 - **Frontmatter:**
-  - `status`: `szkic` for a draft, `zweryfikowane` once a person has checked it against the sources.
   - `summary`: one sentence, up to 200 characters.
   - `roles`: any of `programista`, `projektant`, `autor treści`, `tester`.
   - `related`: other criterion numbers.
   - `keywords`: optional words people search with, not shown on the page.
   - `enhances` and `difference`: for an AAA criterion that tightens a lower-level one in the same guideline, its number and one line, up to 160 characters, on what changes. Always both or neither.
-  - `lastVerified`: the date of that check. Required with `zweryfikowane`, not allowed with `szkic`.
 - **Sections** must use these `##` titles, in this order: Kogo to dotyczy, Jak to spełnić, Typowe błędy, Jak sprawdzić, Częste pomyłki. Use `###` inside a section, for example to split it by role. Every criterion needs the first four, except 4.1.1, which WCAG 2.2 removed.
 - **Glossary terms:** mark a term as `[nazwę](slownik:nazwa)`. The first use on a page becomes a link with a definition preview, later uses stay plain text. Terms are marked by hand because Polish inflection makes automatic matching unreliable.
-- **Checks:** a file with a typo in a section title, an unknown key or glossary term, a summary that is too long, or a reference to a criterion that does not exist fails `pnpm test` and the build, with the file name and the reason. So does a missing explanation, an `enhances` that points at the same or a higher level or another guideline, and verified content older than 12 months.
-
-To verify a draft, check it against the normative text and the W3C Understanding document, then change `status` to `zweryfikowane` and add `lastVerified`.
+- **Checks:** a file with a typo in a section title, an unknown key or glossary term, a summary that is too long, or a reference to a criterion that does not exist fails `pnpm test` and the build, with the file name and the reason. So does a missing explanation, and an `enhances` that points at the same or a higher level or another guideline.
 
 ### Glossary entries
 
@@ -159,7 +154,6 @@ One file per term in `content/slownik/<slug>.md`. The slug is the anchor on `/sl
 term: nazwa
 also: [dostępna nazwa]
 normative: nazwa
-status: szkic
 ---
 To, co czytnik ekranu powie o kontrolce, zanim powie, czym ona jest.
 ```
@@ -188,7 +182,6 @@ criteria: ["4.1.2", "2.1.1", "1.1.1"]
 effort: 1 linia
 gain: Czytnik mówi „Zamknij komunikat, przycisk” zamiast milczeć.
 preview: <span class="p-x">×</span>
-status: szkic
 bad:
   why: Znak × w elemencie div z obsługą kliknięcia.
   announces: Nic sensownego.
@@ -226,7 +219,6 @@ summary: Kiedy kolor jest jedyną informacją, część osób tej informacji nie
 criteria: ["1.4.1", "1.4.11"]
 examples: [formularz-z-bledami, kontrast-stanow]
 limits: Nie pokazuje słabszych odmian zaburzeń.
-status: szkic
 ---
 Opis ogólny, pokazywany przy przykładach bez własnej notatki.
 ```
@@ -261,7 +253,6 @@ aria:
 sources:
   apg: https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/
   deque: https://dequeuniversity.com/library/aria/expand-collapse
-status: szkic
 ---
 ## Kiedy używać
 ## Typowe błędy
@@ -286,7 +277,6 @@ marker: podmenu
 who: [klawiatura, czytnik, telefon]
 axe: []
 pattern: nawigacja-wielopoziomowa
-status: szkic
 ---
 ## Problem
 ## Rozwiązanie
@@ -303,7 +293,6 @@ The tracking page reads `content/wcag3/`: `index.md` for the draft and the compa
 
 ```markdown
 ---
-status: szkic
 draft: 2026-09-10
 draftUrl: https://www.w3.org/TR/2026/WD-wcag-3.0-20260910/
 checked: 2026-10-01
@@ -320,7 +309,6 @@ Status of the draft, in plain words.
 num: "2.1"
 title: Obrazy i multimedia
 en: Images and media
-status: szkic
 guidelines:
   - num: "2.1.1"
     en: Image alternatives
@@ -345,7 +333,6 @@ The statute text is generated; the summaries are written by hand, one file per a
 
 ```markdown
 ---
-status: szkic
 short: Ustawa o dostępności cyfrowej
 summary: Strony i aplikacje podmiotów publicznych muszą spełniać kryteria z załącznika.
 binds: Podmioty publiczne, ich strony internetowe i aplikacje mobilne.
@@ -389,13 +376,12 @@ title: Programista
 role: programista
 summary: Jak pisać kod, który działa z klawiaturą i czytnikiem ekranu.
 lessons: [semantyka-najpierw, nazwy-dostepne, klawiatura-i-fokus]
-status: szkic
 ---
 Wstęp do ścieżki.
 ```
 
 - `lessons` sets the reading order and must name every lesson file in the folder exactly once. `role` is one of the four roles and is left out on the legal minimum path.
-- A lesson has `title`, `summary`, `keep` (two to four lines for the "Zapamiętaj" box), `status`, and optional `criteria`, `examples` and `law` (article ids such as `ustawa-2019-848/art-10`). The body is Markdown with `##` headings and the same `slownik:` and `prawo:` links as elsewhere.
+- A lesson has `title`, `summary`, `keep` (two to four lines for the "Zapamiętaj" box), and optional `criteria`, `examples` and `law` (article ids such as `ustawa-2019-848/art-10`). The body is Markdown with `##` headings and the same `slownik:` and `prawo:` links as elsewhere.
 
 ```yaml
 - id: div-jako-przycisk

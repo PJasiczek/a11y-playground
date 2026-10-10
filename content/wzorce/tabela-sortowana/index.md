@@ -39,7 +39,6 @@ aria:
 sources:
   apg: https://www.w3.org/WAI/ARIA/apg/patterns/table/examples/sortable-table/
   deque: https://dequeuniversity.com/library/aria/table-sortable
-status: szkic
 ---
 ## Kiedy używać
 

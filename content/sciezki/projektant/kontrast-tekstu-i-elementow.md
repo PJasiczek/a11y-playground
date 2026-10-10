@@ -7,7 +7,6 @@ keep:
   - Zwykły tekst co najmniej 4,5 do 1, duży tekst 3 do 1.
   - Granice pól, ikony i stany kontrolek co najmniej 3 do 1.
   - Sprawdzaj każdy stan, nie tylko domyślny.
-status: szkic
 ---
 [Współczynnik kontrastu](slownik:wspolczynnik-kontrastu) porównuje jasność dwóch kolorów, od 1 do 1 (brak różnicy) do 21 do 1 (czerń na bieli). Słabowidzący, starsze osoby i każdy, kto patrzy na telefon w słońcu, potrzebują wyraźnej różnicy.
 

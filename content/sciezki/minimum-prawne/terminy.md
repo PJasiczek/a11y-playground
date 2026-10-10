@@ -6,7 +6,6 @@ keep:
   - Wszystkie terminy wejścia w życie już minęły. Dziś ustawa obejmuje każdą stronę i aplikację.
   - Deklarację dostępności przegląda się co roku do 31 marca.
   - Nowa strona musi być dostępna od pierwszego dnia.
-status: szkic
 ---
 [Art. 27](prawo:ustawa-2019-848/art-27) wprowadzał ustawę stopniowo:
 

@@ -5,7 +5,6 @@ marker: szerokosc
 who: [telefon, slabe-widzenie]
 axe: []
 example: sztywna-szerokosc
-status: szkic
 ---
 ## Problem
 

@@ -2,7 +2,7 @@ import { type } from "arktype";
 import { parse as parseYaml } from "yaml";
 import { examples } from "./examples";
 import { isLegalUnitId, type LegalUnitId } from "./legal";
-import { type Fail, IsoDate, readVerification, splitFrontmatter, Status, type Verification } from "./markdown";
+import { type Fail, splitFrontmatter } from "./markdown";
 import { createRenderer } from "./render";
 import { type Role, roles } from "./sections";
 import { type CriterionId, findCriterion, isCriterionId } from "./wcag";
@@ -19,8 +19,6 @@ const PathFrontmatter = type({
   "role?": type.enumerated(...roles),
   summary: "0 < string <= 200",
   lessons: "string[] > 0",
-  status: Status,
-  "lastVerified?": IsoDate,
   "+": "reject",
 });
 
@@ -31,8 +29,6 @@ const LessonFrontmatter = type({
   "examples?": "string[]",
   "law?": "string[]",
   keep: "2 <= string[] <= 4",
-  status: Status,
-  "lastVerified?": IsoDate,
   "+": "reject",
 });
 
@@ -74,7 +70,7 @@ export type QuizQuestion = {
   options: QuizOption[];
 };
 
-export type Lesson = Verification & {
+export type Lesson = {
   slug: string;
   title: string;
   summary: string;
@@ -88,7 +84,7 @@ export type Lesson = Verification & {
   quiz: QuizQuestion[];
 };
 
-export type LearningPath = Verification & {
+export type LearningPath = {
   slug: string;
   title: string;
   role: Role | null;
@@ -151,7 +147,6 @@ export function parseLesson(file: string, slug: string, source: string, quiz: st
 
   const { terms, render } = createRenderer(fail);
   return {
-    ...readVerification(meta, fail),
     slug,
     title: meta.title,
     summary: meta.summary,
@@ -188,7 +183,6 @@ export function parsePath(
 
   const { terms, render } = createRenderer(fail);
   return {
-    ...readVerification(meta, fail),
     slug,
     title: meta.title,
     role: meta.role ?? null,

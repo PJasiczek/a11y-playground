@@ -2,7 +2,6 @@
 term: relacja
 also: [relacje, struktura]
 normative: relacja
-status: szkic
 ---
 Związek między elementami treści, który widać w układzie: ten nagłówek dotyczy tej sekcji, ta etykieta tego pola, te komórki tej kolumny tabeli.
 

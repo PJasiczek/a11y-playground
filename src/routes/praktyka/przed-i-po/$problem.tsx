@@ -1,6 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { CheckGate, useReview } from "~/components/before-after";
-import { DraftBadge } from "~/components/level-badge";
 import { harmedLabels } from "~/content/before-after-labels";
 import { getProblem } from "~/content/before-after.functions";
 import { pageHead } from "~/lib/seo";
@@ -74,11 +73,6 @@ function ProblemPage() {
               </Link>
             </li>
           ))}
-          {problem.status === "szkic" ? (
-            <li>
-              <DraftBadge />
-            </li>
-          ) : null}
         </ul>
         <dl className="mt-4 grid gap-x-4 gap-y-1 text-[0.9375rem] sm:grid-cols-[9rem_1fr]">
           <dt className="font-semibold">Komu szkodzi</dt>

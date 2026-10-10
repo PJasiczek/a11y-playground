@@ -1,7 +1,6 @@
 ---
 term: stan
 normative: stan
-status: szkic
 ---
 Dodatkowa informacja o kontrolce, która się zmienia: zaznaczone albo nie, rozwinięte albo zwinięte, wciśnięte, niedostępne.
 

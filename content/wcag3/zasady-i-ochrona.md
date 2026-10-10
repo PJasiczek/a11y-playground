@@ -2,7 +2,6 @@
 num: "2.10"
 title: Zasady i ochrona
 en: Policy and protection
-status: szkic
 guidelines:
   - num: "2.10.1"
     en: Risk

@@ -2,7 +2,6 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { type } from "arktype";
 import { useState } from "react";
 import { ProblemLinks } from "~/components/before-after";
-import { DraftBadge } from "~/components/level-badge";
 import { AriaTable, Exercise, NativeVerdictBadge, PatternLog } from "~/components/patterns";
 import { TermTips } from "~/components/term-tips";
 import { useDemoFrame } from "~/components/use-demo-frame";
@@ -139,11 +138,6 @@ function PatternPage() {
               </Link>
             </li>
           ))}
-          {pattern.status === "szkic" ? (
-            <li>
-              <DraftBadge />
-            </li>
-          ) : null}
         </ul>
       </header>
 

@@ -2,7 +2,6 @@
 term: skrót
 also: [skrótowiec, akronim]
 normative: skrót
-status: szkic
 ---
 Skrócona forma słowa albo nazwy: „np.”, „ul.”, „ZUS”, „RODO”.
 

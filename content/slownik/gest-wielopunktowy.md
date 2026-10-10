@@ -1,7 +1,6 @@
 ---
 term: gest wielopunktowy
 also: [gest wielodotykowy, pinch]
-status: szkic
 ---
 Gest wykonywany kilkoma palcami naraz, na przykład rozsuwanie dwóch palców, żeby powiększyć mapę.
 

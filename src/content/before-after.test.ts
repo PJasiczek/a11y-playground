@@ -8,7 +8,6 @@ marker: menu
 who: [klawiatura]
 axe: []
 pattern: nawigacja-wielopoziomowa
-status: szkic
 ---
 ## Problem
 

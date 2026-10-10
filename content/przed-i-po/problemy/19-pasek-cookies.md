@@ -4,7 +4,6 @@ criteria: ["2.4.11"]
 marker: cookies
 who: [klawiatura, slabe-widzenie]
 axe: []
-status: szkic
 ---
 ## Problem
 

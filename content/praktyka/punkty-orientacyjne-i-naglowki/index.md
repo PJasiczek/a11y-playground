@@ -5,7 +5,6 @@ criteria: ["1.3.1", "2.4.1", "2.4.6"]
 effort: 15 minut
 gain: Czytnik skacze klawiszem D prosto do treści, a klawiszem H idzie po spisie, w którym nic nie brakuje.
 preview: <span class="p-x">div · div · div</span>
-status: szkic
 simulations:
   punkty-orientacyjne: W wersji zepsutej obrysy dostają tylko dwie nawigacje, obie bez nazwy. Górny pasek, treść i stopka to zwykłe div, więc czytnik ich nie zna. W wersji poprawnej jest komplet, a nawigacje mają nazwy.
   naglowki: W wersji zepsutej po H1 od razu jest H4, a „Ulica Polna” to pogrubiony tekst, którego nie ma na liście nagłówków. W wersji poprawnej poziomy idą po kolei, od H1 do H3.

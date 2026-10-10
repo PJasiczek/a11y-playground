@@ -24,7 +24,6 @@ aria:
 sources:
   apg: https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/
   deque: https://dequeuniversity.com/library/aria/expand-collapse-summary
-status: szkic
 ---
 ## Kiedy używać
 

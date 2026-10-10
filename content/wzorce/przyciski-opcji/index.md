@@ -35,7 +35,6 @@ aria:
 sources:
   apg: https://www.w3.org/WAI/ARIA/apg/patterns/radio/
   deque: https://dequeuniversity.com/library/aria/radio-and-radio-group
-status: szkic
 ---
 ## Kiedy używać
 

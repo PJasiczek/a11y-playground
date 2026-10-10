@@ -8,7 +8,6 @@ preview: <span class="p-clip">Dostawa do 3 dni roboczych, zwrot do 30 dni</span>
 simulations:
   '320px': 'Karta w wersji zepsutej ma 460 pikseli szerokości, więc przy 320 wychodzi poza ramkę i trzeba ją przewijać w bok. Wersja poprawna zawija tekst i mieści się w całości.'
   tekst-200: 'Napis na przycisku w wersji zepsutej się ucina, bo przycisk ma stałą wysokość i szerokość. W wersji poprawnej przycisk rośnie razem z tekstem.'
-status: szkic
 bad:
   why: Karta ma szerokość 460 pikseli i tekst bez zawijania, więc na wąskim ekranie trzeba ją przewijać w bok. Przycisk ma stałą wysokość i szerokość z ukrytym nadmiarem, więc powiększony napis się ucina.
   announces: Czytnik przeczyta wszystko poprawnie. Ten błąd widać dopiero po powiększeniu, więc czytnik go nie ujawni.

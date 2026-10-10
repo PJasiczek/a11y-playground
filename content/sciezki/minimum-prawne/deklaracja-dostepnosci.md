@@ -6,7 +6,6 @@ keep:
   - Każda strona i aplikacja, w każdej wersji językowej, ma własną deklarację.
   - Link do deklaracji jest dostępny z każdej strony, zwykle w stopce.
   - Deklaracja mówi prawdę, także o tym, co jeszcze nie działa.
-status: szkic
 ---
 [Deklaracja dostępności](slownik:deklaracja-dostepnosci) to dokument, w którym podmiot publiczny mówi, na ile jego strona albo aplikacja jest dostępna. Wymaga jej [art. 10](prawo:ustawa-2019-848/art-10).
 

@@ -5,7 +5,6 @@ marker: linki
 who: [czytnik]
 axe: []
 pattern: lacze
-status: szkic
 ---
 ## Problem
 

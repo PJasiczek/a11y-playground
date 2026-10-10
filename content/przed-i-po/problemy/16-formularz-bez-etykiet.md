@@ -5,7 +5,6 @@ marker: formularz
 who: [czytnik, daltonizm, telefon]
 axe: [label]
 pattern: przyciski-opcji
-status: szkic
 ---
 ## Problem
 

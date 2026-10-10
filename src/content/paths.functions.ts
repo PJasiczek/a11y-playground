@@ -41,7 +41,6 @@ export const getPathPage = createServerFn({ method: "GET" })
       title: path.title,
       summary: path.summary,
       introHtml: path.introHtml,
-      status: path.status,
       terms: termsOf(path.terms),
       lessons: path.lessons.map(({ slug, title, summary, criteria, law, quiz }) => ({
         slug,

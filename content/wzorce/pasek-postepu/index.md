@@ -28,7 +28,6 @@ aria:
     meaning: Region stanu. Ogłasza koniec, bez przenoszenia fokusu.
 sources:
   deque: https://dequeuniversity.com/library/aria/progress-bar-bounded
-status: szkic
 ---
 ## Kiedy używać
 

@@ -2,7 +2,6 @@
 num: "2.4"
 title: Wprowadzanie i obsługa
 en: Input / operation
-status: szkic
 guidelines:
   - num: "2.4.1"
     en: Keyboard interface input

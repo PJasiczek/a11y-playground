@@ -7,7 +7,6 @@ keep:
   - Wszystko, co rusza się dłużej niż 5 sekund, da się zatrzymać.
   - Przeciąganie ma alternatywę pojedynczym kliknięciem.
   - Cel ma co najmniej 24 na 24 piksele albo odstęp od sąsiadów.
-status: szkic
 ---
 Ruch na stronie odciąga uwagę, a przy niektórych zaburzeniach uniemożliwia czytanie. Precyzyjne gesty wykluczają osoby z drżeniem rąk albo sterujące przełącznikiem.
 

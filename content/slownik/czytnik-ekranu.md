@@ -1,7 +1,6 @@
 ---
 term: czytnik ekranu
 also: [screen reader, NVDA, VoiceOver]
-status: szkic
 ---
 Program, który czyta na głos albo wyświetla na monitorze brajlowskim to, co jest na ekranie. Korzystają z niego głównie osoby niewidome i słabowidzące.
 

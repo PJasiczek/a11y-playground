@@ -30,7 +30,7 @@ function contentOf(slug: ActSlug) {
 /** The date the law was read on, shown as "stan prawny na" next to deadlines. */
 const asOf = acts.map((a) => a.retrieved).toSorted().at(-1) ?? "";
 
-/** What every legal page says about its act: names, source text and verification state. */
+/** What every legal page says about its act: names and source text. */
 function actHeader(slug: ActSlug) {
   const act = findAct(slug);
   if (!act) throw new Error(`No act ${slug}`);
@@ -40,7 +40,6 @@ function actHeader(slug: ActSlug) {
     short: content.short,
     summary: content.summary,
     binds: content.binds,
-    verification: content.status === "szkic" ? null : content.lastVerified,
   };
 }
 
@@ -77,7 +76,6 @@ export const getAct = createServerFn({ method: "GET" })
         entries: entries.filter((e) => (act.chapters.length > 0 ? e.chapter === chapter.number : true)),
       })),
       terms: termsOf(content),
-      draft: content.status === "szkic",
     };
   });
 
@@ -131,6 +129,5 @@ export const getArticle = createServerFn({ method: "GET" })
       prev: neighbour(-1),
       next: neighbour(1),
       terms: termsOf(content),
-      draft: content.status === "szkic",
     };
   });

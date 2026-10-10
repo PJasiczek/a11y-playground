@@ -7,7 +7,6 @@ gain: Klawiatura trafia do okna, Esc je zamyka, a fokus wraca tam, skąd przysze
 preview: <span class="p-dialog">Czy na pewno?</span>
 simulations:
   klawiatura: 'Przejdź klawiszem Tab do przycisku „Usuń konto” i naciśnij Enter. W wersji zepsutej fokus zostaje pod oknem, a przyciski w oknie nigdy nie dostają numeru, bo Tab ich nie widzi. W wersji poprawnej fokus trafia do okna, a Esc je zamyka.'
-status: szkic
 bad:
   why: Nakładka z div pokazuje pytanie, ale fokus zostaje na przycisku pod spodem. Tab idzie dalej po stronie za oknem, a Esc nic nie robi.
   announces: Nic nowego. Po kliknięciu czytnik dalej jest na „Usuń konto, przycisk” i nie wie, że pojawiło się okno.

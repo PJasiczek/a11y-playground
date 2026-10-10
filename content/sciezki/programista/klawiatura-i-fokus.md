@@ -7,7 +7,6 @@ keep:
   - Wszystko, co działa myszą, działa klawiaturą.
   - Fokus zawsze widać. Nie usuwaj obrysu bez zamiennika.
   - Okno modalne przejmuje fokus i oddaje go po zamknięciu.
-status: szkic
 ---
 Część ludzi nie używa myszy wcale: bo nie może, bo czytnik ekranu prowadzi ich klawiaturą, bo tak jest szybciej. Dla nich strona to kolejność elementów, po których skacze Tab, i jeden element naraz, który ma [fokus](slownik:fokus).
 

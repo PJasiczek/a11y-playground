@@ -1,7 +1,6 @@
 ---
 term: wskaźnik
 also: [pointer]
-status: szkic
 ---
 Wszystko, czym się wskazuje i klika: kursor myszy, palec na ekranie dotykowym, rysik, gładzik.
 

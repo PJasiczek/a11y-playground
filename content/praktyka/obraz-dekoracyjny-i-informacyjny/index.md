@@ -5,7 +5,6 @@ criteria: ["1.1.1"]
 effort: 2 minuty
 gain: Czytnik pomija szlaczek i czyta, co pokazuje wykres, zamiast nazwy pliku.
 preview: <span class="p-img">IMG_2041.png</span>
-status: szkic
 bad:
   why: Szlaczek ma opisowy alt, który tylko spowalnia słuchanie. Wykres nie ma atrybutu alt wcale.
   announces: „Ozdobny szlaczek z zielonymi listkami, grafika”, a potem przy wykresie nazwa pliku albo samo „grafika”.

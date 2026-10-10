@@ -51,7 +51,6 @@ aria:
     meaning: Czy czytać cały region, czy tylko zmienioną część.
 sources:
   deque: https://dequeuniversity.com/library/aria/liveregion-playground
-status: szkic
 ---
 ## Kiedy używać
 

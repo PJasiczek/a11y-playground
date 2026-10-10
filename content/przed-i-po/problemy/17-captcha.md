@@ -4,7 +4,6 @@ criteria: ["1.1.1"]
 marker: captcha
 who: [czytnik, slabe-widzenie, poznawcze]
 axe: []
-status: szkic
 ---
 ## Problem
 

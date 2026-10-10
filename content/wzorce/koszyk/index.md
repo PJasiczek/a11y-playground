@@ -47,7 +47,6 @@ aria:
     meaning: Okno alertu przed usunięciem.
 sources:
   deque: https://dequeuniversity.com/library/aria/shopping-cart
-status: szkic
 ---
 ## Kiedy używać
 

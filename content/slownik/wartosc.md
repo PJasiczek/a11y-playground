@@ -1,6 +1,5 @@
 ---
 term: wartość
-status: szkic
 ---
 Aktualna zawartość kontrolki, którą użytkownik może zmienić: tekst wpisany w pole, pozycja suwaka, wybrana opcja listy.
 

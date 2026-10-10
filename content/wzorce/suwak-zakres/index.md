@@ -36,7 +36,6 @@ aria:
 sources:
   apg: https://www.w3.org/WAI/ARIA/apg/patterns/slider-multithumb/
   deque: https://dequeuniversity.com/library/aria/slider-multirange
-status: szkic
 ---
 ## Kiedy używać
 

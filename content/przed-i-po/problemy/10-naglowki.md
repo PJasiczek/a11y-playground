@@ -5,7 +5,6 @@ marker: naglowki
 who: [czytnik]
 axe: []
 example: punkty-orientacyjne-i-naglowki
-status: szkic
 ---
 ## Problem
 

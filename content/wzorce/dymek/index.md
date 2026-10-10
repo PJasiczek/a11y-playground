@@ -29,7 +29,6 @@ aria:
 sources:
   apg: https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/
   deque: https://dequeuniversity.com/library/aria/tooltip
-status: szkic
 ---
 ## Kiedy używać
 

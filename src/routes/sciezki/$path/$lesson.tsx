@@ -1,6 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ProvisionLink } from "~/components/legal";
-import { DraftBadge } from "~/components/level-badge";
 import { Quiz } from "~/components/quiz";
 import { TermTips } from "~/components/term-tips";
 import { getLessonPage } from "~/content/paths.functions";
@@ -75,7 +74,6 @@ function LessonPage() {
       <header className="pt-3 pb-2">
         <h1 className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[clamp(1.5rem,4vw,2rem)] leading-tight font-bold tracking-tight">
           {lesson.title}
-          {lesson.status === "szkic" ? <DraftBadge /> : null}
         </h1>
         <p className="mt-2 max-w-[62ch] text-[1.0625rem] text-ink-2">{lesson.summary}</p>
       </header>

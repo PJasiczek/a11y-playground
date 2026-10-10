@@ -7,7 +7,6 @@ keep:
   - Każdy element interaktywny ma nazwę, którą czytnik wypowie.
   - Widoczny tekst jest częścią nazwy. Kto steruje głosem, mówi to, co widzi.
   - Ikona bez tekstu potrzebuje nazwy w aria-label albo w ukrytym tekście.
-status: szkic
 ---
 Przeglądarka liczy [nazwę](slownik:nazwa) elementu w ustalonej kolejności. Najpierw `aria-labelledby`, potem `aria-label`, potem treść elementu albo powiązana [etykieta](slownik:etykieta), na końcu `title`. Wynik zobaczysz w narzędziach deweloperskich, w zakładce dostępności.
 
