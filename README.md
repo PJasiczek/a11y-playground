@@ -479,6 +479,7 @@ Every page is prerendered, so crawlers read the full text without JavaScript. On
 - The production address lives in one place, `siteUrl` in `src/lib/site.ts`. Change it there when the site gets its own domain.
 - `src/content/site-pages.ts` lists every page and whether it is indexed. The prerender renders that list and `/sitemap.xml` publishes the indexed part; `/robots.txt` points at the sitemap. Every route without parameters has to be in the list, or `tsc` fails, so a new page cannot slip out of the sitemap.
 - `/szukaj` and the answers of the whole-page demo (`/praktyka/przed-i-po/lista` and the problem pages) carry `noindex`: the first is a results page, and the rest show only "Najpierw sprawdź stronę sam" until the reader finishes checking.
+- JSON-LD from `src/lib/structured-data.ts`, typed with `schema-dts`: `WebSite` on the home page, `BreadcrumbList` on every page that shows "Okruszki", `DefinedTermSet` on `/slownik`, `Course` on a path, `LearningResource` with its `Quiz` on a lesson, `Legislation` on an act and an article.
 - Every document under `/demo/` carries `<meta name="robots" content="noindex">` in its own `head`, so a broken variant never shows up in results as something to copy. It is a meta tag, not a header, because prerendered files are served without the handler's headers.
 
 The plan behind this is in [`docs/design/2026-10-10-seo-indexing`](docs/design/2026-10-10-seo-indexing/seo-indexing.en.html).

@@ -17,7 +17,7 @@ test("robots.txt points at the sitemap and blocks nothing", async ({ request }) 
   expect(robots).not.toContain("Disallow");
 });
 
-test("the sitemap lists exactly the indexed pages, each with its own canonical, title and description", async ({
+test("the sitemap lists exactly the indexed pages, each with its own canonical, title, description and valid JSON-LD", async ({
   request,
 }) => {
   const xml = await (await request.get("/sitemap.xml")).text();
@@ -40,6 +40,11 @@ test("the sitemap lists exactly the indexed pages, each with its own canonical, 
     expect(descriptions.get(description), `${path} has the description of`).toBeUndefined();
     titles.set(title, path);
     descriptions.set(description, path);
+    for (const [, json] of html.matchAll(/<script type="application\/ld\+json">([^<]*)<\/script>/g)) {
+      expect(() => {
+        JSON.parse(json ?? "");
+      }, path).not.toThrow();
+    }
   }
 });
 

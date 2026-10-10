@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { LegalFooter, ProvisionLink } from "~/components/legal";
 import { pageHead } from "~/lib/seo";
+import { breadcrumbLd } from "~/lib/structured-data";
 
 export const Route = createFileRoute("/prawo/en-301-549")({
   head: ({ match }) =>
@@ -8,6 +9,12 @@ export const Route = createFileRoute("/prawo/en-301-549")({
       title: "EN 301 549 · Prawo", description:
         "EN 301 549, europejska norma wymagań dostępności dla produktów i usług ICT: rozdziały opisane naszymi słowami i numery punktów, które odpowiadają kryteriom WCAG.",
       path: match.pathname,
+      jsonLd: [
+        breadcrumbLd([
+          { name: "Prawo", path: "/prawo" },
+          { name: "EN 301 549", path: match.pathname },
+        ]),
+      ],
     }),
   component: StandardPage,
 });

@@ -1,9 +1,12 @@
 import type { AnyRouteMatch } from "@tanstack/react-router";
+import type { Thing, WithContext } from "schema-dts";
 import { siteName, siteUrl } from "./site";
 
 type Head = {
   meta: NonNullable<AnyRouteMatch["meta"]>;
   links: NonNullable<AnyRouteMatch["links"]>;
+  /** JSON-LD only, so the children are always a string. */
+  scripts: Array<{ type: "application/ld+json"; children: string }>;
 };
 
 /** What one page says about itself to search engines and link previews. */
@@ -15,6 +18,8 @@ export type PageMeta = {
   path: string;
   /** Kept out of search results. Such a page gets no canonical link, which would say the opposite. */
   noindex?: boolean;
+  /** JSON-LD blocks from structured-data.ts. */
+  jsonLd?: ReadonlyArray<WithContext<Thing>>;
 };
 
 /** Search engines cut longer descriptions themselves, mid-word. */
@@ -34,13 +39,14 @@ export function absoluteUrl(path: string) {
 }
 
 /**
- * The `head` of a page: title, description, canonical link and the Open Graph tags. The root
- * route sets what every page shares (site name, locale); tags here replace the root's by name.
+ * The `head` of a page: title, description, canonical link, the Open Graph tags and JSON-LD.
+ * The root route sets what every page shares (site name, locale); tags here replace the root's
+ * by name.
  *
  *     head: ({ loaderData, match }) =>
  *       loaderData ? pageHead({ title: loaderData.title, description: loaderData.summary, path: match.pathname }) : {},
  */
-export function pageHead({ title, description, path, noindex = false }: PageMeta): Head {
+export function pageHead({ title, description, path, noindex = false, jsonLd = [] }: PageMeta): Head {
   const fullTitle = title ? `${title} · ${siteName}` : siteName;
   const text = clip(description);
   const url = absoluteUrl(path);
@@ -54,5 +60,7 @@ export function pageHead({ title, description, path, noindex = false }: PageMeta
       ...(noindex ? [{ name: "robots", content: "noindex" }] : []),
     ],
     links: noindex ? [] : [{ rel: "canonical", href: url }],
+    // `<` escaped, so no string in the data can close the script element.
+    scripts: jsonLd.map((block) => ({ type: "application/ld+json", children: JSON.stringify(block).replace(/</g, "\\u003c") })),
   };
 }

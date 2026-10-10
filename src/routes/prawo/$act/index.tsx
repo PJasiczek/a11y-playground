@@ -5,6 +5,7 @@ import { TermTips } from "~/components/term-tips";
 import { formatDate } from "~/content/legal";
 import { getAct } from "~/content/legal.functions";
 import { pageHead } from "~/lib/seo";
+import { actLd, breadcrumbLd } from "~/lib/structured-data";
 
 export const Route = createFileRoute("/prawo/$act/")({
   loader: async ({ params }) => {
@@ -13,7 +14,20 @@ export const Route = createFileRoute("/prawo/$act/")({
     return found;
   },
   head: ({ loaderData, match }) =>
-    loaderData ? pageHead({ title: `${loaderData.act.short} · Prawo`, description: loaderData.act.summary, path: match.pathname }) : {},
+    loaderData
+      ? pageHead({
+          title: `${loaderData.act.short} · Prawo`,
+          description: loaderData.act.summary,
+          path: match.pathname,
+          jsonLd: [
+            actLd(loaderData.act, match.pathname),
+            breadcrumbLd([
+              { name: "Prawo", path: "/prawo" },
+              { name: loaderData.act.short, path: match.pathname },
+            ]),
+          ],
+        })
+      : {},
   component: ActPage,
 });
 

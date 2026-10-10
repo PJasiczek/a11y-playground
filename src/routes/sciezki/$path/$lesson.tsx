@@ -6,6 +6,7 @@ import { TermTips } from "~/components/term-tips";
 import { getLessonPage } from "~/content/paths.functions";
 import { type LessonKey, progressStore, useProgress } from "~/progress/store";
 import { pageHead } from "~/lib/seo";
+import { breadcrumbLd, lessonLd } from "~/lib/structured-data";
 
 export const Route = createFileRoute("/sciezki/$path/$lesson")({
   loader: async ({ params }) => {
@@ -19,6 +20,20 @@ export const Route = createFileRoute("/sciezki/$path/$lesson")({
           title: `${loaderData.lesson.title} · ${loaderData.path.title}`,
           description: loaderData.lesson.summary,
           path: match.pathname,
+          jsonLd: [
+            lessonLd({
+              title: loaderData.lesson.title,
+              summary: loaderData.lesson.summary,
+              path: match.pathname,
+              course: { title: loaderData.path.title, path: `/sciezki/${loaderData.path.slug}` },
+              quiz: loaderData.lesson.quiz,
+            }),
+            breadcrumbLd([
+              { name: "Ścieżki", path: "/sciezki" },
+              { name: loaderData.path.title, path: `/sciezki/${loaderData.path.slug}` },
+              { name: loaderData.lesson.title, path: match.pathname },
+            ]),
+          ],
         })
       : {},
   component: LessonPage,

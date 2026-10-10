@@ -23,3 +23,14 @@ test("a noindex page has no canonical link", () => {
   expect(hidden.links).toEqual([]);
   expect(hidden.meta).toContainEqual({ name: "robots", content: "noindex" });
 });
+
+test("JSON-LD cannot close its script element", () => {
+  const { scripts } = pageHead({
+    description: "Opis.",
+    path: "/",
+    jsonLd: [{ "@context": "https://schema.org", "@type": "Thing", name: "</script><script>alert(1)</script>" }],
+  });
+  const json = scripts[0]?.children ?? "";
+  expect(json).not.toContain("<");
+  expect(JSON.parse(json)).toMatchObject({ name: "</script><script>alert(1)</script>" });
+});

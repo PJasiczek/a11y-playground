@@ -6,6 +6,7 @@ import { getPathPage } from "~/content/paths.functions";
 import { countOf } from "~/lib/plural";
 import { type LessonKey, useProgress } from "~/progress/store";
 import { pageHead } from "~/lib/seo";
+import { breadcrumbLd, courseLd } from "~/lib/structured-data";
 
 export const Route = createFileRoute("/sciezki/$path/")({
   loader: async ({ params }) => {
@@ -14,7 +15,25 @@ export const Route = createFileRoute("/sciezki/$path/")({
     return path;
   },
   head: ({ loaderData, match }) =>
-    loaderData ? pageHead({ title: `${loaderData.title} · Ścieżki`, description: loaderData.summary, path: match.pathname }) : {},
+    loaderData
+      ? pageHead({
+          title: `${loaderData.title} · Ścieżki`,
+          description: loaderData.summary,
+          path: match.pathname,
+          jsonLd: [
+            courseLd({
+              title: loaderData.title,
+              summary: loaderData.summary,
+              path: match.pathname,
+              lessons: loaderData.lessons.map((lesson) => ({ title: lesson.title, path: `/sciezki/${loaderData.slug}/${lesson.slug}` })),
+            }),
+            breadcrumbLd([
+              { name: "Ścieżki", path: "/sciezki" },
+              { name: loaderData.title, path: match.pathname },
+            ]),
+          ],
+        })
+      : {},
   component: PathPage,
 });
 

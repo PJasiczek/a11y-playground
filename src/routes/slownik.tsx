@@ -3,17 +3,19 @@ import { DraftBadge } from "~/components/level-badge";
 import { getGlossary } from "~/content/content.functions";
 import { countOf } from "~/lib/plural";
 import { pageHead } from "~/lib/seo";
+import { glossaryLd } from "~/lib/structured-data";
 
 // Letters shown in the index. Letters with no term stay as plain text, not dead links.
 const alphabet = "A Ą B C Ć D E Ę F G H I J K L Ł M N Ń O Ó P R S Ś T U W Y Z Ź Ż".split(" ");
 
 export const Route = createFileRoute("/slownik")({
   loader: () => getGlossary(),
-  head: ({ match }) =>
+  head: ({ loaderData, match }) =>
     pageHead({
       title: "Słownik", description:
         "Pojęcia, na których najczęściej potyka się ktoś, kto czyta WCAG pierwszy raz. Najpierw wyjaśnienie prostym językiem, potem brzmienie z normy.",
       path: match.pathname,
+      jsonLd: loaderData ? [glossaryLd(loaderData)] : [],
     }),
   component: GlossaryPage,
 });

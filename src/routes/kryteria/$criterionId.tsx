@@ -12,6 +12,7 @@ import { enClause } from "~/content/legal-map";
 import type { SectionKey } from "~/content/sections";
 import { type CriterionId, findCriterion, guidelineOf, isNewIn22, isObsolete, principleOf } from "~/content/wcag";
 import { pageHead } from "~/lib/seo";
+import { breadcrumbLd } from "~/lib/structured-data";
 
 export const Route = createFileRoute("/kryteria/$criterionId")({
   loader: async ({ params }) => {
@@ -29,6 +30,12 @@ export const Route = createFileRoute("/kryteria/$criterionId")({
       title: `${criterion.id} ${criterion.name}, ${version}`,
       description: content?.summary ?? `Kryterium sukcesu ${criterion.id} ${criterion.name}, poziom ${criterion.level}.`,
       path: match.pathname,
+      jsonLd: [
+        breadcrumbLd([
+          { name: "Kryteria", path: "/kryteria" },
+          { name: criterion.id, path: match.pathname },
+        ]),
+      ],
     });
   },
   component: CriterionPage,
