@@ -37,6 +37,104 @@ test("the marked page puts a numbered link on every problem with a place", async
   expect(violations).toEqual([]);
 });
 
+// The reader's check: notes on the broken page, and the answers hidden until the check ends.
+
+/** Starts every page of the test with the check already ended, as "Kończę sprawdzanie" leaves it. */
+async function checkEnded(page: Page) {
+  await page.addInitScript(() => {
+    const review = { notes: [{ id: "a", text: "Kropki tylko kolorem", createdAt: "2026-10-10T10:00:00.000Z" }], revealedAt: "2026-10-10T10:05:00.000Z" };
+    localStorage.setItem("a11y-playground/postep", JSON.stringify({ v: 1, lessons: {}, quizzes: {}, reviews: { "przed-i-po": review } }));
+  });
+}
+
+test("while the reader checks, nothing leads to the answers", async ({ page }) => {
+  const answers = [/Lista problemów/, /Wersja poprawiona|wersję poprawioną/, /znaczniki/i];
+  await page.goto("/praktyka/przed-i-po");
+  for (const name of answers) await expect(page.getByRole("main").getByRole("link", { name })).toHaveCount(0);
+  await expect(page.getByText("Zablokowane do końca sprawdzania")).toHaveCount(2);
+
+  await page.goto("/demo/przed-i-po/przed");
+  for (const name of answers) await expect(page.getByRole("complementary", { name: "Demonstracja" }).getByRole("link", { name })).toHaveCount(0);
+
+  for (const path of ["/praktyka/przed-i-po/lista", "/praktyka/przed-i-po/7"]) {
+    await page.goto(path);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Najpierw sprawdź stronę sam");
+  }
+});
+
+test("a note survives a reload, and ending the check shows it with the list", async ({ page }) => {
+  await page.goto("/demo/przed-i-po/przed");
+  await page.getByRole("button", { name: "Notatki" }).click();
+  const field = page.getByRole("textbox", { name: "Co nie działa?" });
+  await expect(field).toBeFocused();
+  await field.fill("Tab nie otwiera podmenu");
+  await page.getByRole("button", { name: "Dodaj notatkę" }).click();
+  await expect(field).toBeFocused();
+  await expect(field).toHaveValue("");
+  await expect(page.getByRole("status").filter({ hasText: "notatka" })).toHaveText("1 notatka");
+
+  await page.reload();
+  await page.getByRole("button", { name: "Notatki (1)" }).click();
+  await page.getByRole("button", { name: "Kończę sprawdzanie" }).click();
+  await expect(page).toHaveURL(/\/praktyka\/przed-i-po\/lista$/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Lista problemów");
+  await expect(page.locator("details").getByRole("listitem")).toHaveText(["Tab nie otwiera podmenu"]);
+});
+
+test("editing and deleting a note keep focus in the notes", async ({ page }) => {
+  await page.goto("/demo/przed-i-po/przed");
+  await page.getByRole("button", { name: "Notatki" }).click();
+  const field = page.getByRole("textbox", { name: "Co nie działa?" });
+  for (const text of ["Pierwsza", "Druga"]) {
+    await field.fill(text);
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Enter");
+  }
+  await page.getByRole("button", { name: "Edytuj notatkę 1" }).click();
+  const edit = page.getByRole("textbox", { name: "Notatka 1" });
+  await expect(edit).toBeFocused();
+  await edit.fill("Pierwsza, poprawiona");
+  await page.getByRole("button", { name: "Zapisz notatkę 1" }).click();
+  await expect(page.getByRole("button", { name: "Edytuj notatkę 1" })).toBeFocused();
+  await expect(page.locator("#demo-lista li p:first-child")).toHaveText(["Pierwsza, poprawiona", "Druga"]);
+
+  await page.getByRole("button", { name: "Usuń notatkę 1" }).click();
+  await expect(page.getByRole("button", { name: "Edytuj notatkę 1" })).toBeFocused();
+  await page.getByRole("button", { name: "Usuń notatkę 1" }).click();
+  await expect(field).toBeFocused();
+});
+
+test("the reminder can end the check, and starting over brings it back", async ({ page }) => {
+  await page.goto("/praktyka/przed-i-po/lista");
+  await page.getByRole("button", { name: "Pokaż listę mimo to" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Lista problemów" })).toBeFocused();
+
+  page.once("dialog", (dialog) => void dialog.accept());
+  await page.getByRole("button", { name: "Zacznij od nowa" }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Najpierw sprawdź stronę sam");
+});
+
+for (const path of ["/praktyka/przed-i-po", "/praktyka/przed-i-po/lista", "/praktyka/przed-i-po/7"]) {
+  test(`${path} passes axe after the check`, async ({ page }) => {
+    await checkEnded(page);
+    await page.goto(path);
+    await expect(page.getByText("Zablokowane do końca sprawdzania")).toHaveCount(0);
+    const { violations } = await new AxeBuilder({ page }).withTags(tags).analyze();
+    expect(violations).toEqual([]);
+  });
+}
+
+test("the notes drawer passes axe and leaves the broken page beside it", async ({ page }) => {
+  await page.goto("/demo/przed-i-po/przed");
+  await page.getByRole("button", { name: "Notatki" }).click();
+  const { violations } = await new AxeBuilder({ page }).withTags(tags).include("#demo-pasek").analyze();
+  expect(violations).toEqual([]);
+  // The drawer takes its width from the page instead of lying over it.
+  const drawer = await page.locator("#demo-notatki").boundingBox();
+  const margin = await page.evaluate(() => getComputedStyle(document.body).marginRight);
+  expect(margin).toBe(`${String(drawer?.width ?? 0)}px`);
+});
+
 /** The fixed page opens its disruption notice on arrival; most checks start after it is closed. */
 async function openFixed(page: Page) {
   await page.goto(fixed);

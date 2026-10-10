@@ -1,9 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { CheckGate, focusTitle, NotesBox, useReview } from "~/components/before-after";
 import { Chip, FilterGroup } from "~/components/filters";
 import { DraftBadge } from "~/components/level-badge";
-import { type Harmed, harmedIds, harmedLabels, isHarmed } from "~/content/before-after-labels";
+import { type Harmed, harmedIds, harmedLabels, isHarmed, reviewKey } from "~/content/before-after-labels";
 import { getProblemRows } from "~/content/before-after.functions";
 import { countOf } from "~/lib/plural";
+import { progressStore } from "~/progress/store";
 
 /** `?komu=` narrows the list to the problems that hurt one group. Anything else is dropped. */
 function validateSearch(search: Record<string, unknown>): { komu?: Harmed } {
@@ -20,8 +22,9 @@ export const Route = createFileRoute("/praktyka/przed-i-po/lista")({
 const chip = "inline-flex min-h-11 items-center gap-2 rounded-xs border border-control bg-surface px-3 hover:border-ink";
 
 /**
- * The problems of the broken KMW page as a table filtered by who they hurt (mock 4B of phase 11).
- * Each title opens the problem's own page.
+ * The problems of the broken KMW page as a table filtered by who they hurt (mock 4B of phase 11),
+ * under the reader's notes (mock 3A). Each title opens the problem's own page. While the reader
+ * is still checking, a reminder stands in for all of it.
  */
 function ProblemListPage() {
   const rows = Route.useLoaderData();
@@ -31,6 +34,19 @@ function ProblemListPage() {
   const status = komu
     ? `${countOf(shown.length, ["problem szkodzi", "problemy szkodzą", "problemów szkodzi"])} z ${String(rows.length)}: ${harmedLabels[komu]}`
     : countOf(rows.length, ["problem", "problemy", "problemów"]);
+  const { revealedAt, notes } = useReview();
+
+  if (!revealedAt) return <CheckGate subject="Lista problemów" revealLabel="Pokaż listę mimo to" />;
+
+  const restart = () => {
+    const question =
+      notes.length > 0
+        ? `Usunąć ${countOf(notes.length, ["notatkę", "notatki", "notatek"])} i schować odpowiedzi?`
+        : "Schować odpowiedzi i zacząć sprawdzanie od nowa?";
+    if (!confirm(question)) return;
+    progressStore().restart(reviewKey);
+    focusTitle();
+  };
 
   return (
     <>
@@ -47,10 +63,12 @@ function ProblemListPage() {
           </li>
         </ol>
       </nav>
-      <h1 className="pt-3 pb-2 text-[1.875rem] font-bold tracking-tight">Lista problemów</h1>
+      <h1 id="tytul" tabIndex={-1} className="pt-3 pb-2 text-[1.875rem] font-bold tracking-tight outline-none">
+        Lista problemów
+      </h1>
       <p className="max-w-[60ch] text-ink-2">
-        Problemy strony Komunikacji Miejskiej Wrzosów, w kolejności od góry strony. Numery są te same co na znacznikach w
-        wersji zepsutej.
+        Twoje notatki, a pod nimi problemy strony Komunikacji Miejskiej Wrzosów, w kolejności od góry strony. Numery są te
+        same co na znacznikach w wersji zepsutej.
       </p>
       <div className="mt-4 flex flex-wrap gap-2">
         <a href="/demo/przed-i-po/przed-znaczniki" className={chip}>
@@ -59,7 +77,11 @@ function ProblemListPage() {
         <a href="/demo/przed-i-po/po" className={chip}>
           Wersja poprawiona
         </a>
+        <button type="button" className={chip} onClick={restart}>
+          Zacznij od nowa
+        </button>
       </div>
+      <NotesBox />
 
       <div className="mt-6 border-b border-rule pb-4">
         <FilterGroup legend="Komu szkodzi">

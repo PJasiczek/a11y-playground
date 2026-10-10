@@ -1,7 +1,7 @@
 import { type } from "arktype";
 
 /**
- * Reading progress and quiz attempts, kept in localStorage until accounts exist (phase 5).
+ * Reading progress, quiz attempts and self-check notes, kept in localStorage until accounts exist (phase 5).
  * The shape copies the `progress` and `quizAttempts` tables planned for Convex, minus the user,
  * so phase 5 can import a stored object as is. Client-side; the server always sees no progress.
  * Free of React, so scripts outside the app can share it; components use `useProgress` from store.ts.
@@ -20,14 +20,30 @@ const Attempt = type({
   completedAt: "string.date.iso",
 });
 
+const Note = type({ id: "string > 0", text: "string > 0", createdAt: "string.date.iso" });
+
+/** A self-check of a page: the reader's notes, and when they ended the check and saw the answers. */
+const Review = type({ notes: Note.array(), "revealedAt?": "string.date.iso" });
+
 const Progress = type({
   v: "1",
   lessons: { "[string]": { status: "'ukonczona'", updatedAt: "string.date.iso" } },
   quizzes: { "[string]": Attempt },
+  // Optional, so objects stored before reviews existed still read as valid.
+  "reviews?": { "[string]": Review },
 });
 
 export type Progress = typeof Progress.infer;
 export type QuizAttempt = typeof Attempt.infer;
+export type Note = typeof Note.infer;
+export type Review = typeof Review.infer;
+
+const noReview: Review = { notes: [] };
+
+/** The review stored under `key`, or an empty one. */
+export function reviewOf(progress: Progress, key: string): Review {
+  return progress.reviews?.[key] ?? noReview;
+}
 
 /** What components read: the progress, and whether it will outlive this page. */
 export type ProgressSnapshot = { progress: Progress; persisted: boolean };
@@ -75,6 +91,15 @@ export function createProgressStore(storage: StorageLike | null) {
     for (const listener of listeners) listener();
   }
 
+  /** Writes the review under `key` as `change` returns it; null removes it. */
+  function updateReview(key: string, change: (review: Review) => Review | null) {
+    const { progress } = get();
+    const reviews = Object.fromEntries(Object.entries(progress.reviews ?? {}).filter(([k]) => k !== key));
+    const next = change(reviewOf(progress, key));
+    if (next) reviews[key] = next;
+    write({ ...progress, reviews });
+  }
+
   return {
     get,
     subscribe(listener: () => void) {
@@ -95,6 +120,35 @@ export function createProgressStore(storage: StorageLike | null) {
     saveAttempt(key: LessonKey, attempt: Omit<QuizAttempt, "completedAt">) {
       const { progress } = get();
       write({ ...progress, quizzes: { ...progress.quizzes, [key]: { ...attempt, completedAt: new Date().toISOString() } } });
+    },
+    /** Adds a note at the end and returns it. Blank text adds nothing and returns null. */
+    addNote(key: string, text: string): Note | null {
+      const trimmed = text.trim();
+      if (!trimmed) return null;
+      const note = { id: crypto.randomUUID(), text: trimmed, createdAt: new Date().toISOString() };
+      updateReview(key, (review) => ({ ...review, notes: [...review.notes, note] }));
+      return note;
+    },
+    /** Replaces a note's text; blank text removes the note. */
+    editNote(key: string, id: string, text: string) {
+      const trimmed = text.trim();
+      updateReview(key, (review) => ({
+        ...review,
+        notes: trimmed
+          ? review.notes.map((note) => (note.id === id ? { ...note, text: trimmed } : note))
+          : review.notes.filter((note) => note.id !== id),
+      }));
+    },
+    removeNote(key: string, id: string) {
+      updateReview(key, (review) => ({ ...review, notes: review.notes.filter((note) => note.id !== id) }));
+    },
+    /** Ends the check: the answers show from now on. The notes stay. */
+    reveal(key: string) {
+      updateReview(key, (review) => (review.revealedAt ? review : { ...review, revealedAt: new Date().toISOString() }));
+    },
+    /** Deletes the notes and hides the answers again. */
+    restart(key: string) {
+      updateReview(key, () => null);
     },
     clear() {
       try {

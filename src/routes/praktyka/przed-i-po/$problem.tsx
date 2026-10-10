@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { CheckGate, useReview } from "~/components/before-after";
 import { DraftBadge } from "~/components/level-badge";
 import { harmedLabels } from "~/content/before-after-labels";
 import { getProblem } from "~/content/before-after.functions";
@@ -22,10 +23,13 @@ const link = "inline-flex min-h-11 items-center text-accent underline underline-
 
 /**
  * One problem of the broken KMW page (the body of mock 4A, phase 11): what is wrong, who it hurts,
- * how to fix it, the code before and after, and where the same thing is shown on its own.
+ * how to fix it, the code before and after, and where the same thing is shown on its own. While
+ * the reader is still checking, a reminder stands in for it.
  */
 function ProblemPage() {
   const { problem, previous, next, count } = Route.useLoaderData();
+  const { revealedAt } = useReview();
+  if (!revealedAt) return <CheckGate subject="Opis problemu" revealLabel="Pokaż opis mimo to" />;
   return (
     <article>
       <nav aria-label="Okruszki" className="pt-4 font-mono text-[0.8125rem] text-ink-2">
@@ -52,7 +56,9 @@ function ProblemPage() {
         <p className="font-mono text-sm text-ink-2">
           Problem {problem.number} z {count}
         </p>
-        <h1 className="mt-1 text-[clamp(1.5rem,4vw,2rem)] leading-tight font-bold tracking-tight">{problem.title}</h1>
+        <h1 id="tytul" tabIndex={-1} className="mt-1 text-[clamp(1.5rem,4vw,2rem)] leading-tight font-bold tracking-tight outline-none">
+          {problem.title}
+        </h1>
         <ul aria-label="Kryteria WCAG" className="mt-4 flex flex-wrap items-center gap-2">
           {problem.criteria.map((id) => (
             <li key={id}>

@@ -1,7 +1,16 @@
 import { useSyncExternalStore } from "react";
 import { type ProgressSnapshot, progressStore, serverSnapshot } from "./core";
 
-export { progressStore, type LessonKey, type Progress, type ProgressSnapshot, type QuizAttempt } from "./core";
+export {
+  progressStore,
+  reviewOf,
+  type LessonKey,
+  type Note,
+  type Progress,
+  type ProgressSnapshot,
+  type QuizAttempt,
+  type Review,
+} from "./core";
 
 /**
  * Progress for rendering. The server and the first client render see no progress, so
