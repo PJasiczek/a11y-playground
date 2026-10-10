@@ -5,7 +5,7 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: [".output", ".vercel", ".tanstack", "node_modules", "playwright-report", "test-results", "src/routeTree.gen.ts"] },
+  { ignores: [".output", ".vercel", ".tanstack", "node_modules", "playwright-report", "test-results", ".tmp", "src/routeTree.gen.ts"] },
   js.configs.recommended,
   tseslint.configs.strictTypeChecked,
   jsxA11y.flatConfigs.strict,

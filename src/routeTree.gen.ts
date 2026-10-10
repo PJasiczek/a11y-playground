@@ -24,6 +24,7 @@ import { Route as PrawoIndexRouteImport } from './routes/prawo/index'
 import { Route as PrawoEn301549RouteImport } from './routes/prawo/en-301-549'
 import { Route as SciezkiIndexRouteImport } from './routes/sciezki/index'
 import { Route as DemoSlugVariantRouteImport } from './routes/demo/$slug.$variant'
+import { Route as DemoPrzedIPoViewRouteImport } from './routes/demo/przed-i-po.$view'
 import { Route as DemoWzorceSlugRouteImport } from './routes/demo/wzorce.$slug'
 import { Route as PraktykaWzorceIndexRouteImport } from './routes/praktyka/wzorce/index'
 import { Route as PraktykaWzorceSlugRouteImport } from './routes/praktyka/wzorce/$slug'
@@ -107,6 +108,11 @@ const DemoSlugVariantRoute = DemoSlugVariantRouteImport.update({
   path: '/demo/$slug/$variant',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DemoPrzedIPoViewRoute = DemoPrzedIPoViewRouteImport.update({
+  id: '/demo/przed-i-po/$view',
+  path: '/demo/przed-i-po/$view',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DemoWzorceSlugRoute = DemoWzorceSlugRouteImport.update({
   id: '/demo/wzorce/$slug',
   path: '/demo/wzorce/$slug',
@@ -159,6 +165,7 @@ export interface FileRoutesByFullPath {
   '/prawo/': typeof PrawoIndexRoute
   '/sciezki/': typeof SciezkiIndexRoute
   '/demo/$slug/$variant': typeof DemoSlugVariantRoute
+  '/demo/przed-i-po/$view': typeof DemoPrzedIPoViewRoute
   '/demo/wzorce/$slug': typeof DemoWzorceSlugRoute
   '/praktyka/wzorce/$slug': typeof PraktykaWzorceSlugRoute
   '/prawo/$act/$unit': typeof PrawoActUnitRoute
@@ -183,6 +190,7 @@ export interface FileRoutesByTo {
   '/prawo': typeof PrawoIndexRoute
   '/sciezki': typeof SciezkiIndexRoute
   '/demo/$slug/$variant': typeof DemoSlugVariantRoute
+  '/demo/przed-i-po/$view': typeof DemoPrzedIPoViewRoute
   '/demo/wzorce/$slug': typeof DemoWzorceSlugRoute
   '/praktyka/wzorce/$slug': typeof PraktykaWzorceSlugRoute
   '/prawo/$act/$unit': typeof PrawoActUnitRoute
@@ -208,6 +216,7 @@ export interface FileRoutesById {
   '/prawo/': typeof PrawoIndexRoute
   '/sciezki/': typeof SciezkiIndexRoute
   '/demo/$slug/$variant': typeof DemoSlugVariantRoute
+  '/demo/przed-i-po/$view': typeof DemoPrzedIPoViewRoute
   '/demo/wzorce/$slug': typeof DemoWzorceSlugRoute
   '/praktyka/wzorce/$slug': typeof PraktykaWzorceSlugRoute
   '/prawo/$act/$unit': typeof PrawoActUnitRoute
@@ -234,6 +243,7 @@ export interface FileRouteTypes {
     | '/prawo/'
     | '/sciezki/'
     | '/demo/$slug/$variant'
+    | '/demo/przed-i-po/$view'
     | '/demo/wzorce/$slug'
     | '/praktyka/wzorce/$slug'
     | '/prawo/$act/$unit'
@@ -258,6 +268,7 @@ export interface FileRouteTypes {
     | '/prawo'
     | '/sciezki'
     | '/demo/$slug/$variant'
+    | '/demo/przed-i-po/$view'
     | '/demo/wzorce/$slug'
     | '/praktyka/wzorce/$slug'
     | '/prawo/$act/$unit'
@@ -282,6 +293,7 @@ export interface FileRouteTypes {
     | '/prawo/'
     | '/sciezki/'
     | '/demo/$slug/$variant'
+    | '/demo/przed-i-po/$view'
     | '/demo/wzorce/$slug'
     | '/praktyka/wzorce/$slug'
     | '/prawo/$act/$unit'
@@ -307,6 +319,7 @@ export interface RootRouteChildren {
   PrawoIndexRoute: typeof PrawoIndexRoute
   SciezkiIndexRoute: typeof SciezkiIndexRoute
   DemoSlugVariantRoute: typeof DemoSlugVariantRoute
+  DemoPrzedIPoViewRoute: typeof DemoPrzedIPoViewRoute
   DemoWzorceSlugRoute: typeof DemoWzorceSlugRoute
   PraktykaWzorceSlugRoute: typeof PraktykaWzorceSlugRoute
   PrawoActUnitRoute: typeof PrawoActUnitRoute
@@ -423,6 +436,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoSlugVariantRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/demo/przed-i-po/$view': {
+      id: '/demo/przed-i-po/$view'
+      path: '/demo/przed-i-po/$view'
+      fullPath: '/demo/przed-i-po/$view'
+      preLoaderRoute: typeof DemoPrzedIPoViewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/demo/wzorce/$slug': {
       id: '/demo/wzorce/$slug'
       path: '/demo/wzorce/$slug'
@@ -491,6 +511,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrawoIndexRoute: PrawoIndexRoute,
   SciezkiIndexRoute: SciezkiIndexRoute,
   DemoSlugVariantRoute: DemoSlugVariantRoute,
+  DemoPrzedIPoViewRoute: DemoPrzedIPoViewRoute,
   DemoWzorceSlugRoute: DemoWzorceSlugRoute,
   PraktykaWzorceSlugRoute: PraktykaWzorceSlugRoute,
   PrawoActUnitRoute: PrawoActUnitRoute,

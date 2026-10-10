@@ -21,6 +21,7 @@ export default defineConfig({
     readingOrderPlugin(),
     frameScriptPlugin({ id: "virtual:pattern-log", entry: "src/content/pattern-log.entry.ts", name: "a11yPatternLog" }),
     frameScriptPlugin({ id: "virtual:structure", entry: "src/content/structure.entry.ts", name: "a11yStructure" }),
+    frameScriptPlugin({ id: "virtual:demo-bar", entry: "src/content/demo-bar.entry.ts", name: "a11yDemoBar" }),
     tailwindcss(),
     tanstackStart({
       // Content is static, so every page is rendered to HTML at build time. Crawling finds the
@@ -46,6 +47,9 @@ export default defineConfig({
           { path: `/demo/${slug}/good` },
         ]),
         ...patternSlugs.flatMap((slug) => [{ path: `/praktyka/wzorce/${slug}` }, { path: `/demo/wzorce/${slug}` }]),
+        // The whole-page demo, broken and fixed.
+        { path: "/demo/przed-i-po/przed" },
+        { path: "/demo/przed-i-po/po" },
         // Written as a plain file, not /search-index.json/index.html.
         { path: "/search-index.json", prerender: { autoSubfolderIndex: false } },
       ],
