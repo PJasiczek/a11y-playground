@@ -3,10 +3,16 @@ import MiniSearch, { type SearchResult } from "minisearch";
 import { type ReactNode, type SubmitEvent, useEffect, useState } from "react";
 import { type SearchDoc, searchOptions } from "~/search/options";
 import { countOf } from "~/lib/plural";
+import { pageHead } from "~/lib/seo";
 
 export const Route = createFileRoute("/szukaj")({
   validateSearch: (search: Record<string, unknown>) => (typeof search.q === "string" && search.q.trim() ? { q: search.q } : {}),
-  head: () => ({ meta: [{ title: "Szukaj · a11y playground" }] }),
+  head: ({ match }) =>
+    pageHead({
+      title: "Szukaj", description:
+        "Szukaj w kryteriach WCAG, słowniku, przykładach, wzorcach, lekcjach i przepisach.",
+      path: match.pathname, noindex: true,
+    }),
   component: SearchPage,
 });
 

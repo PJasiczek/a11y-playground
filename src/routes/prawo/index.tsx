@@ -2,10 +2,16 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { DraftBadge } from "~/components/level-badge";
 import { LegalFooter, Timeline } from "~/components/legal";
 import { getLawIndex } from "~/content/legal.functions";
+import { pageHead } from "~/lib/seo";
 
 export const Route = createFileRoute("/prawo/")({
   loader: () => getLawIndex(),
-  head: () => ({ meta: [{ title: "Prawo · a11y playground" }] }),
+  head: ({ match }) =>
+    pageHead({
+      title: "Prawo", description:
+        "Kogo dotyczą polskie przepisy o dostępności cyfrowej, od kiedy i które kryteria WCAG z nich wynikają. Streszczenie każdej ustawy obok dosłownego brzmienia.",
+      path: match.pathname,
+    }),
   component: LawPage,
 });
 

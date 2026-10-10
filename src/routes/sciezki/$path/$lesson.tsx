@@ -5,6 +5,7 @@ import { Quiz } from "~/components/quiz";
 import { TermTips } from "~/components/term-tips";
 import { getLessonPage } from "~/content/paths.functions";
 import { type LessonKey, progressStore, useProgress } from "~/progress/store";
+import { pageHead } from "~/lib/seo";
 
 export const Route = createFileRoute("/sciezki/$path/$lesson")({
   loader: async ({ params }) => {
@@ -12,13 +13,14 @@ export const Route = createFileRoute("/sciezki/$path/$lesson")({
     if (!found) throw notFound();
     return found;
   },
-  head: ({ loaderData }) => ({
-    meta: [
-      {
-        title: loaderData ? `${loaderData.lesson.title} · ${loaderData.path.title} · a11y playground` : "a11y playground",
-      },
-    ],
-  }),
+  head: ({ loaderData, match }) =>
+    loaderData
+      ? pageHead({
+          title: `${loaderData.lesson.title} · ${loaderData.path.title}`,
+          description: loaderData.lesson.summary,
+          path: match.pathname,
+        })
+      : {},
   component: LessonPage,
 });
 

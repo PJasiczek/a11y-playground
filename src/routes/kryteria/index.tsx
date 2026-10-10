@@ -15,6 +15,7 @@ import {
   type CriterionId,
   versions,
 } from "~/content/wcag";
+import { pageHead } from "~/lib/seo";
 
 const VersionParam = type.enumerated(...versions);
 const PrincipleParam = type.enumerated(...principles.map((p) => p.num));
@@ -38,7 +39,12 @@ function validateSearch(search: Record<string, unknown>) {
 export const Route = createFileRoute("/kryteria/")({
   validateSearch,
   loader: () => getCriteriaOverview(),
-  head: () => ({ meta: [{ title: "Kryteria · a11y playground" }] }),
+  head: ({ match }) =>
+    pageHead({
+      title: "Kryteria", description:
+        "Wszystkie kryteria sukcesu WCAG 2.0, 2.1 i 2.2 po polsku, z filtrami według wersji, poziomu A, AA i AAA, zasady i roli w zespole.",
+      path: match.pathname,
+    }),
   component: CriteriaPage,
 });
 

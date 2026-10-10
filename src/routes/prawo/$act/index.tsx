@@ -4,6 +4,7 @@ import { LegalFooter, ProvisionLink } from "~/components/legal";
 import { TermTips } from "~/components/term-tips";
 import { formatDate } from "~/content/legal";
 import { getAct } from "~/content/legal.functions";
+import { pageHead } from "~/lib/seo";
 
 export const Route = createFileRoute("/prawo/$act/")({
   loader: async ({ params }) => {
@@ -11,9 +12,8 @@ export const Route = createFileRoute("/prawo/$act/")({
     if (!found) throw notFound();
     return found;
   },
-  head: ({ loaderData }) => ({
-    meta: [{ title: loaderData ? `${loaderData.act.short} · Prawo · a11y playground` : "a11y playground" }],
-  }),
+  head: ({ loaderData, match }) =>
+    loaderData ? pageHead({ title: `${loaderData.act.short} · Prawo`, description: loaderData.act.summary, path: match.pathname }) : {},
   component: ActPage,
 });
 

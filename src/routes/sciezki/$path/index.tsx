@@ -5,6 +5,7 @@ import { TermTips } from "~/components/term-tips";
 import { getPathPage } from "~/content/paths.functions";
 import { countOf } from "~/lib/plural";
 import { type LessonKey, useProgress } from "~/progress/store";
+import { pageHead } from "~/lib/seo";
 
 export const Route = createFileRoute("/sciezki/$path/")({
   loader: async ({ params }) => {
@@ -12,9 +13,8 @@ export const Route = createFileRoute("/sciezki/$path/")({
     if (!path) throw notFound();
     return path;
   },
-  head: ({ loaderData }) => ({
-    meta: [{ title: loaderData ? `${loaderData.title} · Ścieżki · a11y playground` : "a11y playground" }],
-  }),
+  head: ({ loaderData, match }) =>
+    loaderData ? pageHead({ title: `${loaderData.title} · Ścieżki`, description: loaderData.summary, path: match.pathname }) : {},
   component: PathPage,
 });
 
