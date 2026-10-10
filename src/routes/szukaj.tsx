@@ -273,9 +273,11 @@ function SearchPage() {
 }
 
 function ResultGroup({ title, children }: { title: string; children: ReactNode }) {
+  // An id may not contain spaces, or aria-labelledby would read it as several ids.
+  const id = `wyniki-${title.replace(/[\s,.]+/g, "-")}`;
   return (
-    <section aria-labelledby={`wyniki-${title}`} className="mt-8">
-      <h2 id={`wyniki-${title}`} className="mb-2 font-mono text-xs font-semibold tracking-widest text-ink-2 uppercase">
+    <section aria-labelledby={id} className="mt-8">
+      <h2 id={id} className="mb-2 font-mono text-xs font-semibold tracking-widest text-ink-2 uppercase">
         {title}
       </h2>
       <ul>{children}</ul>
