@@ -3,6 +3,7 @@ import { Chip, FilterGroup } from "~/components/filters";
 import { PatternCard, PracticeTabs } from "~/components/patterns";
 import { isNativeVerdict, type NativeVerdict, nativeVerdictIds, nativeVerdicts, patternBatches, patternBatchIds } from "~/content/pattern-labels";
 import { getPatternCards } from "~/content/patterns.functions";
+import { pageHead } from "~/lib/seo";
 
 /** `?natywnie=` narrows the catalogue to one verdict. Anything else is dropped, as on /kryteria. */
 function validateSearch(search: Record<string, unknown>): { natywnie?: NativeVerdict } {
@@ -12,7 +13,12 @@ function validateSearch(search: Record<string, unknown>): { natywnie?: NativeVer
 export const Route = createFileRoute("/praktyka/wzorce/")({
   validateSearch,
   loader: () => getPatternCards(),
-  head: () => ({ meta: [{ title: "Wzorce komponentów · Praktyka · a11y playground" }] }),
+  head: ({ match }) =>
+    pageHead({
+      title: "Wzorce komponentów · Praktyka", description:
+        "Działające kontrolki do obsłużenia klawiaturą, a obok to, co powiedziałby czytnik ekranu. Kod napisany według WAI-ARIA Authoring Practices.",
+      path: match.pathname,
+    }),
   component: PatternsPage,
 });
 

@@ -7,6 +7,8 @@ import { strengthLabels } from "~/content/legal-map";
 import { getArticle } from "~/content/legal.functions";
 import { principles } from "~/content/wcag";
 import { countOf } from "~/lib/plural";
+import { pageHead } from "~/lib/seo";
+import { articleLd, breadcrumbLd } from "~/lib/structured-data";
 
 export const Route = createFileRoute("/prawo/$act/$unit")({
   loader: async ({ params }) => {
@@ -14,13 +16,24 @@ export const Route = createFileRoute("/prawo/$act/$unit")({
     if (!found) throw notFound();
     return found;
   },
-  head: ({ loaderData }) => ({
-    meta: [
-      {
-        title: loaderData ? `${loaderData.unit.label} · ${loaderData.act.short} · a11y playground` : "a11y playground",
-      },
-    ],
-  }),
+  head: ({ loaderData, match }) => {
+    if (!loaderData) return {};
+    const { act, unit, title } = loaderData;
+    const source = `${unit.label}, ${act.short}, ${act.address}`;
+    return pageHead({
+      title: `${unit.label} · ${act.short}`,
+      description: `${title ? `${title}. ${source}` : source}: brzmienie przepisu obok naszego streszczenia.`,
+      path: match.pathname,
+      jsonLd: [
+        articleLd(unit.label, act, match.pathname),
+        breadcrumbLd([
+          { name: "Prawo", path: "/prawo" },
+          { name: act.short, path: `/prawo/${act.slug}` },
+          { name: unit.label, path: match.pathname },
+        ]),
+      ],
+    });
+  },
   component: ArticlePage,
 });
 

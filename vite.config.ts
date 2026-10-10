@@ -2,19 +2,11 @@ import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { nitro } from "nitro/vite";
-import { readdirSync } from "node:fs";
 import { defineConfig } from "vite";
 import { frameScriptPlugin } from "./src/content/frame-script.vite.ts";
 import { readingOrderPlugin } from "./src/content/reading-order.vite.ts";
-import { acts, legalUnits } from "./src/content/legal.gen.ts";
-import { criteria } from "./src/content/wcag.gen.ts";
-
-// One folder per example; each has a page and two demo documents for its iframes.
-const exampleSlugs = readdirSync("content/praktyka");
-// One folder per pattern; each has a page and a demo document with the live log.
-const patternSlugs = readdirSync("content/wzorce");
-// One file per problem of the whole-page demo, numbered from 01.
-const problemCount = readdirSync("content/przed-i-po/problemy").length;
+import { sitePages } from "./src/content/site-pages.ts";
+import { siteContentFromDisk } from "./src/content/site-pages.node.ts";
 
 export default defineConfig({
   resolve: { tsconfigPaths: true },
@@ -26,10 +18,8 @@ export default defineConfig({
     frameScriptPlugin({ id: "virtual:demo-bar", entry: "src/content/demo-bar.entry.ts", name: "a11yDemoBar" }),
     tailwindcss(),
     tanstackStart({
-      // Content is static, so every page is rendered to HTML at build time. Crawling finds the
-      // linked pages; criterion and law pages are listed explicitly because some (4.1.1, repealed
-      // articles) are only linked from filtered views or not at all, and the search index
-      // because nothing links to it.
+      // Content is static, so every page is rendered to HTML at build time: every page in
+      // site-pages.ts, anything else crawling finds, and the files nothing links to.
       prerender: {
         enabled: true,
         crawlLinks: true,
@@ -40,24 +30,9 @@ export default defineConfig({
         filter: ({ path }) => !path.includes("#") && !path.includes("?"),
       },
       pages: [
-        ...criteria.map((c) => ({ path: `/kryteria/${c.id}` })),
-        ...acts.map((act) => ({ path: `/prawo/${act.slug}` })),
-        ...legalUnits.map((unit) => ({ path: `/prawo/${unit.id}` })),
-        ...exampleSlugs.flatMap((slug) => [
-          { path: `/praktyka/${slug}` },
-          { path: `/demo/${slug}/bad` },
-          { path: `/demo/${slug}/good` },
-        ]),
-        ...patternSlugs.flatMap((slug) => [{ path: `/praktyka/wzorce/${slug}` }, { path: `/demo/wzorce/${slug}` }]),
-        // The whole-page demo: its pages in the app, and the broken, marked and fixed documents.
-        { path: "/praktyka/przed-i-po" },
-        { path: "/praktyka/przed-i-po/lista" },
-        ...Array.from({ length: problemCount }, (_, i) => ({ path: `/praktyka/przed-i-po/${String(i + 1)}` })),
-        { path: "/demo/przed-i-po/przed" },
-        { path: "/demo/przed-i-po/przed-znaczniki" },
-        { path: "/demo/przed-i-po/po" },
-        // Written as a plain file, not /search-index.json/index.html.
-        { path: "/search-index.json", prerender: { autoSubfolderIndex: false } },
+        ...sitePages(siteContentFromDisk()).map(({ path }) => ({ path })),
+        // Written as plain files, not /search-index.json/index.html.
+        ...["/search-index.json", "/robots.txt", "/sitemap.xml"].map((path) => ({ path, prerender: { autoSubfolderIndex: false } })),
       ],
     }),
     nitro(),

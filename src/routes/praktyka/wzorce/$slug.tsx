@@ -9,6 +9,8 @@ import { useDemoFrame } from "~/components/use-demo-frame";
 import { type Announcement, keyNames } from "~/content/announce";
 import { patternSections } from "~/content/pattern-labels";
 import { getPattern } from "~/content/patterns.functions";
+import { pageHead } from "~/lib/seo";
+import { breadcrumbLd } from "~/lib/structured-data";
 
 export const Route = createFileRoute("/praktyka/wzorce/$slug")({
   loader: async ({ params }) => {
@@ -16,9 +18,21 @@ export const Route = createFileRoute("/praktyka/wzorce/$slug")({
     if (!found) throw notFound();
     return found;
   },
-  head: ({ loaderData }) => ({
-    meta: [{ title: loaderData ? `${loaderData.pattern.title} · Wzorce · a11y playground` : "a11y playground" }],
-  }),
+  head: ({ loaderData, match }) =>
+    loaderData
+      ? pageHead({
+          title: `${loaderData.pattern.title} · Wzorce`,
+          description: loaderData.pattern.summary,
+          path: match.pathname,
+          jsonLd: [
+            breadcrumbLd([
+              { name: "Praktyka", path: "/praktyka" },
+              { name: "Wzorce", path: "/praktyka/wzorce" },
+              { name: loaderData.pattern.title, path: match.pathname },
+            ]),
+          ],
+        })
+      : {},
   component: PatternPage,
 });
 

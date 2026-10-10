@@ -11,6 +11,8 @@ import { formatDate } from "~/content/legal";
 import { enClause } from "~/content/legal-map";
 import type { SectionKey } from "~/content/sections";
 import { type CriterionId, findCriterion, guidelineOf, isNewIn22, isObsolete, principleOf } from "~/content/wcag";
+import { pageHead } from "~/lib/seo";
+import { breadcrumbLd } from "~/lib/structured-data";
 
 export const Route = createFileRoute("/kryteria/$criterionId")({
   loader: async ({ params }) => {
@@ -19,9 +21,23 @@ export const Route = createFileRoute("/kryteria/$criterionId")({
     const page = await getCriterionPage({ data: criterion.id });
     return { criterion, ...page };
   },
-  head: ({ loaderData }) => ({
-    meta: [{ title: loaderData ? `${loaderData.criterion.id} ${loaderData.criterion.name} · a11y playground` : "a11y playground" }],
-  }),
+  head: ({ loaderData, match }) => {
+    if (!loaderData) return {};
+    const { criterion, content } = loaderData;
+    // 4.1.1 is gone from 2.2, so its title names the last version that has it.
+    const version = isObsolete(criterion) ? "WCAG 2.1" : "WCAG 2.2";
+    return pageHead({
+      title: `${criterion.id} ${criterion.name}, ${version}`,
+      description: content?.summary ?? `Kryterium sukcesu ${criterion.id} ${criterion.name}, poziom ${criterion.level}.`,
+      path: match.pathname,
+      jsonLd: [
+        breadcrumbLd([
+          { name: "Kryteria", path: "/kryteria" },
+          { name: criterion.id, path: match.pathname },
+        ]),
+      ],
+    });
+  },
   component: CriterionPage,
 });
 

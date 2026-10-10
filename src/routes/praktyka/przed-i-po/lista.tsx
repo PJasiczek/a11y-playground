@@ -6,6 +6,7 @@ import { type Harmed, harmedIds, harmedLabels, isHarmed, reviewKey } from "~/con
 import { getProblemRows } from "~/content/before-after.functions";
 import { countOf } from "~/lib/plural";
 import { progressStore } from "~/progress/store";
+import { pageHead } from "~/lib/seo";
 
 /** `?komu=` narrows the list to the problems that hurt one group. Anything else is dropped. */
 function validateSearch(search: Record<string, unknown>): { komu?: Harmed } {
@@ -15,7 +16,12 @@ function validateSearch(search: Record<string, unknown>): { komu?: Harmed } {
 export const Route = createFileRoute("/praktyka/przed-i-po/lista")({
   validateSearch,
   loader: () => getProblemRows(),
-  head: () => ({ meta: [{ title: "Lista problemów · Strona przed i po · a11y playground" }] }),
+  head: ({ match }) =>
+    pageHead({
+      title: "Lista problemów · Strona przed i po", description:
+        "Problemy z dostępnością na stronie Komunikacji Miejskiej Wrzosów, z tym, komu szkodzą, i z tym, które z nich znajdzie axe.",
+      path: match.pathname, noindex: true,
+    }),
   component: ProblemListPage,
 });
 

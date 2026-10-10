@@ -3,10 +3,16 @@ import { lessonNumber, pathProgress, ProgressNote } from "~/components/paths";
 import { getPathList } from "~/content/paths.functions";
 import { countOf } from "~/lib/plural";
 import { useProgress } from "~/progress/store";
+import { pageHead } from "~/lib/seo";
 
 export const Route = createFileRoute("/sciezki/")({
   loader: () => getPathList(),
-  head: () => ({ meta: [{ title: "Ścieżki · a11y playground" }] }),
+  head: ({ match }) =>
+    pageHead({
+      title: "Ścieżki", description:
+        "Lekcje dostępności ułożone po kolei dla programisty, projektanta, autora treści, testera i podmiotu publicznego, z quizem na końcu każdej lekcji.",
+      path: match.pathname,
+    }),
   component: PathsPage,
 });
 

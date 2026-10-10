@@ -4,6 +4,7 @@ import { DraftBadge, WorkingDraftBadge } from "~/components/level-badge";
 import { formatDate } from "~/content/legal";
 import { findCriterion } from "~/content/wcag";
 import { getWcag3 } from "~/content/wcag3.functions";
+import { pageHead } from "~/lib/seo";
 
 const filters = [
   { value: undefined, label: "Wszystkie" },
@@ -22,7 +23,12 @@ function validateSearch(search: Record<string, unknown>): { pokaz?: Filter } {
 export const Route = createFileRoute("/wcag-3")({
   validateSearch,
   loader: () => getWcag3(),
-  head: () => ({ meta: [{ title: "WCAG 3.0 · a11y playground" }] }),
+  head: ({ match }) =>
+    pageHead({
+      title: "WCAG 3.0", description:
+        "Stan wersji roboczej WCAG 3.0: czym różni się od WCAG 2.x i której wytycznej 3.0 odpowiada każde kryterium WCAG 2.2.",
+      path: match.pathname,
+    }),
   component: Wcag3Page,
 });
 

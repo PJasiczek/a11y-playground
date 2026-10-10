@@ -6,12 +6,18 @@ import { reviewKey } from "~/content/before-after-labels";
 import { getProblemRows } from "~/content/before-after.functions";
 import { countOf } from "~/lib/plural";
 import { progressStore } from "~/progress/store";
+import { pageHead } from "~/lib/seo";
 
 const problemForms = ["problem", "problemy", "problemów"] as const;
 
 export const Route = createFileRoute("/praktyka/przed-i-po/")({
   loader: async () => (await getProblemRows()).length,
-  head: () => ({ meta: [{ title: "Strona przed i po · Praktyka · a11y playground" }] }),
+  head: ({ loaderData, match }) =>
+    pageHead({
+      title: "Strona przed i po · Praktyka",
+      description: `Strona główna fikcyjnego przewoźnika, zepsuta na ${loaderData ? countOf(loaderData, ["sposób", "sposoby", "sposobów"]) : "wiele sposobów"}. Znajdź problemy sam, zapisując notatki, a potem porównaj je z listą i poprawioną wersją.`,
+      path: match.pathname,
+    }),
   component: BeforeAfterPage,
 });
 

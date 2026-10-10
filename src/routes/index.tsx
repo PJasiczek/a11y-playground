@@ -1,12 +1,21 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { FixCard, FixCards } from "~/components/fix-card";
 import { getExampleCards } from "~/content/content.functions";
+import { pageHead } from "~/lib/seo";
+import { websiteLd } from "~/lib/structured-data";
 
 // How many of the cheapest examples open the page as cards; the rest follow as a list.
 const featured = 6;
 
 export const Route = createFileRoute("/")({
   loader: () => getExampleCards(),
+  head: ({ match }) =>
+    pageHead({
+      description:
+        "WCAG 2.2 po polsku: kryteria z przykładami kodu przed i po poprawce, wzorce ARIA, symulatory, ścieżki nauki i polskie prawo o dostępności cyfrowej.",
+      path: match.pathname,
+      jsonLd: [websiteLd()],
+    }),
   component: HomePage,
 });
 

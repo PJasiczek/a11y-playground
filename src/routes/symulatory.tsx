@@ -4,10 +4,16 @@ import { DraftBadge } from "~/components/level-badge";
 import { TermTips } from "~/components/term-tips";
 import { firstOfKind, type SimulationKind } from "~/content/simulations";
 import { getSimulators } from "~/content/simulators.functions";
+import { pageHead } from "~/lib/seo";
 
 export const Route = createFileRoute("/symulatory")({
   loader: () => getSimulators(),
-  head: () => ({ meta: [{ title: "Symulatory · a11y playground" }] }),
+  head: ({ match }) =>
+    pageHead({
+      title: "Symulatory", description:
+        "Daltonizm, słabe widzenie, sama klawiatura, czytnik ekranu, wąski ekran i powiększony tekst: co pokazuje każdy symulator, czego nie pokazuje i których kryteriów uczy.",
+      path: match.pathname,
+    }),
   component: SimulatorsPage,
 });
 

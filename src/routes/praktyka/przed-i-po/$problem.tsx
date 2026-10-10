@@ -3,6 +3,7 @@ import { CheckGate, useReview } from "~/components/before-after";
 import { DraftBadge } from "~/components/level-badge";
 import { harmedLabels } from "~/content/before-after-labels";
 import { getProblem } from "~/content/before-after.functions";
+import { pageHead } from "~/lib/seo";
 
 export const Route = createFileRoute("/praktyka/przed-i-po/$problem")({
   loader: async ({ params }) => {
@@ -11,9 +12,15 @@ export const Route = createFileRoute("/praktyka/przed-i-po/$problem")({
     if (!found) throw notFound();
     return found;
   },
-  head: ({ loaderData }) => ({
-    meta: [{ title: loaderData ? `${loaderData.problem.title} · Strona przed i po · a11y playground` : "a11y playground" }],
-  }),
+  head: ({ loaderData, match }) =>
+    loaderData
+      ? pageHead({
+          title: `${loaderData.problem.title} · Strona przed i po`,
+          description: `Problem ${String(loaderData.problem.number)} na stronie Komunikacji Miejskiej Wrzosów: na czym polega i jak go poprawić.`,
+          path: match.pathname,
+          noindex: true,
+        })
+      : {},
   component: ProblemPage,
 });
 

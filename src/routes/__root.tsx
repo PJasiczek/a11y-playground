@@ -3,6 +3,7 @@ import { RouteAnnouncer } from "~/components/route-announcer";
 import { SiteHeader } from "~/components/site-header";
 import { StructureTool } from "~/components/structure-tool";
 import { themeInitScript } from "~/components/theme-toggle";
+import { siteName } from "~/lib/site";
 import stylesUrl from "~/styles.css?url";
 
 export const Route = createRootRoute({
@@ -11,7 +12,12 @@ export const Route = createRootRoute({
       { charSet: "utf-8" },
       // No maximum-scale or user-scalable: zoom must stay available (1.4.4).
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "a11y playground" },
+      { title: siteName },
+      // Shared by every page; pageHead adds the title, description and address of each one.
+      { property: "og:site_name", content: siteName },
+      { property: "og:locale", content: "pl_PL" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
     links: [{ rel: "stylesheet", href: stylesUrl }],
   }),

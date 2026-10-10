@@ -9,6 +9,8 @@ import { TermTips } from "~/components/term-tips";
 import { getExample } from "~/content/content.functions";
 import { variantLabels } from "~/content/demo-document";
 import { isSimulationId, type SimulationId, simulations } from "~/content/simulations";
+import { pageHead } from "~/lib/seo";
+import { breadcrumbLd } from "~/lib/structured-data";
 
 /** The simulation lives in the URL, so a simulated view can be shared. Anything unknown is dropped. */
 function validateSearch(search: Record<string, unknown>): { symulacja?: SimulationId } {
@@ -22,9 +24,20 @@ export const Route = createFileRoute("/praktyka/$slug")({
     if (!found) throw notFound();
     return found;
   },
-  head: ({ loaderData }) => ({
-    meta: [{ title: loaderData ? `${loaderData.example.title} · Praktyka · a11y playground` : "a11y playground" }],
-  }),
+  head: ({ loaderData, match }) =>
+    loaderData
+      ? pageHead({
+          title: `${loaderData.example.title} · Praktyka`,
+          description: loaderData.example.summary,
+          path: match.pathname,
+          jsonLd: [
+            breadcrumbLd([
+              { name: "Praktyka", path: "/praktyka" },
+              { name: loaderData.example.title, path: match.pathname },
+            ]),
+          ],
+        })
+      : {},
   component: ExamplePage,
 });
 

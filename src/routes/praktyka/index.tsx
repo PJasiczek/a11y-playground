@@ -3,10 +3,16 @@ import { FixCard, FixCards } from "~/components/fix-card";
 import { PracticeTabs } from "~/components/patterns";
 import { getExampleCards } from "~/content/content.functions";
 import { countOf } from "~/lib/plural";
+import { pageHead } from "~/lib/seo";
 
 export const Route = createFileRoute("/praktyka/")({
   loader: () => getExampleCards(),
-  head: () => ({ meta: [{ title: "Praktyka · a11y playground" }] }),
+  head: ({ match }) =>
+    pageHead({
+      title: "Praktyka", description:
+        "Ten sam fragment interfejsu dwa razy: zepsuty i poprawny, z kodem i z tym, co usłyszy czytnik ekranu. Przykłady ułożone od najtańszej poprawki.",
+      path: match.pathname,
+    }),
   component: PracticePage,
 });
 

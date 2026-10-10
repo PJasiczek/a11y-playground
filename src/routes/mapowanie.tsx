@@ -7,6 +7,7 @@ import { edges } from "~/content/legal-map";
 import { getLawIndex } from "~/content/legal.functions";
 import { findCriterion } from "~/content/wcag";
 import { countOf } from "~/lib/plural";
+import { pageHead } from "~/lib/seo";
 
 const SituationParam = type.enumerated(...situationIds);
 
@@ -15,7 +16,12 @@ export const Route = createFileRoute("/mapowanie")({
   validateSearch: (search: Record<string, unknown>) =>
     SituationParam.allows(search.sytuacja) ? { sytuacja: search.sytuacja } : {},
   loader: () => getLawIndex(),
-  head: () => ({ meta: [{ title: "Co mnie obowiązuje · a11y playground" }] }),
+  head: ({ match }) =>
+    pageHead({
+      title: "Co mnie obowiązuje", description:
+        "Wybierz, czym jest twój produkt: strona lub aplikacja podmiotu publicznego albo produkt czy usługa firmy. Zobaczysz terminy z ustaw i kryteria WCAG, które z nich wynikają.",
+      path: match.pathname,
+    }),
   component: ObligationsPage,
 });
 
