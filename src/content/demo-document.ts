@@ -125,13 +125,17 @@ function inlineScript(source: string) {
 <script>${source.replace(/<\/script/gi, "<\\/script")}</script>`;
 }
 
-/** The document every demo frame loads: base styles, the fragment, the colour filters and the frame script. */
+/**
+ * The document every demo frame loads: base styles, the fragment, the colour filters and the frame
+ * script. Search engines skip it; the app page that frames it is the one to find.
+ */
 function demoShell({ title, root, fragment, scripts = "" }: { title: string; root: string; fragment: string; scripts?: string }) {
   return `<!doctype html>
 <html lang="pl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
 <title>${title}</title>
 <style>${baseStyles}</style>
 </head>

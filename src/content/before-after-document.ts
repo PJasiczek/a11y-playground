@@ -145,7 +145,8 @@ function inlineScript(source: string) {
 /**
  * One page with the demo bar in front of it. `barScript` is the bundle from virtual:demo-bar,
  * which runs the bar: the motion switch, the links that lead nowhere in the demo, and on the
- * marked page the numbered markers, which is the only view that gets `markers`.
+ * marked page the numbered markers, which is the only view that gets `markers`. Search engines
+ * skip all three views, so a broken page never shows up in results as something to copy.
  */
 export function beforeAfterDocument(view: View, barScript: string, markers: readonly Marker[] = []) {
   const bar = `<style>${barStyles}</style>
@@ -158,5 +159,8 @@ export function beforeAfterDocument(view: View, barScript: string, markers: read
   const source = view === "po" ? pages.po : view === "przed" ? withoutHints(pages.przed) : pages.przed;
   // Replacer functions, not strings: the bundle contains `$'` and `$&`, which a replacement
   // string would expand into pieces of the page.
-  return source.replace(/<body[^>]*>/, (body) => `${body}\n${bar}`).replace(/<\/body>/, () => `${scripts}\n</body>`);
+  return source
+    .replace(/<head>/, (head) => `${head}\n<meta name="robots" content="noindex">`)
+    .replace(/<body[^>]*>/, (body) => `${body}\n${bar}`)
+    .replace(/<\/body>/, () => `${scripts}\n</body>`);
 }
