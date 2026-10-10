@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan: SEO, wyszukiwanie i indeksowanie</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1.25rem 6rem;
+    background: #000; color: #fff;
+    font: 16px/1.65 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  main { max-width: 82ch; margin: 0 auto; }
+  h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 .5rem; letter-spacing: -.02em; }
+  h2 { font-size: 1.2rem; margin: 3rem 0 .75rem; padding-top: 1rem; border-top: 1px solid #262626; letter-spacing: -.01em; }
+  h3 { font-size: 1rem; margin: 1.75rem 0 .5rem; }
+  p, li, dd { color: #e5e5e5; }
+  a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  ul, ol { padding-left: 1.3rem; }
+  li { margin: .3rem 0; }
+  code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .875em; background: #141414; border: 1px solid #262626; border-radius: 3px; padding: .08em .3em; }
+  pre { background: #0b0b0b; border: 1px solid #262626; border-radius: 4px; padding: .9rem 1rem; overflow-x: auto; }
+  pre code { background: none; border: 0; padding: 0; font-size: .82rem; line-height: 1.55; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; display: block; overflow-x: auto; }
+  th, td { border: 1px solid #262626; padding: .45rem .6rem; text-align: left; vertical-align: top; }
+  th { background: #101010; font-weight: 600; }
+  .meta { color: #a3a3a3; font-size: .85rem; margin: 0 0 1.5rem; }
+  .meta a { color: #fff; }
+  .flag { border-left: 2px solid #737373; padding: .1rem 0 .1rem .85rem; margin: 1rem 0; color: #d4d4d4; font-size: .93rem; }
+  .toc { border: 1px solid #262626; padding: 1rem 1rem 1rem 2.4rem; margin: 1.5rem 0 0; }
+  .toc li { margin: .15rem 0; }
+  @media (max-width: 40rem) { body { padding: 1.25rem .9rem 4rem; } h1 { font-size: 1.45rem; } }
+</style>
+</head>
+<body>
+<main>
+
+<p class="meta"><a href="seo-indexing.en.html" hreflang="en">English version</a></p>
+
+<h1>Plan: SEO, wyszukiwanie i indeksowanie</h1>
+<p class="meta">Zlecenie: poprawić, jak strona trafia do wyszukiwarek i jak wygląda w wynikach. Produkcja: <code>https://a11y-playground-tau.vercel.app</code>. Wersja planu: 2026-10-10.</p>
+
+<p class="flag">Ustalone przed planem: adres zostaje na <code>*.vercel.app</code>, dokumenty <code>/demo/*</code> dostają <code>noindex</code>, obrazki Open Graph powstają w buildzie, JSON-LD w zakresie podstawowym i treściowym.</p>
+
+<p class="flag">Decyzje z 2026-10-10: strony listy i problemów KMW dostają <code>noindex</code>, kryteria dostają „WCAG 2.2” w tytule, Search Console dodajesz sam po wdrożeniu. Tytuł strony głównej zostaje <code>a11y playground</code>.</p>
+
+<ol class="toc">
+  <li><a href="#stan">Stan dzisiaj</a></li>
+  <li><a href="#zakres">Zakres</a></li>
+  <li><a href="#meta">Tagi w head</a></li>
+  <li><a href="#indeks">Co trafia do indeksu</a></li>
+  <li><a href="#sitemap">robots.txt i sitemap.xml</a></li>
+  <li><a href="#og">Obrazki Open Graph</a></li>
+  <li><a href="#jsonld">JSON-LD</a></li>
+  <li><a href="#testy">Testy</a></li>
+  <li><a href="#commity">Gałąź i commity</a></li>
+  <li><a href="#decyzje">Decyzje</a></li>
+  <li><a href="#poza">Poza zakresem i ręczne kroki</a></li>
+</ol>
+
+<h2 id="stan">Stan dzisiaj</h2>
+<p>Dobra wiadomość: wszystko jest prerenderowane do HTML, więc robot widzi pełną treść bez JavaScriptu. <code>lang="pl"</code> jest ustawione, a większość tras ma własny <code>title</code>. Reszty brakuje.</p>
+<table>
+  <thead><tr><th>Element</th><th>Jest?</th><th>Skutek</th></tr></thead>
+  <tbody>
+    <tr><td><code>meta description</code></td><td>nie</td><td>Google sam wycina fragment strony, często nawigację albo baner.</td></tr>
+    <tr><td><code>link rel=canonical</code></td><td>nie</td><td><code>/kryteria?poziom=AA</code>, <code>/praktyka/x?symulacja=czytnik</code> i <code>/praktyka/przed-i-po/lista?komu=</code> to dla robota osobne adresy z tą samą treścią.</td></tr>
+    <tr><td><code>robots.txt</code>, <code>sitemap.xml</code></td><td>nie</td><td>Robot odkrywa strony tylko po linkach. Kryterium 4.1.1 i uchylone artykuły nie mają linków z widoków bez filtrów.</td></tr>
+    <tr><td>Open Graph, Twitter card</td><td>nie</td><td>Link wklejony do Slacka czy LinkedIna pokazuje samą nazwę domeny.</td></tr>
+    <tr><td>JSON-LD</td><td>nie</td><td>Brak okruszków w wynikach.</td></tr>
+    <tr><td>Favicon</td><td>nie</td><td>Google pokazuje szarą kulę obok wyniku.</td></tr>
+    <tr><td><code>noindex</code> na stronach zepsutych</td><td>nie</td><td>Zepsuta strona KMW albo wariant <code>bad</code> może wyjść w wynikach jako wzór.</td></tr>
+  </tbody>
+</table>
+
+<h2 id="zakres">Zakres</h2>
+<p>Jeden plik z adresem i pomocnikiem do <code>head</code>, dwie nowe trasy prerenderowane jako pliki, generator obrazków i JSON-LD z danych, które trasy już ładują. Nic z tego nie zmienia wyglądu stron poza faviconem.</p>
+
+<h2 id="meta">Tagi w head</h2>
+<h3>Jedno źródło adresu</h3>
+<p><code>src/lib/site.ts</code> trzyma <code>siteUrl = "https://a11y-playground-tau.vercel.app"</code> i nazwę serwisu. Zmiana domeny to jedna linijka. Bez zmiennej środowiskowej: build preview też ma generować adresy produkcyjne w canonical, a Vercel i tak dokłada <code>X-Robots-Tag: noindex</code> do adresów preview (sprawdzę to na jednym deployu preview, krok w sekcji <a href="#poza">Ręczne kroki</a>).</p>
+
+<h3>Pomocnik <code>pageHead</code></h3>
+<p><code>src/lib/seo.ts</code> eksportuje funkcję, która z <code>{ title, description, path, image?, noindex? }</code> robi gotowe <code>meta</code> i <code>links</code> dla <code>head</code> w TanStack Router: <code>title</code>, <code>description</code>, <code>canonical</code>, <code>og:*</code>, <code>twitter:card</code>, <code>robots</code>. Typ argumentu bierze ścieżkę z <code>FileRoutesByPath</code>, więc literówka w <code>path</code> nie przejdzie przez <code>tsc</code>. Canonical zawsze bez query i bez końcowego ukośnika.</p>
+<pre><code>head: ({ loaderData }) =&gt; pageHead({
+  title: `${c.id} ${c.name}, WCAG 2.2`,
+  description: c.summary,
+  path: `/kryteria/${c.id}`,
+}),</code></pre>
+
+<h3>Skąd opisy</h3>
+<table>
+  <thead><tr><th>Trasa</th><th>Źródło <code>description</code></th></tr></thead>
+  <tbody>
+    <tr><td><code>/kryteria/$id</code></td><td><code>summary</code> z <code>content/kryteria/*.md</code></td></tr>
+    <tr><td><code>/praktyka/$slug</code>, <code>/praktyka/wzorce/$slug</code></td><td><code>summary</code> z front matter</td></tr>
+    <tr><td><code>/sciezki/$path/$lesson</code></td><td><code>summary</code> lekcji</td></tr>
+    <tr><td><code>/prawo/$act</code>, <code>/prawo/$act/$unit</code></td><td>tytuł aktu i numer jednostki, złożone w szablon</td></tr>
+    <tr><td>strony list i pojedyncze (<code>/</code>, <code>/kryteria</code>, <code>/slownik</code>, <code>/symulatory</code>, <code>/mapowanie</code>, <code>/wcag-3</code>…)</td><td>napisane ręcznie, jedno zdanie, w pliku trasy</td></tr>
+  </tbody>
+</table>
+<p>Opisy przycinam do 160 znaków na granicy słowa. Pola <code>summary</code> już są i mają po jedno, dwa zdania, więc ręcznie piszę tylko opisy stron list.</p>
+
+<h3>Tytuły</h3>
+<p>Schemat <code>X · a11y playground</code> zostaje. Jedna zmiana: kryteria dostają „WCAG 2.2” w tytule (ludzie szukają „wcag 1.4.3”, nie „kontrast minimum”). Strona główna zostaje przy <code>a11y playground</code> (<a href="#decyzje">Decyzje</a>).</p>
+
+<h3>Favicon</h3>
+<p>Brak ikony to szara kula w wynikach Google. To zmiana wizualna, więc najpierw makiety (2 lub 3 warianty prostego znaku, SVG plus PNG 180 px dla Apple) przez <code>html-communication</code>, potem wybór, potem kod. Ten krok czeka na makiety i nie blokuje reszty.</p>
+
+<h2 id="indeks">Co trafia do indeksu</h2>
+<table>
+  <thead><tr><th>Strony</th><th>Indeks</th><th>Sitemap</th><th>Dlaczego</th></tr></thead>
+  <tbody>
+    <tr><td>wszystkie strony aplikacji poza poniższymi</td><td>tak</td><td>tak</td><td></td></tr>
+    <tr><td><code>/demo/*</code> (warianty <code>bad</code>/<code>good</code>, wzorce, KMW <code>przed</code>, <code>przed-znaczniki</code>, <code>po</code>)</td><td><code>noindex</code></td><td>nie</td><td>Twoja decyzja. Strony aplikacji, które je osadzają w ramkach, indeksują się normalnie.</td></tr>
+    <tr><td><code>/szukaj</code></td><td><code>noindex</code></td><td>nie</td><td>Strona wyników wyszukiwania. Google odradza indeksowanie takich stron.</td></tr>
+    <tr><td><code>/praktyka/przed-i-po/lista</code> i <code>/praktyka/przed-i-po/1</code> do <code>/20</code></td><td><code>noindex</code></td><td>nie</td><td>Prerender widzi pusty postęp, więc w HTML jest tylko „Najpierw sprawdź stronę sam”. Indeksuje się strona wejściowa <code>/praktyka/przed-i-po</code>.</td></tr>
+    <tr><td><code>/search-index.json</code></td><td>nie dotyczy</td><td>nie</td><td>To nie HTML.</td></tr>
+  </tbody>
+</table>
+<p><code>noindex</code> w dokumentach <code>/demo/*</code> idzie jako <code>&lt;meta name="robots" content="noindex"&gt;</code> w samym dokumencie, nie jako nagłówek HTTP. Prerender zapisuje te strony jako pliki statyczne, a nagłówki z handlera wtedy giną. Meta dodaję w <code>demoDocument</code> i dokumencie KMW, a nie w treści przykładów, więc nie zmienia tego, co sprawdza axe.</p>
+
+<h2 id="sitemap">robots.txt i sitemap.xml</h2>
+<p>Dziś lista stron do prerenderu żyje w <code>vite.config.ts</code>. Sitemap potrzebuje tej samej listy. Zamiast drugiej kopii przenoszę ją do <code>src/content/site-pages.ts</code> i importuję w obu miejscach. To osobny commit, mechaniczny, bez zmiany zachowania. Każdy wpis dostaje pole <code>index: boolean</code>, a sitemap filtruje po nim.</p>
+<p>Obie trasy działają jak <code>search-index[.]json.ts</code>: handler <code>GET</code> plus wpis w <code>pages</code> z <code>autoSubfolderIndex: false</code>.</p>
+<pre><code>User-agent: *
+Allow: /
+Sitemap: https://a11y-playground-tau.vercel.app/sitemap.xml</code></pre>
+<p>Bez <code>Disallow: /demo/</code>. Zablokowanej strony robot nie pobierze, więc nie zobaczy <code>noindex</code> i może pokazać sam adres bez opisu. Zostawię o tym komentarz w kodzie, żeby nikt tego nie dopisał później.</p>
+<p><code>lastmod</code> pomijam. Bez prawdziwej daty zmiany każdej strony Google i tak go ignoruje.</p>
+
+<h2 id="og">Obrazki Open Graph</h2>
+<p>Obrazek 1200×630 PNG na każdą zaindeksowaną stronę, zrobiony w czasie prerenderu. Trasa <code>/og/$[...]path.png</code> zwraca PNG; w <code>site-pages.ts</code> każda strona z <code>index: true</code> dostaje drugi wpis z obrazkiem.</p>
+<ul>
+  <li>Biblioteki: <code>satori</code> (JSX do SVG) i <code>@resvg/resvg-wasm</code> (SVG do PNG). Wersja wasm, nie natywna, żeby build na Vercelu i na Windowsie działał tak samo.</li>
+  <li>Font: satori nie czyta <code>woff2</code>, a <code>@fontsource-variable/inter</code> ma tylko taki. Dołączam plik TTF Inter (licencja OFL) do <code>src/assets/</code>. Polskie znaki muszą być w nim, sprawdzi to test.</li>
+  <li>Treść obrazka: sekcja (Kryteria, Praktyka, Prawo…), tytuł strony, dla kryterium poziom A/AA/AAA, nazwa serwisu. Kontrast tekstu co najmniej 7:1, bo obrazek ląduje w cudzym interfejsie, gdzie nie mamy wpływu na nic innego.</li>
+  <li><code>og:image:alt</code> powtarza tytuł strony, żeby czytnik w Slacku czy na LinkedInie miał co przeczytać.</li>
+  <li>Wygląd obrazka to zmiana wizualna. Najpierw 2 lub 3 warianty w makietach razem z faviconem, potem kod.</li>
+</ul>
+<p>Koszt: jeden PNG na każdą zaindeksowaną stronę w buildzie i dłuższy prerender. Zmierzę oba przed commitem. Jeśli build urośnie za bardzo, spadam do obrazka na sekcję zamiast na stronę; to zmiana jednej funkcji.</p>
+
+<h2 id="jsonld">JSON-LD</h2>
+<p>Bloki <code>&lt;script type="application/ld+json"&gt;</code> idą przez <code>scripts</code> w <code>head</code>, z <code>&lt;</code> zamienionym na <code><</code>. Typy z <code>schema-dts</code> (tylko typy, zero kodu w paczce), więc zła właściwość w schemacie to błąd <code>tsc</code>.</p>
+<table>
+  <thead><tr><th>Gdzie</th><th>Typ</th><th>Z czego</th></tr></thead>
+  <tbody>
+    <tr><td><code>/</code></td><td><code>WebSite</code></td><td>stałe. Bez <code>SearchAction</code>: Google wyłączył pole wyszukiwania w wynikach w 2024 roku.</td></tr>
+    <tr><td>strony z nawigacją „Okruszki”</td><td><code>BreadcrumbList</code></td><td>te same okruszki, które strona już pokazuje</td></tr>
+    <tr><td><code>/slownik</code></td><td><code>DefinedTermSet</code> z <code>DefinedTerm</code> na hasło</td><td><code>glossary.ts</code></td></tr>
+    <tr><td><code>/sciezki/$path</code></td><td><code>Course</code></td><td>tytuł i opis ścieżki, lista lekcji</td></tr>
+    <tr><td><code>/sciezki/$path/$lesson</code></td><td><code>LearningResource</code>, w nim <code>Quiz</code></td><td>lekcja i jej pytania</td></tr>
+    <tr><td><code>/prawo/$act</code>, <code>/prawo/$act/$unit</code></td><td><code>Legislation</code></td><td>metadane aktu z ELI (<code>legislationIdentifier</code>, data tekstu jednolitego)</td></tr>
+  </tbody>
+</table>
+<p>Uczciwie: Google pokazuje dziś wyniki rozszerzone tylko dla okruszków. <code>Course</code> wymaga wypełnionej oferty i dostawcy, a <code>Quiz</code> w Google działa tylko dla treści edukacyjnych z odpowiedziami w HTML, więc te typy dają głównie poprawny opis dla innych wyszukiwarek i narzędzi. Kosztują mało, bo dane już są w loaderach.</p>
+
+<h2 id="testy">Testy</h2>
+<p>Wszystkie na zbudowanym <code>.output/public</code>, w jednym pliku <code>e2e/seo.spec.ts</code> albo teście vitest czytającym pliki, bez przeglądarki:</p>
+<ul>
+  <li>każdy URL z <code>sitemap.xml</code> istnieje jako plik, ma canonical równy sobie i niepusty <code>description</code>;</li>
+  <li>opisy i tytuły są unikalne między stronami z sitemap;</li>
+  <li>żadna strona z <code>noindex</code> nie jest w sitemap, a każdy dokument <code>/demo/*</code> ma <code>noindex</code>;</li>
+  <li>każdy <code>og:image</code> wskazuje na istniejący PNG 1200×630;</li>
+  <li>każdy JSON-LD się parsuje.</li>
+</ul>
+<p>Pomocnik <code>pageHead</code> dostaje jeden test jednostkowy na przycinanie opisu i budowę canonical. Więcej nie trzeba.</p>
+
+<h2 id="commity">Gałąź i commity</h2>
+<p>Gałąź: <code>feat/seo-indexing</code>. Utworzę ją dopiero po Twoim „tak”.</p>
+<ol>
+  <li><code>refactor(build): move the prerender page list to site-pages.ts</code>. Mechaniczne, zero zmian w wyniku buildu.</li>
+  <li><code>feat(seo): add descriptions, canonical links and page titles</code>. <code>site.ts</code>, <code>seo.ts</code> z testem, wszystkie trasy, opis strony głównej, <code>noindex</code> na <code>/szukaj</code> i stronach odpowiedzi KMW, README.</li>
+  <li><code>feat(seo): keep the demo documents out of the index</code>. Meta <code>noindex</code> w dokumentach <code>/demo/*</code>.</li>
+  <li><code>feat(seo): add robots.txt and sitemap.xml</code>. Dwie trasy, pole <code>index</code> w <code>site-pages.ts</code>, test sitemap, README.</li>
+  <li><code>feat(seo): add JSON-LD structured data</code>. Razem z <code>schema-dts</code>; to tylko typy w <code>devDependencies</code>, więc nie wydzielam go do osobnego commitu zależności. Jeśli wolisz osobno, powiedz.</li>
+  <li><code>chore(deps): add satori and resvg-wasm</code>.</li>
+  <li><code>feat(seo): generate Open Graph images at build time</code>. Trasa, font, test, README ze zrzutem przykładowego obrazka.</li>
+  <li><code>feat(ui): add a favicon</code>. Po wyborze wariantu z makiet.</li>
+</ol>
+<p>Makiety obrazka OG i faviconu robię przed commitem 6, w <code>docs/design/2026-10-10-seo-indexing-mocks/</code>. Commity od 1 do 5 nie czekają na makiety. Przed każdym commitem <code>pnpm lint</code>, <code>pnpm build</code>, <code>pnpm test</code>.</p>
+
+<h2 id="decyzje">Decyzje</h2>
+<table>
+  <thead><tr><th>Sprawa</th><th>Decyzja</th></tr></thead>
+  <tbody>
+    <tr><td>Strony listy i problemów KMW</td><td><code>noindex</code>, poza sitemap. Robot zobaczyłby tylko blokadę, a pokazanie treści w HTML zdradzałoby odpowiedzi.</td></tr>
+    <tr><td>Tytuł strony głównej</td><td>Zostaje <code>a11y playground</code>, bez hasła. Strona główna dostaje tylko opis.</td></tr>
+    <tr><td>„WCAG 2.2” w tytułach kryteriów</td><td>Tak: <code>1.4.3 Kontrast (minimum), WCAG 2.2 · a11y playground</code>. Pozycje WCAG 3 bez dopisku.</td></tr>
+    <tr><td>Google Search Console</td><td>Poza PR. To nie Google Analytics: narzędzie pokazuje stan indeksu i przyjmuje sitemap, nie wymaga skryptu ani cookies. Dodajesz właściwość sam po wdrożeniu, metodą pliku HTML. Analityki ruchu plan nie obejmuje.</td></tr>
+  </tbody>
+</table>
+
+<h2 id="poza">Poza zakresem i ręczne kroki</h2>
+<ul>
+  <li>Własna domena. Gdy przyjdzie, zmieniam <code>siteUrl</code>, a Ty ustawiasz w Vercelu przekierowanie 308 z <code>*.vercel.app</code>.</li>
+  <li>Wersja angielska i <code>hreflang</code>. Strona jest jednojęzyczna.</li>
+  <li>Teksty pod frazy. Treść zostaje taka, jaka jest; plan dotyczy tylko technicznej strony indeksowania.</li>
+  <li>Twoje kroki po wdrożeniu: dodać właściwość w Search Console i Bing Webmaster Tools, zgłosić <code>/sitemap.xml</code>, sprawdzić kilka adresów narzędziem „Sprawdzanie adresu URL”.</li>
+  <li>Mój krok przed PR: sprawdzić na deployu preview, że Vercel wysyła <code>X-Robots-Tag: noindex</code>. Jeśli nie, dodaję <code>noindex</code> zależne od <code>VERCEL_ENV</code>.</li>
+</ul>
+
+</main>
+</body>
+</html>

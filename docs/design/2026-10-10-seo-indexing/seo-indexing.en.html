@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan: SEO, search and indexing</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1.25rem 6rem;
+    background: #000; color: #fff;
+    font: 16px/1.65 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  main { max-width: 82ch; margin: 0 auto; }
+  h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 .5rem; letter-spacing: -.02em; }
+  h2 { font-size: 1.2rem; margin: 3rem 0 .75rem; padding-top: 1rem; border-top: 1px solid #262626; letter-spacing: -.01em; }
+  h3 { font-size: 1rem; margin: 1.75rem 0 .5rem; }
+  p, li, dd { color: #e5e5e5; }
+  a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  ul, ol { padding-left: 1.3rem; }
+  li { margin: .3rem 0; }
+  code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .875em; background: #141414; border: 1px solid #262626; border-radius: 3px; padding: .08em .3em; }
+  pre { background: #0b0b0b; border: 1px solid #262626; border-radius: 4px; padding: .9rem 1rem; overflow-x: auto; }
+  pre code { background: none; border: 0; padding: 0; font-size: .82rem; line-height: 1.55; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; display: block; overflow-x: auto; }
+  th, td { border: 1px solid #262626; padding: .45rem .6rem; text-align: left; vertical-align: top; }
+  th { background: #101010; font-weight: 600; }
+  .meta { color: #a3a3a3; font-size: .85rem; margin: 0 0 1.5rem; }
+  .meta a { color: #fff; }
+  .flag { border-left: 2px solid #737373; padding: .1rem 0 .1rem .85rem; margin: 1rem 0; color: #d4d4d4; font-size: .93rem; }
+  .toc { border: 1px solid #262626; padding: 1rem 1rem 1rem 2.4rem; margin: 1.5rem 0 0; }
+  .toc li { margin: .15rem 0; }
+  @media (max-width: 40rem) { body { padding: 1.25rem .9rem 4rem; } h1 { font-size: 1.45rem; } }
+</style>
+</head>
+<body>
+<main>
+
+<p class="meta"><a href="seo-indexing.pl.html" hreflang="pl">Wersja polska</a></p>
+
+<h1>Plan: SEO, search and indexing</h1>
+<p class="meta">Brief: improve how the site gets into search engines and how it looks in results. Production: <code>https://a11y-playground-tau.vercel.app</code>. Plan version: 2026-10-10.</p>
+
+<p class="flag">Settled before the plan: the address stays on <code>*.vercel.app</code>, <code>/demo/*</code> documents get <code>noindex</code>, Open Graph images are generated at build time, JSON-LD covers the basic and content types.</p>
+
+<p class="flag">Decisions of 2026-10-10: KMW list and problem pages get <code>noindex</code>, criteria get "WCAG 2.2" in the title, you add Search Console yourself after deploy. The home page title stays <code>a11y playground</code>.</p>
+
+<ol class="toc">
+  <li><a href="#stan">Where things stand</a></li>
+  <li><a href="#zakres">Scope</a></li>
+  <li><a href="#meta">Head tags</a></li>
+  <li><a href="#indeks">What goes into the index</a></li>
+  <li><a href="#sitemap">robots.txt and sitemap.xml</a></li>
+  <li><a href="#og">Open Graph images</a></li>
+  <li><a href="#jsonld">JSON-LD</a></li>
+  <li><a href="#testy">Tests</a></li>
+  <li><a href="#commity">Branch and commits</a></li>
+  <li><a href="#decyzje">Decisions</a></li>
+  <li><a href="#poza">Out of scope and manual steps</a></li>
+</ol>
+
+<h2 id="stan">Where things stand</h2>
+<p>The good part: every page is prerendered to HTML, so a crawler sees the full content without JavaScript. <code>lang="pl"</code> is set and most routes have their own <code>title</code>. Everything else is missing.</p>
+<table>
+  <thead><tr><th>Item</th><th>Present?</th><th>Effect</th></tr></thead>
+  <tbody>
+    <tr><td><code>meta description</code></td><td>no</td><td>Google cuts its own snippet from the page, often the navigation or a banner.</td></tr>
+    <tr><td><code>link rel=canonical</code></td><td>no</td><td><code>/kryteria?poziom=AA</code>, <code>/praktyka/x?symulacja=czytnik</code> and <code>/praktyka/przed-i-po/lista?komu=</code> are separate URLs with the same content to a crawler.</td></tr>
+    <tr><td><code>robots.txt</code>, <code>sitemap.xml</code></td><td>no</td><td>The crawler finds pages only through links. Criterion 4.1.1 and repealed articles have no links from unfiltered views.</td></tr>
+    <tr><td>Open Graph, Twitter card</td><td>no</td><td>A link pasted into Slack or LinkedIn shows only the domain name.</td></tr>
+    <tr><td>JSON-LD</td><td>no</td><td>No breadcrumbs in results.</td></tr>
+    <tr><td>Favicon</td><td>no</td><td>Google shows a grey globe next to the result.</td></tr>
+    <tr><td><code>noindex</code> on broken pages</td><td>no</td><td>The broken KMW page or a <code>bad</code> variant can show up in results as if it were a model to copy.</td></tr>
+  </tbody>
+</table>
+
+<h2 id="zakres">Scope</h2>
+<p>One file with the address and a <code>head</code> helper, two new routes prerendered as files, an image generator, and JSON-LD built from data the routes already load. None of it changes how pages look, apart from the favicon.</p>
+
+<h2 id="meta">Head tags</h2>
+<h3>One source for the address</h3>
+<p><code>src/lib/site.ts</code> holds <code>siteUrl = "https://a11y-playground-tau.vercel.app"</code> and the site name. Changing the domain is one line. No environment variable: preview builds should also put production URLs in canonical, and Vercel already adds <code>X-Robots-Tag: noindex</code> to preview URLs (I will check this on one preview deploy, see <a href="#poza">manual steps</a>).</p>
+
+<h3>The <code>pageHead</code> helper</h3>
+<p><code>src/lib/seo.ts</code> exports a function that turns <code>{ title, description, path, image?, noindex? }</code> into ready <code>meta</code> and <code>links</code> for a TanStack Router <code>head</code>: <code>title</code>, <code>description</code>, <code>canonical</code>, <code>og:*</code>, <code>twitter:card</code>, <code>robots</code>. The argument type takes the path from <code>FileRoutesByPath</code>, so a typo in <code>path</code> fails <code>tsc</code>. Canonical never carries a query or a trailing slash.</p>
+<pre><code>head: ({ loaderData }) =&gt; pageHead({
+  title: `${c.id} ${c.name}, WCAG 2.2`,
+  description: c.summary,
+  path: `/kryteria/${c.id}`,
+}),</code></pre>
+
+<h3>Where descriptions come from</h3>
+<table>
+  <thead><tr><th>Route</th><th><code>description</code> source</th></tr></thead>
+  <tbody>
+    <tr><td><code>/kryteria/$id</code></td><td><code>summary</code> from <code>content/kryteria/*.md</code></td></tr>
+    <tr><td><code>/praktyka/$slug</code>, <code>/praktyka/wzorce/$slug</code></td><td><code>summary</code> from front matter</td></tr>
+    <tr><td><code>/sciezki/$path/$lesson</code></td><td>the lesson <code>summary</code></td></tr>
+    <tr><td><code>/prawo/$act</code>, <code>/prawo/$act/$unit</code></td><td>act title and unit number, filled into a template</td></tr>
+    <tr><td>list and one-off pages (<code>/</code>, <code>/kryteria</code>, <code>/slownik</code>, <code>/symulatory</code>, <code>/mapowanie</code>, <code>/wcag-3</code>…)</td><td>written by hand, one sentence, in the route file</td></tr>
+  </tbody>
+</table>
+<p>Descriptions are cut to 160 characters at a word boundary. The <code>summary</code> fields already exist and run one or two sentences, so only the list pages need hand-written descriptions.</p>
+
+<h3>Titles</h3>
+<p>The <code>X · a11y playground</code> pattern stays. One change: criteria get "WCAG 2.2" in the title (people search "wcag 1.4.3", not "kontrast minimum"). The home page stays at <code>a11y playground</code> (<a href="#decyzje">decisions</a>).</p>
+
+<h3>Favicon</h3>
+<p>No icon means a grey globe in Google results. This is a visual change, so it starts with mocks (2 or 3 variants of a simple mark, SVG plus a 180 px PNG for Apple) through <code>html-communication</code>, then your pick, then code. This step waits on the mocks and does not block the rest.</p>
+
+<h2 id="indeks">What goes into the index</h2>
+<table>
+  <thead><tr><th>Pages</th><th>Index</th><th>Sitemap</th><th>Why</th></tr></thead>
+  <tbody>
+    <tr><td>every app page except those below</td><td>yes</td><td>yes</td><td></td></tr>
+    <tr><td><code>/demo/*</code> (<code>bad</code>/<code>good</code> variants, patterns, KMW <code>przed</code>, <code>przed-znaczniki</code>, <code>po</code>)</td><td><code>noindex</code></td><td>no</td><td>Your call. The app pages that frame them are indexed as usual.</td></tr>
+    <tr><td><code>/szukaj</code></td><td><code>noindex</code></td><td>no</td><td>A search results page. Google advises against indexing those.</td></tr>
+    <tr><td><code>/praktyka/przed-i-po/lista</code> and <code>/praktyka/przed-i-po/1</code> to <code>/20</code></td><td><code>noindex</code></td><td>no</td><td>Prerender sees empty progress, so the HTML holds only "Najpierw sprawdź stronę sam". The entry page <code>/praktyka/przed-i-po</code> gets indexed.</td></tr>
+    <tr><td><code>/search-index.json</code></td><td>n/a</td><td>no</td><td>Not HTML.</td></tr>
+  </tbody>
+</table>
+<p><code>noindex</code> on <code>/demo/*</code> documents goes in as <code>&lt;meta name="robots" content="noindex"&gt;</code> inside the document, not as an HTTP header. Prerender writes these pages as static files, and headers set in the handler are lost. The meta goes into <code>demoDocument</code> and the KMW document, not into the example markup, so it does not change what axe checks.</p>
+
+<h2 id="sitemap">robots.txt and sitemap.xml</h2>
+<p>The prerender page list lives in <code>vite.config.ts</code> today. The sitemap needs the same list. Instead of a second copy, I move it to <code>src/content/site-pages.ts</code> and import it in both places. That is its own mechanical commit with no change in behaviour. Each entry gets an <code>index: boolean</code> field and the sitemap filters on it.</p>
+<p>Both routes work like <code>search-index[.]json.ts</code>: a <code>GET</code> handler plus a <code>pages</code> entry with <code>autoSubfolderIndex: false</code>.</p>
+<pre><code>User-agent: *
+Allow: /
+Sitemap: https://a11y-playground-tau.vercel.app/sitemap.xml</code></pre>
+<p>No <code>Disallow: /demo/</code>. A crawler does not fetch a blocked page, so it never sees the <code>noindex</code> and may list the bare URL with no description. I will leave a comment in the code so nobody adds it later.</p>
+<p>No <code>lastmod</code>. Without a real change date for each page, Google ignores it anyway.</p>
+
+<h2 id="og">Open Graph images</h2>
+<p>A 1200×630 PNG for every indexed page, made during prerender. A route <code>/og/$[...]path.png</code> returns the PNG; in <code>site-pages.ts</code> every page with <code>index: true</code> gets a second entry for its image.</p>
+<ul>
+  <li>Libraries: <code>satori</code> (JSX to SVG) and <code>@resvg/resvg-wasm</code> (SVG to PNG). The wasm build, not the native one, so the build behaves the same on Vercel and on Windows.</li>
+  <li>Font: satori cannot read <code>woff2</code>, and <code>@fontsource-variable/inter</code> ships only that. I add an Inter TTF (OFL licence) to <code>src/assets/</code>. It has to cover Polish letters; a test checks that.</li>
+  <li>Image content: the section (Kryteria, Praktyka, Prawo…), the page title, the A/AA/AAA level for a criterion, the site name. Text contrast at least 7:1, because the image lands in someone else's interface where we control nothing else.</li>
+  <li><code>og:image:alt</code> repeats the page title, so a screen reader in Slack or LinkedIn has something to read.</li>
+  <li>The image design is a visual change. 2 or 3 variants go into the mocks together with the favicon first, then code.</li>
+</ul>
+<p>Cost: one PNG per indexed page in the build and a longer prerender. I will measure both before committing. If the build grows too much, I fall back to one image per section instead of per page; that is a change to one function.</p>
+
+<h2 id="jsonld">JSON-LD</h2>
+<p>The <code>&lt;script type="application/ld+json"&gt;</code> blocks go through <code>scripts</code> in <code>head</code>, with <code>&lt;</code> written as <code><</code>. Types come from <code>schema-dts</code> (types only, no code in the bundle), so a wrong property in a schema is a <code>tsc</code> error.</p>
+<table>
+  <thead><tr><th>Where</th><th>Type</th><th>Built from</th></tr></thead>
+  <tbody>
+    <tr><td><code>/</code></td><td><code>WebSite</code></td><td>constants. No <code>SearchAction</code>: Google dropped the search box in results in 2024.</td></tr>
+    <tr><td>pages with the "Okruszki" navigation</td><td><code>BreadcrumbList</code></td><td>the breadcrumbs the page already shows</td></tr>
+    <tr><td><code>/slownik</code></td><td><code>DefinedTermSet</code> with a <code>DefinedTerm</code> per entry</td><td><code>glossary.ts</code></td></tr>
+    <tr><td><code>/sciezki/$path</code></td><td><code>Course</code></td><td>path title, description, lesson list</td></tr>
+    <tr><td><code>/sciezki/$path/$lesson</code></td><td><code>LearningResource</code> containing a <code>Quiz</code></td><td>the lesson and its questions</td></tr>
+    <tr><td><code>/prawo/$act</code>, <code>/prawo/$act/$unit</code></td><td><code>Legislation</code></td><td>act metadata from ELI (<code>legislationIdentifier</code>, consolidated text date)</td></tr>
+  </tbody>
+</table>
+<p>To be honest about it: of these, Google shows a rich result today only for breadcrumbs. <code>Course</code> needs a filled-in offer and provider, and Google's <code>Quiz</code> support is limited to education content with answers in the HTML, so these types mostly give other search engines and tools a correct description. They cost little, since the data is already in the loaders.</p>
+
+<h2 id="testy">Tests</h2>
+<p>All of them run against the built <code>.output/public</code>, in one file, either <code>e2e/seo.spec.ts</code> or a vitest test that reads files, no browser needed:</p>
+<ul>
+  <li>every URL in <code>sitemap.xml</code> exists as a file, has a canonical equal to itself and a non-empty <code>description</code>;</li>
+  <li>descriptions and titles are unique across sitemap pages;</li>
+  <li>no <code>noindex</code> page is in the sitemap, and every <code>/demo/*</code> document has <code>noindex</code>;</li>
+  <li>every <code>og:image</code> points at an existing 1200×630 PNG;</li>
+  <li>every JSON-LD block parses.</li>
+</ul>
+<p>The <code>pageHead</code> helper gets one unit test for description cutting and canonical building. Nothing more is needed.</p>
+
+<h2 id="commity">Branch and commits</h2>
+<p>Branch: <code>feat/seo-indexing</code>. I create it only after your go-ahead.</p>
+<ol>
+  <li><code>refactor(build): move the prerender page list to site-pages.ts</code>. Mechanical, no change in build output.</li>
+  <li><code>feat(seo): add descriptions, canonical links and page titles</code>. <code>site.ts</code>, <code>seo.ts</code> with its test, all routes, home page description, <code>noindex</code> on <code>/szukaj</code> and the KMW answer pages, README.</li>
+  <li><code>feat(seo): keep the demo documents out of the index</code>. <code>noindex</code> meta in the <code>/demo/*</code> documents.</li>
+  <li><code>feat(seo): add robots.txt and sitemap.xml</code>. Two routes, the <code>index</code> field in <code>site-pages.ts</code>, the sitemap test, README.</li>
+  <li><code>feat(seo): add JSON-LD structured data</code>. Together with <code>schema-dts</code>; it is types only in <code>devDependencies</code>, so I am not splitting it into its own dependency commit. Say if you want it separate.</li>
+  <li><code>chore(deps): add satori and resvg-wasm</code>.</li>
+  <li><code>feat(seo): generate Open Graph images at build time</code>. Route, font, test, README with a sample image.</li>
+  <li><code>feat(ui): add a favicon</code>. After you pick a variant from the mocks.</li>
+</ol>
+<p>The OG image and favicon mocks come before commit 6, in <code>docs/design/2026-10-10-seo-indexing-mocks/</code>. Commits 1 to 5 do not wait for them. <code>pnpm lint</code>, <code>pnpm build</code> and <code>pnpm test</code> run before every commit.</p>
+
+<h2 id="decyzje">Decisions</h2>
+<table>
+  <thead><tr><th>Question</th><th>Decision</th></tr></thead>
+  <tbody>
+    <tr><td>KMW list and problem pages</td><td><code>noindex</code>, out of the sitemap. A crawler would see only the lock, and putting the content in the HTML would give the answers away.</td></tr>
+    <tr><td>Home page title</td><td>Stays <code>a11y playground</code>, no tagline. The home page only gets a description.</td></tr>
+    <tr><td>"WCAG 2.2" in criterion titles</td><td>Yes: <code>1.4.3 Kontrast (minimum), WCAG 2.2 · a11y playground</code>. WCAG 3 items stay as they are.</td></tr>
+    <tr><td>Google Search Console</td><td>Outside the PR. It is not Google Analytics: it shows the index status and takes the sitemap, with no script and no cookies. You add the property yourself after deploy, using the HTML file method. Traffic analytics are not part of this plan.</td></tr>
+  </tbody>
+</table>
+
+<h2 id="poza">Out of scope and manual steps</h2>
+<ul>
+  <li>A custom domain. When it comes, I change <code>siteUrl</code> and you set a 308 redirect from <code>*.vercel.app</code> in Vercel.</li>
+  <li>An English version and <code>hreflang</code>. The site has one language.</li>
+  <li>Rewriting copy for keywords. Content stays as it is; this plan covers the technical side of indexing.</li>
+  <li>Your steps after deploy: add the property in Search Console and Bing Webmaster Tools, submit <code>/sitemap.xml</code>, run a few URLs through "URL Inspection".</li>
+  <li>My step before the PR: check on a preview deploy that Vercel sends <code>X-Robots-Tag: noindex</code>. If it does not, I add <code>noindex</code> keyed on <code>VERCEL_ENV</code>.</li>
+</ul>
+
+</main>
+</body>
+</html>

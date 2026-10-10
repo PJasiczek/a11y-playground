@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mocks: Open Graph image and favicon</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 2rem 1.25rem 6rem; background: #000; color: #fff; font: 16px/1.6 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif; }
+  main { max-width: 1240px; margin: 0 auto; }
+  h1 { font-size: 1.6rem; margin: 0 0 .5rem; letter-spacing: -.02em; }
+  h2 { font-size: 1.2rem; margin: 3rem 0 .5rem; padding-top: 1rem; border-top: 1px solid #262626; }
+  h3 { font-size: 1rem; margin: 1.75rem 0 .5rem; }
+  p, li { color: #e5e5e5; max-width: 80ch; }
+  a { color: #fff; }
+  code { font-family: ui-monospace, Consolas, monospace; font-size: .875em; background: #141414; border: 1px solid #262626; border-radius: 3px; padding: .05em .3em; }
+  .meta { color: #a3a3a3; font-size: .85rem; }
+  .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1rem; margin: .75rem 0; }
+  figure { margin: 0; }
+  figcaption { font-size: .8rem; color: #a3a3a3; margin-top: .35rem; }
+
+  /* ---------- Open Graph canvas: 1200x630, everything sized in cqw (1cqw = 12px at full size) ---------- */
+  .og { container-type: inline-size; width: 100%; aspect-ratio: 1200 / 630; overflow: hidden; position: relative; font-family: Inter, "Inter Variable", ui-sans-serif, "Segoe UI", system-ui, sans-serif; }
+  .og .in { position: absolute; inset: 0; display: flex; flex-direction: column; }
+  .mono { font-family: ui-monospace, "JetBrains Mono", Consolas, monospace; }
+
+  /* A: Zakreślacz. Paper, the page's own identifier on the yellow marker. */
+  .a { background: #fbfaf7; color: #14171a; }
+  .a .in { padding: 5.5cqw 6cqw; }
+  .a .eyebrow { font-size: 1.75cqw; letter-spacing: .12em; text-transform: uppercase; color: #484d52; }
+  .a .id { align-self: flex-start; margin-top: 3.2cqw; background: #f4e75b; color: #14171a; font-weight: 700; font-size: 3.4cqw; padding: .35cqw 1.2cqw; }
+  .a .title { margin-top: 1.6cqw; font-size: 5.6cqw; line-height: 1.08; font-weight: 700; letter-spacing: -.02em; max-width: 92%; }
+  .a .lead { margin-top: 2cqw; font-size: 2.2cqw; line-height: 1.4; color: #484d52; max-width: 80%; }
+  .a .foot { margin-top: auto; display: flex; justify-content: space-between; align-items: flex-end; border-top: .25cqw solid #14171a; padding-top: 1.6cqw; font-size: 1.9cqw; }
+  .a .foot b { font-weight: 700; }
+  .a .foot span { color: #484d52; }
+
+  /* B: Fokus. Ink, the title inside a 2.4.13-style focus outline. */
+  .b { background: #14171a; color: #f3f1ec; }
+  .b .in { padding: 5cqw 6cqw; }
+  .b .eyebrow { font-size: 1.75cqw; letter-spacing: .12em; text-transform: uppercase; color: #b4b9be; }
+  .b .ring { margin-top: 3.5cqw; align-self: flex-start; max-width: 94%; border: .55cqw solid #f4e75b; padding: 1.6cqw 2cqw; }
+  .b .title { font-size: 5.4cqw; line-height: 1.08; font-weight: 700; letter-spacing: -.02em; }
+  .b .lead { margin-top: 1.4cqw; font-size: 2.1cqw; line-height: 1.4; color: #b4b9be; }
+  .b .foot { margin-top: auto; display: flex; justify-content: space-between; font-size: 1.9cqw; }
+  .b .foot span { color: #b4b9be; }
+
+  /* C: Numer. An ink column carries the page's number; paper carries the words. */
+  .c { background: #fbfaf7; color: #14171a; }
+  .c .in { flex-direction: row; }
+  .c .col { width: 36%; background: #14171a; color: #f4e75b; display: flex; flex-direction: column; justify-content: space-between; padding: 5cqw 3.5cqw; }
+  .c .num { font-weight: 700; font-size: 8.6cqw; line-height: .95; letter-spacing: -.03em; }
+  .c .num.small { font-size: 6.4cqw; }
+  .c .lvl { color: #f3f1ec; font-size: 1.9cqw; letter-spacing: .1em; text-transform: uppercase; }
+  .c .body { flex: 1; display: flex; flex-direction: column; padding: 5cqw 4.5cqw 4.5cqw; }
+  .c .eyebrow { font-size: 1.75cqw; letter-spacing: .12em; text-transform: uppercase; color: #2c36a8; font-weight: 700; }
+  .c .title { margin-top: 2cqw; font-size: 4.9cqw; line-height: 1.1; font-weight: 700; letter-spacing: -.02em; }
+  .c .lead { margin-top: 1.8cqw; font-size: 2.05cqw; line-height: 1.4; color: #484d52; }
+  .c .foot { margin-top: auto; font-size: 1.9cqw; display: flex; justify-content: space-between; }
+  .c .foot span { color: #484d52; }
+
+  /* Link preview frame, roughly how Slack and LinkedIn show it. */
+  .preview { max-width: 520px; border-left: 4px solid #3a3a3a; padding: .25rem 0 .25rem .85rem; }
+  .preview .site { font-size: .8rem; color: #a3a3a3; }
+  .preview .t { color: #6fb3ff; font-weight: 700; margin: .1rem 0; }
+  .preview .d { font-size: .88rem; color: #d4d4d4; margin-bottom: .5rem; }
+  .preview .og { border-radius: 8px; }
+
+  /* ---------- Favicons ---------- */
+  .fav-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem; }
+  .sizes { display: flex; align-items: flex-end; gap: 1rem; padding: 1rem; background: #fff; }
+  .sizes.dark { background: #202124; }
+  .sizes svg { display: block; }
+  .tab { display: flex; align-items: center; gap: .5rem; height: 34px; padding: 0 .75rem; border-radius: 8px 8px 0 0; font-size: 13px; width: 240px; }
+  .tab.light { background: #fff; color: #1f1f1f; }
+  .tab.dark { background: #35363a; color: #e8eaed; }
+  .tabs { display: flex; gap: .5rem; padding: .5rem .5rem 0; }
+  .tabs.light { background: #dee1e6; }
+  .tabs.dark { background: #202124; }
+</style>
+</head>
+<body>
+<main>
+
+<h1>Mocks: Open Graph image and favicon</h1>
+<p class="meta">Belongs to <a href="../2026-10-10-seo-indexing/seo-indexing.en.html">the SEO and indexing plan</a>, commits 6 to 8. 2026-10-10. Pick one OG variant (A, B, C) and one favicon (1, 2, 3).</p>
+
+<p>All three OG variants use the app's own tokens: paper <code>#fbfaf7</code>, ink <code>#14171a</code>, indigo <code>#2c36a8</code>, the marker yellow <code>#f4e75b</code>. Each is drawn with flexbox, borders and plain text only, which is what satori renders. Text pairs reach at least 7:1. The image always repeats the page title, so <code>og:image:alt</code> can be the title and the image carries nothing the text does not.</p>
+
+<h2 id="og">Open Graph image, 1200×630</h2>
+
+<h3>A · Zakreślacz</h3>
+<p>Paper, like the app. The page's identifier sits on the yellow marker, the way the app marks what a user gains. Quiet, reads as a page of the site.</p>
+<div class="row">
+  <figure>
+    <div class="og a"><div class="in">
+      <div class="eyebrow mono">Kryteria · WCAG 2.2 · poziom AA</div>
+      <div class="id mono">1.4.3</div>
+      <div class="title">Kontrast (minimum)</div>
+      <div class="lead">Tekst musi odcinać się od tła w stosunku co najmniej 4,5 do 1. Duży tekst wystarczy 3 do 1.</div>
+      <div class="foot"><b>a11y playground</b><span class="mono">a11y-playground-tau.vercel.app</span></div>
+    </div></div>
+    <figcaption>Criterion</figcaption>
+  </figure>
+  <figure>
+    <div class="og a"><div class="in">
+      <div class="eyebrow mono">Ścieżki · Programista</div>
+      <div class="id mono">Lekcja 3 z 6</div>
+      <div class="title">Punkty orientacyjne i nagłówki</div>
+      <div class="lead">Header, nav, main i footer oraz nagłówki po kolei to mapa strony, po której czytnik skacze.</div>
+      <div class="foot"><b>a11y playground</b><span class="mono">a11y-playground-tau.vercel.app</span></div>
+    </div></div>
+    <figcaption>Lesson</figcaption>
+  </figure>
+  <figure>
+    <div class="og a"><div class="in">
+      <div class="eyebrow mono">Prawo · Dz.U. 2019 poz. 848</div>
+      <div class="id mono">Art. 5</div>
+      <div class="title">Wymagania · Ustawa o dostępności cyfrowej</div>
+      <div class="foot"><b>a11y playground</b><span class="mono">a11y-playground-tau.vercel.app</span></div>
+    </div></div>
+    <figcaption>Article, long title, no lead</figcaption>
+  </figure>
+</div>
+
+<h3>B · Fokus</h3>
+<p>Ink background, the title inside a thick yellow outline drawn like the app's focus indicator (2.4.13). The most distinctive in a feed, and the outline is the subject itself: where focus is, you can see it.</p>
+<div class="row">
+  <figure>
+    <div class="og b"><div class="in">
+      <div class="eyebrow mono">Kryteria · WCAG 2.2 · poziom AA</div>
+      <div class="ring"><div class="title"><span class="mono">1.4.3</span> Kontrast (minimum)</div><div class="lead">Tekst musi odcinać się od tła w stosunku co najmniej 4,5 do 1. Duży tekst wystarczy 3 do 1.</div></div>
+      <div class="foot"><b>a11y playground</b><span class="mono">a11y-playground-tau.vercel.app</span></div>
+    </div></div>
+    <figcaption>Criterion</figcaption>
+  </figure>
+  <figure>
+    <div class="og b"><div class="in">
+      <div class="eyebrow mono">Ścieżki · Programista · lekcja 3 z 6</div>
+      <div class="ring"><div class="title">Punkty orientacyjne i nagłówki</div><div class="lead">Header, nav, main i footer oraz nagłówki po kolei to mapa strony, po której czytnik skacze.</div></div>
+      <div class="foot"><b>a11y playground</b><span class="mono">a11y-playground-tau.vercel.app</span></div>
+    </div></div>
+    <figcaption>Lesson</figcaption>
+  </figure>
+  <figure>
+    <div class="og b"><div class="in">
+      <div class="eyebrow mono">Prawo · Dz.U. 2019 poz. 848</div>
+      <div class="ring"><div class="title"><span class="mono">Art. 5</span> Wymagania · Ustawa o dostępności cyfrowej</div></div>
+      <div class="foot"><b>a11y playground</b><span class="mono">a11y-playground-tau.vercel.app</span></div>
+    </div></div>
+    <figcaption>Article, long title, no lead</figcaption>
+  </figure>
+</div>
+
+<h3>C · Numer</h3>
+<p>The number people search for (1.4.3, Art. 5) gets its own ink column, set large in yellow mono. Pages without a number (home, lists) show the section name there instead. Best for criteria, weakest for long article titles.</p>
+<div class="row">
+  <figure>
+    <div class="og c"><div class="in">
+      <div class="col mono"><div class="num">1.4.3</div><div class="lvl">Poziom AA</div></div>
+      <div class="body">
+        <div class="eyebrow mono">Kryteria · WCAG 2.2</div>
+        <div class="title">Kontrast (minimum)</div>
+        <div class="lead">Tekst musi odcinać się od tła w stosunku co najmniej 4,5 do 1. Duży tekst wystarczy 3 do 1.</div>
+        <div class="foot"><b>a11y playground</b></div>
+      </div>
+    </div></div>
+    <figcaption>Criterion</figcaption>
+  </figure>
+  <figure>
+    <div class="og c"><div class="in">
+      <div class="col mono"><div class="num">3/6</div><div class="lvl">Lekcja</div></div>
+      <div class="body">
+        <div class="eyebrow mono">Ścieżki · Programista</div>
+        <div class="title">Punkty orientacyjne i nagłówki</div>
+        <div class="lead">Header, nav, main i footer oraz nagłówki po kolei to mapa strony, po której czytnik skacze.</div>
+        <div class="foot"><b>a11y playground</b></div>
+      </div>
+    </div></div>
+    <figcaption>Lesson</figcaption>
+  </figure>
+  <figure>
+    <div class="og c"><div class="in">
+      <div class="col mono"><div class="num small">Art. 5</div><div class="lvl">Dz.U. 2019 poz. 848</div></div>
+      <div class="body">
+        <div class="eyebrow mono">Prawo</div>
+        <div class="title">Wymagania · Ustawa o dostępności cyfrowej</div>
+        <div class="foot"><b>a11y playground</b></div>
+      </div>
+    </div></div>
+    <figcaption>Article, long title, no lead</figcaption>
+  </figure>
+</div>
+
+<h3>In a link preview</h3>
+<p>The same criterion in each variant, at the size a chat app shows it.</p>
+<div class="row">
+  <div class="preview"><div class="site">a11y playground</div><div class="t">1.4.3 Kontrast (minimum), WCAG 2.2</div><div class="d">Tekst musi odcinać się od tła w stosunku co najmniej 4,5 do 1. Duży tekst wystarczy 3 do 1.</div>
+    <div class="og a"><div class="in"><div class="eyebrow mono">Kryteria · WCAG 2.2 · poziom AA</div><div class="id mono">1.4.3</div><div class="title">Kontrast (minimum)</div><div class="lead">Tekst musi odcinać się od tła w stosunku co najmniej 4,5 do 1. Duży tekst wystarczy 3 do 1.</div><div class="foot"><b>a11y playground</b><span class="mono">a11y-playground-tau.vercel.app</span></div></div></div>
+    <figcaption>A</figcaption></div>
+  <div class="preview"><div class="site">a11y playground</div><div class="t">1.4.3 Kontrast (minimum), WCAG 2.2</div><div class="d">Tekst musi odcinać się od tła w stosunku co najmniej 4,5 do 1. Duży tekst wystarczy 3 do 1.</div>
+    <div class="og b"><div class="in"><div class="eyebrow mono">Kryteria · WCAG 2.2 · poziom AA</div><div class="ring"><div class="title"><span class="mono">1.4.3</span> Kontrast (minimum)</div><div class="lead">Tekst musi odcinać się od tła w stosunku co najmniej 4,5 do 1. Duży tekst wystarczy 3 do 1.</div></div><div class="foot"><b>a11y playground</b><span class="mono">a11y-playground-tau.vercel.app</span></div></div></div>
+    <figcaption>B</figcaption></div>
+  <div class="preview"><div class="site">a11y playground</div><div class="t">1.4.3 Kontrast (minimum), WCAG 2.2</div><div class="d">Tekst musi odcinać się od tła w stosunku co najmniej 4,5 do 1. Duży tekst wystarczy 3 do 1.</div>
+    <div class="og c"><div class="in"><div class="col mono"><div class="num">1.4.3</div><div class="lvl">Poziom AA</div></div><div class="body"><div class="eyebrow mono">Kryteria · WCAG 2.2</div><div class="title">Kontrast (minimum)</div><div class="lead">Tekst musi odcinać się od tła w stosunku co najmniej 4,5 do 1. Duży tekst wystarczy 3 do 1.</div><div class="foot"><b>a11y playground</b></div></div></div></div>
+    <figcaption>C</figcaption></div>
+</div>
+
+<h2 id="favicon">Favicon</h2>
+<p>SVG for browsers plus a 180 px PNG for Apple touch icons. Shown at 16, 32 and 64 px on light and dark, and in a browser tab. A favicon has to survive 16 px, so each one is a single shape and at most two letters.</p>
+
+<div class="fav-grid">
+  <figure>
+    <h3>1 · Fokus</h3>
+    <div class="sizes">
+      <svg width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#f4e75b"/><rect x="3" y="3" width="26" height="26" rx="4" fill="none" stroke="#14171a" stroke-width="2.5"/><text x="16" y="22.5" text-anchor="middle" font-family="Inter, Segoe UI, sans-serif" font-weight="800" font-size="19" fill="#14171a">a</text></svg>
+      <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#f4e75b"/><rect x="3" y="3" width="26" height="26" rx="4" fill="none" stroke="#14171a" stroke-width="2.5"/><text x="16" y="22.5" text-anchor="middle" font-family="Inter, Segoe UI, sans-serif" font-weight="800" font-size="19" fill="#14171a">a</text></svg>
+      <svg width="64" height="64" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#f4e75b"/><rect x="3" y="3" width="26" height="26" rx="4" fill="none" stroke="#14171a" stroke-width="2.5"/><text x="16" y="22.5" text-anchor="middle" font-family="Inter, Segoe UI, sans-serif" font-weight="800" font-size="19" fill="#14171a">a</text></svg>
+    </div>
+    <div class="sizes dark">
+      <svg width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#f4e75b"/><rect x="3" y="3" width="26" height="26" rx="4" fill="none" stroke="#14171a" stroke-width="2.5"/><text x="16" y="22.5" text-anchor="middle" font-family="Inter, Segoe UI, sans-serif" font-weight="800" font-size="19" fill="#14171a">a</text></svg>
+      <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#f4e75b"/><rect x="3" y="3" width="26" height="26" rx="4" fill="none" stroke="#14171a" stroke-width="2.5"/><text x="16" y="22.5" text-anchor="middle" font-family="Inter, Segoe UI, sans-serif" font-weight="800" font-size="19" fill="#14171a">a</text></svg>
+      <svg width="64" height="64" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#f4e75b"/><rect x="3" y="3" width="26" height="26" rx="4" fill="none" stroke="#14171a" stroke-width="2.5"/><text x="16" y="22.5" text-anchor="middle" font-family="Inter, Segoe UI, sans-serif" font-weight="800" font-size="19" fill="#14171a">a</text></svg>
+    </div>
+    <figcaption>Yellow square, an "a" inside a focus ring. Visible on both tab colours. Matches OG B.</figcaption>
+  </figure>
+
+  <figure>
+    <h3>2 · Jedenaście</h3>
+    <div class="sizes">
+      <svg width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#14171a"/><text x="16" y="23" text-anchor="middle" font-family="ui-monospace, Consolas, monospace" font-weight="700" font-size="20" letter-spacing="-1" fill="#f4e75b">11</text></svg>
+      <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#14171a"/><text x="16" y="23" text-anchor="middle" font-family="ui-monospace, Consolas, monospace" font-weight="700" font-size="20" letter-spacing="-1" fill="#f4e75b">11</text></svg>
+      <svg width="64" height="64" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#14171a"/><text x="16" y="23" text-anchor="middle" font-family="ui-monospace, Consolas, monospace" font-weight="700" font-size="20" letter-spacing="-1" fill="#f4e75b">11</text></svg>
+    </div>
+    <div class="sizes dark">
+      <svg width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#14171a"/><text x="16" y="23" text-anchor="middle" font-family="ui-monospace, Consolas, monospace" font-weight="700" font-size="20" letter-spacing="-1" fill="#f4e75b">11</text></svg>
+      <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#14171a"/><text x="16" y="23" text-anchor="middle" font-family="ui-monospace, Consolas, monospace" font-weight="700" font-size="20" letter-spacing="-1" fill="#f4e75b">11</text></svg>
+      <svg width="64" height="64" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#14171a"/><text x="16" y="23" text-anchor="middle" font-family="ui-monospace, Consolas, monospace" font-weight="700" font-size="20" letter-spacing="-1" fill="#f4e75b">11</text></svg>
+    </div>
+    <figcaption>The "11" of a11y in yellow mono on ink. Crisp at 16 px, but the dark square blends into a dark tab bar. Matches OG C.</figcaption>
+  </figure>
+
+  <figure>
+    <h3>3 · Zakreślone a</h3>
+    <div class="sizes">
+      <svg width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#fbfaf7"/><rect x=".75" y=".75" width="30.5" height="30.5" rx="5.5" fill="none" stroke="#14171a" stroke-width="1.5"/><rect x="5" y="15" width="22" height="10" fill="#f4e75b"/><text x="16" y="24" text-anchor="middle" font-family="Inter, Segoe UI, sans-serif" font-weight="800" font-size="22" fill="#14171a">a</text></svg>
+      <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#fbfaf7"/><rect x=".75" y=".75" width="30.5" height="30.5" rx="5.5" fill="none" stroke="#14171a" stroke-width="1.5"/><rect x="5" y="15" width="22" height="10" fill="#f4e75b"/><text x="16" y="24" text-anchor="middle" font-family="Inter, Segoe UI, sans-serif" font-weight="800" font-size="22" fill="#14171a">a</text></svg>
+      <svg width="64" height="64" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#fbfaf7"/><rect x=".75" y=".75" width="30.5" height="30.5" rx="5.5" fill="none" stroke="#14171a" stroke-width="1.5"/><rect x="5" y="15" width="22" height="10" fill="#f4e75b"/><text x="16" y="24" text-anchor="middle" font-family="Inter, Segoe UI, sans-serif" font-weight="800" font-size="22" fill="#14171a">a</text></svg>
+    </div>
+    <div class="sizes dark">
+      <svg width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#fbfaf7"/><rect x=".75" y=".75" width="30.5" height="30.5" rx="5.5" fill="none" stroke="#14171a" stroke-width="1.5"/><rect x="5" y="15" width="22" height="10" fill="#f4e75b"/><text x="16" y="24" text-anchor="middle" font-family="Inter, Segoe UI, sans-serif" font-weight="800" font-size="22" fill="#14171a">a</text></svg>
+      <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#fbfaf7"/><rect x=".75" y=".75" width="30.5" height="30.5" rx="5.5" fill="none" stroke="#14171a" stroke-width="1.5"/><rect x="5" y="15" width="22" height="10" fill="#f4e75b"/><text x="16" y="24" text-anchor="middle" font-family="Inter, Segoe UI, sans-serif" font-weight="800" font-size="22" fill="#14171a">a</text></svg>
+      <svg width="64" height="64" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#fbfaf7"/><rect x=".75" y=".75" width="30.5" height="30.5" rx="5.5" fill="none" stroke="#14171a" stroke-width="1.5"/><rect x="5" y="15" width="22" height="10" fill="#f4e75b"/><text x="16" y="24" text-anchor="middle" font-family="Inter, Segoe UI, sans-serif" font-weight="800" font-size="22" fill="#14171a">a</text></svg>
+    </div>
+    <figcaption>Paper square, an "a" underlined with the marker. At 16 px the marker reads as a yellow band. Matches OG A.</figcaption>
+  </figure>
+</div>
+
+<h3>In a browser tab</h3>
+<div class="tabs light">
+  <div class="tab light"><svg width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#f4e75b"/><rect x="3" y="3" width="26" height="26" rx="4" fill="none" stroke="#14171a" stroke-width="2.5"/><text x="16" y="22.5" text-anchor="middle" font-family="Inter, Segoe UI, sans-serif" font-weight="800" font-size="19" fill="#14171a">a</text></svg>1 · 1.4.3 Kontrast (minimum)…</div>
+  <div class="tab light"><svg width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#14171a"/><text x="16" y="23" text-anchor="middle" font-family="ui-monospace, Consolas, monospace" font-weight="700" font-size="20" letter-spacing="-1" fill="#f4e75b">11</text></svg>2 · 1.4.3 Kontrast (minimum)…</div>
+  <div class="tab light"><svg width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#fbfaf7"/><rect x=".75" y=".75" width="30.5" height="30.5" rx="5.5" fill="none" stroke="#14171a" stroke-width="1.5"/><rect x="5" y="15" width="22" height="10" fill="#f4e75b"/><text x="16" y="24" text-anchor="middle" font-family="Inter, Segoe UI, sans-serif" font-weight="800" font-size="22" fill="#14171a">a</text></svg>3 · 1.4.3 Kontrast (minimum)…</div>
+</div>
+<div class="tabs dark">
+  <div class="tab dark"><svg width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#f4e75b"/><rect x="3" y="3" width="26" height="26" rx="4" fill="none" stroke="#14171a" stroke-width="2.5"/><text x="16" y="22.5" text-anchor="middle" font-family="Inter, Segoe UI, sans-serif" font-weight="800" font-size="19" fill="#14171a">a</text></svg>1 · 1.4.3 Kontrast (minimum)…</div>
+  <div class="tab dark"><svg width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#14171a"/><text x="16" y="23" text-anchor="middle" font-family="ui-monospace, Consolas, monospace" font-weight="700" font-size="20" letter-spacing="-1" fill="#f4e75b">11</text></svg>2 · 1.4.3 Kontrast (minimum)…</div>
+  <div class="tab dark"><svg width="16" height="16" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#fbfaf7"/><rect x=".75" y=".75" width="30.5" height="30.5" rx="5.5" fill="none" stroke="#14171a" stroke-width="1.5"/><rect x="5" y="15" width="22" height="10" fill="#f4e75b"/><text x="16" y="24" text-anchor="middle" font-family="Inter, Segoe UI, sans-serif" font-weight="800" font-size="22" fill="#14171a">a</text></svg>3 · 1.4.3 Kontrast (minimum)…</div>
+</div>
+
+<h2 id="notes">Notes for the build</h2>
+<ul>
+  <li>The SVG favicon will be drawn as paths, not <code>&lt;text&gt;</code>, so it does not depend on fonts installed on the reader's machine.</li>
+  <li>The mono parts of A, B and C need a second font file for satori (JetBrains Mono, OFL) next to Inter. Without it they fall back to Inter.</li>
+  <li>My pick: B with favicon 1. They share the focus ring, an image taken straight from the subject, and B stands out in both a light and a dark feed. A is the safe choice if you want the preview to look like the app page.</li>
+</ul>
+
+</main>
+</body>
+</html>
