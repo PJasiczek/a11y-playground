@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Before and after page mocks: entry, viewing, problem list, the KMW site</title>
+<style>
+  :root {
+    /* app tokens, as in earlier mocks */
+    --paper: #FBFAF7; --paper-2: #F1EFE8; --surface: #FFFFFF;
+    --ink: #14171A; --ink-2: #484D52; --rule: #DFDBD1; --control: #857F72;
+    --accent: #2C36A8; --marker: #F4E75B; --good: #145537; --bad: #9A1B1B;
+    --sans: "Inter var", Inter, "Segoe UI", -apple-system, system-ui, sans-serif;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, "SF Mono", monospace;
+    /* KMW, modern look: heather, signal yellow, an amber departure board */
+    --heather: #4A1F5C; --heather-2: #EDE6F0; --signal: #FFC93C; --k-ink: #17141C; --k-paper: #F7F4F9;
+    --board: #15111A; --amber: #FFB547; --tram: #B3122E; --bus: #1D6B36; --fast: #1C3D8F;
+    --cond: "Bahnschrift", "Roboto Condensed", "Arial Narrow", "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 2.5rem 1rem 6rem; background: #000; color: #fff; font: 16px/1.6 var(--sans); }
+  .page { max-width: 1180px; margin: 0 auto; }
+  .page > h1 { font-size: 1.4rem; margin: 0 0 .35rem; letter-spacing: -.02em; }
+  .page > p, .note { color: #B8BDC2; font-size: .9rem; margin: 0 0 1rem; max-width: 76ch; }
+  .page > h2 { font: 600 .8rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; margin: 4rem 0 .6rem; }
+  .page code { font-family: var(--mono); font-size: .9em; }
+  .page a { color: #fff; }
+  .page a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  .variant { margin: 0 0 3rem; }
+  .variant > h3 { font-size: 1.05rem; margin: 0 0 .25rem; }
+  .variant > h3 b { font-family: var(--mono); display: inline-block; min-width: 1.9rem; }
+  .frame { border: 1px solid #2A2D31; border-radius: 6px; overflow: hidden; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 900px) { .pair { grid-template-columns: 1fr; } }
+  .cap { font: .75rem var(--mono); color: #B8BDC2; margin: .4rem 0 0; }
+
+  /* ---------- app surface ---------- */
+  .s { background: var(--paper); color: var(--ink); font-size: 15px; }
+  .s a, .s .a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+  .s p { margin: .35rem 0 0; }
+  .mono { font-family: var(--mono); }
+  .btn { display: inline-flex; align-items: center; gap: .4rem; min-height: 44px; padding: 0 .85rem; border: 1px solid var(--control); border-radius: 2px; background: var(--surface); color: var(--ink); font: 600 .875rem var(--sans); }
+  .btn.pri { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .btn[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .btn[aria-pressed="true"]::before { content: "✓" / ""; }
+  .hd { border-bottom: 1px solid var(--rule); padding: .4rem 1rem; display: flex; flex-wrap: wrap; align-items: center; gap: .25rem .9rem; }
+  .wm { font-weight: 700; min-height: 44px; display: inline-flex; align-items: center; }
+  .wm span { font-family: var(--mono); }
+  .nv { display: flex; flex-wrap: wrap; gap: 0 .1rem; margin-left: auto; font-size: .875rem; color: var(--ink-2); }
+  .nv span { min-height: 44px; display: inline-flex; align-items: center; padding: 0 .45rem; border-bottom: 2px solid transparent; }
+  .nv span.cur { color: var(--ink); font-weight: 600; border-color: var(--ink); }
+  .mn { padding: 1.25rem 1rem 1.5rem; }
+  .t1 { font-size: 1.75rem; line-height: 1.1; font-weight: 700; letter-spacing: -.03em; margin: 0; }
+  .t2 { font-size: 1.2rem; font-weight: 700; letter-spacing: -.02em; margin: 0; }
+  .lead { color: var(--ink-2); max-width: 60ch; }
+  .tabs { display: flex; flex-wrap: wrap; gap: 0 1.25rem; border-bottom: 1px solid var(--rule); margin: .75rem 0 1.25rem; font-size: .9rem; }
+  .tabs span { min-height: 44px; display: inline-flex; align-items: center; color: var(--ink-2); border-bottom: 3px solid transparent; }
+  .tabs span.cur { color: var(--ink); font-weight: 700; border-color: var(--ink); }
+  .warn { border: 2px solid var(--ink); background: var(--marker); padding: .55rem .75rem; font-size: .875rem; font-weight: 600; margin: .6rem 0 0; max-width: 60ch; }
+  .warn::before { content: "⚠ " / ""; }
+  .steps { list-style: none; counter-reset: st; padding: 0; margin: 1.25rem 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-top: 2px solid var(--ink); }
+  @media (max-width: 760px) { .steps { grid-template-columns: 1fr; } }
+  .steps li { counter-increment: st; padding: .9rem 1rem 1rem 0; border-right: 1px solid var(--rule); }
+  .steps li + li { padding-left: 1rem; }
+  .steps li:last-child { border-right: 0; }
+  .steps li::before { content: counter(st); font: 700 2.4rem/1 var(--mono); display: block; margin-bottom: .4rem; }
+  .steps h3 { margin: 0; font-size: 1.05rem; }
+  .steps p { font-size: .875rem; color: var(--ink-2); }
+  .steps .btn { margin-top: .7rem; }
+  .thumb { border: 1px solid var(--rule); background: var(--surface); height: 92px; margin-top: .7rem; overflow: hidden; position: relative; }
+  .fixcards { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; margin-top: .9rem; }
+  @media (max-width: 760px) { .fixcards { grid-template-columns: 1fr; } }
+  .fc { border: 1px solid var(--rule); background: var(--surface); padding: .75rem .85rem; border-left: 4px solid var(--marker); }
+  .fc h3 { font-size: 1rem; margin: 0; }
+  .fc p { font-size: .8rem; color: var(--ink-2); }
+  .fc .eff { font: .72rem var(--mono); color: var(--ink-2); }
+  .wide { border: 2px solid var(--ink); background: var(--surface); display: grid; grid-template-columns: 1.1fr 1fr; }
+  @media (max-width: 760px) { .wide { grid-template-columns: 1fr; } }
+  .wide .txt { padding: 1rem 1.1rem; }
+  .wide .kick { font: .72rem var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 .4rem; }
+  .wide .acts { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .8rem; }
+  .wide .pic { border-left: 2px solid var(--ink); position: relative; overflow: hidden; min-height: 190px; }
+
+  /* demo bar (app-made, accessible in both versions) */
+  .demobar { background: var(--ink); color: var(--paper); padding: .55rem 1rem; display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; font-size: .85rem; }
+  .demobar .tag { font: 700 .72rem var(--mono); letter-spacing: .08em; text-transform: uppercase; background: var(--marker); color: var(--ink); padding: .2rem .45rem; }
+  .demobar .tag.ok { background: #BFE3CC; }
+  .demobar .msg { flex: 1 1 22rem; color: #E9E6DD; }
+  .demobar .a { color: #fff; text-decoration: underline; text-underline-offset: 3px; min-height: 44px; display: inline-flex; align-items: center; }
+  .demobar .sw { min-height: 44px; display: inline-flex; align-items: center; gap: .45rem; padding: 0 .7rem; border: 1px solid #8E8A80; color: #fff; font-weight: 600; }
+  .demobar .sw[aria-pressed="true"] { background: var(--paper); color: var(--ink); }
+  .demobar .sw[aria-pressed="true"]::before { content: "✓" / ""; }
+  .chrome { background: #2A2D31; color: #CFD3D7; font: .75rem var(--mono); padding: .45rem .8rem; display: flex; gap: .6rem; align-items: center; }
+  .chrome i { width: .6rem; height: .6rem; border-radius: 50%; background: #55595E; display: inline-block; }
+  .chrome span { background: #1B1D20; padding: .15rem .6rem; border-radius: 3px; flex: 1; }
+  .seg { display: inline-flex; border: 1px solid var(--ink); }
+  .seg span { min-height: 44px; display: inline-flex; align-items: center; padding: 0 1rem; font-weight: 600; font-size: .875rem; }
+  .seg span.on { background: var(--ink); color: var(--paper); }
+  .seg span.on::before { content: "✓ " / ""; }
+  .toolrow { display: flex; flex-wrap: wrap; gap: .5rem .75rem; align-items: center; margin: .8rem 0; }
+  .sel { min-height: 44px; display: inline-flex; align-items: center; gap: .5rem; padding: 0 .7rem; border: 1px solid var(--control); background: var(--surface); font-size: .875rem; }
+  .sel::after { content: "▾" / ""; }
+  .split { display: grid; grid-template-columns: 1fr 330px; border-top: 1px solid var(--rule); }
+  @media (max-width: 900px) { .split { grid-template-columns: 1fr; } }
+  .rail { border-left: 1px solid var(--rule); background: var(--surface); padding: .8rem .9rem; max-height: 560px; overflow: hidden; }
+  .rail h2 { font-size: 1rem; margin: 0 0 .5rem; }
+  .rail ol { list-style: none; margin: 0; padding: 0; font-size: .85rem; }
+  .rail li { display: grid; grid-template-columns: 2rem 1fr; gap: .4rem; padding: .45rem 0; border-top: 1px solid var(--rule); min-height: 44px; align-items: start; }
+  .rail li b.n { font: 700 .8rem/1.6rem var(--mono); width: 1.6rem; text-align: center; border-radius: 50%; background: var(--ink); color: #fff; }
+  .rail li.cur { background: #FFF8C9; margin: 0 -.9rem; padding: .45rem .9rem; box-shadow: inset 4px 0 0 var(--ink); }
+  .rail li small { display: block; color: var(--ink-2); font-family: var(--mono); font-size: .72rem; }
+
+  /* problem list */
+  .crit { display: inline-flex; align-items: center; gap: .3rem; font: .75rem var(--mono); border: 1px solid var(--control); padding: .1rem .4rem; margin: .15rem .25rem 0 0; background: var(--surface); }
+  .who { font-size: .8rem; color: var(--ink-2); }
+  .axe { font: .72rem var(--mono); padding: .1rem .4rem; border: 1px dashed var(--control); color: var(--ink-2); }
+  .axe.yes { border-style: solid; border-color: var(--ink); color: var(--ink); }
+  .prob { border-top: 2px solid var(--ink); padding: 1rem 0 1.25rem; display: grid; grid-template-columns: 3.2rem 1fr; gap: 0 .8rem; }
+  .prob .num { font: 700 1.9rem/1 var(--mono); }
+  .prob h3 { margin: 0 0 .25rem; font-size: 1.15rem; }
+  .prob h4 { margin: .9rem 0 0; font-size: .9rem; }
+  .prob .body { max-width: 66ch; }
+  .codes { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; margin-top: .5rem; }
+  @media (max-width: 760px) { .codes { grid-template-columns: 1fr; } }
+  .codes pre { margin: 0; background: #1B1E22; color: #E8E6E1; font: .74rem/1.55 var(--mono); padding: .6rem .7rem; overflow-x: auto; border-top: 4px solid var(--bad); }
+  .codes pre.ok { border-top-color: var(--good); }
+  .codes pre b { display: block; font-weight: 700; color: #fff; margin-bottom: .3rem; font-family: var(--sans); font-size: .75rem; }
+  .sum { font-weight: 600; font-size: .9rem; min-height: 44px; display: flex; align-items: center; gap: .4rem; }
+  .sum::before { content: "▾" / ""; }
+  .links { display: flex; flex-wrap: wrap; gap: .25rem 1.25rem; margin-top: .6rem; font-size: .875rem; }
+  .links .a { min-height: 44px; display: inline-flex; align-items: center; }
+  .fil { border: 0; margin: 0 0 .8rem; padding: 0; }
+  .fil legend { font-weight: 700; font-size: .9rem; margin-bottom: .3rem; }
+  .fil div { display: flex; flex-wrap: wrap; gap: .4rem; }
+  .fil span { min-height: 44px; display: inline-flex; align-items: center; gap: .4rem; padding: 0 .7rem; border: 1px solid var(--control); background: var(--surface); font-size: .85rem; }
+  .fil span::before { content: ""; width: 1rem; height: 1rem; border-radius: 50%; border: 2px solid var(--ink); }
+  .fil span.on { border: 2px solid var(--ink); font-weight: 700; }
+  .fil span.on::before { background: radial-gradient(var(--ink) 40%, transparent 46%); }
+  .tbl { width: 100%; border-collapse: collapse; font-size: .85rem; background: var(--surface); }
+  .tbl caption { text-align: left; font: .78rem var(--mono); color: var(--ink-2); padding-bottom: .4rem; }
+  .tbl th, .tbl td { border-bottom: 1px solid var(--rule); padding: .5rem .5rem; text-align: left; vertical-align: top; }
+  .tbl thead th { border-bottom: 2px solid var(--ink); font-size: .78rem; }
+  .tbl td.n { font: 700 .9rem var(--mono); }
+  .tblwrap { overflow-x: auto; }
+  .mapwrap { display: grid; grid-template-columns: 280px 1fr; gap: 1.25rem; }
+  @media (max-width: 760px) { .mapwrap { grid-template-columns: 1fr; } }
+  .map { border: 2px solid var(--ink); background: var(--surface); padding: .5rem; display: grid; gap: .3rem; align-self: start; position: sticky; top: 0; }
+  .map div { border: 1px solid var(--control); background: var(--paper-2); font-size: .78rem; font-weight: 600; padding: .3rem .45rem; display: flex; flex-wrap: wrap; align-items: center; gap: .25rem; min-height: 44px; }
+  .map div.cur { background: #FFF8C9; border: 2px solid var(--ink); }
+  .map div.tall { min-height: 88px; align-items: flex-start; }
+  .map div .pn { margin-left: auto; display: inline-flex; gap: .2rem; flex-wrap: wrap; }
+  .map i, .grp i { font: 700 .68rem/1.25rem var(--mono); font-style: normal; min-width: 1.25rem; text-align: center; border-radius: .7rem; background: var(--ink); color: #fff; padding: 0 .2rem; }
+  .grp { border-top: 2px solid var(--ink); padding-top: .5rem; margin-bottom: 1rem; }
+  .grp h3 { margin: 0 0 .3rem; font-size: 1rem; }
+  .grp ul { list-style: none; margin: 0; padding: 0; }
+  .grp li { display: grid; grid-template-columns: 1.6rem 1fr auto; gap: .5rem; align-items: center; min-height: 44px; border-top: 1px solid var(--rule); font-size: .9rem; }
+
+  /* ---------- KMW, modern look ---------- */
+  .k { background: var(--k-paper); color: var(--k-ink); font: 14px/1.45 "Segoe UI", system-ui, sans-serif; position: relative; }
+  .k .top { display: flex; align-items: center; gap: 1rem; padding: .7rem 1.1rem; background: #fff; }
+  .k .logo { display: flex; align-items: center; gap: .55rem; }
+  .k .logo b { font: 800 1.35rem/1 var(--cond); letter-spacing: .02em; color: var(--heather); }
+  .k .logo small { display: block; font: 600 .68rem/1.15 var(--cond); text-transform: uppercase; letter-spacing: .1em; color: var(--k-ink); }
+  .k .soc { margin-left: auto; display: flex; gap: 0; align-items: center; }
+  .k .soc i { width: 16px; height: 16px; background: var(--heather); border-radius: 3px; display: inline-block; }
+  .k .soc.ok { gap: .1rem; }
+  .k .soc.ok i { width: 44px; height: 44px; background: transparent; border-radius: 0; display: inline-flex; align-items: center; justify-content: center; }
+  .k .soc.ok i::after { content: ""; width: 20px; height: 20px; border-radius: 4px; background: var(--heather); }
+  .k .ua { font-size: .8rem; color: var(--heather); }
+  .k .menu { background: var(--signal); display: flex; flex-wrap: wrap; padding: 0 .6rem; }
+  .k .menu span { padding: .7rem .7rem; font: 700 .95rem var(--cond); letter-spacing: .02em; color: #B9B4A6; }
+  .k .menu.ok span { color: var(--k-ink); display: inline-flex; align-items: center; gap: .35rem; min-height: 44px; padding: 0 .7rem; }
+  .k .menu.ok span::after { content: "▾" / ""; font-size: .75rem; }
+  .k .menu.ok span.open { background: var(--k-ink); color: var(--signal); }
+  .k .sub { position: absolute; z-index: 3; background: #fff; border: 2px solid var(--k-ink); padding: .3rem 0; min-width: 13rem; font-size: .85rem; }
+  .k .sub span { display: block; padding: .5rem .8rem; }
+  .k .sub span.f { outline: 3px solid var(--heather); outline-offset: -3px; }
+  .k .hero { background: var(--heather); color: #fff; padding: 1.4rem 3.4rem; position: relative; min-height: 132px; }
+  .k .hero .ln { position: absolute; right: 1.6rem; top: 50%; transform: translateY(-50%); font: 800 4.4rem/1 var(--cond); color: var(--signal); }
+  .k .hero h2, .k .hero .h { font: 800 1.6rem/1.05 var(--cond); margin: 0; max-width: 20ch; }
+  .k .hero p { margin: .35rem 0 0; color: #E6DCEB; max-width: 40ch; }
+  .k .arr { position: absolute; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; border-radius: 50%; background: rgb(255 255 255 / .2); display: flex; align-items: center; justify-content: center; font-weight: 700; }
+  .k .arr.l { left: .9rem; } .k .arr.r { right: 7.3rem; }
+  .k .arr.big { width: 44px; height: 44px; background: #fff; color: var(--heather); }
+  .k .dots { display: flex; gap: .3rem; margin-top: .6rem; }
+  .k .dots i { width: 8px; height: 8px; border-radius: 50%; background: rgb(255 255 255 / .4); }
+  .k .dots i:first-child { background: #fff; }
+  .k .pause { display: inline-flex; align-items: center; gap: .35rem; min-height: 44px; padding: 0 .8rem; border: 2px solid #fff; font-weight: 700; font-size: .85rem; margin-top: .6rem; }
+  .k .cols { display: grid; grid-template-columns: 1.25fr 1fr; gap: 1.1rem; padding: 1.1rem; }
+  @media (max-width: 760px) { .k .cols { grid-template-columns: 1fr; } }
+  .k .hd2 { font: 800 1.15rem/1.1 var(--cond); margin: 0 0 .5rem; letter-spacing: .01em; }
+  .k .boardw { background: var(--board); color: var(--amber); padding: .7rem .8rem .5rem; font-family: var(--mono); border-radius: 4px; }
+  .k .boardw .hd2 { color: #fff; font-family: var(--cond); }
+  .k .row { display: grid; grid-template-columns: 2.6rem 1fr 3.4rem 1.2rem; gap: .5rem; align-items: center; padding: .38rem 0; border-top: 1px dashed rgb(255 181 71 / .25); font-size: .85rem; }
+  .k .board-ok .row { grid-template-columns: 2.6rem 1fr 3.4rem 7.6rem; }
+  .k .row.h { color: #A99C8A; font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; border-top: 0; }
+  .k .bad-l { font: 800 .9rem/1.6rem var(--cond); text-align: center; color: #fff; border-radius: 3px; }
+  .k .tram { background: var(--tram); } .k .bus { background: var(--bus); } .k .fast { background: var(--fast); }
+  .k .dot { width: 11px; height: 11px; border-radius: 50%; }
+  .k .dot.g { background: #2FA35A; } .k .dot.r { background: #E0453A; }
+  .k .st { font-family: var(--sans); font-size: .78rem; font-weight: 600; display: inline-flex; gap: .3rem; align-items: center; color: #fff; }
+  .k .st.late { color: var(--amber); }
+  .k .st.late::before { content: "▲" / ""; font-size: .6rem; }
+  .k .st.on::before { content: "●" / ""; font-size: .6rem; color: #7FD39C; }
+  .k .upd { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .4rem; font: .72rem var(--sans); color: #CFC6D6; margin-top: .4rem; }
+  .k .upd span.b { border: 1px solid #CFC6D6; color: #fff; min-height: 44px; display: inline-flex; align-items: center; padding: 0 .7rem; font-weight: 700; }
+  .k .news { list-style: none; margin: 0; padding: 0; }
+  .k .news li { display: grid; grid-template-columns: 22px 1fr; gap: .55rem; padding: .5rem 0; border-top: 1px solid #DCD3E1; }
+  .k .bi { width: 22px; height: 22px; border-radius: 5px; background: var(--heather-2); position: relative; }
+  .k .bi::after { content: ""; position: absolute; inset: 6px 5px 7px; border: 2px solid var(--heather); border-radius: 2px; }
+  .k .news b { display: block; font-size: .9rem; }
+  .k .news .more { color: var(--heather); font-size: .8rem; }
+  .k .news.ok b { color: var(--heather); text-decoration: underline; text-underline-offset: 3px; }
+  .k .ukr { margin: 0 1.1rem 1.1rem; border-left: 6px solid var(--signal); background: #fff; padding: .7rem .9rem; }
+  .k .ukr p { margin: .2rem 0 0; }
+  .k .ukr .lnk { color: var(--heather); }
+  .k .ukr.ok .lnk { text-decoration: underline; }
+  .k .map { margin: 0 1.1rem 1.1rem; }
+  .k .netmap { height: 110px; background: #fff; border: 1px solid #DCD3E1; position: relative; overflow: hidden; }
+  .k .form { margin: 0 1.1rem 1.1rem; background: #fff; padding: .9rem 1rem; border-top: 6px solid var(--heather); }
+  .k .fgrid { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem .9rem; }
+  @media (max-width: 760px) { .k .fgrid { grid-template-columns: 1fr; } }
+  .k .fld .lb { font-size: .8rem; font-weight: 600; display: block; margin-bottom: .2rem; }
+  .k .fld .lb.req { color: #3B6FD8; }
+  .k .fld .in { height: 40px; border: 1px solid #A79DAD; background: #fff; border-radius: 3px; }
+  .k .fld.err .in { border: 2px solid #B3122E; }
+  .k .fld .em { color: #9A0F27; font-size: .78rem; font-weight: 600; margin-top: .2rem; }
+  .k .fld .em::before { content: "✕ " / ""; }
+  .k .rad { display: flex; flex-wrap: wrap; gap: .3rem 1rem; font-size: .85rem; margin-top: .25rem; }
+  .k .rad span { display: inline-flex; align-items: center; gap: .3rem; }
+  .k .rad span::before { content: ""; width: 14px; height: 14px; border-radius: 50%; border: 2px solid #6E6375; }
+  .k fieldset.rf { border: 1px solid #A79DAD; border-radius: 3px; padding: .3rem .7rem .55rem; margin: 0; }
+  .k fieldset.rf legend { font-size: .8rem; font-weight: 600; padding: 0 .25rem; }
+  .k .captcha { display: flex; gap: .6rem; align-items: center; margin-top: .6rem; }
+  .k .captcha .img { width: 120px; height: 40px; background: repeating-linear-gradient(-30deg, #DCD3E1 0 4px, #fff 4px 9px); font: italic 800 1.25rem/40px Georgia, serif; text-align: center; letter-spacing: .3em; color: #6E6375; transform: skewX(-12deg); }
+  .k .sbtn { display: inline-flex; align-items: center; min-height: 44px; padding: 0 1.1rem; background: var(--heather); color: #fff; font-weight: 700; border-radius: 3px; margin-top: .8rem; }
+  .k .errtop { background: #FDECEF; color: #B3122E; padding: .45rem .6rem; font-size: .85rem; margin-bottom: .6rem; }
+  .k .errsum { border: 3px solid #9A0F27; background: #fff; padding: .6rem .8rem; margin-bottom: .7rem; outline: 3px solid var(--heather); outline-offset: 3px; }
+  .k .errsum b { display: block; color: #9A0F27; }
+  .k .errsum ul { margin: .2rem 0 0; padding-left: 1.1rem; font-size: .85rem; }
+  .k .errsum li span { color: var(--heather); text-decoration: underline; }
+  .k .foot { background: var(--k-ink); color: #D8D0DD; padding: .9rem 1.1rem 4rem; font-size: .8rem; display: flex; flex-wrap: wrap; gap: .4rem 1.6rem; }
+  .k .cookie { position: absolute; left: 0; right: 0; bottom: 0; background: #2C2433; color: #fff; padding: .55rem 1.1rem; display: flex; gap: 1rem; align-items: center; font-size: .82rem; z-index: 4; }
+  .k .cookie span.b { margin-left: auto; background: var(--signal); color: var(--k-ink); font-weight: 700; padding: .35rem .8rem; }
+  .k .cookie.ok { position: static; }
+  .k .cookie.ok span.x { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #fff; }
+  .k .fr { outline: 3px solid var(--heather); outline-offset: 2px; }
+  .k .fr-y { outline: 3px solid var(--k-ink); outline-offset: -3px; box-shadow: inset 0 0 0 6px var(--signal); }
+  .k .modal-bg { position: absolute; inset: 0; background: rgb(23 20 28 / .55); z-index: 5; }
+  .k .modal { position: absolute; z-index: 6; left: 50%; top: 2.2rem; transform: translateX(-50%); width: min(26rem, 88%); background: #fff; border-top: 6px solid var(--signal); padding: 1rem 1.1rem; }
+  .k .modal .x { position: absolute; right: .5rem; top: .4rem; font-size: 1.1rem; color: #6E6375; }
+  .k .modal .t { font: 800 1.2rem var(--cond); }
+  .k .lnk-plain { color: var(--k-ink); }
+  .k .lnk-u { color: var(--heather); text-decoration: underline; text-underline-offset: 3px; }
+
+  /* problem markers on the broken page */
+  .pin { position: absolute; z-index: 9; min-width: 1.6rem; height: 1.6rem; padding: 0 .3rem; border-radius: .8rem; background: var(--ink); color: #fff; font: 700 .8rem/1.6rem var(--mono); text-align: center; box-shadow: 0 0 0 2px var(--marker); }
+  .pin.cur { background: var(--marker); color: var(--ink); box-shadow: 0 0 0 3px var(--ink); }
+
+  /* ---------- KMW, portal from around 2012 ---------- */
+  .o { background: #E9ECF0; color: #222; font: 11px/1.4 Verdana, Tahoma, sans-serif; width: 100%; position: relative; overflow: hidden; }
+  .o .wrap { width: 1000px; max-width: none; margin: 0 auto; background: #fff; border: 1px solid #B9C2CE; }
+  .o .ban { height: 78px; background: linear-gradient(#2F68B8, #173E7A); color: #fff; display: flex; align-items: center; padding: 0 14px; gap: 12px; }
+  .o .ban .crest { width: 46px; height: 54px; background: linear-gradient(#F2D04B, #C99B12); clip-path: polygon(0 0, 100% 0, 100% 62%, 50% 100%, 0 62%); }
+  .o .ban b { font: bold 20px Georgia, serif; text-shadow: 1px 1px 0 #0B2550; }
+  .o .ban small { display: block; font-size: 11px; color: #CFE0F7; }
+  .o .ban .soc { margin-left: auto; display: flex; gap: 2px; }
+  .o .ban .soc i { width: 16px; height: 16px; background: #fff; opacity: .8; display: inline-block; }
+  .o .bar { background: linear-gradient(#FFF07A, #F3C823); border-top: 1px solid #fff; border-bottom: 1px solid #C79C00; display: flex; }
+  .o .bar span { padding: 6px 14px; color: #BDB49A; font-weight: bold; border-right: 1px solid #E2BC23; }
+  .o .tick { background: #FFFBE0; border-bottom: 1px solid #E5D48A; padding: 4px 10px; color: #8A6D00; }
+  .o .body { display: grid; grid-template-columns: 200px 1fr 230px; }
+  .o .side { background: #F2F5F9; border-right: 1px solid #D5DDE7; padding: 8px; }
+  .o .side .h, .o .main .h, .o .right .h { background: linear-gradient(#5C8FD6, #3466B0); color: #fff; font-weight: bold; padding: 3px 6px; margin: 0 0 6px; }
+  .o .side div { padding: 3px 0 3px 12px; color: #1A4E9C; background: linear-gradient(90deg, #1A4E9C 0 4px, transparent 4px) 0 8px / 4px 4px no-repeat; }
+  .o .main { padding: 8px 10px; }
+  .o .main .slide { height: 110px; background: linear-gradient(120deg, #6E3C86, #2F68B8); color: #fff; padding: 12px 16px; font: bold 17px Georgia, serif; position: relative; margin-bottom: 8px; }
+  .o .main .slide small { display: block; font: 11px Verdana, sans-serif; margin-top: 6px; color: #EEE; }
+  .o .grid { display: grid; grid-template-columns: 40px 1fr 50px 16px; border: 1px solid #C9D3DF; }
+  .o .grid div { padding: 3px 5px; border-bottom: 1px solid #E1E7EE; }
+  .o .grid .hh { background: #E4EBF4; font-weight: bold; }
+  .o .grid .d { width: 9px; height: 9px; border-radius: 50%; margin-top: 2px; padding: 0; }
+  .o .right { padding: 8px; background: #FAFBFC; border-left: 1px solid #D5DDE7; }
+  .o .right p { margin: 0 0 8px; }
+  .o .right .more { color: #1A4E9C; }
+  .o .foot { background: #173E7A; color: #CFE0F7; padding: 8px 14px; text-align: center; }
+  .o .hr { height: 4px; background: linear-gradient(90deg, transparent, #9DB4D3, transparent); margin: 8px 0; }
+  .scroller { overflow-x: auto; }
+
+  /* self-check: locked steps, notes, the list after the check */
+  .steps li.locked h3, .steps li.locked p { color: var(--ink-2); }
+  .steps li.locked { background: repeating-linear-gradient(-45deg, transparent 0 8px, rgb(20 23 26 / .04) 8px 16px); }
+  .lock { font: 600 .8rem var(--mono); color: var(--ink) !important; margin-top: .7rem !important; }
+  .lock::before { content: "🔒 " / ""; }
+  .notes { background: var(--surface); color: var(--ink); padding: .9rem 1rem; font-size: .9rem; }
+  .notes h2 { font-size: 1.05rem; margin: 0; }
+  .saved { font: .72rem var(--mono); color: var(--ink-2); margin: .15rem 0 .7rem !important; }
+  .lbl { display: block; font-weight: 700; font-size: .85rem; margin-bottom: .25rem; }
+  .ta { min-height: 4.4rem; border: 2px solid var(--ink); background: var(--surface); padding: .4rem .5rem; font-size: .85rem; margin-bottom: .5rem; }
+  .count { font: 600 .78rem var(--mono); margin: .9rem 0 .2rem !important; }
+  .nl { list-style: none; margin: 0 0 .8rem; padding: 0; counter-reset: nn; }
+  .nl li { counter-increment: nn; display: grid; grid-template-columns: 1.4rem 1fr auto; gap: 0 .4rem; border-top: 1px solid var(--rule); padding: .4rem 0; font-size: .85rem; }
+  .nl li::before { content: counter(nn) "."; font: 700 .8rem var(--mono); grid-row: span 2; padding-top: .1rem; }
+  .nl li p { margin: 0 !important; grid-column: 2 / 4; }
+  .nl li small { font: .7rem var(--mono); color: var(--ink-2); align-self: center; }
+  .nact { display: flex; gap: .2rem .8rem; font-size: .8rem; }
+  .nact .a { min-height: 32px; min-width: 44px; display: inline-flex; align-items: center; }
+  .nfoot { display: flex; flex-wrap: wrap; gap: .5rem; border-top: 2px solid var(--ink); padding-top: .7rem; }
+  .drawer-wrap { display: grid; grid-template-columns: 1fr 320px; }
+  @media (max-width: 900px) { .drawer-wrap { grid-template-columns: 1fr; } }
+  .fold { border: 2px solid var(--ink); background: var(--surface); padding: 0 .8rem .8rem; }
+  .fold-body { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 760px) { .fold-body { grid-template-columns: 1fr; } }
+  .mynotes { border: 2px solid var(--ink); background: #FFF8C9; padding: 0 .9rem .8rem; margin-top: .4rem; }
+  .mynotes ol { margin: .2rem 0 .7rem; padding-left: 1.3rem; font-size: .9rem; }
+  .mynotes li { margin: .2rem 0; }
+  .score { font-size: .95rem; margin: .4rem 0 .9rem !important; }
+  .sbs { display: grid; grid-template-columns: 300px 1fr; gap: 1.25rem; align-items: start; }
+  @media (max-width: 760px) { .sbs { grid-template-columns: 1fr; } }
+  .found { list-style: none; margin: 0; padding: 0; }
+  .found li { display: grid; grid-template-columns: 44px 2rem 1fr; align-items: center; min-height: 44px; border-top: 1px solid var(--rule); font-size: .9rem; }
+  .found .cb { width: 20px; height: 20px; border: 2px solid var(--ink); background: var(--surface); justify-self: center; }
+  .found li.on .cb { background: var(--ink); box-shadow: inset 0 0 0 3px var(--surface); }
+  .found b.n { font: 700 .85rem var(--mono); }
+  .found em { font: normal 600 .72rem var(--mono); border: 1px solid var(--good); color: var(--good); padding: 0 .3rem; margin-left: .4rem; }
+  .found em::before { content: "✓ " / ""; }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>Before and after page: mocks</h1>
+<p>Companion to the plan: <a href="../2026-10-04-phase-11-before-after/phase-11-before-after.en.html">phase-11-before-after.en.html</a> (<a href="../2026-10-04-phase-11-before-after/phase-11-before-after.pl.html" hreflang="pl">PL</a>). Five questions, each with variants to pick from. Revised: the reader takes notes while checking the broken page, and the answers (list, markers, fixed page) stay hidden until they finish. Copy inside the mocks is Polish, as in the app. The fictional site is Komunikacja Miejska Wrzosów (KMW), decision 1 of the plan.</p>
+<p>The app surface uses the existing tokens. KMW has its own identity: heather purple from the city's name, signal yellow from bus stop signs, and an amber departure board in a monospace face, which is the one thing a reader should remember.</p>
+
+<!-- ================================================================ 1 -->
+<h2 id="s1">1. Where it lives in the app</h2>
+
+<section class="variant" aria-labelledby="v1a">
+  <h3 id="v1a"><b>1A</b> A third tab in Praktyka, three steps in AU's order</h3>
+  <p class="note">Shown mid-check: the reader has four notes. Steps 2 and 3 say in words that they are locked and why, and have no links yet. The steps are a real sequence, so they are numbered.</p>
+  <div class="frame s">
+    <div class="hd"><span class="wm">a11y&nbsp;<span>playground</span></span><nav class="nv" aria-label="Główna (makieta)"><span>Kryteria</span><span class="cur">Praktyka</span><span>Ścieżki</span><span>Prawo</span><span>WCAG 3.0</span><span>Słownik</span></nav></div>
+    <div class="mn">
+      <p class="t1">Praktyka</p>
+      <div class="tabs"><span>Przykłady</span><span>Wzorce</span><span class="cur">Strona przed i po</span></div>
+      <p class="t2">Komunikacja Miejska Wrzosów: znajdź 20 problemów</p>
+      <p class="lead">Strona główna fikcyjnego przewoźnika. Ma 20 problemów z dostępnością. Poszukaj ich sam, zapisując notatki, a potem porównaj je z listą. Format pochodzi z <span class="a">Accessible University</span> (University of Washington).</p>
+      <ol class="steps">
+        <li>
+          <h3>Sprawdź sam</h3>
+          <p>Przejdź stronę klawiaturą, czytnikiem ekranu albo w powiększeniu. Wszystko, co nie działa, zapisz w notatkach.</p>
+          <p class="warn">Ta strona celowo łamie zasady dostępności. Część rzeczy nie zadziała z klawiatury ani z czytnikiem ekranu.</p>
+          <p class="mono" style="font-size:.78rem;margin-top:.6rem">Sprawdzasz · 4 notatki</p>
+          <span class="btn pri">Wróć do sprawdzania</span>
+          <span class="btn">Kończę sprawdzanie</span>
+        </li>
+        <li class="locked">
+          <h3>Porównaj z listą</h3>
+          <p>Dwadzieścia problemów z poprawkami, a obok Twoje notatki.</p>
+          <p class="lock">Zablokowane do końca sprawdzania</p>
+        </li>
+        <li class="locked">
+          <h3>Zobacz efekt końcowy</h3>
+          <p>Ta sama strona bez tych problemów. Tak powinna wyglądać.</p>
+          <p class="lock">Zablokowane do końca sprawdzania</p>
+        </li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="variant" aria-labelledby="v1b">
+  <h3 id="v1b"><b>1B</b> A wide card above the examples</h3>
+  <p class="note">No new tab. The card starts the check and says nothing about where the problems are; the entry page behind it is 1A without the tabs.</p>
+  <div class="frame s">
+    <div class="hd"><span class="wm">a11y&nbsp;<span>playground</span></span><nav class="nv" aria-label="Główna (makieta)"><span>Kryteria</span><span class="cur">Praktyka</span><span>Ścieżki</span><span>Prawo</span><span>WCAG 3.0</span><span>Słownik</span></nav></div>
+    <div class="mn">
+      <p class="t1">Praktyka</p>
+      <div class="tabs"><span class="cur">Przykłady</span><span>Wzorce</span></div>
+      <div class="wide">
+        <div class="txt">
+          <p class="kick">Cała strona · sprawdź się</p>
+          <p class="t2">Komunikacja Miejska Wrzosów przed i po</p>
+          <p class="lead">Dwadzieścia problemów na jednej stronie, tak jak na prawdziwej witrynie. Znajdź je sam, zapisując notatki. Odpowiedzi zobaczysz, gdy skończysz.</p>
+          <p class="warn">Strona do sprawdzania celowo łamie zasady dostępności.</p>
+          <div class="acts"><span class="btn pri">Zacznij sprawdzanie</span></div>
+        </div>
+        <div class="pic" aria-hidden="true">
+          <div class="k" style="font-size:9px;transform:scale(.82);transform-origin:0 0;width:122%;">
+            <div class="top"><div class="logo"><b>KMW</b></div><div class="soc"><i></i><i></i><i></i></div></div>
+            <div class="menu"><span>Rozkłady</span><span>Bilety</span><span>Utrudnienia</span></div>
+            <div class="hero" style="padding:1rem 1.4rem;min-height:90px"><p class="h" style="font-size:1.25rem">Linia 14 dojedzie na Osiedle Wrzosowe</p><span class="ln" style="font-size:3rem">14</span></div>
+            <div class="cols" style="padding:.7rem"><div class="boardw"><div class="row"><span class="bad-l bus">14</span><span>Os. Wrzosowe</span><span>12:04</span><span class="dot g"></span></div><div class="row"><span class="bad-l tram">3</span><span>Dworzec Gł.</span><span>12:06</span><span class="dot r"></span></div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="fixcards" aria-hidden="true">
+        <div class="fc"><p class="eff">1 linia</p><h3>Ikona jako przycisk</h3><p>Przycisk z samą ikoną nie ma nazwy.</p></div>
+        <div class="fc"><p class="eff">1 linia</p><h3>Obraz dekoracyjny i informacyjny</h3><p>Ozdobnik czytany na głos, schemat bez opisu.</p></div>
+        <div class="fc"><p class="eff">1 token</p><h3>Kontrast stanów</h3><p>Jasnoszary tekst, którego nie widać.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ 2 -->
+<h2 id="s2">2. Checking the broken page, with notes</h2>
+<p>While checking, nothing on screen points at a problem: no list, no markers, no fixed version, no region names. The notes panel is the same in every variant: one field, a list, "Kopiuj notatki", "Kończę sprawdzanie". Only where it sits changes.</p>
+
+<section class="variant" aria-labelledby="v2a">
+  <h3 id="v2a"><b>2A</b> The whole window, notes in a drawer from the demo bar</h3>
+  <p class="note">The page gets the real viewport, as in AU. "Notatki" in the demo bar opens a drawer that narrows the page instead of covering it, so it never hides focus. Costs a second copy of the store in the demo document.</p>
+  <div class="frame">
+    <div class="chrome" aria-hidden="true"><i></i><i></i><i></i><span>a11y-playground / demo / przed-i-po / przed</span></div>
+    <div class="s">
+      <aside class="demobar" aria-label="Demonstracja (makieta)">
+        <span class="tag">Wersja zepsuta</span>
+        <span class="msg">Ta strona celowo łamie zasady dostępności. Część rzeczy nie zadziała z klawiatury ani z czytnikiem ekranu.</span>
+        <span class="sw" aria-pressed="true">Notatki (4)</span><span class="sw" aria-pressed="false">Włącz ruch</span><span class="a">Wróć do aplikacji</span>
+      </aside>
+    </div>
+    <div class="drawer-wrap">
+      <div class="k" style="min-height:520px">
+        <div class="top"><div class="logo"><svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect width="34" height="34" rx="6" fill="#4A1F5C"/><path d="M17 27V9M17 14l-6-4M17 18l6-4M17 22l-5-3" stroke="#FFC93C" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg><div><b>KMW</b><small>Komunikacja Miejska Wrzosów</small></div></div><div class="soc"><i></i><i></i><i></i><i></i></div><span class="ua">Українською</span></div>
+        <div class="menu"><span>Rozkłady</span><span>Bilety</span><span>Utrudnienia</span><span>O nas</span></div>
+        <div class="hero"><span class="arr l">‹</span><p class="h">Linia 14 dojedzie na Osiedle Wrzosowe</p><p>Od 1 listopada co 10 minut w szczycie. <span class="lnk-plain">Kliknij tutaj</span>, żeby zobaczyć rozkład.</p><div class="dots"><i></i><i></i><i></i></div><span class="arr r">›</span><span class="ln">14</span></div>
+        <div class="cols" style="grid-template-columns:1fr">
+          <div class="boardw">
+            <div class="hd2">Odjazdy z przystanku Rynek</div>
+            <div class="row h"><span>Linia</span><span>Kierunek</span><span>Odjazd</span><span></span></div>
+            <div class="row"><span class="bad-l bus">14</span><span>Osiedle Wrzosowe</span><span>12:04</span><span class="dot g"></span></div>
+            <div class="row"><span class="bad-l tram">3</span><span>Dworzec Główny</span><span>12:06</span><span class="dot r"></span></div>
+            <div class="row"><span class="bad-l bus">21</span><span>Szpital Miejski</span><span>12:09</span><span class="dot g"></span></div>
+          </div>
+        </div>
+        <div class="cookie"><span>Używamy plików cookies, żeby strona działała.</span><span class="b">Akceptuję</span></div>
+      </div>
+      <div class="s notes" style="border-left:2px solid var(--ink)">
+        <h2>Twoje notatki</h2>
+        <p class="saved">Zapisane w tej przeglądarce</p>
+        <span class="lbl">Co nie działa?</span>
+        <div class="ta">Pasek cookies zasłania przycisk „Wyślij”, gdy do niego dojdę Tabem</div>
+        <span class="btn">Dodaj notatkę</span>
+        <p class="count">4 notatki</p>
+        <ol class="nl">
+          <li><p>Tab nie otwiera podmenu w „Rozkładach”</p><small>12:41</small><span class="nact"><span class="a">Edytuj</span><span class="a">Usuń</span></span></li>
+          <li><p>Kropki na tablicy: czerwona i zielona, nie wiem, co znaczą</p><small>12:43</small><span class="nact"><span class="a">Edytuj</span><span class="a">Usuń</span></span></li>
+          <li><p>Nie widać, gdzie jest fokus</p><small>12:44</small><span class="nact"><span class="a">Edytuj</span><span class="a">Usuń</span></span></li>
+          <li><p>Okna z utrudnieniami nie da się zamknąć klawiaturą</p><small>12:46</small><span class="nact"><span class="a">Edytuj</span><span class="a">Usuń</span></span></li>
+        </ol>
+        <div class="nfoot"><span class="btn">Kopiuj notatki</span><span class="btn pri">Kończę sprawdzanie</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="variant" aria-labelledby="v2b">
+  <h3 id="v2b"><b>2B</b> Inside the app, notes folded under the toolbar</h3>
+  <p class="note">The frame takes the full content width. The notes are a <code>details</code> above it, open while typing and folded while looking, so they never take width from the page. The reader scrolls up to write a note.</p>
+  <div class="frame s">
+    <div class="hd"><span class="wm">a11y&nbsp;<span>playground</span></span><nav class="nv" aria-label="Główna (makieta)"><span>Kryteria</span><span class="cur">Praktyka</span><span>Ścieżki</span><span>Prawo</span><span>WCAG 3.0</span><span>Słownik</span></nav></div>
+    <div class="mn">
+      <p class="mono" style="font-size:.78rem;color:var(--ink-2);margin:0">Praktyka / Strona przed i po</p>
+      <p class="t1" style="margin-top:.3rem">Sprawdź stronę Komunikacji Miejskiej Wrzosów</p>
+      <p class="warn" style="margin:.6rem 0 0">Strona w ramce celowo łamie zasady dostępności. Część rzeczy nie zadziała z klawiatury ani z czytnikiem ekranu.</p>
+      <div class="toolrow">
+        <span class="btn" aria-pressed="false">Włącz ruch</span>
+        <span class="sel">Symulacja: brak</span>
+        <span class="btn pri" style="margin-left:auto">Kończę sprawdzanie</span>
+      </div>
+      <div class="fold">
+        <p class="sum">Twoje notatki (4)</p>
+        <div class="fold-body">
+          <div>
+            <span class="lbl">Co nie działa?</span>
+            <div class="ta" style="min-height:3.2rem"></div>
+            <span class="btn">Dodaj notatkę</span>
+          </div>
+          <ol class="nl" style="margin:0">
+            <li><p>Tab nie otwiera podmenu w „Rozkładach”</p><small>12:41</small><span class="nact"><span class="a">Edytuj</span><span class="a">Usuń</span></span></li>
+            <li><p>Kropki na tablicy: czerwona i zielona, nie wiem, co znaczą</p><small>12:43</small><span class="nact"><span class="a">Edytuj</span><span class="a">Usuń</span></span></li>
+            <li><p>…i 2 kolejne</p></li>
+          </ol>
+        </div>
+      </div>
+      <div class="frame" style="border-color:var(--ink);border-width:2px;border-radius:0;margin-top:.8rem">
+        <div class="k">
+          <div class="top"><div class="logo"><svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect width="34" height="34" rx="6" fill="#4A1F5C"/><path d="M17 27V9M17 14l-6-4M17 18l6-4M17 22l-5-3" stroke="#FFC93C" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg><div><b>KMW</b><small>Komunikacja Miejska Wrzosów</small></div></div><div class="soc"><i></i><i></i><i></i><i></i></div><span class="ua">Українською</span></div>
+          <div class="menu"><span>Rozkłady</span><span>Bilety</span><span>Utrudnienia</span><span>O nas</span></div>
+          <div class="hero"><span class="arr l">‹</span><p class="h">Linia 14 dojedzie na Osiedle Wrzosowe</p><p>Od 1 listopada co 10 minut w szczycie.</p><div class="dots"><i></i><i></i><i></i></div><span class="arr r">›</span><span class="ln">14</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="variant" aria-labelledby="v2c">
+  <h3 id="v2c"><b>2C</b> Frame with the notes beside it (recommended)</h3>
+  <p class="note">A workbench: the page on the left, the notes in a rail that stays in view while the frame scrolls. Writing a note never moves the page. Below 900 pixels the rail drops under the frame. The rail is a named <code>aside</code>, and Tab reaches it after the frame.</p>
+  <div class="frame s">
+    <div class="mn" style="padding-bottom:.6rem">
+      <p class="t1" style="font-size:1.35rem">Sprawdź stronę Komunikacji Miejskiej Wrzosów</p>
+      <div class="toolrow" style="margin-bottom:0"><span class="btn" aria-pressed="false">Włącz ruch</span><span class="sel">Symulacja: brak</span><span class="a" style="min-height:44px;display:inline-flex;align-items:center">Wróć do opisu</span></div>
+    </div>
+    <div class="split">
+      <div style="padding:.8rem 1rem;background:var(--paper-2)">
+        <p class="warn" style="margin:0 0 .6rem">Strona w ramce celowo łamie zasady dostępności.</p>
+        <div class="k" style="border:2px solid var(--ink)">
+          <div class="top"><div class="logo"><b>KMW</b><small>Komunikacja Miejska Wrzosów</small></div><div class="soc"><i></i><i></i><i></i><i></i></div></div>
+          <div class="menu"><span>Rozkłady</span><span>Bilety</span><span>Utrudnienia</span><span>O nas</span></div>
+          <div class="hero" style="min-height:100px"><p class="h">Linia 14 dojedzie na Osiedle Wrzosowe</p><span class="ln">14</span></div>
+          <div class="cols" style="grid-template-columns:1fr"><div class="boardw"><div class="hd2">Odjazdy z przystanku Rynek</div><div class="row"><span class="bad-l bus">14</span><span>Osiedle Wrzosowe</span><span>12:04</span><span class="dot g"></span></div><div class="row"><span class="bad-l tram">3</span><span>Dworzec Główny</span><span>12:06</span><span class="dot r"></span></div></div></div>
+        </div>
+      </div>
+      <aside class="rail notes" aria-label="Notatki (makieta)" style="max-height:none">
+        <h2>Twoje notatki</h2>
+        <p class="saved">Zapisane w tej przeglądarce</p>
+        <span class="lbl">Co nie działa?</span>
+        <div class="ta"></div>
+        <span class="btn">Dodaj notatkę</span>
+        <p class="count">4 notatki</p>
+        <ol class="nl">
+          <li><p>Tab nie otwiera podmenu w „Rozkładach”</p><small>12:41</small><span class="nact"><span class="a">Edytuj</span><span class="a">Usuń</span></span></li>
+          <li><p>Kropki na tablicy: czerwona i zielona, nie wiem, co znaczą</p><small>12:43</small><span class="nact"><span class="a">Edytuj</span><span class="a">Usuń</span></span></li>
+          <li><p>Nie widać, gdzie jest fokus</p><small>12:44</small><span class="nact"><span class="a">Edytuj</span><span class="a">Usuń</span></span></li>
+          <li><p>Okna z utrudnieniami nie da się zamknąć klawiaturą</p><small>12:46</small><span class="nact"><span class="a">Edytuj</span><span class="a">Usuń</span></span></li>
+        </ol>
+        <div class="nfoot"><span class="btn">Kopiuj notatki</span><span class="btn pri">Kończę sprawdzanie</span></div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section class="variant" aria-labelledby="v2bars">
+  <h3 id="v2bars"><b>2·</b> The demo bar in each stage, for every variant</h3>
+  <p class="note">What the bar above a page offers changes with the stage. Only the third bar belongs to the fixed page, which is the end result: no notes, no markers, no motion switch.</p>
+  <div class="frame s" style="display:grid;gap:2px;background:var(--rule)">
+    <div class="demobar"><span class="tag">Wersja zepsuta</span><span class="msg">Sprawdzasz. Ta strona celowo łamie zasady dostępności.</span><span class="sw" aria-pressed="false">Notatki (4)</span><span class="sw" aria-pressed="false">Włącz ruch</span><span class="a">Wróć do aplikacji</span></div>
+    <div class="demobar"><span class="tag">Wersja zepsuta</span><span class="msg">Sprawdzanie zakończone. Numery na stronie odpowiadają liście.</span><span class="sw" aria-pressed="true">Znaczniki problemów</span><span class="a">Lista problemów</span><span class="a">Wersja poprawiona</span><span class="a">Wróć do aplikacji</span></div>
+    <div class="demobar"><span class="tag ok">Wersja poprawiona</span><span class="msg">Tak ta strona powinna wyglądać.</span><span class="a">Lista problemów</span><span class="a">Wróć do aplikacji</span></div>
+  </div>
+  <p class="cap">1: during the check · 2: broken page after the check · 3: fixed page</p>
+</section>
+
+<!-- ================================================================ 3 -->
+<h2 id="s3">3. After the check: notes meet the list</h2>
+
+<section class="variant" aria-labelledby="v3a">
+  <h3 id="v3a"><b>3A</b> Notes above the list (recommended)</h3>
+  <p class="note">The notes come first, unchanged, in a box the reader can fold. Below, the list in the layout from section 4. The reader compares on their own; nothing is scored.</p>
+  <div class="frame s">
+    <div class="mn">
+      <p class="t1">Lista problemów</p>
+      <p class="lead">Twoje notatki, a pod nimi 20 problemów strony Komunikacji Miejskiej Wrzosów, w kolejności od góry strony.</p>
+      <div class="toolrow"><span class="btn">Strona zepsuta ze znacznikami</span><span class="btn">Wersja poprawiona</span><span class="btn">Zacznij od nowa</span></div>
+      <div class="mynotes">
+        <p class="sum">Twoje notatki (4)</p>
+        <ol>
+          <li>Tab nie otwiera podmenu w „Rozkładach”</li>
+          <li>Kropki na tablicy: czerwona i zielona, nie wiem, co znaczą</li>
+          <li>Nie widać, gdzie jest fokus</li>
+          <li>Okna z utrudnieniami nie da się zamknąć klawiaturą</li>
+        </ol>
+        <span class="btn">Kopiuj notatki</span>
+      </div>
+      <div class="prob" style="margin-top:1.25rem">
+        <span class="num">1</span>
+        <div class="body"><h3>Język strony i ramki po ukraińsku nieoznaczony</h3><span class="crit">3.1.1 · A</span><span class="crit">3.1.2 · AA</span><span class="axe yes">axe: html-has-lang</span></div>
+      </div>
+      <div class="prob">
+        <span class="num">2</span>
+        <div class="body"><h3>Brak punktów orientacyjnych i łącza do treści</h3><span class="crit">1.3.1 · A</span><span class="crit">2.4.1 · A</span><span class="axe yes">axe: region</span></div>
+      </div>
+      <div class="prob">
+        <span class="num">3</span>
+        <div class="body"><h3>Okno utrudnień nie przejmuje fokusu</h3><span class="crit">2.1.1 · A</span><span class="crit">2.4.3 · A</span><span class="axe">axe: nie wykrywa</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="variant" aria-labelledby="v3b">
+  <h3 id="v3b"><b>3B</b> Side by side, with "Znalazłem" and a count</h3>
+  <p class="note">The notes stay in a column; each problem gets a native checkbox the reader ticks if one of their notes covers it. The count updates in a polite live region. Ticks are stored with the notes.</p>
+  <div class="frame s">
+    <div class="mn">
+      <p class="t1">Lista problemów</p>
+      <p class="score"><b>Znalazłeś 3 z 20</b> · zaznacz problemy, które masz w notatkach</p>
+      <div class="sbs">
+        <aside class="mynotes" aria-label="Twoje notatki (makieta)" style="margin:0">
+          <p class="sum" style="margin-top:0">Twoje notatki (4)</p>
+          <ol>
+            <li>Tab nie otwiera podmenu w „Rozkładach”</li>
+            <li>Kropki na tablicy: czerwona i zielona, nie wiem, co znaczą</li>
+            <li>Nie widać, gdzie jest fokus</li>
+            <li>Okna z utrudnieniami nie da się zamknąć klawiaturą</li>
+          </ol>
+        </aside>
+        <ol class="found">
+          <li><span class="cb"></span><b class="n">1</b><span>Język strony i ramki po ukraińsku nieoznaczony</span></li>
+          <li><span class="cb"></span><b class="n">2</b><span>Brak punktów orientacyjnych i łącza do treści</span></li>
+          <li class="on"><span class="cb"></span><b class="n">3</b><span>Okno utrudnień nie przejmuje fokusu <em>Znalazłem</em></span></li>
+          <li><span class="cb"></span><b class="n">4</b><span>Obrazy informacyjne bez tekstu alternatywnego</span></li>
+          <li><span class="cb"></span><b class="n">5</b><span>Ikony 16 na 16 pikseli</span></li>
+          <li><span class="cb"></span><b class="n">6</b><span>Menu jasnoszare na żółtym</span></li>
+          <li class="on"><span class="cb"></span><b class="n">7</b><span>Podmenu tylko pod myszą <em>Znalazłem</em></span></li>
+          <li class="on"><span class="cb"></span><b class="n">8</b><span>Niewidoczny fokus <em>Znalazłem</em></span></li>
+          <li><span class="cb"></span><b class="n">…</b><span style="color:var(--ink-2)">jeszcze 12</span></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="variant" aria-labelledby="v3gate">
+  <h3 id="v3gate"><b>3·</b> Opening the list during the check</h3>
+  <p class="note">The URL is public, so someone may land on the list early. They get this instead of the list. "Pokaż listę mimo to" ends the check, so the notes stay but the stage moves on.</p>
+  <div class="frame s">
+    <div class="mn">
+      <p class="t1">Najpierw sprawdź stronę sam</p>
+      <p class="lead">Lista zdradza wszystkie odpowiedzi. Masz 4 notatki. Wróć do sprawdzania albo zakończ je i zobacz listę.</p>
+      <div class="toolrow"><span class="btn pri">Wróć do sprawdzania</span><span class="btn">Pokaż listę mimo to</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ 4 -->
+<h2 id="s4">4. The list of problems</h2>
+
+<section class="variant" aria-labelledby="v4a">
+  <h3 id="v4a"><b>4A</b> One long list, AU style, code folded</h3>
+  <p class="note">Each problem is a section with an H2 (H3 here), so a screen reader user walks the list with H. The number is the marker's number. Code before and after is a <code>details</code>, closed by default.</p>
+  <div class="frame s">
+    <div class="mn">
+      <p class="t1">Lista problemów</p>
+      <p class="lead">Dwadzieścia problemów strony Komunikacji Miejskiej Wrzosów, w kolejności od góry strony. Przy każdym: co jest nie tak, komu to szkodzi i jak to naprawić. axe-core zgłasza sześć z nich.</p>
+      <div class="prob">
+        <span class="num">6</span>
+        <div class="body">
+          <h3>Menu jasnoszare na żółtym</h3>
+          <span class="crit">1.4.3 Kontrast (minimum) · AA</span><span class="axe yes">axe: color-contrast</span>
+          <p class="who">Szkodzi: słabe widzenie, ostre słońce na ekranie telefonu.</p>
+          <p>Pozycje menu mają kontrast 1,9:1. Na przystanku w słońcu nie widać ich wcale.</p>
+          <p class="sum">Kod przed i po</p>
+        </div>
+      </div>
+      <div class="prob">
+        <span class="num">7</span>
+        <div class="body">
+          <h3>Podmenu otwiera się tylko pod myszą</h3>
+          <span class="crit">2.1.1 Klawiatura · A</span><span class="crit">4.1.2 Nazwa, rola, wartość · A</span><span class="axe">axe: nie wykrywa</span>
+          <p class="who">Szkodzi: klawiatura, czytnik ekranu, sterowanie głosem, ekran dotykowy.</p>
+          <h4>Problem</h4>
+          <p>„Rozkłady” rozwija listę linii, gdy najedziesz na nie myszą. Tab przechodzi przez „Rozkłady” do „Bilety”, a lista się nie pokazuje. Czytnik nie wie, że pod pozycją coś jest.</p>
+          <h4>Rozwiązanie</h4>
+          <p>Każda pozycja z podmenu to przycisk z <code>aria-expanded</code>. Enter i spacja otwierają listę, Esc ją zamyka i zwraca fokus na przycisk.</p>
+          <div class="codes">
+            <pre><b>Przed</b>&lt;li class="has-sub"
+    onmouseover="open(this)"&gt;
+  &lt;span&gt;Rozkłady&lt;/span&gt;
+  &lt;ul class="sub"&gt;…&lt;/ul&gt;
+&lt;/li&gt;</pre>
+            <pre class="ok"><b>Po</b>&lt;li&gt;
+  &lt;button aria-expanded="false"
+    aria-controls="sub-rozklady"&gt;Rozkłady&lt;/button&gt;
+  &lt;ul id="sub-rozklady" hidden&gt;…&lt;/ul&gt;
+&lt;/li&gt;</pre>
+          </div>
+          <div class="links"><span class="a">Pokaż na stronie zepsutej</span><span class="a">Wzorzec: Nawigacja wielopoziomowa</span><span class="a">Kryterium 2.1.1</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="variant" aria-labelledby="v4b">
+  <h3 id="v4b"><b>4B</b> A table, filtered by who it hurts</h3>
+  <p class="note">Short and scannable. The filter is native radio buttons with the state in the URL (<code>?komu=klawiatura</code>), as on <code>/kryteria</code>, and the count is announced. Each title opens the problem's own page with the fields from 4A.</p>
+  <div class="frame s">
+    <div class="mn">
+      <p class="t1">Lista problemów</p>
+      <fieldset class="fil"><legend>Komu szkodzi</legend><div><span>Wszystkim</span><span class="on">Klawiatura</span><span>Czytnik ekranu</span><span>Słabe widzenie</span><span>Daltonizm</span><span>Telefon</span></div></fieldset>
+      <div class="tblwrap">
+        <table class="tbl">
+          <caption>8 z 20 problemów szkodzi użytkownikom klawiatury</caption>
+          <thead><tr><th scope="col">#</th><th scope="col">Problem</th><th scope="col">Kryteria</th><th scope="col">axe</th><th scope="col">Też szkodzi</th></tr></thead>
+          <tbody>
+            <tr><td class="n">2</td><td><span class="a">Brak punktów orientacyjnych i łącza do treści</span></td><td class="mono">1.3.1 · 2.4.1</td><td>częściowo</td><td>czytnik ekranu</td></tr>
+            <tr><td class="n">3</td><td><span class="a">Okno utrudnień nie przejmuje fokusu</span></td><td class="mono">2.1.1 · 2.4.3</td><td>nie</td><td>czytnik ekranu</td></tr>
+            <tr><td class="n">7</td><td><span class="a">Podmenu tylko pod myszą</span></td><td class="mono">2.1.1 · 4.1.2</td><td>nie</td><td>czytnik, dotyk</td></tr>
+            <tr><td class="n">8</td><td><span class="a">Niewidoczny fokus</span></td><td class="mono">2.4.7</td><td>nie</td><td>nikt więcej</td></tr>
+            <tr><td class="n">9</td><td><span class="a">Karuzela bez pauzy</span></td><td class="mono">2.2.2</td><td>nie</td><td>poznawcze</td></tr>
+            <tr><td class="n">18</td><td><span class="a">Błędy formularza bez wskazania pól</span></td><td class="mono">3.3.1 · 4.1.3</td><td>nie</td><td>czytnik, poznawcze</td></tr>
+            <tr><td class="n">19</td><td><span class="a">Pasek cookies zasłania fokus</span></td><td class="mono">2.4.11</td><td>nie</td><td>powiększenie</td></tr>
+            <tr><td class="n">…</td><td colspan="4" style="color:var(--ink-2)">jeszcze jeden</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="variant" aria-labelledby="v4c">
+  <h3 id="v4c"><b>4C</b> A map of the page, problems grouped by region</h3>
+  <p class="note">The map is the page in blocks, top to bottom, with the numbers in each. On wide screens it stays in view while the list scrolls. It is a picture of the list, so it is hidden from screen readers and the region headings carry the same information. Each row opens the full problem (4A's body) in place.</p>
+  <div class="frame s">
+    <div class="mn">
+      <p class="t1">Lista problemów</p>
+      <p class="lead">Od góry strony do dołu. Numery są te same co na znacznikach w wersji zepsutej.</p>
+      <div class="mapwrap" style="margin-top:1rem">
+        <div class="map" aria-hidden="true">
+          <div>Cała strona<span class="pn"><i>1</i><i>2</i><i>8</i><i>20</i></span></div>
+          <div>Okno utrudnień<span class="pn"><i>3</i></span></div>
+          <div>Nagłówek<span class="pn"><i>4</i><i>5</i></span></div>
+          <div class="cur">Menu<span class="pn"><i>6</i><i>7</i></span></div>
+          <div>Karuzela<span class="pn"><i>9</i></span></div>
+          <div class="tall">Odjazdy<span class="pn"><i>10</i><i>11</i><i>12</i><i>13</i></span></div>
+          <div>Aktualności<span class="pn"><i>14</i><i>15</i></span></div>
+          <div class="tall">Formularz<span class="pn"><i>16</i><i>17</i><i>18</i></span></div>
+          <div>Pasek cookies<span class="pn"><i>19</i></span></div>
+        </div>
+        <div>
+          <div class="grp"><h3>Cała strona</h3><ul><li><i>1</i><span>Język strony i ramki po ukraińsku nieoznaczony</span><span class="axe yes">axe</span></li><li><i>2</i><span>Brak punktów orientacyjnych i łącza do treści</span><span class="axe yes">axe</span></li><li><i>8</i><span>Niewidoczny fokus</span><span class="axe">—</span></li><li><i>20</i><span>Strona ma 1000 pikseli szerokości</span><span class="axe">—</span></li></ul></div>
+          <div class="grp"><h3>Okno utrudnień</h3><ul><li><i>3</i><span>Nie przejmuje fokusu, Esc nic nie robi</span><span class="axe">—</span></li></ul></div>
+          <div class="grp"><h3>Nagłówek</h3><ul><li><i>4</i><span>Logo bez tekstu alternatywnego</span><span class="axe yes">axe</span></li><li><i>5</i><span>Ikony 16 na 16 pikseli</span><span class="axe yes">axe</span></li></ul></div>
+          <div class="grp" style="background:#FFF8C9;margin-left:-.5rem;padding-left:.5rem"><h3>Menu</h3><ul><li><i>6</i><span>Jasnoszare na żółtym</span><span class="axe yes">axe</span></li><li><i>7</i><span>Podmenu tylko pod myszą</span><span class="axe">—</span></li></ul></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ 5 -->
+<h2 id="s5">5. The look of KMW</h2>
+<p class="note" style="color:#B8BDC2">Both looks carry the same twenty problems. The question is which one teaches better. Both shown broken; 5B also shown fixed, with the same layout, so the difference sits where the fixes are.</p>
+
+<section class="variant" aria-labelledby="v5a">
+  <h3 id="v5a"><b>5A</b> A municipal portal from around 2012</h3>
+  <p class="note">Gradients, Verdana at 11 pixels, three columns at a fixed 1000 pixels, a ticker. Familiar to anyone who audits public sector sites, and it makes problem 20 obvious. The risk: readers file accessibility under "old sites".</p>
+  <div class="frame scroller">
+    <div class="o">
+      <div class="wrap">
+        <div class="ban"><span class="crest"></span><div><b>Komunikacja Miejska Wrzosów</b><small>Miejski Zakład Komunikacji Sp. z o.o.</small></div><div class="soc"><i></i><i></i><i></i></div></div>
+        <div class="bar"><span>Strona główna</span><span>Rozkłady jazdy</span><span>Bilety</span><span>Utrudnienia</span><span>O nas</span><span>Kontakt</span></div>
+        <div class="tick">» Uwaga! Od 1.11 zmiana rozkładu linii 14 »» Remont wiaduktu na ul. Kolejowej »» Nowe automaty biletowe</div>
+        <div class="body">
+          <div class="side"><p class="h">Na skróty</p><div>Rozkład jazdy</div><div>Planer podróży</div><div>Cennik biletów</div><div>Ulgi</div><div>Biuro rzeczy znalezionych</div><div>Deklaracja dostępności</div></div>
+          <div class="main">
+            <div class="slide">Linia 14 dojedzie na Osiedle Wrzosowe<small>Od 1 listopada co 10 minut w szczycie. Kliknij tutaj »</small></div>
+            <p class="h">Odjazdy z przystanku Rynek</p>
+            <div class="grid">
+              <div class="hh">Linia</div><div class="hh">Kierunek</div><div class="hh">Odjazd</div><div class="hh"></div>
+              <div>14</div><div>Osiedle Wrzosowe</div><div>12:04</div><div><span class="d" style="display:block;background:#3BA55C"></span></div>
+              <div>3</div><div>Dworzec Główny</div><div>12:06</div><div><span class="d" style="display:block;background:#E0453A"></span></div>
+              <div>21</div><div>Szpital Miejski</div><div>12:09</div><div><span class="d" style="display:block;background:#3BA55C"></span></div>
+            </div>
+            <div class="hr"></div>
+            <p class="h">Zgłoś uwagę</p>
+            <p style="margin:0;color:#3B6FD8">Imię i nazwisko</p><div style="height:20px;border:1px solid #9AA6B5;width:220px;margin-bottom:4px"></div>
+            <p style="margin:0;color:#3B6FD8">E-mail</p><div style="height:20px;border:1px solid #9AA6B5;width:220px"></div>
+          </div>
+          <div class="right"><p class="h">Aktualności</p><p><b>Remont wiaduktu na Kolejowej</b><br>Objazdy linii 3 i 7. <span class="more">więcej »</span></p><div class="hr"></div><p><b>Nowe automaty biletowe</b><br>Na 12 przystankach. <span class="more">więcej »</span></p><div class="hr"></div><p class="h">Інформація для пасажирів</p><p>Квитки можна купити в автоматах на зупинках.</p></div>
+        </div>
+        <div class="foot">© 2012 Komunikacja Miejska Wrzosów · ul. Zajezdniowa 4, 00-000 Wrzosów · Kontakt</div>
+      </div>
+    </div>
+  </div>
+  <p class="cap">Scrolls sideways here on purpose: the page is 1000 pixels wide.</p>
+</section>
+
+<section class="variant" aria-labelledby="v5b">
+  <h3 id="v5b"><b>5B</b> A modern site, broken and fixed</h3>
+  <p class="note">Condensed display type, a heather hero with a giant line number, the amber board. It looks like 2026 and still fails twenty times, which is a point AU cannot make. On the right, the fixed version in a state worth showing: submenu open with focus in it, board with status in words, form after a bad submit.</p>
+  <div class="pair">
+    <div>
+      <div class="frame">
+        <div class="k">
+          <div class="top"><div class="logo"><svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect width="34" height="34" rx="6" fill="#4A1F5C"/><path d="M17 27V9M17 14l-6-4M17 18l6-4M17 22l-5-3" stroke="#FFC93C" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg><div><b>KMW</b><small>Komunikacja Miejska Wrzosów</small></div></div><div class="soc"><i></i><i></i><i></i><i></i></div><span class="ua">Українською</span></div>
+          <div class="menu"><span>Rozkłady</span><span>Bilety</span><span>Utrudnienia</span><span>O nas</span></div>
+          <div class="hero"><span class="arr l">‹</span><p class="h">Linia 14 dojedzie na Osiedle Wrzosowe</p><p>Od 1 listopada co 10 minut w szczycie. <span style="color:#fff">Kliknij tutaj</span>.</p><div class="dots"><i></i><i></i><i></i></div><span class="arr r">›</span><span class="ln">14</span></div>
+          <div class="cols" style="grid-template-columns:1fr">
+            <div class="boardw">
+              <div class="hd2">Odjazdy z przystanku Rynek</div>
+              <div class="row h"><span>Linia</span><span>Kierunek</span><span>Odjazd</span><span></span></div>
+              <div class="row"><span class="bad-l bus">14</span><span>Osiedle Wrzosowe</span><span>12:04</span><span class="dot g"></span></div>
+              <div class="row"><span class="bad-l tram">3</span><span>Dworzec Główny</span><span>12:06</span><span class="dot r"></span></div>
+              <div class="row"><span class="bad-l bus">21</span><span>Szpital Miejski</span><span>12:09</span><span class="dot g"></span></div>
+              <div class="row"><span class="bad-l fast">A</span><span>Port Lotniczy</span><span>12:15</span><span class="dot r"></span></div>
+            </div>
+            <div>
+              <div class="hd2">Aktualności</div>
+              <ul class="news">
+                <li><span class="bi"></span><span><b>Remont wiaduktu na Kolejowej: objazdy linii 3 i 7</b><span class="more">Więcej</span></span></li>
+                <li><span class="bi"></span><span><b>Nowe automaty biletowe na 12 przystankach</b><span class="more">Więcej</span></span></li>
+              </ul>
+            </div>
+          </div>
+          <div class="ukr"><div class="hd2" style="margin:0">Інформація для пасажирів</div><p>Квитки можна купити в автоматах на зупинках і в мобільному застосунку. <span class="lnk">Детальніше</span></p></div>
+          <div class="form">
+            <div class="hd2">Zgłoś uwagę</div>
+            <div class="errtop">Formularz zawiera błędy.</div>
+            <div class="fgrid">
+              <div class="fld"><span class="lb req">Imię i nazwisko</span><div class="in"></div></div>
+              <div class="fld"><span class="lb req">E-mail</span><div class="in" style="border-color:#E0453A"></div></div>
+              <div class="fld"><span class="lb">Numer linii</span><div class="in"></div></div>
+              <div class="fld"><span class="lb">Data przejazdu</span><div class="in"></div></div>
+            </div>
+            <div class="fld" style="margin-top:.6rem"><span class="lb req">Rodzaj zgłoszenia</span><div class="rad"><span>Opóźnienie</span><span>Zachowanie kierowcy</span><span>Czystość pojazdu</span><span>Inne</span></div></div>
+            <div class="captcha"><span class="img">x7Kp2</span><div class="fld" style="flex:1"><div class="in"></div></div></div>
+            <span class="sbtn">Wyślij</span>
+          </div>
+          <div class="foot"><span>© 2026 Komunikacja Miejska Wrzosów</span><span>ul. Zajezdniowa 4, Wrzosów</span><span>Deklaracja dostępności</span></div>
+          <div class="cookie"><span>Używamy plików cookies, żeby strona działała.</span><span class="b">Akceptuję</span></div>
+        </div>
+      </div>
+      <p class="cap">5B przed: menu 1.9:1, status kropką, „Więcej”, CAPTCHA, ogólny błąd, pasek przyklejony.</p>
+    </div>
+    <div>
+      <div class="frame">
+        <div class="k">
+          <div class="top"><div class="logo"><svg width="34" height="34" viewBox="0 0 34 34" role="img" aria-label="KMW"><rect width="34" height="34" rx="6" fill="#4A1F5C"/><path d="M17 27V9M17 14l-6-4M17 18l6-4M17 22l-5-3" stroke="#FFC93C" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg><div><b>KMW</b><small>Komunikacja Miejska Wrzosów</small></div></div><div class="soc ok"><i></i><i></i><i></i></div><span class="ua lnk-u" lang="uk">Українською</span></div>
+          <div class="menu ok" style="position:relative"><span class="open">Rozkłady</span><span>Bilety</span><span>Utrudnienia</span><span>O nas</span>
+            <div class="sub" style="left:.6rem;top:44px"><span class="f">Tramwaje</span><span>Autobusy dzienne</span><span>Autobusy nocne</span><span>Planer podróży</span></div>
+          </div>
+          <div class="hero"><span class="arr l big">‹</span><p class="h">Linia 14 dojedzie na Osiedle Wrzosowe</p><p>Od 1 listopada co 10 minut w szczycie. <span style="color:#fff;text-decoration:underline">Rozkład linii 14</span></p><span class="pause">❚❚ Zatrzymaj</span><span class="arr r big">›</span><span class="ln">14</span></div>
+          <div class="cols" style="grid-template-columns:1fr">
+            <div class="boardw board-ok">
+              <div class="hd2">Odjazdy z przystanku Rynek</div>
+              <div class="row h"><span>Linia</span><span>Kierunek</span><span>Odjazd</span><span>Stan</span></div>
+              <div class="row"><span class="bad-l bus">14</span><span>Osiedle Wrzosowe</span><span>12:04</span><span class="st on">o czasie</span></div>
+              <div class="row"><span class="bad-l tram">3</span><span>Dworzec Główny</span><span>12:06</span><span class="st late">opóźniony 4 min</span></div>
+              <div class="row"><span class="bad-l bus">21</span><span>Szpital Miejski</span><span>12:09</span><span class="st on">o czasie</span></div>
+              <div class="row"><span class="bad-l fast">A</span><span>Port Lotniczy</span><span>12:15</span><span class="st late">opóźniony 2 min</span></div>
+              <div class="upd"><span>Stan na 12:01</span><span class="b">Odśwież</span></div>
+            </div>
+            <div>
+              <div class="hd2">Aktualności</div>
+              <ul class="news ok">
+                <li><span class="bi"></span><span><b>Remont wiaduktu na Kolejowej: objazdy linii 3 i 7</b></span></li>
+                <li><span class="bi"></span><span><b>Nowe automaty biletowe na 12 przystankach</b></span></li>
+              </ul>
+            </div>
+          </div>
+          <div class="ukr ok" lang="uk"><div class="hd2" style="margin:0">Інформація для пасажирів</div><p>Квитки можна купити в автоматах на зупинках і в мобільному застосунку. <span class="lnk">Як купити квиток</span></p></div>
+          <div class="form">
+            <div class="hd2">Zgłoś uwagę</div>
+            <div class="errsum"><b>Popraw 2 pola</b><ul><li><span>E-mail: wpisz adres w formacie nazwa@domena.pl</span></li><li><span>Rodzaj zgłoszenia: wybierz jedną opcję</span></li></ul></div>
+            <div class="fgrid">
+              <div class="fld"><span class="lb">Imię i nazwisko (wymagane)</span><div class="in"></div></div>
+              <div class="fld err"><span class="lb">E-mail (wymagane)</span><div class="in"></div><p class="em">Wpisz adres w formacie nazwa@domena.pl</p></div>
+              <div class="fld"><span class="lb">Numer linii</span><div class="in"></div></div>
+              <div class="fld"><span class="lb">Data przejazdu</span><div class="in"></div></div>
+            </div>
+            <fieldset class="rf" style="margin-top:.6rem"><legend>Rodzaj zgłoszenia (wymagane)</legend><div class="rad"><span>Opóźnienie</span><span>Zachowanie kierowcy</span><span>Czystość pojazdu</span><span>Inne</span></div><p class="em" style="color:#9A0F27;font-size:.78rem;font-weight:600;margin:.3rem 0 0">✕ Wybierz jedną opcję</p></fieldset>
+            <span class="sbtn">Wyślij zgłoszenie</span>
+          </div>
+          <div class="foot" style="padding-bottom:.9rem"><span>© 2026 Komunikacja Miejska Wrzosów</span><span>ul. Zajezdniowa 4, Wrzosów</span><span class="lnk-u" style="color:#fff">Deklaracja dostępności</span></div>
+          <div class="cookie ok"><span>Używamy plików cookies, żeby strona działała.</span><span class="b">Akceptuję</span><span class="x" aria-label="Zamknij">✕</span></div>
+        </div>
+      </div>
+      <p class="cap">5B po: menu jako przyciski, pauza, status słowami, nazwy łączy, etykiety i podsumowanie błędów z fokusem, pasek w obiegu strony.</p>
+    </div>
+  </div>
+</section>
+
+</div>
+</body>
+</html>

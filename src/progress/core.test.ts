@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { createProgressStore } from "./store";
+import { createProgressStore, reviewOf } from "./core";
 
 /** An in-memory stand-in for localStorage. */
 function memoryStorage(initial: Record<string, string> = {}) {
@@ -67,5 +67,46 @@ describe("progress store", () => {
     store.setLessonDone("programista/a", true);
     expect(calls).toBe(1);
     expect(store.get()).not.toBe(before);
+  });
+});
+
+describe("self-check reviews", () => {
+  const notesOf = (store: ReturnType<typeof createProgressStore>) => reviewOf(store.get().progress, "przed-i-po").notes;
+
+  test("adds, edits and removes notes in order, and skips blank ones", () => {
+    const storage = memoryStorage();
+    const store = createProgressStore(storage);
+    const first = store.addNote("przed-i-po", "  Tab nie otwiera podmenu ");
+    store.addNote("przed-i-po", "Nie widać fokusu");
+    expect(store.addNote("przed-i-po", "   ")).toBeNull();
+    expect(notesOf(store).map((note) => note.text)).toEqual(["Tab nie otwiera podmenu", "Nie widać fokusu"]);
+
+    store.editNote("przed-i-po", first?.id ?? "", "Podmenu tylko pod myszą");
+    expect(notesOf(createProgressStore(storage)).map((note) => note.text)).toEqual(["Podmenu tylko pod myszą", "Nie widać fokusu"]);
+
+    store.editNote("przed-i-po", first?.id ?? "", " ");
+    expect(notesOf(store)).toHaveLength(1);
+    store.removeNote("przed-i-po", notesOf(store)[0]?.id ?? "");
+    expect(notesOf(store)).toEqual([]);
+  });
+
+  test("reveals once, keeps the notes, and starts over without either", () => {
+    const store = createProgressStore(memoryStorage());
+    store.addNote("przed-i-po", "Kropki tylko kolorem");
+    store.reveal("przed-i-po");
+    const revealedAt = reviewOf(store.get().progress, "przed-i-po").revealedAt;
+    expect(revealedAt).toBeDefined();
+    store.reveal("przed-i-po");
+    expect(reviewOf(store.get().progress, "przed-i-po")).toMatchObject({ revealedAt, notes: [{ text: "Kropki tylko kolorem" }] });
+
+    store.restart("przed-i-po");
+    expect(reviewOf(store.get().progress, "przed-i-po")).toEqual({ notes: [] });
+  });
+
+  test("reads progress stored before reviews existed", () => {
+    const stored = JSON.stringify({ v: 1, lessons: { "a/b": { status: "ukonczona", updatedAt: "2026-01-01T10:00:00.000Z" } }, quizzes: {} });
+    const store = createProgressStore(memoryStorage({ [key]: stored }));
+    expect(store.get().progress.lessons["a/b"]?.status).toBe("ukonczona");
+    expect(reviewOf(store.get().progress, "przed-i-po")).toEqual({ notes: [] });
   });
 });

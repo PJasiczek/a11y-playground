@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Komunikacja Miejska Wrzosów</title>
+<style>
+  * { box-sizing: border-box; }
+  :focus-visible { outline: 3px solid #4a1f5c; outline-offset: 2px; }
+  .ciemne :focus-visible, .karuzela :focus-visible, .stopka :focus-visible, .cookies :focus-visible { outline-color: #ffc93c; }
+  body { margin: 0; background: #e9e4ee; color: #17141c; font: 15px/1.5 "Segoe UI", system-ui, sans-serif; }
+  .strona { max-width: 1000px; margin: 0 auto; background: #f7f4f9; }
+  a { color: #4a1f5c; text-decoration: underline; text-underline-offset: 3px; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .przejdz { position: absolute; left: .5rem; top: -10rem; z-index: 200; background: #17141c; color: #fff; padding: .7rem 1rem; }
+  .przejdz:focus { top: .5rem; }
+  .gora { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; padding: .6rem 1.25rem; background: #fff; }
+  .logo { display: flex; align-items: center; gap: .6rem; color: inherit; text-decoration: none; min-height: 44px; }
+  .logo-tekst b { display: block; font: 800 1.5rem/1 "Bahnschrift", "Roboto Condensed", "Arial Narrow", sans-serif; color: #4a1f5c; }
+  .logo-tekst span { font: 600 .72rem/1.2 "Bahnschrift", "Arial Narrow", sans-serif; text-transform: uppercase; letter-spacing: .1em; }
+  .spolecznosc { margin-left: auto; display: flex; gap: .25rem; list-style: none; margin-block: 0; padding: 0; }
+  .spolecznosc a { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; }
+  .jezyk { display: inline-flex; align-items: center; min-height: 44px; }
+  .utrudnienia { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem 1rem; padding: .3rem 1.25rem; background: #fff6d8; border-top: 1px solid #e8d9a4; }
+  .utrudnienia p { margin: 0; }
+  .utrudnienia button { min-height: 44px; font: 600 .9rem "Segoe UI", system-ui, sans-serif; background: #fff; color: #17141c; border: 2px solid #17141c; border-radius: 3px; padding: 0 .9rem; cursor: pointer; }
+  .menu { background: #ffc93c; }
+  .menu > ul { list-style: none; margin: 0; padding: 0 .75rem; display: flex; flex-wrap: wrap; }
+  .menu li { position: relative; }
+  .menu > ul > li > a, .menu > ul > li > button { display: inline-flex; align-items: center; gap: .4rem; min-height: 48px; padding: 0 .9rem; font: 700 1rem "Bahnschrift", "Arial Narrow", sans-serif; color: #17141c; background: none; border: 0; cursor: pointer; text-decoration: none; }
+  .menu button[aria-expanded="true"] { background: #17141c; color: #ffc93c; }
+  .menu button::after { content: "▾" / ""; font-size: .8rem; }
+  .menu button[aria-expanded="true"]::after { content: "▴" / ""; }
+  .menu .pod { position: absolute; z-index: 5; left: 0; top: 100%; min-width: 14rem; list-style: none; margin: 0; padding: .3rem 0; background: #fff; border: 2px solid #17141c; }
+  .menu .pod a { display: flex; align-items: center; min-height: 44px; padding: 0 .9rem; color: #17141c; }
+  .karuzela { position: relative; background: #4a1f5c; color: #fff; padding: 1.5rem 1.25rem 1.25rem; }
+  .slajdy { min-height: 7.5rem; padding-right: 7rem; }
+  .slajd h3 { font: 800 2rem/1.05 "Bahnschrift", "Roboto Condensed", "Arial Narrow", sans-serif; max-width: 20ch; margin: 0; }
+  .slajd p { color: #e6dceb; margin: .5rem 0 0; max-width: 46ch; }
+  .slajd a { color: #fff; }
+  .slajd .numer { position: absolute; right: 1.5rem; top: 1rem; font: 800 4.5rem/1 "Bahnschrift", "Arial Narrow", sans-serif; color: #ffc93c; }
+  .sterowanie { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-top: 1rem; }
+  .sterowanie button { min-width: 44px; min-height: 44px; font: 700 .9rem "Segoe UI", system-ui, sans-serif; color: #4a1f5c; background: #fff; border: 0; border-radius: 3px; padding: 0 .8rem; cursor: pointer; }
+  .sterowanie button[aria-pressed="true"] { background: #ffc93c; color: #17141c; }
+  .sterowanie .ktory { margin-left: .4rem; color: #e6dceb; font-size: .9rem; }
+  .kolumny { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: 1.5rem; padding: 1.5rem 1.25rem; }
+  h1 { margin: 0; }
+  h2 { font: 800 1.35rem/1.1 "Bahnschrift", "Roboto Condensed", "Arial Narrow", sans-serif; margin: 0 0 .7rem; }
+  .tablica { background: #15111a; color: #ffb547; border-radius: 4px; padding: .9rem 1rem .7rem; }
+  .tablica h2 { color: #fff; }
+  .tablica table { width: 100%; border-collapse: collapse; font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; }
+  .tablica caption { text-align: left; color: #c9bfd3; font: .8rem "Segoe UI", system-ui, sans-serif; padding-bottom: .4rem; }
+  .tablica th { color: #c9bfd3; font: 600 .75rem "Segoe UI", system-ui, sans-serif; text-transform: uppercase; letter-spacing: .08em; text-align: left; padding: .3rem .4rem .3rem 0; }
+  .tablica td { padding: .45rem .4rem .45rem 0; border-top: 1px dashed #4b3d2a; vertical-align: middle; }
+  .linia { display: inline-block; min-width: 2.4rem; background: #4a1f5c; color: #fff; text-align: center; font: 800 1rem/1.8rem "Bahnschrift", "Arial Narrow", sans-serif; border-radius: 3px; }
+  .stan { font: 600 .85rem "Segoe UI", system-ui, sans-serif; color: #fff; }
+  .stan.spozniony { color: #ffb547; }
+  .stan::before { content: "● " / ""; color: #7fd39c; }
+  .stan.spozniony::before { content: "▲ " / ""; color: #ffb547; }
+  .aktualizacja { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .4rem; margin-top: .5rem; color: #c9bfd3; font-size: .85rem; }
+  .aktualizacja button { min-height: 44px; font: 700 .9rem "Segoe UI", system-ui, sans-serif; color: #fff; background: none; border: 1px solid #c9bfd3; border-radius: 3px; padding: 0 .9rem; cursor: pointer; }
+  .wiadomosci { list-style: none; margin: 0; padding: 0; }
+  .wiadomosci li { display: grid; grid-template-columns: 24px 1fr; gap: .6rem; padding: .6rem 0; border-top: 1px solid #dcd3e1; }
+  .wiadomosci h3 { margin: 0; font-size: 1rem; }
+  .wiadomosci p { margin: .2rem 0 0; }
+  .wstep { margin: 0 0 .5rem; }
+  .schemat { padding: 0 1.25rem 1.5rem; }
+  .schemat img { display: block; width: 100%; height: auto; background: #fff; border: 1px solid #dcd3e1; }
+  .schemat ul { margin: .7rem 0 0; padding-left: 1.2rem; }
+  .ramka { margin: 0 1.25rem 1.5rem; border-left: 6px solid #ffc93c; background: #fff; padding: .9rem 1.1rem; }
+  .ramka p { margin: .3rem 0 0; }
+  .zgloszenie { margin: 0 1.25rem 1.5rem; background: #fff; padding: 1.1rem 1.25rem 1.4rem; border-top: 6px solid #4a1f5c; }
+  .podsumowanie { border: 3px solid #8e0e24; padding: .7rem .9rem; margin-bottom: 1rem; }
+  .podsumowanie h3 { margin: 0; color: #8e0e24; font-size: 1.05rem; }
+  .podsumowanie ul { margin: .3rem 0 0; padding-left: 1.2rem; }
+  .podsumowanie li a { display: inline-block; padding: .35rem 0; }
+  .wyslane { border: 3px solid #145537; padding: .7rem .9rem; margin-bottom: 1rem; font-weight: 600; }
+  .siatka { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: .8rem 1.1rem; }
+  .pole label, .pole legend { display: block; font-size: .9rem; font-weight: 600; margin-bottom: .25rem; }
+  .pole input[type="text"], .pole input[type="email"], .pole textarea { width: 100%; min-height: 44px; font: inherit; padding: .5rem .6rem; border: 1px solid #5c5260; border-radius: 3px; background: #fff; color: #17141c; }
+  .pole textarea { min-height: 6rem; }
+  .pole [aria-invalid="true"] { border: 2px solid #8e0e24; }
+  .pole .podpowiedz { margin: .2rem 0 0; font-size: .85rem; color: #5c5260; }
+  .pole .blad { margin: .25rem 0 0; color: #8e0e24; font-size: .9rem; font-weight: 600; }
+  .pole .blad::before { content: "✕ " / ""; }
+  fieldset.pole { border: 1px solid #5c5260; border-radius: 3px; margin: .9rem 0 0; padding: .4rem .8rem .7rem; }
+  fieldset.pole legend { padding: 0 .3rem; }
+  .opcje { display: flex; flex-wrap: wrap; gap: 0 1.25rem; }
+  .opcje label, .zgoda label { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; font-weight: 400; margin: 0; }
+  .opcje input, .zgoda input { width: 20px; height: 20px; margin: 0; accent-color: #4a1f5c; }
+  .wyslij { margin-top: 1rem; min-height: 44px; font: 700 1rem "Segoe UI", system-ui, sans-serif; padding: 0 1.4rem; background: #4a1f5c; color: #fff; border: 0; border-radius: 3px; cursor: pointer; }
+  .stopka { background: #17141c; color: #d8d0dd; padding: 1.1rem 1.25rem; display: flex; flex-wrap: wrap; gap: .5rem 2rem; align-items: center; font-size: .9rem; }
+  .stopka a { color: #fff; display: inline-flex; align-items: center; min-height: 44px; }
+  .stopka p { margin: 0; }
+  .cookies { background: #2c2433; color: #fff; padding: .6rem 1.25rem; display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; }
+  .cookies p { margin: 0; }
+  .cookies button { min-height: 44px; font: 700 .9rem "Segoe UI", system-ui, sans-serif; background: #ffc93c; color: #17141c; border: 0; padding: 0 .9rem; cursor: pointer; }
+  .cookies button:first-of-type { margin-left: auto; }
+  .cookies .zamknij { min-width: 44px; background: none; color: #fff; border: 1px solid #fff; }
+  dialog { width: min(28rem, calc(100% - 2rem)); border: 0; border-top: 6px solid #ffc93c; padding: 1.2rem 1.4rem; color: #17141c; }
+  dialog::backdrop { background: rgb(23 20 28 / .55); }
+  dialog h2 { margin-bottom: .4rem; }
+  dialog button { min-height: 44px; font: 700 .95rem "Segoe UI", system-ui, sans-serif; background: #4a1f5c; color: #fff; border: 0; border-radius: 3px; padding: 0 1.1rem; cursor: pointer; }
+  @media (max-width: 40rem) {
+    .slajdy { padding-right: 0; }
+    .slajd .numer { position: static; display: block; font-size: 3rem; margin-top: .4rem; }
+    .slajd h3 { font-size: 1.6rem; }
+    .kolumny { padding-inline: .75rem; }
+    .tablica { padding-inline: .7rem; }
+    .tablica td, .tablica th { padding-right: .3rem; }
+  }
+</style>
+</head>
+<body>
+<a class="przejdz" href="#tresc">Przejdź do treści</a>
+<div class="strona">
+
+  <header>
+    <div class="gora">
+      <a class="logo" href="#">
+        <img width="40" height="40" alt="" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='7' fill='%234a1f5c'/%3E%3Cpath d='M20 32V10M20 16l-7-5M20 21l7-5M20 26l-6-4' stroke='%23ffc93c' stroke-width='2.8' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+        <span class="logo-tekst"><b>KMW</b><span>Komunikacja Miejska Wrzosów</span></span>
+      </a>
+      <ul class="spolecznosc">
+        <li><a href="#"><img width="24" height="24" alt="Facebook" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%234a1f5c'/%3E%3Cpath d='M9 13V8.5h1.5L11 7H9V6c0-.5.2-.8.8-.8H11V3.6C10.6 3.5 10.1 3.5 9.6 3.5 8.3 3.5 7.5 4.3 7.5 5.7V7H6v1.5h1.5V13z' fill='%23fff'/%3E%3C/svg%3E"></a></li>
+        <li><a href="#"><img width="24" height="24" alt="Instagram" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%234a1f5c'/%3E%3Crect x='4' y='4' width='8' height='8' rx='2.5' stroke='%23fff' stroke-width='1.3' fill='none'/%3E%3Ccircle cx='8' cy='8' r='1.8' stroke='%23fff' stroke-width='1.3' fill='none'/%3E%3C/svg%3E"></a></li>
+        <li><a href="#"><img width="24" height="24" alt="YouTube" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%234a1f5c'/%3E%3Cpath d='M6.5 5.2v5.6L11 8z' fill='%23fff'/%3E%3C/svg%3E"></a></li>
+      </ul>
+      <a class="jezyk" href="#" lang="uk" hreflang="uk">Українською</a>
+    </div>
+    <div class="utrudnienia">
+      <p><strong>Utrudnienia:</strong> tramwaje linii 3 jadą objazdem.</p>
+      <button type="button" class="pokaz-utrudnienia">Szczegóły utrudnień</button>
+    </div>
+    <nav class="menu" aria-label="Główna">
+      <ul>
+        <li><button type="button" aria-expanded="false" aria-controls="pod-rozklady">Rozkłady</button>
+          <ul class="pod" id="pod-rozklady" hidden>
+            <li><a href="#">Tramwaje</a></li>
+            <li><a href="#">Autobusy dzienne</a></li>
+            <li><a href="#">Autobusy nocne</a></li>
+            <li><a href="#">Planer podróży</a></li>
+          </ul>
+        </li>
+        <li><button type="button" aria-expanded="false" aria-controls="pod-bilety">Bilety</button>
+          <ul class="pod" id="pod-bilety" hidden>
+            <li><a href="#">Cennik</a></li>
+            <li><a href="#">Ulgi</a></li>
+            <li><a href="#">Bilet w aplikacji</a></li>
+          </ul>
+        </li>
+        <li><a href="#">Utrudnienia</a></li>
+        <li><button type="button" aria-expanded="false" aria-controls="pod-o-nas">O nas</button>
+          <ul class="pod" id="pod-o-nas" hidden>
+            <li><a href="#">Kontakt</a></li>
+            <li><a href="#">Biuro rzeczy znalezionych</a></li>
+            <li><a href="#">Deklaracja dostępności</a></li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="tresc" tabindex="-1">
+    <h1 class="sr-only">Komunikacja Miejska Wrzosów: strona główna</h1>
+
+    <section class="karuzela" aria-roledescription="karuzela" aria-labelledby="karuzela-tytul">
+      <h2 id="karuzela-tytul" class="sr-only">Komunikaty</h2>
+      <div class="slajdy" aria-live="polite">
+        <div class="slajd" role="group" aria-roledescription="slajd" aria-label="1 z 3">
+          <h3>Linia 14 dojedzie na Osiedle Słoneczne</h3>
+          <p>Od 1 listopada co 10 minut w szczycie. <a href="#">Rozkład linii 14</a></p>
+          <span class="numer" aria-hidden="true">14</span>
+        </div>
+        <div class="slajd" role="group" aria-roledescription="slajd" aria-label="2 z 3" hidden>
+          <h3>Nocą jeżdżą linie N1 i N2</h3>
+          <p>W piątki i soboty do 4:30. <a href="#">Trasy linii nocnych</a></p>
+          <span class="numer" aria-hidden="true">N1</span>
+        </div>
+        <div class="slajd" role="group" aria-roledescription="slajd" aria-label="3 z 3" hidden>
+          <h3>Bilet 24-godzinny za 15 zł</h3>
+          <p>Kupisz go w automacie i w aplikacji. <a href="#">Gdzie kupić bilet 24-godzinny</a></p>
+          <span class="numer" aria-hidden="true">24h</span>
+        </div>
+      </div>
+      <div class="sterowanie">
+        <button type="button" class="wstecz" aria-label="Poprzedni komunikat">‹</button>
+        <button type="button" class="dalej" aria-label="Następny komunikat">›</button>
+        <button type="button" class="samoczynnie" aria-pressed="false">Przewijaj samoczynnie</button>
+        <span class="ktory" aria-hidden="true">1 z 3</span>
+      </div>
+    </section>
+
+    <div class="kolumny">
+      <section class="tablica ciemne" aria-labelledby="odjazdy-tytul">
+        <h2 id="odjazdy-tytul">Odjazdy z przystanku Rynek</h2>
+        <table>
+          <caption>Najbliższe odjazdy</caption>
+          <thead><tr><th scope="col">Linia</th><th scope="col">Kierunek</th><th scope="col">Odjazd</th><th scope="col">Stan</th></tr></thead>
+          <tbody class="wiersze"></tbody>
+        </table>
+        <div class="aktualizacja">
+          <p role="status" class="kiedy" style="margin:0">Stan na 12:01</p>
+          <button type="button" class="odswiez">Odśwież odjazdy</button>
+        </div>
+      </section>
+
+      <section aria-labelledby="aktualnosci-tytul">
+        <h2 id="aktualnosci-tytul">Aktualności</h2>
+        <p class="wstep">Wszystkie zmiany znajdziesz w <a href="#">rozkładach jazdy</a> i w <a href="#">komunikatach</a>.</p>
+        <ul class="wiadomosci">
+          <li><img width="24" height="24" alt="" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%23ede6f0'/%3E%3Crect x='6' y='6' width='12' height='10' rx='2' stroke='%234a1f5c' stroke-width='2' fill='none'/%3E%3Ccircle cx='9' cy='18' r='1.5' fill='%234a1f5c'/%3E%3Ccircle cx='15' cy='18' r='1.5' fill='%234a1f5c'/%3E%3C/svg%3E"><div><h3><a href="#">Remont wiaduktu na Kolejowej: objazdy linii 3 i 7</a></h3></div></li>
+          <li><img width="24" height="24" alt="" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%23ede6f0'/%3E%3Crect x='6' y='6' width='12' height='10' rx='2' stroke='%234a1f5c' stroke-width='2' fill='none'/%3E%3Ccircle cx='9' cy='18' r='1.5' fill='%234a1f5c'/%3E%3Ccircle cx='15' cy='18' r='1.5' fill='%234a1f5c'/%3E%3C/svg%3E"><div><h3><a href="#">Nowe automaty biletowe na 12 przystankach</a></h3></div></li>
+          <li><img width="24" height="24" alt="" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%23ede6f0'/%3E%3Crect x='6' y='6' width='12' height='10' rx='2' stroke='%234a1f5c' stroke-width='2' fill='none'/%3E%3Ccircle cx='9' cy='18' r='1.5' fill='%234a1f5c'/%3E%3Ccircle cx='15' cy='18' r='1.5' fill='%234a1f5c'/%3E%3C/svg%3E"><div><h3><a href="#">Bilet miesięczny w aplikacji od 1 grudnia</a></h3></div></li>
+        </ul>
+      </section>
+    </div>
+
+    <section class="schemat" aria-labelledby="schemat-tytul">
+      <h2 id="schemat-tytul">Schemat sieci</h2>
+      <img width="960" height="220" alt="Schemat sieci linii KMW. Opis linii jest pod schematem." src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 960 220' font-family='Segoe UI,sans-serif' font-size='14'%3E%3Crect width='960' height='220' fill='%23fff'/%3E%3Cpath d='M60 110H900' stroke='%234a1f5c' stroke-width='8'/%3E%3Cpath d='M200 30V190' stroke='%23b3122e' stroke-width='8'/%3E%3Cpath d='M480 30L480 110L760 190' stroke='%231d6b36' stroke-width='8' fill='none'/%3E%3Cpath d='M60 170L480 110L900 40' stroke='%231c3d8f' stroke-width='6' stroke-dasharray='14 8' fill='none'/%3E%3Cg fill='%23fff' stroke='%2317141c' stroke-width='3'%3E%3Ccircle cx='60' cy='110' r='9'/%3E%3Ccircle cx='200' cy='110' r='9'/%3E%3Ccircle cx='480' cy='110' r='12'/%3E%3Ccircle cx='900' cy='110' r='9'/%3E%3Ccircle cx='200' cy='30' r='9'/%3E%3Ccircle cx='200' cy='190' r='9'/%3E%3Ccircle cx='760' cy='190' r='9'/%3E%3Ccircle cx='900' cy='40' r='9'/%3E%3C/g%3E%3Cg fill='%2317141c'%3E%3Ctext x='40' y='140'%3EZajezdnia Lipowa%3C/text%3E%3Ctext x='212' y='100'%3EPlac Wolności%3C/text%3E%3Ctext x='492' y='100' font-weight='700'%3ERynek%3C/text%3E%3Ctext x='820' y='140'%3EDworzec Główny%3C/text%3E%3Ctext x='212' y='35'%3EOsiedle Wrzosowe%3C/text%3E%3Ctext x='492' y='40'%3EStadion%3C/text%3E%3Ctext x='212' y='205'%3ESzpital Miejski%3C/text%3E%3Ctext x='690' y='212'%3EOsiedle Słoneczne%3C/text%3E%3Ctext x='800' y='30'%3EPort Lotniczy%3C/text%3E%3C/g%3E%3C/svg%3E">
+      <ul>
+        <li>Tramwaj 7: Zajezdnia Lipowa, Plac Wolności, Rynek, Dworzec Główny.</li>
+        <li>Tramwaj 3: Osiedle Wrzosowe, Plac Wolności, Szpital Miejski.</li>
+        <li>Autobus 14: Stadion, Rynek, Osiedle Słoneczne.</li>
+        <li>Autobus A (lotniskowy, linia przerywana): Zajezdnia Lipowa, Rynek, Port Lotniczy.</li>
+      </ul>
+    </section>
+
+    <section class="ramka" lang="uk" aria-labelledby="ua-tytul">
+      <h2 id="ua-tytul">Інформація для пасажирів</h2>
+      <p>Квитки можна купити в автоматах на зупинках і в мобільному застосунку. <a href="#">Як купити квиток</a></p>
+    </section>
+
+    <section class="zgloszenie" aria-labelledby="zgloszenie-tytul">
+      <h2 id="zgloszenie-tytul">Zgłoś uwagę</h2>
+      <div class="wynik" tabindex="-1"></div>
+      <form class="formularz" novalidate>
+        <p style="margin:0 0 .8rem">Pola oznaczone „(wymagane)” trzeba wypełnić.</p>
+        <div class="siatka">
+          <div class="pole"><label for="imie">Imię i nazwisko (wymagane)</label><input id="imie" name="imie" type="text" autocomplete="name" required></div>
+          <div class="pole"><label for="email">E-mail (wymagane)</label><input id="email" name="email" type="email" autocomplete="email" required aria-describedby="email-podpowiedz"><p class="podpowiedz" id="email-podpowiedz">Odpowiemy na ten adres.</p></div>
+          <div class="pole"><label for="linia">Numer linii</label><input id="linia" name="linia" type="text"></div>
+          <div class="pole"><label for="data">Data przejazdu</label><input id="data" name="data" type="text" aria-describedby="data-podpowiedz"><p class="podpowiedz" id="data-podpowiedz">Na przykład 3.11.2026</p></div>
+        </div>
+        <fieldset class="pole" id="rodzaj">
+          <legend>Rodzaj zgłoszenia (wymagane)</legend>
+          <div class="opcje">
+            <label><input id="rodzaj-opoznienie" type="radio" name="rodzaj" value="opoznienie" required> Opóźnienie</label>
+            <label><input type="radio" name="rodzaj" value="kierowca"> Zachowanie kierowcy</label>
+            <label><input type="radio" name="rodzaj" value="czystosc"> Czystość pojazdu</label>
+            <label><input type="radio" name="rodzaj" value="inne"> Inne</label>
+          </div>
+        </fieldset>
+        <div class="pole" style="margin-top:.9rem"><label for="tresc-zgloszenia">Treść (wymagane)</label><textarea id="tresc-zgloszenia" name="tresc" required></textarea></div>
+        <div class="pole zgoda" style="margin-top:.6rem"><label><input id="zgoda" type="checkbox" name="zgoda" required> Zgadzam się na przetwarzanie moich danych w celu odpowiedzi na zgłoszenie (wymagane).</label></div>
+        <button class="wyslij" type="submit">Wyślij zgłoszenie</button>
+      </form>
+    </section>
+  </main>
+
+  <footer class="stopka">
+    <p>© 2026 Komunikacja Miejska Wrzosów</p>
+    <p>ul. Zajezdniowa 4, 00-000 Wrzosów</p>
+    <a href="#">Deklaracja dostępności</a>
+  </footer>
+
+  <section class="cookies" aria-label="Pliki cookies">
+    <p>Używamy plików cookies, żeby strona działała.</p>
+    <button type="button">Akceptuję</button>
+    <button type="button" class="zamknij" aria-label="Zamknij informację o cookies">✕</button>
+  </section>
+</div>
+
+<dialog class="okno" aria-labelledby="okno-tytul">
+  <h2 id="okno-tytul">Utrudnienia w ruchu</h2>
+  <p>Tramwaje linii 3 jadą objazdem przez ulicę Lipową do 15 listopada.</p>
+  <form method="dialog"><button>Zamknij</button></form>
+</dialog>
+
+<script>
+  // Submenus: a button per item opens its list, Esc closes it and gives focus back to the button.
+  const przyciski = [...document.querySelectorAll(".menu button[aria-controls]")];
+  const zamknijMenu = (wyjatek) => {
+    for (const p of przyciski) {
+      if (p === wyjatek) continue;
+      p.setAttribute("aria-expanded", "false");
+      document.getElementById(p.getAttribute("aria-controls")).hidden = true;
+    }
+  };
+  for (const przycisk of przyciski) {
+    const lista = document.getElementById(przycisk.getAttribute("aria-controls"));
+    przycisk.addEventListener("click", () => {
+      const otworz = przycisk.getAttribute("aria-expanded") !== "true";
+      zamknijMenu(przycisk);
+      przycisk.setAttribute("aria-expanded", String(otworz));
+      lista.hidden = !otworz;
+    });
+    przycisk.parentElement.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape" || lista.hidden) return;
+      zamknijMenu();
+      przycisk.focus();
+    });
+  }
+  document.addEventListener("click", (e) => { if (!e.target.closest(".menu")) zamknijMenu(); });
+  document.addEventListener("focusin", (e) => { if (!e.target.closest(".menu")) zamknijMenu(); });
+
+  // Carousel: still by default. Turning rotation on stops the live announcements, which would
+  // otherwise interrupt every five seconds; focus inside the carousel pauses it.
+  const slajdy = [...document.querySelectorAll(".slajd")];
+  const karuzela = document.querySelector(".karuzela");
+  const kontener = document.querySelector(".slajdy");
+  const ktory = document.querySelector(".ktory");
+  const samoczynnie = document.querySelector(".samoczynnie");
+  let teraz = 0;
+  let zegar = null;
+  const pokazSlajd = (n) => {
+    teraz = (n + slajdy.length) % slajdy.length;
+    slajdy.forEach((s, i) => { s.hidden = i !== teraz; });
+    ktory.textContent = teraz + 1 + " z " + slajdy.length;
+  };
+  const ustawRuch = (on) => {
+    clearInterval(zegar);
+    zegar = on ? setInterval(() => pokazSlajd(teraz + 1), 5000) : null;
+    samoczynnie.setAttribute("aria-pressed", String(on));
+    kontener.setAttribute("aria-live", on ? "off" : "polite");
+  };
+  document.querySelector(".wstecz").addEventListener("click", () => pokazSlajd(teraz - 1));
+  document.querySelector(".dalej").addEventListener("click", () => pokazSlajd(teraz + 1));
+  samoczynnie.addEventListener("click", () => ustawRuch(samoczynnie.getAttribute("aria-pressed") !== "true"));
+  karuzela.addEventListener("focusin", (e) => { if (e.target !== samoczynnie && zegar) ustawRuch(false); });
+
+  // Departures change only when the reader asks, and the time of the last update says how fresh they are.
+  const odjazdy = [
+    ["7", "Dworzec Główny", 4, 0],
+    ["14", "Osiedle Słoneczne", 6, 4],
+    ["A", "Port Lotniczy", 9, 0],
+    ["7", "Zajezdnia Lipowa", 15, 2],
+    ["14", "Stadion", 18, 0],
+  ];
+  let minuta = 0;
+  const godzina = (m) => Math.floor(m / 60) + ":" + String(m % 60).padStart(2, "0");
+  const pokazOdjazdy = () => {
+    document.querySelector(".wiersze").innerHTML = odjazdy.map(([linia, kierunek, za, spoznienie]) =>
+      "<tr><td><span class=\"linia\">" + linia + "</span></td><td>" + kierunek + "</td><td>" + godzina(12 * 60 + za + minuta) +
+      "</td><td><span class=\"stan" + (spoznienie > 0 ? " spozniony\">opóźniony " + spoznienie + " min" : "\">o czasie") + "</span></td></tr>").join("");
+  };
+  pokazOdjazdy();
+  document.querySelector(".odswiez").addEventListener("click", () => {
+    minuta += 1;
+    odjazdy.forEach((o) => { o[3] = Math.max(0, o[3] - 1); });
+    pokazOdjazdy();
+    document.querySelector(".kiedy").textContent = "Stan na " + godzina(12 * 60 + 1 + minuta);
+  });
+
+  // The disruption notice opens once on arrival, as a real modal, and again from its button.
+  const okno = document.querySelector(".okno");
+  document.querySelector(".pokaz-utrudnienia").addEventListener("click", () => okno.showModal());
+  okno.showModal();
+
+  for (const przycisk of document.querySelectorAll(".cookies button")) {
+    przycisk.addEventListener("click", () => document.querySelector(".cookies").remove());
+  }
+
+  // Validation: an error under each field and a summary that takes focus and links to the fields.
+  const formularz = document.querySelector(".formularz");
+  const wynik = document.querySelector(".wynik");
+  const sprawdz = () => {
+    const dane = new FormData(formularz);
+    const bledy = [];
+    if (!String(dane.get("imie")).trim()) bledy.push(["imie", "Imię i nazwisko: wpisz, jak mamy się do Ciebie zwracać"]);
+    const email = String(dane.get("email")).trim();
+    if (!email) bledy.push(["email", "E-mail: wpisz adres, na który odpowiemy"]);
+    else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) bledy.push(["email", "E-mail: wpisz adres w formacie nazwa@domena.pl"]);
+    if (!dane.get("rodzaj")) bledy.push(["rodzaj", "Rodzaj zgłoszenia: wybierz jedną opcję"]);
+    if (!String(dane.get("tresc")).trim()) bledy.push(["tresc-zgloszenia", "Treść: opisz, co się stało"]);
+    if (!dane.get("zgoda")) bledy.push(["zgoda", "Zgoda: zaznacz ją, żebyśmy mogli odpowiedzieć"]);
+    return bledy;
+  };
+  formularz.addEventListener("submit", (e) => {
+    e.preventDefault();
+    for (const stary of formularz.querySelectorAll(".blad")) stary.remove();
+    for (const pole of formularz.querySelectorAll("[aria-invalid]")) {
+      pole.removeAttribute("aria-invalid");
+      pole.setAttribute("aria-describedby", (pole.getAttribute("aria-describedby") ?? "").replace(/\s*\S+-blad/g, "").trim());
+      if (!pole.getAttribute("aria-describedby")) pole.removeAttribute("aria-describedby");
+    }
+    const bledy = sprawdz();
+    if (bledy.length === 0) {
+      wynik.className = "wynik wyslane";
+      wynik.textContent = "Dziękujemy. Zgłoszenie ma numer KMW-2026-0142. Odpowiemy w ciągu 14 dni.";
+      formularz.reset();
+      wynik.focus();
+      return;
+    }
+    for (const [id, tekst] of bledy) {
+      const pole = document.getElementById(id);
+      const komunikat = document.createElement("p");
+      komunikat.className = "blad";
+      komunikat.id = id + "-blad";
+      komunikat.textContent = tekst.slice(tekst.indexOf(":") + 2).replace(/^./, (c) => c.toUpperCase());
+      const cel = pole.tagName === "FIELDSET" ? pole : pole.closest(".pole");
+      cel.append(komunikat);
+      const kontrolki = pole.tagName === "FIELDSET" ? [...pole.querySelectorAll("input")] : [pole];
+      for (const k of kontrolki) {
+        k.setAttribute("aria-invalid", "true");
+        k.setAttribute("aria-describedby", ((k.getAttribute("aria-describedby") ?? "") + " " + komunikat.id).trim());
+      }
+    }
+    const naglowek = bledy.length === 1 ? "Popraw 1 pole" : "Popraw " + bledy.length + (bledy.length < 5 ? " pola" : " pól");
+    wynik.className = "wynik podsumowanie";
+    wynik.innerHTML = "<h3>" + naglowek + "</h3><ul>" + bledy.map(([id, tekst]) => {
+      const cel = id === "rodzaj" ? document.querySelector("#rodzaj input") : document.getElementById(id);
+      return "<li><a href=\"#" + cel.id + "\">" + tekst + "</a></li>";
+    }).join("") + "</ul>";
+    wynik.focus();
+  });
+  wynik.addEventListener("click", (e) => {
+    const link = e.target.closest("a[href^='#']");
+    if (!link) return;
+    e.preventDefault();
+    document.getElementById(link.getAttribute("href").slice(1))?.focus();
+  });
+</script>
+</body>
+</html>

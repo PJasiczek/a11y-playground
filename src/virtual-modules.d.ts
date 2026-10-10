@@ -14,6 +14,12 @@ declare module "virtual:pattern-log" {
   export default script;
 }
 
+declare module "virtual:demo-bar" {
+  /** The demo bar of the KMW pages as one classic script. See frame-script.vite.ts. */
+  const script: string;
+  export default script;
+}
+
 declare module "virtual:structure" {
   /** The landmarks and headings simulations of example frames as one classic script. See frame-script.vite.ts. */
   const script: string;

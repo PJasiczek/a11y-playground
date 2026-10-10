@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan: phase 11, a whole page before and after</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1.25rem 6rem;
+    background: #000; color: #fff;
+    font: 16px/1.65 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  main { max-width: 82ch; margin: 0 auto; }
+  h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 .5rem; letter-spacing: -.02em; }
+  h2 { font-size: 1.2rem; margin: 3rem 0 .75rem; padding-top: 1rem; border-top: 1px solid #262626; letter-spacing: -.01em; }
+  h3 { font-size: 1rem; margin: 1.75rem 0 .5rem; }
+  p, li, dd { color: #e5e5e5; }
+  a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  ul, ol { padding-left: 1.3rem; }
+  li { margin: .3rem 0; }
+  code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .875em; background: #141414; border: 1px solid #262626; border-radius: 3px; padding: .08em .3em; }
+  pre { background: #0b0b0b; border: 1px solid #262626; border-radius: 4px; padding: .9rem 1rem; overflow-x: auto; }
+  pre code { background: none; border: 0; padding: 0; font-size: .82rem; line-height: 1.55; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; display: block; overflow-x: auto; }
+  th, td { border: 1px solid #262626; padding: .45rem .6rem; text-align: left; vertical-align: top; }
+  th { background: #101010; font-weight: 600; }
+  .meta { color: #a3a3a3; font-size: .85rem; margin: 0 0 1.5rem; }
+  .meta a { color: #fff; }
+  .flag { border-left: 2px solid #737373; padding: .1rem 0 .1rem .85rem; margin: 1rem 0; color: #d4d4d4; font-size: .93rem; }
+  .toc { border: 1px solid #262626; padding: 1rem 1rem 1rem 2.4rem; margin: 1.5rem 0 0; }
+  .toc li { margin: .15rem 0; }
+  @media (max-width: 40rem) { body { padding: 1.25rem .9rem 4rem; } h1 { font-size: 1.45rem; } }
+</style>
+</head>
+<body>
+<main>
+
+<p class="meta"><a href="phase-11-before-after.pl.html" hreflang="pl">Wersja polska</a></p>
+
+<h1>Plan: phase 11, a whole page before and after</h1>
+<p class="meta">Brief: a before and after demo of a whole page, in the format of Accessible University 3.0 (University of Washington), with Polish content on a topic other than a university. Mocks: <a href="../2026-10-04-before-after-mocks/before-after-mocks.html">before-after-mocks.html</a>. Plan version: 2026-10-04.</p>
+
+<p class="flag">Revision of 2026-10-04: the reader gets notes while checking the broken page, the answers (list, markers, fixed page) stay hidden until they finish, and the fixed page is only the end result. New section 5; mock sections 1 to 3 changed to match.</p>
+
+<p class="flag">Accessible University is licensed CC BY-NC-SA 4.0. We take its format (a broken page, a list of problems, a fixed page) and write our own topic, text and code, so nothing from AU ships in the app. The entry page does not mention AU.</p>
+
+<h2 id="changes">Changes after work started</h2>
+<p>Picks: <strong>1A</strong> (a third tab in Praktyka), <strong>2A</strong> (the whole window, notes in a drawer from the demo bar), <strong>3A</strong> (notes above the list), <strong>4B</strong> (a table filtered by who a problem hurts), <strong>5B</strong> (the modern site). The other decisions took the recommendation: KMW as the topic, our own code for the fixed widgets, twenty problems, no CAPTCHA in the fixed version, the lesson later, notes under <code>reviews</code> in the progress store, and "Kopiuj notatki". Where these conflict with the sections below, these win.</p>
+<ul>
+  <li><strong>Six commits, not five (section 10).</strong> The store moves to a module without React first, so the broken page can share it; a small fix to search result ids (their ids had spaces, which broke <code>aria-labelledby</code>) goes in on its own.</li>
+  <li><strong>No <code>index.md</code> (section 6).</strong> The entry page's few sentences live in its route.</li>
+  <li><strong>axe still finds 6 of 20, but not the same 6 (section 3).</strong> Problem 2 is not reported: <code>region</code> is a best-practice rule and does not run with the WCAG tags. Problem 12 is (<code>link-in-text-block</code>). Problem 4 also reports <code>link-name</code>, for the carousel arrows. The menu's contrast is 1.35:1.</li>
+  <li><strong>Markers are a page, not a switch.</strong> "Pokaż znaczniki problemów" and "Ukryj znaczniki" link between <code>przed</code> and <code>przed-znaczniki</code>, since only the second carries the hints. Problems of the whole page (1, 2, 8, 20) are listed in the bar.</li>
+  <li><strong>The notes drawer sits inside the demo bar</strong> and has no heading, so the broken page gains no heading and no landmark apart from the bar.</li>
+  <li><strong>Problem pages are behind the same reminder as the list.</strong> "Zacznij od nowa" lives on the list. On the entry page, "Kończę sprawdzanie" shows once there is a note.</li>
+  <li><strong>The fixed page</strong> opens the disruption notice on arrival and again from a "Szczegóły utrudnień" button; its cookie bar is part of the page, at the bottom.</li>
+  <li><strong>Problem 15</strong> has three decorative icons, not six.</li>
+</ul>
+
+<ol class="toc">
+  <li><a href="#changes">Changes after work started</a></li>
+  <li><a href="#au">What AU does and what we take</a></li>
+  <li><a href="#topic">The topic</a></li>
+  <li><a href="#problems">The twenty problems</a></li>
+  <li><a href="#scope">What we build</a></li>
+  <li><a href="#selfcheck">Self-check: notes and hidden answers</a></li>
+  <li><a href="#content">Content format</a></li>
+  <li><a href="#motion">Motion and a page that is broken on purpose</a></li>
+  <li><a href="#a11y">Accessibility of everything around the broken page</a></li>
+  <li><a href="#tests">Tests</a></li>
+  <li><a href="#prs">Pull request and commits</a></li>
+  <li><a href="#decisions">Decisions</a></li>
+  <li><a href="#out">Out of scope</a></li>
+</ol>
+
+<h2 id="au">1. What AU does and what we take</h2>
+<p>AU 3.0 has four pages: an index, the inaccessible home page of a fictional university, a list of 18 issues with a solution for each, and the accessible home page. The two home pages look almost the same. Most fixes live in the markup, which is the point.</p>
+<p>The index tells the reader to go in this order: find as many problems as you can on your own, compare with the list, then look at the fixed page. We keep that order.</p>
+<p>AU's 18 issues are headings, alt text, decorative images, contrast, a hover-only dropdown, focus, "click here" links, colour, language, form labels, CAPTCHA, validation, landmarks, a modal, a carousel, a data table, abbreviations and HTML validity. We drop two of them. HTML validity was 4.1.1, which WCAG 2.2 removed, and abbreviations are 3.1.4, an AAA criterion. We add three that WCAG 2.1 and 2.2 brought: reflow (1.4.10), target size (2.5.8) and focus not obscured (2.4.11).</p>
+<p>The app already has twelve examples, each showing one fault on its own, and 30 patterns. What it does not have is a page where the faults sit together the way they do on a real site, and where the reader can look for them before reading the answer.</p>
+
+<h2 id="topic">2. The topic</h2>
+<p><strong>Komunikacja Miejska Wrzosów (KMW)</strong>: the home page of the transport operator of a fictional city. Everyone uses public transport, including people who cannot drive, so the stakes are easy to explain. The subject brings the widgets on its own: a timetable table, a live departure board, disruption alerts, a complaint form, and a box in Ukrainian, which Polish operators really publish. AU is a university and the phase 10 example is a municipal page, so neither repeats. Alternatives are in decision 1.</p>
+<p>The page, top to bottom:</p>
+<ol>
+  <li>A modal "Utrudnienia w ruchu" that opens on load.</li>
+  <li>The header: logo, social media icons, a "Українською" link.</li>
+  <li>The main menu with submenus: Rozkłady, Bilety, Utrudnienia, O nas.</li>
+  <li>A carousel of announcements.</li>
+  <li>"Odjazdy z przystanku Rynek", a departure board that refreshes itself.</li>
+  <li>"Aktualności", three news items.</li>
+  <li>An image of the network map.</li>
+  <li>"Інформація для пасажирів", a box in Ukrainian.</li>
+  <li>The form "Zgłoś uwagę": name, email, line, date, type of report (radio buttons), message, consent, CAPTCHA.</li>
+  <li>The footer, and a cookie bar fixed to the bottom of the window.</li>
+</ol>
+
+<h2 id="problems">3. The twenty problems</h2>
+<p>Numbered in page order, so a marker on the page and an item in the list carry the same number. The axe column says whether axe-core reports the problem. Six of twenty: the list says so, because it shows why an automated scan is not an audit.</p>
+<table>
+  <thead><tr><th>#</th><th>Problem (broken version)</th><th>Criteria</th><th>Fix</th><th>axe</th><th>In isolation</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>No <code>lang</code> on <code>html</code>, and the Ukrainian box is not marked either</td><td>3.1.1, 3.1.2</td><td><code>lang="pl"</code>, <code>lang="uk"</code> on the box</td><td>yes</td><td>none</td></tr>
+    <tr><td>2</td><td>No landmarks, no skip link</td><td>1.3.1, 2.4.1</td><td><code>header</code>, <code>nav</code>, <code>main</code>, <code>footer</code>, a skip link</td><td>partly (<code>region</code>)</td><td>example <code>punkty-orientacyjne-i-naglowki</code></td></tr>
+    <tr><td>3</td><td>The disruption modal does not take focus, its close button is a <code>div</code>, Esc does nothing</td><td>2.1.1, 2.4.3</td><td><code>dialog</code> with <code>showModal()</code>, focus returns</td><td>no</td><td>example <code>okno-modalne-i-fokus</code>, pattern <code>okno-dialogowe</code></td></tr>
+    <tr><td>4</td><td>Logo, carousel arrows and network map without alt text</td><td>1.1.1</td><td>Alt text; the map gets a list of lines next to it</td><td>yes</td><td>example <code>obraz-dekoracyjny-i-informacyjny</code></td></tr>
+    <tr><td>5</td><td>Social media icons 16 by 16 pixels, touching each other</td><td>2.5.8</td><td>44 by 44 pixel targets</td><td>yes</td><td>example <code>cel-24-na-24</code></td></tr>
+    <tr><td>6</td><td>Menu in light grey on yellow</td><td>1.4.3</td><td>Dark text, at least 4.5:1</td><td>yes</td><td>example <code>kontrast-stanow</code></td></tr>
+    <tr><td>7</td><td>Submenus open only on hover</td><td>2.1.1, 4.1.2</td><td>Disclosure buttons with <code>aria-expanded</code></td><td>no</td><td>pattern <code>nawigacja-wielopoziomowa</code></td></tr>
+    <tr><td>8</td><td><code>outline: none</code> everywhere</td><td>2.4.7</td><td>A visible <code>:focus-visible</code> style</td><td>no</td><td>none</td></tr>
+    <tr><td>9</td><td>The carousel rotates every 5 seconds with no pause</td><td>2.2.2</td><td>Starts still, with a pause button</td><td>no</td><td>example <code>karuzela-automatyczna</code>, pattern <code>karuzela</code></td></tr>
+    <tr><td>10</td><td>Headings are bold <code>div</code>s</td><td>1.3.1, 2.4.6</td><td>H1 to H3 in order</td><td>no</td><td>example <code>punkty-orientacyjne-i-naglowki</code></td></tr>
+    <tr><td>11</td><td>The departure board is a grid of <code>div</code>s</td><td>1.3.1</td><td><code>table</code> with <code>caption</code> and <code>th scope</code></td><td>no</td><td>example <code>tabela-z-naglowkami</code></td></tr>
+    <tr><td>12</td><td>Delay shown only as a red or green dot; links in text not underlined</td><td>1.4.1</td><td>"opóźniony 4 min" in text; underlines</td><td>partly (<code>link-in-text-block</code>)</td><td>none</td></tr>
+    <tr><td>13</td><td>The board rebuilds itself every 15 seconds and cannot be stopped</td><td>2.2.2</td><td>A "Odśwież" button, the time of the last update, a polite status</td><td>no</td><td>pattern <code>regiony-na-zywo</code></td></tr>
+    <tr><td>14</td><td>"Więcej" three times, "kliknij tutaj"</td><td>2.4.4</td><td>Link text that names the target</td><td>no</td><td>pattern <code>lacze</code></td></tr>
+    <tr><td>15</td><td>Decorative bus icons with <code>alt="ikona autobusu"</code>, six times</td><td>1.1.1</td><td><code>alt=""</code></td><td>no</td><td>example <code>obraz-dekoracyjny-i-informacyjny</code></td></tr>
+    <tr><td>16</td><td>Fields with text above them but no <code>label</code>; radio buttons without <code>fieldset</code>; required fields marked only in blue</td><td>1.3.1, 3.3.2, 1.4.1</td><td><code>label</code>, <code>fieldset</code> and <code>legend</code>, "(wymagane)" and <code>required</code></td><td>yes (<code>label</code>)</td><td>patterns <code>przyciski-opcji</code>, <code>pole-wyboru</code></td></tr>
+    <tr><td>17</td><td>An image CAPTCHA with no alternative</td><td>1.1.1</td><td>No CAPTCHA, decision 9</td><td>no</td><td>none</td></tr>
+    <tr><td>18</td><td>After submit: "Formularz zawiera błędy" at the top, nothing announced, focus stays on the button</td><td>3.3.1, 3.3.3, 4.1.3</td><td>An error summary that takes focus and links to fields, messages under the fields</td><td>no</td><td>example <code>formularz-z-bledami</code></td></tr>
+    <tr><td>19</td><td>The fixed cookie bar covers the focused element at the bottom of the window</td><td>2.4.11</td><td><code>scroll-padding-bottom</code> equal to the bar, and the bar can be closed</td><td>no</td><td>none</td></tr>
+    <tr><td>20</td><td>The page is 1000 pixels wide</td><td>1.4.10</td><td>A fluid layout down to 320 pixels</td><td>no</td><td>example <code>sztywna-szerokosc</code></td></tr>
+  </tbody>
+</table>
+<p>The "axe" column is a forecast. The test in section 9 confirms it, and the list shows what the test found, not what we expected.</p>
+
+<h2 id="scope">4. What we build</h2>
+<ol>
+  <li><strong>Two pages</strong>, broken and fixed, as standalone documents at <code>/demo/przed-i-po/przed</code> and <code>/demo/przed-i-po/po</code>, prerendered like the example demos. How the reader sees them: mock section 2.</li>
+  <li><strong>An entry page</strong> at <code>/praktyka/przed-i-po</code>, with the three steps in AU's order. Steps 2 and 3 open once the reader finishes checking. Where it sits in the app: mock section 1.</li>
+  <li><strong>Notes</strong> the reader takes while checking the broken page, kept in the browser (section 5, mock section 2).</li>
+  <li><strong>The list of problems</strong>, shown after the check, with the reader's notes beside it: for each problem, what is wrong, who it hurts, how to fix it, the code before and after, and links to the criteria and to the example or pattern that shows it alone. Mock sections 3 and 4.</li>
+  <li><strong>Markers</strong>: after the check, a switch "Znaczniki problemów" puts numbered badges on the broken page, each linking to its item in the list. During the check the switch does not exist.</li>
+  <li><strong>Links back</strong>: a criterion page that has a problem on the page says "Na stronie przed i po: problem 7", and so do the examples and patterns from the last column of section 3.</li>
+  <li><strong>Search</strong> indexes the entry page and the twenty problems.</li>
+</ol>
+
+<h2 id="selfcheck">5. Self-check: notes and hidden answers</h2>
+<p>The reader checks the broken page alone. Anything that gives the answers away stays hidden until they say they are done, and the notes they took are waiting for them next to the list.</p>
+
+<h3>Two stages</h3>
+<table>
+  <thead><tr><th>Stage</th><th>The reader has</th><th>Hidden</th></tr></thead>
+  <tbody>
+    <tr><td>Checking (the default)</td><td>The broken page, the notes, the motion switch, the number 20 as a goal</td><td>The list, the markers, the fixed page, every hint of where the problems are</td></tr>
+    <tr><td>After the check</td><td>Everything: the list with the notes beside it, markers on the broken page, the fixed page</td><td>Nothing</td></tr>
+  </tbody>
+</table>
+<p>"Kończę sprawdzanie", in the notes panel and on the entry page, moves to the second stage. "Zacznij od nowa" deletes the notes and hides everything again, after a confirmation that says the notes will be deleted.</p>
+<p>The lock is soft. The list and the fixed page have public URLs, and the entry page and the demo bar simply do not link to them during the check. Opening the list directly shows "Najpierw sprawdź stronę sam" with a "Pokaż listę mimo to" link, which ends the check. Nobody gains anything by cheating, so nothing more is needed.</p>
+<p>Links back from criterion pages, examples and patterns ("Na stronie przed i po: problem 7") stay visible at all times. They sit on other pages, off the path of someone checking, and hiding them would mean client state on prerendered pages.</p>
+
+<h3>No answers in the source</h3>
+<p>A reader who opens developer tools on the broken page should not find the answers there either. <code>przed.html</code> carries the <code>data-problem</code> attributes the markers need, so the build serves two documents from it:</p>
+<ul>
+  <li><code>/demo/przed-i-po/przed</code>, with no <code>data-problem</code> and no HTML comments, for the check;</li>
+  <li><code>/demo/przed-i-po/przed-znaczniki</code>, with both and with the marker script, linked only after the check.</li>
+</ul>
+<p>Class names and ids in <code>przed.html</code> are neutral (<code>.menu</code>, not <code>.menu-hover-only</code>), and so is the page title. A test searches the check document for words like "problem", "błąd" and "a11y".</p>
+
+<h3>Notes</h3>
+<ul>
+  <li>Free text, one note per thing the reader noticed: a field "Co nie działa?" and a button "Dodaj notatkę", with the notes listed below it, each with "Edytuj" and "Usuń". No picker for the region or the criterion, since either would hint at the answer.</li>
+  <li>Notes keep their order and the time they were added.</li>
+  <li>They live in the browser next to the progress (decision 11), so they survive closing the tab. With storage blocked they last until the tab closes and the panel says so, as <code>/sciezki</code> does.</li>
+  <li>"Kopiuj notatki" puts them on the clipboard as plain text, for a trainer collecting results (decision 12).</li>
+  <li>Where the panel sits while checking: mock section 2. How the notes meet the list afterwards: mock section 3, decision 4.</li>
+</ul>
+<pre><code>// Added to Progress in src/progress/store.ts. Optional, so stored v1 objects still parse.
+reviews?: {
+  "przed-i-po"?: {
+    notes: { id: string; text: string; createdAt: string }[];
+    revealedAt?: string; // set by "Kończę sprawdzanie", removed by "Zacznij od nowa"
+  };
+};</code></pre>
+
+<h3>The fixed page is the end result</h3>
+<p><code>po</code> has no markers, no notes and no motion switch. Its carousel starts still and has its own pause button, as a correct page should. Its demo bar says "Wersja poprawiona: tak ta strona powinna wyglądać" and links to the list and back to the app. It is linked only after the check.</p>
+
+<h2 id="content">6. Content format</h2>
+<pre><code>content/przed-i-po/
+  index.md                  intro for the entry page, status, lastVerified
+  przed.html                the broken page: markup, &lt;style&gt;, &lt;script&gt;
+  po.html                   the fixed page
+  problemy/
+    01-jezyk.md
+    02-punkty-orientacyjne.md
+    ...
+    20-stala-szerokosc.md</code></pre>
+<p>One file per problem keeps a diff readable and lets a problem be verified on its own, like criteria. Frontmatter:</p>
+<pre><code>title: Menu rozwija się tylko pod myszą
+criteria: ["2.1.1", "4.1.2"]
+marker: menu            # data-problem="menu" in przed.html
+who: [klawiatura, czytnik]
+axe: []                 # rules axe must report on przed.html
+example: null
+pattern: nawigacja-wielopoziomowa
+status: szkic</code></pre>
+<p>The body has <code>## Problem</code> and <code>## Rozwiązanie</code>, with code blocks tagged <code>przed</code> and <code>po</code>. A new <code>src/content/before-after.ts</code> parses it with an ArkType schema, in the shape of <code>examples.ts</code>: the number comes from the file name, the types are inferred from the schema, and a parse error names the file and the reason.</p>
+<p>Checks at build time, with a test for each:</p>
+<ul>
+  <li>Numbers run from 1 with no gaps.</li>
+  <li>Every <code>marker</code> appears exactly once as <code>data-problem</code> in <code>przed.html</code>, and no <code>data-problem</code> is left without a problem.</li>
+  <li>Criteria, example and pattern slugs exist.</li>
+</ul>
+
+<h2 id="motion">7. Motion and a page that is broken on purpose</h2>
+<p>Problems 9 and 13 are motion: a carousel that turns and a board that refreshes on its own. The app opts into 2.3.3 and starts moving demos only when the reader asks. So the broken page loads still, and a "Włącz ruch" switch starts both. That is the current rule for examples, applied to a whole page. With <code>prefers-reduced-motion</code> the switch still works, since the reader chose it, but slides change without a transition.</p>
+<p>The modal (problem 3) opens on load, because that is the fault. It is not a keyboard trap: focus goes behind it, which is the fault we show. A real trap (2.1.2) would lock a keyboard user inside a demo, so we do not build one.</p>
+
+<h2 id="a11y">8. Accessibility of everything around the broken page</h2>
+<ul>
+  <li>Both pages start with a demo bar that is not part of KMW, and it is the first stop for Tab. On the broken page during the check it says "Wersja zepsuta: ta strona celowo łamie zasady dostępności. Część rzeczy nie zadziała z klawiatury ani z czytnikiem ekranu." and offers the notes, the motion switch, "Kończę sprawdzanie" and a way back to the app. After the check it adds the list, the markers switch and the fixed page. On the fixed page it offers the list and the way back. It is accessible in both versions.</li>
+  <li>The notes panel is a labelled field, a real button, and a list with an announced count ("3 notatki"). Adding a note keeps focus in the field, so the reader can type the next one; deleting one moves focus to the next note, or to the field when none is left.</li>
+  <li>The bar is a named <code>aside</code> and is not sticky, so it never covers focus the way problem 19 does.</li>
+  <li>The entry page and the list are app pages and follow <code>docs/accessibility.md</code> like every other page.</li>
+  <li>The entry page warns before the link to the broken page, as AU does, so nobody walks into it unprepared.</li>
+</ul>
+
+<h2 id="tests">9. Tests</h2>
+<ul>
+  <li><strong>Unit</strong> (Vitest): the parser rejects bad frontmatter, and the checks from section 6. The store keeps notes and <code>revealedAt</code>, reads a stored object without <code>reviews</code>, and "Zacznij od nowa" clears both.</li>
+  <li><strong>No answers in the source</strong>: the check document has no <code>data-problem</code>, no comments and none of the giveaway words.</li>
+  <li><strong>The two stages</strong> (Playwright): during the check, no link on the entry page or the demo bar leads to the list, the markers or the fixed page; a note survives a reload; "Kończę sprawdzanie" shows the list with the notes beside it.</li>
+  <li><strong>axe</strong> (Playwright): <code>przed</code> reports every rule its problems list, and only those rules; <code>po</code> reports nothing; the demo bar reports nothing in either version.</li>
+  <li><strong>Keyboard on <code>po</code></strong>: the menu opens with Enter and closes with Esc; the modal takes focus and gives it back; the carousel pauses; after a bad submit, focus is on the error summary and its links reach the fields; the focused element is never under the cookie bar; no horizontal scroll at 320 pixels.</li>
+</ul>
+<p>Nothing tests that the faults in <code>przed</code> still work beyond what axe sees. Those tests would only stop a fix nobody plans to make.</p>
+
+<h2 id="prs">10. Pull request and commits</h2>
+<p>One branch, <code>feat/before-after-page</code>, one pull request, as in earlier phases.</p>
+<ol>
+  <li><code>docs(design): add the plan and mocks for the before and after page</code></li>
+  <li><code>feat(practice): add the before and after content model</code>: parser, types, the checks and their tests.</li>
+  <li><code>feat(practice): add the broken and fixed KMW pages</code>: <code>przed.html</code>, <code>po.html</code>, the demo bar, the demo routes with the check document stripped of answers, the axe and keyboard tests.</li>
+  <li><code>feat(practice): add the before and after entry page and problem list</code>: the route, the twenty problems, markers, links back, search.</li>
+  <li><code>feat(practice): add self-check notes and hide the answers until the check ends</code>: <code>reviews</code> in the progress store, the notes panel, the two stages, their tests, README and screenshots.</li>
+</ol>
+
+<h2 id="decisions">11. Decisions</h2>
+<ol>
+  <li><strong>Topic.</strong> Komunikacja Miejska Wrzosów (recommended). Alternatives: a public library (catalogue search, reader card form, events) or a clinic's online registration (appointment booking, opening hours).</li>
+  <li><strong>Where it lives.</strong> Mock section 1: a third tab in Praktyka, or a card above the examples.</li>
+  <li><strong>How the broken page opens and where the notes sit.</strong> Mock section 2: a full window with a notes drawer in the demo bar, a frame in the app with the notes under the toolbar, or a frame with the notes in a rail beside it. Recommended: 2C. The notes stay in view while the reader looks, everything lives in React, and the frame brings the simulators almost for free. 2A needs the store again as a separate bundle inside the demo document, kept in step with the app through <code>storage</code> events.</li>
+  <li><strong>How the notes meet the list.</strong> Mock section 3: the notes above the list (3A), or side by side with "Znalazłem" on every problem and "Znalazłeś 7 z 20" (3B). Recommended: 3A. The reader compares on their own, and a score invites arguing over what counts as a match.</li>
+  <li><strong>List layout.</strong> Mock section 4: a long list like AU, a table you can filter by who is affected, or a map of the page with the list grouped by region.</li>
+  <li><strong>The look of KMW.</strong> Mock section 5: a municipal portal from around 2012, or a modern site. The modern one makes a point AU cannot: a site can look new and still fail.</li>
+  <li><strong>The fixed widgets.</strong> Write compact code for <code>po.html</code> following the phase 9 patterns, and link to them (recommended), or load the pattern files themselves. Pattern files carry hooks for the live log, which this page does not need.</li>
+  <li><strong>How many problems.</strong> Twenty (recommended) or fourteen, dropping 5, 8, 12, 15, 19 and 20, which the examples already show on their own.</li>
+  <li><strong>CAPTCHA in the fixed version.</strong> Remove it and explain the alternatives (a honeypot field, server-side limits), which is recommended, or replace it with a text question as AU does.</li>
+  <li><strong>A lesson.</strong> "Przegląd całej strony" on the tester path with a quiz built on this page. Recommended: a later phase.</li>
+  <li><strong>Where notes are stored.</strong> In the progress object under <code>reviews</code> (recommended: phase 5 imports them with everything else), or under a storage key of their own.</li>
+  <li><strong>"Kopiuj notatki".</strong> Yes, one button (recommended), or no.</li>
+</ol>
+
+<h2 id="out">12. Out of scope</h2>
+<ul>
+  <li>A second site or KMW subpages. Menu links go nowhere and say so.</li>
+  <li>Video and captions. AU has them on a separate page; ours would be a separate phase.</li>
+  <li>An English version of KMW.</li>
+  <li>Simulators on the full window version (decision 3 brings them in the frame variants).</li>
+</ul>
+
+</main>
+</body>
+</html>

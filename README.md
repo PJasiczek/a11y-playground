@@ -19,7 +19,7 @@ a11y playground is a learning app for people who build digital products in Polan
 The interface is in Polish. This README is in English.
 
 > [!NOTE]
-> Phase 10 (landmarks and headings) is complete: a "Struktura strony" button on every page outlines its landmarks and headings and lists them as text, and two new simulations do the same inside the examples. All 30 patterns of the Deque University list run in Praktyka with a live log of what a screen reader would say. Every criterion of WCAG 2.2, A to AAA, has a plain-language explanation, and `/wcag-3` tracks the WCAG 3.0 Working Draft with our mapping to today's criteria. Twelve common faults have a broken and a fixed example, each viewable through six kinds of simulator. Three Polish acts are in the app with the statute text and our summaries, and five learning paths walk through them lesson by lesson. All content is marked as a draft until a person has checked it. Phase 5 (accounts) is postponed, so progress is kept in the browser.
+> Phase 11 (a whole page before and after) is complete: the home page of a fictional transport operator, broken in 20 ways and fixed, with notes for checking it yourself and the answers hidden until you are done. Phase 10 added a "Struktura strony" button on every page that outlines its landmarks and headings. All 30 patterns of the Deque University list run in Praktyka with a live log of what a screen reader would say. Every criterion of WCAG 2.2, A to AAA, has a plain-language explanation, and `/wcag-3` tracks the WCAG 3.0 Working Draft with our mapping to today's criteria. Twelve common faults have a broken and a fixed example, each viewable through six kinds of simulator. Three Polish acts are in the app with the statute text and our summaries, and five learning paths walk through them lesson by lesson. All content is marked as a draft until a person has checked it. Phase 5 (accounts) is postponed, so progress is kept in the browser.
 
 ### What works today
 
@@ -38,6 +38,8 @@ The interface is in Polish. This README is in English.
 - **Search** (`/szukaj`, also on the home page) over criteria, examples, patterns, provisions, lessons, WCAG 3.0 guidelines and the glossary. It finds criteria by number, name or symptom ("modal", "placeholder"), articles by topic ("deklaracja dostępności"), and ignores Polish diacritics.
 - **Practice** (`/praktyka`): twelve examples as cards ordered by the cost of the fix, each with what the user gains. An example page (`/praktyka/ikona-jako-przycisk`) shows the broken and the fixed variant one above the other, each running in a sandboxed iframe, with its code and what a screen reader says. Examples that move start only when the reader asks. Criterion pages link to their examples.
 - **Patterns** (`/praktyka/wzorce`, the second half of Praktyka): working components built from the WAI-ARIA Authoring Practices, after the list of Deque University ARIA Examples. The catalogue shows a still of each, grouped by batch, and filters by whether HTML has the element for the job (`?natywnie=`). A pattern page (`/praktyka/wzorce/rozwin-zwin`) runs the pattern in a sandboxed iframe, logs beside it what a screen reader would say after every key (focus, state changes, live regions), shows its ARIA attributes with their current values, and turns its keyboard behaviour into an exercise that ticks itself off. Criterion pages and practice examples link to their patterns.
+- **Whole page before and after** (`/praktyka/przed-i-po`, the third part of Praktyka): the home page of a fictional transport operator, Komunikacja Miejska Wrzosów, broken in 20 ways and fixed. Both versions open in the whole window (`/demo/przed-i-po/przed`, `/demo/przed-i-po/po`) under a bar that says which one it is and leads back. The broken page moves only after "Włącz ruch".
+- **Self-check with notes.** While checking the broken page, "Notatki" in the bar opens a drawer beside the page (it takes width from the page instead of covering it) where the reader writes down what does not work, edits and deletes notes, and copies them as text. Until "Kończę sprawdzanie", nothing gives the answers away: the entry page shows steps 2 and 3 locked, the bar links only back to the app, the list and problem pages show "Najpierw sprawdź stronę sam", and the page served for checking has no hints in its source. Afterwards the notes stand above the list of problems (`/praktyka/przed-i-po/lista`), which filters by who a problem hurts (`?komu=`) and says which ones axe finds (6 of 20). Each problem has a page with the fix and the code before and after, and `/demo/przed-i-po/przed-znaczniki` puts the numbers on the broken page. "Zacznij od nowa" deletes the notes and hides the answers again. Notes live in the progress store, so "Wyczyść postęp" on `/sciezki` removes them too. Criterion, example and pattern pages link to the problems they share.
 - **Simulators** on every example page: a list beside the frames switches both variants to colour vision deficiency (four types), low vision, keyboard only, screen reader, 320 pixels wide, text at 200%, or the outlines of their landmarks or headings. The choice lives in `?symulacja=`, and none is on by default. Each one puts text next to the frames, so no simulator is the only way to get the information: what the simulation shows and what it does not, the numbered focus steps and blocked mouse clicks, a table of what a screen reader reads in both variants (computed at build time), whether the content fits in 320 pixels, measured in the frame, or the landmarks or headings each frame has and what is missing.
 - **Simulators page** (`/symulatory`): what each simulator shows, its limits, the criteria it teaches, and links into the examples with the simulation already picked.
 - **Law** (`/prawo`): the 2019 digital accessibility act in full, the parts of the 2019 special needs act and the 2024 products and services act (the Polish EAA) that create digital obligations, and a page on EN 301 549. An article page (`/prawo/ustawa-2019-848/art-5`) shows each ustęp next to our summary. Every act says which consolidated text it comes from, when it was downloaded, and whether it was amended after that text.
@@ -62,6 +64,14 @@ The interface is in Polish. This README is in English.
 | Patterns | Pattern page |
 | --- | --- |
 | ![Pattern catalogue with a still of each pattern and the native element filter](docs/screenshots/patterns.png) | ![The expand and collapse pattern with the exercise half done and the screen reader log beside it](docs/screenshots/pattern-page.png) |
+
+| Before and after: entry | Checking, with notes |
+| --- | --- |
+| ![The before and after entry page with step 1 open and steps 2 and 3 locked until the check ends](docs/screenshots/before-after-entry.png) | ![The broken KMW page with the notes drawer open beside it and three notes](docs/screenshots/before-after-check.png) |
+
+| After the check: the list | Markers on the broken page |
+| --- | --- |
+| ![The list of problems with the reader's three notes above it and the filter by who a problem hurts](docs/screenshots/before-after-list.png) | ![The broken KMW page with numbered markers on its problems and the whole-page problems listed in the bar](docs/screenshots/before-after-markers.png) |
 
 | Struktura strony | Headings simulation |
 | --- | --- |
@@ -264,6 +274,29 @@ status: szkic
 - `examples` (optional) names practice examples that show the same thing broken.
 - The live log is `src/content/pattern-log.ts`: it reads focus with the name, role, states and description, state changes of the focused element (attributes, native checkboxes, popovers) and live regions. It is bundled with `dom-accessibility-api` by a Vite plugin and inlined into every pattern document.
 
+### Whole page before and after
+
+`content/przed-i-po/` holds the two pages as complete HTML documents, `przed.html` and `po.html`, and one file per problem in `problemy/NN-slug.md`, numbered in page order.
+
+```markdown
+---
+title: Podmenu otwiera się tylko pod myszą
+criteria: ["2.1.1", "4.1.2"]
+marker: podmenu
+who: [klawiatura, czytnik, telefon]
+axe: []
+pattern: nawigacja-wielopoziomowa
+status: szkic
+---
+## Problem
+## Rozwiązanie
+```
+
+- `marker` names the element the problem sits on: `przed.html` carries it in a `data-problem` attribute (several, space-separated, on `<body>` for problems of the whole page). Every marker appears exactly once, and every `data-problem` belongs to a problem, or the build fails. The page served for checking has the attributes and comments stripped, so its source gives nothing away.
+- `who` comes from `src/content/before-after-labels.ts`. `example` and `pattern` (optional) name the practice example and the ARIA pattern that show the same thing alone.
+- `axe` lists the axe-core rules that report the problem. The e2e test fails unless the broken page reports exactly the rules all problems list together.
+- The body ends with one ` ```przed ` and one ` ```po ` code block, shown side by side.
+
 ### WCAG 3.0
 
 The tracking page reads `content/wcag3/`: `index.md` for the draft and the comparison, and one file per guideline group.
@@ -446,6 +479,7 @@ content/
   slownik/       one Markdown file per glossary term
   praktyka/      one folder per example: index.md, bad.html, good.html
   wzorce/        one folder per ARIA pattern: index.md, wzorzec.html
+  przed-i-po/    the KMW page broken and fixed, and one Markdown file per problem
   prawo/         one Markdown file per act: summaries and deadlines
   sciezki/       one folder per learning path: lessons and their quizzes
   symulatory/    one Markdown file per kind of simulator
@@ -460,7 +494,7 @@ src/
   routes/        file-based routes (__root.tsx holds the layout)
   components/    header, theme toggle, route announcer, badges, filter chips, the AAA comparison, glossary previews, example and pattern frames and cards, the screen reader log, the simulator list, the quiz
   styles.css     Tailwind setup, colour tokens, styles for rendered Markdown
-e2e/             Playwright tests: axe, target size, animations, keyboard, example isolation, simulators, a whole path from the keyboard, WCAG 3.0, every pattern exercise
+e2e/             Playwright tests: axe, target size, animations, keyboard, example isolation, simulators, a whole path from the keyboard, WCAG 3.0, every pattern exercise, the before and after page
 docs/
   accessibility.md   the accessibility checklist
   design/            dated plans and mocks
@@ -482,3 +516,4 @@ The full plan, with content scope, architecture and risks, is in [`docs/design/2
 - [x] **8. AAA criteria and WCAG 3.0 tracking.** Explanations for the 31 AAA criteria and 4.1.1, the comparison with the AA criterion each one tightens, and `/wcag-3` with the guideline mapping. Detailed plan: [`docs/design/2026-10-01-phase-8-aaa-wcag3`](docs/design/2026-10-01-phase-8-aaa-wcag3/phase-8-aaa-wcag3.en.html).
 - [x] **9. ARIA widget patterns.** The 30 patterns of Deque University ARIA Examples, our own code, each with a live screen reader log, an ARIA table and a keyboard exercise, in four batches: native first, showing and hiding, composite widgets, content that changes. Detailed plan: [`docs/design/2026-10-02-phase-9-aria-patterns`](docs/design/2026-10-02-phase-9-aria-patterns/phase-9-aria-patterns.en.html).
 - [x] **10. Landmarks and headings.** "Struktura strony" on every page, the landmark and heading simulations, an example and a lesson on page structure. Detailed plan: [`docs/design/2026-10-03-phase-10-landmarks`](docs/design/2026-10-03-phase-10-landmarks/phase-10-landmarks.en.html).
+- [x] **11. A whole page before and after.** The KMW home page broken in 20 ways and fixed, notes for a self-check with the answers hidden until it ends, the list of problems, markers on the broken page. Detailed plan: [`docs/design/2026-10-04-phase-11-before-after`](docs/design/2026-10-04-phase-11-before-after/phase-11-before-after.en.html).

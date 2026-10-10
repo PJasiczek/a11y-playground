@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { ProblemLinks } from "~/components/before-after";
 import { ExampleFrame } from "~/components/example-frame";
 import { DraftBadge } from "~/components/level-badge";
 import { ReadingTables } from "~/components/reading-table";
@@ -37,7 +38,7 @@ const panes = [
  * the simulator rail beside them (variant 1C of the simulator mocks).
  */
 function ExamplePage() {
-  const { example, terms, simulators, reading, tab, patterns } = Route.useLoaderData();
+  const { example, terms, simulators, reading, tab, patterns, beforeAfter } = Route.useLoaderData();
   const { symulacja } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
   const simulator = symulacja ? simulators.find((s) => s.kind === simulations[symulacja].kind) : undefined;
@@ -99,6 +100,7 @@ function ExamplePage() {
             ))}
           </p>
         ) : null}
+        <ProblemLinks problems={beforeAfter} />
       </header>
 
       <div className="mt-6 grid items-start gap-6 lg:grid-cols-[17rem_minmax(0,1fr)]">

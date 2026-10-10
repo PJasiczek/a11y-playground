@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { type } from "arktype";
 import readingOrders from "virtual:reading-order";
+import { problemsFor, problemsForExample } from "./before-after";
 import { type CriterionContent, criterionContent, strongerVersionsOf } from "./criterion-content";
 import { examples } from "./examples";
 import { glossary } from "./glossary";
@@ -22,8 +23,8 @@ const CriterionIdInput = type.enumerated(...criteria.map((c) => c.id));
  * written), the normative Polish text (null where no authorized translation exists), the short
  * definitions of the glossary terms the content marks, for the preview bubbles, the examples
  * that show the criterion, the lessons that teach it, which provisions require it, and the
- * stronger AAA criteria that tighten it, the WCAG 3.0 guidelines it corresponds to, and the ARIA
- * patterns that show it.
+ * stronger AAA criteria that tighten it, the WCAG 3.0 guidelines it corresponds to, the ARIA
+ * patterns that show it, and the problems of the whole-page demo that break it.
  */
 export const getCriterionPage = createServerFn({ method: "GET" })
   .validator(CriterionIdInput)
@@ -47,6 +48,7 @@ export const getCriterionPage = createServerFn({ method: "GET" })
       stronger: strongerVersionsOf(data),
       wcag3: wcag3GuidelinesFor(data),
       patterns: patternsFor(data),
+      beforeAfter: problemsFor(data),
     };
   });
 
@@ -74,7 +76,7 @@ export const getCriteriaOverview = createServerFn({ method: "GET" }).handler(() 
  * One example with both fragments, or null for an unknown slug. Also the general description and
  * limits of every simulator kind, for the rail, the glossary terms both kinds of text mark, and
  * what a screen reader reads in each variant, for the "Czytnik ekranu" simulator, and the ARIA
- * patterns that show the fixed version.
+ * patterns that show the fixed version, and the problems of the whole-page demo it shows alone.
  */
 export const getExample = createServerFn({ method: "GET" })
   .validator(type("string"))
@@ -98,6 +100,7 @@ export const getExample = createServerFn({ method: "GET" })
       reading: { bad: bad.reading, good: good.reading },
       tab: { bad: bad.tab, good: good.tab },
       patterns: patternsForExample(data),
+      beforeAfter: problemsForExample(data),
     };
   });
 

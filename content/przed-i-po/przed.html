@@ -1,0 +1,291 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Komunikacja Miejska Wrzosów</title>
+<style>
+  * { box-sizing: border-box; }
+  *:focus { outline: none; }
+  body { margin: 0; background: #e9e4ee; color: #17141c; font: 15px/1.5 "Segoe UI", system-ui, sans-serif; }
+  .strona { width: 1000px; margin: 0 auto; background: #f7f4f9; padding-bottom: 4rem; }
+  a { color: #4a1f5c; text-decoration: none; }
+  .gora { display: flex; align-items: center; gap: 1rem; padding: .8rem 1.25rem; background: #fff; }
+  .logo { display: flex; align-items: center; gap: .6rem; }
+  .logo-tekst b { display: block; font: 800 1.5rem/1 "Bahnschrift", "Roboto Condensed", "Arial Narrow", sans-serif; color: #4a1f5c; }
+  .logo-tekst span { font: 600 .72rem/1.2 "Bahnschrift", "Arial Narrow", sans-serif; text-transform: uppercase; letter-spacing: .1em; }
+  .spolecznosc { margin-left: auto; display: flex; gap: 2px; }
+  .spolecznosc a { display: block; width: 16px; height: 16px; }
+  .spolecznosc img { display: block; }
+  .jezyk { font-size: .85rem; }
+  .menu { background: #ffc93c; }
+  .menu > ul { list-style: none; margin: 0; padding: 0 .75rem; display: flex; }
+  .menu li { position: relative; }
+  .menu > ul > li > a { display: block; padding: .75rem .9rem; font: 700 1rem "Bahnschrift", "Arial Narrow", sans-serif; color: #bdb49a; }
+  .menu .pod { display: none; position: absolute; z-index: 5; left: 0; top: 100%; min-width: 14rem; list-style: none; margin: 0; padding: .3rem 0; background: #fff; border: 2px solid #17141c; }
+  .menu li:hover .pod { display: block; }
+  .menu .pod a { display: block; padding: .5rem .9rem; color: #17141c; }
+  .karuzela { position: relative; background: #4a1f5c; color: #fff; min-height: 170px; padding: 1.75rem 9rem 1.5rem 4.5rem; }
+  .slajd { display: none; }
+  .slajd.widoczny { display: block; }
+  .slajd .tytul { font: 800 2rem/1.05 "Bahnschrift", "Roboto Condensed", "Arial Narrow", sans-serif; max-width: 20ch; }
+  .slajd p { color: #e6dceb; margin: .5rem 0 0; }
+  .slajd p a { color: #fff; }
+  .slajd .numer { position: absolute; right: 2.5rem; top: 50%; transform: translateY(-50%); font: 800 5rem/1 "Bahnschrift", "Arial Narrow", sans-serif; color: #ffc93c; }
+  .strzalka { position: absolute; top: 50%; transform: translateY(-50%); display: block; width: 32px; height: 32px; }
+  .strzalka.lewa { left: 1.25rem; }
+  .strzalka.prawa { right: 7.5rem; }
+  .kropki { display: flex; gap: .35rem; margin-top: .9rem; }
+  .kropki span { width: 9px; height: 9px; border-radius: 50%; background: #8a6a97; }
+  .kropki span.teraz { background: #fff; }
+  .kolumny { display: grid; grid-template-columns: 1.3fr 1fr; gap: 1.5rem; padding: 1.5rem 1.25rem; }
+  .naglowek { font: 800 1.35rem/1.1 "Bahnschrift", "Roboto Condensed", "Arial Narrow", sans-serif; margin: 0 0 .7rem; }
+  .tablica { background: #15111a; color: #ffb547; border-radius: 4px; padding: .9rem 1rem .7rem; font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; }
+  .tablica .naglowek { color: #fff; }
+  .wiersz { display: grid; grid-template-columns: 3rem 1fr 4rem 1.5rem; gap: .6rem; align-items: center; padding: .45rem 0; border-top: 1px dashed #4b3d2a; }
+  .wiersz.opis { color: #c9bfd3; font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; border-top: 0; }
+  .linia { background: #4a1f5c; color: #fff; text-align: center; font: 800 1rem/1.8rem "Bahnschrift", "Arial Narrow", sans-serif; border-radius: 3px; }
+  .kropka { width: 12px; height: 12px; border-radius: 50%; }
+  .kropka.ok { background: #2fa35a; }
+  .kropka.spozniony { background: #e0453a; }
+  .wiadomosci { list-style: none; margin: 0; padding: 0; }
+  .wiadomosci li { display: grid; grid-template-columns: 24px 1fr; gap: .6rem; padding: .6rem 0; border-top: 1px solid #dcd3e1; }
+  .wiadomosci b { display: block; }
+  .wstep { margin: 0 0 .5rem; }
+  .schemat { padding: 0 1.25rem 1.5rem; }
+  .schemat img { display: block; max-width: 100%; background: #fff; border: 1px solid #dcd3e1; }
+  .ramka { margin: 0 1.25rem 1.5rem; border-left: 6px solid #ffc93c; background: #fff; padding: .9rem 1.1rem; }
+  .ramka p { margin: .3rem 0 0; }
+  .zgloszenie { margin: 0 1.25rem 1.5rem; background: #fff; padding: 1.1rem 1.25rem 1.4rem; border-top: 6px solid #4a1f5c; }
+  .bledy { display: none; background: #fdecef; color: #8e0e24; padding: .6rem .8rem; margin-bottom: .9rem; font-weight: 600; }
+  .bledy.widoczne { display: block; }
+  .siatka { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem 1.1rem; }
+  .pole .etykieta { font-size: .85rem; font-weight: 600; margin-bottom: .25rem; }
+  .pole .etykieta.wymagane { color: #1f3a93; }
+  .pole input[type="text"], .pole textarea { width: 100%; font: inherit; padding: .5rem .6rem; border: 1px solid #5c5260; border-radius: 3px; background: #fff; }
+  .pole textarea { min-height: 6rem; }
+  .opcje { display: flex; flex-wrap: wrap; gap: .4rem 1.25rem; margin-top: .3rem; }
+  .kod { display: flex; align-items: center; gap: .8rem; margin-top: .9rem; }
+  .kod input { width: 9rem; font: inherit; padding: .5rem .6rem; border: 1px solid #5c5260; border-radius: 3px; }
+  .wyslij { margin-top: 1rem; font: 700 1rem "Segoe UI", system-ui, sans-serif; padding: .7rem 1.4rem; background: #4a1f5c; color: #fff; border: 0; border-radius: 3px; cursor: pointer; }
+  .stopka { background: #17141c; color: #d8d0dd; padding: 1.1rem 1.25rem; display: flex; gap: 2rem; font-size: .85rem; }
+  .stopka a { color: #fff; }
+  .cookies { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: #2c2433; color: #fff; padding: .8rem 1.25rem; display: flex; align-items: center; gap: 1rem; }
+  .cookies button { margin-left: auto; font: 700 .9rem "Segoe UI", system-ui, sans-serif; background: #ffc93c; color: #17141c; border: 0; padding: .45rem .9rem; cursor: pointer; }
+  .zaslona { display: none; position: fixed; inset: 0; z-index: 30; background: rgb(23 20 28 / .55); }
+  .okno { display: none; position: fixed; z-index: 31; left: 50%; top: 10rem; transform: translateX(-50%); width: 28rem; background: #fff; border-top: 6px solid #ffc93c; padding: 1.2rem 1.4rem; }
+  .zaslona.otwarta, .okno.otwarte { display: block; }
+  .okno .zamknij { position: absolute; right: .7rem; top: .4rem; font-size: 1.3rem; cursor: pointer; color: #5c5260; }
+  .okno .naglowek { margin: 0 0 .4rem; }
+</style>
+</head>
+<body data-problem="jezyk punkty fokus szerokosc">
+<div class="strona">
+
+  <div class="gora">
+    <div class="logo">
+      <img data-problem="obrazy" width="40" height="40" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='7' fill='%234a1f5c'/%3E%3Cpath d='M20 32V10M20 16l-7-5M20 21l7-5M20 26l-6-4' stroke='%23ffc93c' stroke-width='2.8' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+      <div class="logo-tekst"><b>KMW</b><span>Komunikacja Miejska Wrzosów</span></div>
+    </div>
+    <div class="spolecznosc" data-problem="ikony">
+      <a href="#"><img width="16" height="16" alt="Facebook" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%234a1f5c'/%3E%3Cpath d='M9 13V8.5h1.5L11 7H9V6c0-.5.2-.8.8-.8H11V3.6C10.6 3.5 10.1 3.5 9.6 3.5 8.3 3.5 7.5 4.3 7.5 5.7V7H6v1.5h1.5V13z' fill='%23fff'/%3E%3C/svg%3E"></a>
+      <a href="#"><img width="16" height="16" alt="Instagram" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%234a1f5c'/%3E%3Crect x='4' y='4' width='8' height='8' rx='2.5' stroke='%23fff' stroke-width='1.3' fill='none'/%3E%3Ccircle cx='8' cy='8' r='1.8' stroke='%23fff' stroke-width='1.3' fill='none'/%3E%3C/svg%3E"></a>
+      <a href="#"><img width="16" height="16" alt="YouTube" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%234a1f5c'/%3E%3Cpath d='M6.5 5.2v5.6L11 8z' fill='%23fff'/%3E%3C/svg%3E"></a>
+    </div>
+    <a class="jezyk" href="#">Українською</a>
+  </div>
+
+  <div class="menu" data-problem="kontrast">
+    <ul>
+      <li data-problem="podmenu"><a href="#">Rozkłady</a>
+        <ul class="pod">
+          <li><a href="#">Tramwaje</a></li>
+          <li><a href="#">Autobusy dzienne</a></li>
+          <li><a href="#">Autobusy nocne</a></li>
+          <li><a href="#">Planer podróży</a></li>
+        </ul>
+      </li>
+      <li><a href="#">Bilety</a>
+        <ul class="pod">
+          <li><a href="#">Cennik</a></li>
+          <li><a href="#">Ulgi</a></li>
+          <li><a href="#">Bilet w aplikacji</a></li>
+        </ul>
+      </li>
+      <li><a href="#">Utrudnienia</a></li>
+      <li><a href="#">O nas</a>
+        <ul class="pod">
+          <li><a href="#">Kontakt</a></li>
+          <li><a href="#">Biuro rzeczy znalezionych</a></li>
+          <li><a href="#">Deklaracja dostępności</a></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="karuzela" data-problem="karuzela">
+    <a class="strzalka lewa" href="#"><img width="32" height="32" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='16' fill='%23fff' fill-opacity='.25'/%3E%3Cpath d='M19 9l-7 7 7 7' stroke='%23fff' stroke-width='2.5' fill='none'/%3E%3C/svg%3E"></a>
+    <div class="slajd widoczny">
+      <div class="tytul">Linia 14 dojedzie na Osiedle Słoneczne</div>
+      <p>Od 1 listopada co 10 minut w szczycie. <a href="#">Kliknij tutaj</a>, żeby zobaczyć rozkład.</p>
+      <span class="numer">14</span>
+    </div>
+    <div class="slajd">
+      <div class="tytul">Nocą jeżdżą linie N1 i N2</div>
+      <p>W piątki i soboty do 4:30. <a href="#">Kliknij tutaj</a>, żeby zobaczyć trasy.</p>
+      <span class="numer">N1</span>
+    </div>
+    <div class="slajd">
+      <div class="tytul">Bilet 24-godzinny za 15 zł</div>
+      <p>Kupisz go w automacie i w aplikacji. <a href="#">Kliknij tutaj</a>.</p>
+      <span class="numer">24h</span>
+    </div>
+    <div class="kropki"><span class="teraz"></span><span></span><span></span></div>
+    <a class="strzalka prawa" href="#"><img width="32" height="32" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='16' fill='%23fff' fill-opacity='.25'/%3E%3Cpath d='M13 9l7 7-7 7' stroke='%23fff' stroke-width='2.5' fill='none'/%3E%3C/svg%3E"></a>
+  </div>
+
+  <div class="kolumny">
+    <div class="tablica" data-problem="odswiezanie">
+      <div class="naglowek" data-problem="naglowki">Odjazdy z przystanku Rynek</div>
+      <div class="wiersze" data-problem="tablica">
+        <div class="wiersz opis"><div>Linia</div><div>Kierunek</div><div>Odjazd</div><div></div></div>
+      </div>
+    </div>
+    <div>
+      <div class="naglowek">Aktualności</div>
+      <p class="wstep" data-problem="kolor">Wszystkie zmiany znajdziesz w <a href="#">rozkładach jazdy</a> i w <a href="#">komunikatach</a>.</p>
+      <ul class="wiadomosci" data-problem="linki">
+        <li><img data-problem="ozdobniki" width="24" height="24" alt="ikona autobusu" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%23ede6f0'/%3E%3Crect x='6' y='6' width='12' height='10' rx='2' stroke='%234a1f5c' stroke-width='2' fill='none'/%3E%3Ccircle cx='9' cy='18' r='1.5' fill='%234a1f5c'/%3E%3Ccircle cx='15' cy='18' r='1.5' fill='%234a1f5c'/%3E%3C/svg%3E"><div><b>Remont wiaduktu na Kolejowej: objazdy linii 3 i 7</b><a href="#">Więcej</a></div></li>
+        <li><img width="24" height="24" alt="ikona autobusu" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%23ede6f0'/%3E%3Crect x='6' y='6' width='12' height='10' rx='2' stroke='%234a1f5c' stroke-width='2' fill='none'/%3E%3Ccircle cx='9' cy='18' r='1.5' fill='%234a1f5c'/%3E%3Ccircle cx='15' cy='18' r='1.5' fill='%234a1f5c'/%3E%3C/svg%3E"><div><b>Nowe automaty biletowe na 12 przystankach</b><a href="#">Więcej</a></div></li>
+        <li><img width="24" height="24" alt="ikona autobusu" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%23ede6f0'/%3E%3Crect x='6' y='6' width='12' height='10' rx='2' stroke='%234a1f5c' stroke-width='2' fill='none'/%3E%3Ccircle cx='9' cy='18' r='1.5' fill='%234a1f5c'/%3E%3Ccircle cx='15' cy='18' r='1.5' fill='%234a1f5c'/%3E%3C/svg%3E"><div><b>Bilet miesięczny w aplikacji od 1 grudnia</b><a href="#">Więcej</a></div></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="schemat">
+    <div class="naglowek">Schemat sieci</div>
+    <img width="960" height="220" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 960 220' font-family='Segoe UI,sans-serif' font-size='14'%3E%3Crect width='960' height='220' fill='%23fff'/%3E%3Cpath d='M60 110H900' stroke='%234a1f5c' stroke-width='8'/%3E%3Cpath d='M200 30V190' stroke='%23b3122e' stroke-width='8'/%3E%3Cpath d='M480 30L480 110L760 190' stroke='%231d6b36' stroke-width='8' fill='none'/%3E%3Cpath d='M60 170L480 110L900 40' stroke='%231c3d8f' stroke-width='6' stroke-dasharray='14 8' fill='none'/%3E%3Cg fill='%23fff' stroke='%2317141c' stroke-width='3'%3E%3Ccircle cx='60' cy='110' r='9'/%3E%3Ccircle cx='200' cy='110' r='9'/%3E%3Ccircle cx='480' cy='110' r='12'/%3E%3Ccircle cx='900' cy='110' r='9'/%3E%3Ccircle cx='200' cy='30' r='9'/%3E%3Ccircle cx='200' cy='190' r='9'/%3E%3Ccircle cx='760' cy='190' r='9'/%3E%3Ccircle cx='900' cy='40' r='9'/%3E%3C/g%3E%3Cg fill='%2317141c'%3E%3Ctext x='40' y='140'%3EZajezdnia Lipowa%3C/text%3E%3Ctext x='212' y='100'%3EPlac Wolności%3C/text%3E%3Ctext x='492' y='100' font-weight='700'%3ERynek%3C/text%3E%3Ctext x='820' y='140'%3EDworzec Główny%3C/text%3E%3Ctext x='212' y='35'%3EOsiedle Wrzosowe%3C/text%3E%3Ctext x='492' y='40'%3EStadion%3C/text%3E%3Ctext x='212' y='205'%3ESzpital Miejski%3C/text%3E%3Ctext x='690' y='212'%3EOsiedle Słoneczne%3C/text%3E%3Ctext x='800' y='30'%3EPort Lotniczy%3C/text%3E%3C/g%3E%3C/svg%3E">
+  </div>
+
+  <div class="ramka">
+    <div class="naglowek">Інформація для пасажирів</div>
+    <p>Квитки можна купити в автоматах на зупинках і в мобільному застосунку. <a href="#">Детальніше</a></p>
+  </div>
+
+  <div class="zgloszenie">
+    <div class="naglowek">Zgłoś uwagę</div>
+    <div class="bledy">Formularz zawiera błędy.</div>
+    <form class="formularz" novalidate>
+      <div class="siatka" data-problem="formularz">
+        <div class="pole"><div class="etykieta wymagane">Imię i nazwisko</div><input type="text" name="imie"></div>
+        <div class="pole"><div class="etykieta wymagane">E-mail</div><input type="text" name="email"></div>
+        <div class="pole"><div class="etykieta">Numer linii</div><input type="text" name="linia"></div>
+        <div class="pole"><div class="etykieta">Data przejazdu</div><input type="text" name="data" placeholder="dd.mm.rrrr"></div>
+      </div>
+      <div class="pole" style="margin-top:.9rem">
+        <div class="etykieta wymagane">Rodzaj zgłoszenia</div>
+        <div class="opcje">
+          <span><input type="radio" name="rodzaj" value="opoznienie"> Opóźnienie</span>
+          <span><input type="radio" name="rodzaj" value="kierowca"> Zachowanie kierowcy</span>
+          <span><input type="radio" name="rodzaj" value="czystosc"> Czystość pojazdu</span>
+          <span><input type="radio" name="rodzaj" value="inne"> Inne</span>
+        </div>
+      </div>
+      <div class="pole" style="margin-top:.9rem"><div class="etykieta wymagane">Treść</div><textarea name="tresc"></textarea></div>
+      <div class="pole" style="margin-top:.6rem"><input type="checkbox" name="zgoda"> Zgadzam się na przetwarzanie moich danych w celu odpowiedzi na zgłoszenie.</div>
+      <div class="kod" data-problem="captcha">
+        <img width="130" height="44" alt="kod" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 130 44'%3E%3Cdefs%3E%3Cpattern id='p' width='9' height='9' patternUnits='userSpaceOnUse' patternTransform='rotate(-30)'%3E%3Crect width='4' height='9' fill='%23dcd3e1'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='130' height='44' fill='%23fff'/%3E%3Crect width='130' height='44' fill='url(%23p)'/%3E%3Ctext x='14' y='31' font-family='Georgia,serif' font-style='italic' font-weight='700' font-size='24' fill='%235c5260' transform='skewX(-14) translate(8 0)' letter-spacing='5'%3Ex7Kp2%3C/text%3E%3Cpath d='M4 30C40 10 80 40 126 14' stroke='%235c5260' stroke-width='1.5' fill='none'/%3E%3C/svg%3E">
+        <input type="text" name="kod">
+      </div>
+      <button class="wyslij" type="submit" data-problem="walidacja">Wyślij</button>
+    </form>
+  </div>
+
+  <div class="stopka">
+    <span>© 2026 Komunikacja Miejska Wrzosów</span>
+    <span>ul. Zajezdniowa 4, 00-000 Wrzosów</span>
+    <a href="#">Deklaracja dostępności</a>
+  </div>
+</div>
+
+<div class="cookies" data-problem="cookies">
+  <span>Używamy plików cookies, żeby strona działała.</span>
+  <button type="button">Akceptuję</button>
+</div>
+
+<div class="zaslona otwarta"></div>
+<div class="okno otwarte" data-problem="okno">
+  <div class="zamknij">✕</div>
+  <div class="naglowek">Utrudnienia w ruchu</div>
+  <p>Tramwaje linii 3 jadą objazdem przez ulicę Lipową do 15 listopada.</p>
+</div>
+
+<script>
+  // Departures: rebuilt from scratch on every refresh.
+  const odjazdy = [
+    ["7", "Dworzec Główny", 4, 0],
+    ["14", "Osiedle Słoneczne", 6, 4],
+    ["A", "Port Lotniczy", 9, 0],
+    ["7", "Zajezdnia Lipowa", 15, 2],
+    ["14", "Stadion", 18, 0],
+  ];
+  let minuta = 0;
+  const pokazOdjazdy = () => {
+    const wiersze = document.querySelector(".wiersze");
+    const opis = wiersze.firstElementChild;
+    wiersze.replaceChildren(opis);
+    for (const [linia, kierunek, za, spoznienie] of odjazdy) {
+      const czas = 12 * 60 + za + minuta;
+      const wiersz = document.createElement("div");
+      wiersz.className = "wiersz";
+      wiersz.innerHTML =
+        '<div class="linia">' + linia + "</div><div>" + kierunek + "</div><div>" +
+        Math.floor(czas / 60) + ":" + String(czas % 60).padStart(2, "0") + '</div><div class="kropka ' +
+        (spoznienie > 0 ? "spozniony" : "ok") + '"></div>';
+      wiersze.append(wiersz);
+    }
+  };
+  pokazOdjazdy();
+
+  // Slides change every 5 seconds once the page is allowed to move.
+  const slajdy = [...document.querySelectorAll(".slajd")];
+  const kropki = [...document.querySelectorAll(".kropki span")];
+  let teraz = 0;
+  const pokazSlajd = (n) => {
+    teraz = (n + slajdy.length) % slajdy.length;
+    slajdy.forEach((s, i) => s.classList.toggle("widoczny", i === teraz));
+    kropki.forEach((k, i) => k.classList.toggle("teraz", i === teraz));
+  };
+  document.querySelector(".strzalka.lewa").addEventListener("click", (e) => { e.preventDefault(); pokazSlajd(teraz - 1); });
+  document.querySelector(".strzalka.prawa").addEventListener("click", (e) => { e.preventDefault(); pokazSlajd(teraz + 1); });
+
+  let zegary = [];
+  document.addEventListener("kmw-ruch", (e) => {
+    zegary.forEach(clearInterval);
+    zegary = [];
+    if (!e.detail.on) return;
+    zegary.push(setInterval(() => pokazSlajd(teraz + 1), 5000));
+    zegary.push(setInterval(() => { minuta += 1; odjazdy.forEach((o) => { o[3] = o[3] > 0 ? o[3] - 1 : Math.random() < 0.2 ? 3 : 0; }); pokazOdjazdy(); }, 15000));
+  });
+
+  document.querySelector(".okno .zamknij").addEventListener("click", () => {
+    document.querySelector(".okno").classList.remove("otwarte");
+    document.querySelector(".zaslona").classList.remove("otwarta");
+  });
+  document.querySelector(".cookies button").addEventListener("click", () => document.querySelector(".cookies").remove());
+
+  const formularz = document.querySelector(".formularz");
+  formularz.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const dane = new FormData(formularz);
+    const puste = ["imie", "email", "rodzaj", "tresc", "zgoda"].some((pole) => !String(dane.get(pole) ?? "").trim());
+    const zlyEmail = !String(dane.get("email")).includes("@");
+    const zlyKod = dane.get("kod") !== "x7Kp2";
+    const bledy = document.querySelector(".bledy");
+    bledy.textContent = puste || zlyEmail || zlyKod ? "Formularz zawiera błędy." : "Dziękujemy. Zgłoszenie zostało wysłane.";
+    bledy.classList.add("widoczne");
+    bledy.scrollIntoView();
+  });
+</script>
+</body>
+</html>

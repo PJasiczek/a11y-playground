@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { type } from "arktype";
 import { useState } from "react";
+import { ProblemLinks } from "~/components/before-after";
 import { DraftBadge } from "~/components/level-badge";
 import { AriaTable, Exercise, NativeVerdictBadge, PatternLog } from "~/components/patterns";
 import { TermTips } from "~/components/term-tips";
@@ -41,7 +42,7 @@ const chip = "inline-flex min-h-11 items-center rounded border border-control bg
  * with live values. "Od nowa" reloads the frame, so the pattern starts from its first state.
  */
 function PatternPage() {
-  const { pattern, terms, examples } = Route.useLoaderData();
+  const { pattern, terms, examples, beforeAfter } = Route.useLoaderData();
   const [lines, setLines] = useState<Announcement[]>([]);
   const [values, setValues] = useState<{ now: (string | null)[]; changed: boolean[] }>({ now: [], changed: [] });
   const [done, setDone] = useState(0);
@@ -207,21 +208,24 @@ function PatternPage() {
         })}
       </TermTips>
 
-      {examples.length > 0 ? (
+      {examples.length > 0 || beforeAfter.length > 0 ? (
         <section aria-labelledby="zepsute" className="mt-10 border-t-2 border-ink pt-4">
           <h2 id="zepsute" className="text-xl font-bold tracking-tight">
             Ten sam błąd w Praktyce
           </h2>
-          <ul className="mt-3 border-t border-rule">
-            {examples.map((example) => (
-              <li key={example.slug} className="border-b border-rule">
-                <Link to="/praktyka/$slug" params={{ slug: example.slug }} className="block px-1 py-3 hover:bg-surface">
-                  <span className="font-semibold">{example.title}</span>
-                  <span className="mt-0.5 block text-[0.9375rem] text-ink-2">{example.summary}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <ProblemLinks problems={beforeAfter} />
+          {examples.length > 0 ? (
+            <ul className="mt-3 border-t border-rule">
+              {examples.map((example) => (
+                <li key={example.slug} className="border-b border-rule">
+                  <Link to="/praktyka/$slug" params={{ slug: example.slug }} className="block px-1 py-3 hover:bg-surface">
+                    <span className="font-semibold">{example.title}</span>
+                    <span className="mt-0.5 block text-[0.9375rem] text-ink-2">{example.summary}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : null}
         </section>
       ) : null}
 
