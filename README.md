@@ -35,6 +35,7 @@ The interface is in Polish. This README is in English.
 - **WCAG 3.0** (`/wcag-3`, in the main navigation): the status of the Working Draft of 10 September 2026 under a "wersja robocza W3C" badge, with the date we last compared it with w3.org, a table of how 3.0 differs from 2.2, and one table of all 46 guidelines in 12 groups with the 2.2 criteria that correspond to them today, or "Nowe w 3.0". The mapping is ours and the page says so. A filter (`?pokaz=nowe`) shows only what is new in 3.0, and every criterion page links to its guidelines.
 - **Normative text** in Polish from the authorized W3C translation of WCAG 2.1, collapsed on each criterion page. The criteria new in 2.2 link to their sources until a licensed Polish text is available.
 - **Glossary** (`/slownik`) of about 30 terms, alphabetical, each with a plain explanation and, where WCAG defines the term, its normative wording. The first use of a term in a criterion links to it, with a small button that opens a short definition.
+- **Content edited in Notion.** Explanations, glossary, examples, patterns, acts, lessons and the rest are pages in Notion; a change there reaches the site a few minutes later, without a commit.
 - **Search** (`/szukaj`, also on the home page) over criteria, examples, patterns, provisions, lessons, WCAG 3.0 guidelines and the glossary. It finds criteria by number, name or symptom ("modal", "placeholder"), articles by topic ("deklaracja dostępności"), and ignores Polish diacritics.
 - **Practice** (`/praktyka`): twelve examples as cards ordered by the cost of the fix, each with what the user gains. An example page (`/praktyka/ikona-jako-przycisk`) shows the broken and the fixed variant one above the other, each running in a sandboxed iframe, with its code and what a screen reader says. Examples that move start only when the reader asks. Criterion pages link to their examples.
 - **Patterns** (`/praktyka/wzorce`, the second half of Praktyka): working components built from the WAI-ARIA Authoring Practices, after the list of Deque University ARIA Examples. The catalogue shows a still of each, grouped by batch, and filters by whether HTML has the element for the job (`?natywnie=`). A pattern page (`/praktyka/wzorce/rozwin-zwin`) runs the pattern in a sandboxed iframe, logs beside it what a screen reader would say after every key (focus, state changes, live regions), shows its ARIA attributes with their current values, and turns its keyboard behaviour into an exercise that ticks itself off. Criterion pages and practice examples link to their patterns.
@@ -101,18 +102,47 @@ The interface is in Polish. This README is in English.
 
 You need [Node.js](https://nodejs.org) 24 or newer and [pnpm](https://pnpm.io) 11.
 
+The texts live in Notion (see [Editing content in Notion](#editing-content-in-notion)), so you also need a `.env.local` with access to it. The file is git-ignored:
+
+```bash
+NOTION_TOKEN=ntn_...           # the secret of the Notion integration
+NOTION_ROOT_PAGE_ID=...        # the page that holds the content, shared with the integration
+```
+
 ```bash
 pnpm install
+pnpm import:notion
 pnpm dev
 ```
 
-The dev server prints its local URL. To run the end-to-end tests locally, install the browser once:
+`pnpm import:notion` writes the Markdown files into `content/`. Run it again to pick up changes made in Notion; `pnpm build` runs it on its own. The dev server prints its local URL. To run the end-to-end tests locally, install the browser once:
 
 ```bash
 pnpm exec playwright install chromium
 ```
 
 ## Writing content
+
+### Editing content in Notion
+
+All Markdown files of `content/` come from Notion and are not in git. Quizzes (`*.quiz.yaml`) and the HTML of examples, patterns and the before and after page stay in the repository.
+
+- **Layout:** under the root page, one page per folder of `content/` (`kryteria`, `slownik`, `praktyka`…), and under it one page per file. The page title is the file name without `.md`: `1.4.3`, `problemy/01-jezyk`, and for folders `ikona-jako-przycisk` (its `index.md`) or `programista/nazwy-dostepne`.
+- **Page content:** a YAML code block at the top with the frontmatter, then the text. Everything below describes the files as the import writes them.
+- **Links:** glossary and law links are links to the live site in Notion, `https://a11y-playground-tau.vercel.app/slownik#fokus` and `…/prawo/ustawa-2019-848/art-5`, which the import turns back into `slownik:` and `prawo:` marks. The code blocks of a before and after problem are `html` blocks whose first line is `<!-- przed -->` or `<!-- po -->`.
+- **Publishing:** saving in Notion sends a webhook to `/api/notion-webhook`, which starts a Vercel deploy; the build imports the content and the change is live a few minutes later. A page that breaks a rule below fails the build, and the site keeps the last version that built. The reason is in the Vercel build log.
+
+> [!NOTE]
+> A new page must follow the title rule above, or the import stops with the title it could not read. `pnpm seed:notion` copied the original files into an empty root page once and refuses to run again.
+
+To set up publishing on a new deploy:
+
+1. In Vercel, add `NOTION_TOKEN` and `NOTION_ROOT_PAGE_ID` to the environment variables, create a deploy hook for `master` (Settings → Git → Deploy Hooks) and add its URL as `VERCEL_DEPLOY_HOOK_URL`. Redeploy.
+2. In the Notion integration settings, add a webhook subscription to `https://<domain>/api/notion-webhook` for page events. Notion sends a verification token; the endpoint writes it to the Vercel function log.
+3. Paste the token into Notion to verify the subscription, add it to Vercel as `NOTION_WEBHOOK_SECRET` and redeploy. From then on the endpoint accepts only requests signed with it.
+4. In GitHub, add `NOTION_TOKEN` and `NOTION_ROOT_PAGE_ID` as Actions secrets, for CI.
+
+### Criteria
 
 Criterion names, levels, versions and normative text are generated. The explanations are written by hand in Markdown, one file per criterion in `content/kryteria/<id>.md`:
 
@@ -425,12 +455,14 @@ Run the import by hand and review the diff of the generated files in a PR.
 | Command | What it does |
 | --- | --- |
 | `pnpm dev` | Starts the Vite dev server. |
-| `pnpm build` | Builds the production app into `.output/`. |
+| `pnpm build` | Imports the content from Notion, then builds the production app into `.output/`. |
 | `pnpm preview` | Serves the production build locally. |
 | `pnpm lint` | Runs ESLint (with `jsx-a11y` in strict mode) and the TypeScript compiler. |
 | `pnpm test` | Runs the Vitest content and data tests, then builds the app and runs the Playwright suite: axe in light and dark mode, 44px target checks, no running animations, and keyboard flows. |
 | `pnpm import:wcag` | Regenerates the WCAG structure with Polish names. See [Where the criterion names come from](#where-the-criterion-names-come-from). |
 | `pnpm import:legal` | Regenerates the statute text of the acts. See [Where the statute text comes from](#where-the-statute-text-comes-from). |
+| `pnpm import:notion` | Writes the Markdown files of `content/` from Notion. See [Editing content in Notion](#editing-content-in-notion). |
+| `pnpm seed:notion` | Copied the content files into an empty Notion page once; refuses to run when the page has content. |
 
 CI runs `lint`, `build` and `test` on every pull request and on pushes to `master`.
 
@@ -473,7 +505,7 @@ The plan behind this is in [`docs/design/2026-10-10-seo-indexing`](docs/design/2
 ## Project structure
 
 ```text
-content/
+content/         Markdown files written from Notion (git-ignored), quizzes and HTML in git
   kryteria/      one Markdown file per criterion
   slownik/       one Markdown file per glossary term
   praktyka/      one folder per example: index.md, bad.html, good.html
@@ -486,7 +518,11 @@ content/
 scripts/
   import-wcag.ts   generates src/content/wcag.gen.ts and wcag-text.gen.ts
   import-legal.ts  generates src/content/legal.gen.ts and legal-text.gen.ts
+  notion.ts        the Notion layout and the Markdown translation, shared by:
+  import-notion.ts   writes content/ from Notion, before every build
+  seed-notion.ts     copied content/ into Notion once
 src/
+  routes/api/    the Notion webhook that starts a deploy
   content/       WCAG structure, the WCAG 3.0 mapping, acts and the legal mapping, Markdown parsing and validation, the live log of pattern frames, server functions
   search/        search options, index builder and relevance tests
   progress/      reading progress and quiz scores in localStorage
