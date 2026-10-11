@@ -1,5 +1,4 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { DraftBadge } from "~/components/level-badge";
 import { lessonNumber, pathProgress, ProgressNote } from "~/components/paths";
 import { TermTips } from "~/components/term-tips";
 import { getPathPage } from "~/content/paths.functions";
@@ -63,7 +62,6 @@ function PathPage() {
       <header className="pt-3 pb-2">
         <h1 className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[clamp(1.5rem,4vw,2rem)] leading-tight font-bold tracking-tight">
           {path.title}
-          {path.status === "szkic" ? <DraftBadge /> : null}
         </h1>
         <p className="mt-2 max-w-[62ch] text-[1.0625rem] text-ink-2">
           {path.summary} {countOf(total, ["lekcja", "lekcje", "lekcji"])}.

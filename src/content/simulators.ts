@@ -1,6 +1,6 @@
 import { type } from "arktype";
 import { examples } from "./examples";
-import { type Fail, IsoDate, readVerification, splitFrontmatter, Status, type Verification } from "./markdown";
+import { type Fail, splitFrontmatter } from "./markdown";
 import { createRenderer } from "./render";
 import { type SimulationKind, simulationKinds } from "./simulations";
 import { type CriterionId, isCriterionId } from "./wcag";
@@ -18,12 +18,10 @@ const Frontmatter = type({
   examples: "string[]",
   /** "Czego to nie pokazuje", shown next to every simulation of this kind. */
   limits: "string > 0",
-  status: Status,
-  "lastVerified?": IsoDate,
   "+": "reject",
 });
 
-export type Simulator = Verification & {
+export type Simulator = {
   kind: SimulationKind;
   title: string;
   summary: string;
@@ -52,7 +50,6 @@ export function parseSimulator(kind: SimulationKind, source: string): Simulator 
 
   const { terms, render } = createRenderer(fail);
   return {
-    ...readVerification(meta, fail),
     kind,
     title: meta.title,
     summary: meta.summary,

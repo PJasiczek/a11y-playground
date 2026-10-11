@@ -6,3 +6,6 @@ test-results/
 playwright-report/
 .tmp-legal/
 .tmp/
+.env.local
+# Written from Notion by scripts/import-notion.ts
+/content/**/*.md

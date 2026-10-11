@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Chip, FilterGroup } from "~/components/filters";
-import { DraftBadge, WorkingDraftBadge } from "~/components/level-badge";
+import { WorkingDraftBadge } from "~/components/level-badge";
 import { formatDate } from "~/content/legal";
 import { findCriterion } from "~/content/wcag";
 import { getWcag3 } from "~/content/wcag3.functions";
@@ -65,7 +65,6 @@ function Wcag3Page() {
         </span>
         <span aria-hidden="true">·</span>
         <span>sprawdzone przez nas {formatDate(overview.checked)}</span>
-        {overview.status === "szkic" ? <DraftBadge /> : null}
       </p>
       <h1 className="mt-2 text-[1.875rem] font-bold tracking-tight">WCAG 3.0</h1>
       {/* Markdown in content/ is written by us and rendered at build time, so injecting it is safe. */}

@@ -11,13 +11,11 @@ const group = `---
 num: "2.1"
 title: Obrazy
 en: Images
-status: szkic
 guidelines:
 ${guideline}---
 `;
 
 const index = `---
-status: szkic
 draft: 2026-09-10
 draftUrl: https://www.w3.org/TR/2026/WD-wcag-3.0-20260910/
 checked: 2026-10-01

@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { DraftBadge } from "~/components/level-badge";
 import { LegalFooter, Timeline } from "~/components/legal";
 import { getLawIndex } from "~/content/legal.functions";
 import { pageHead } from "~/lib/seo";
@@ -46,7 +45,6 @@ function LawPage() {
                 <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
                   <span className="text-[1.0625rem] font-semibold">{act.short}</span>
                   <span className="font-mono text-[0.8125rem] text-ink-2">{act.address}</span>
-                  {act.verification === null ? <DraftBadge /> : null}
                 </span>
                 <span className="mt-1 block max-w-[66ch] text-[0.9375rem] text-ink-2">{act.summary}</span>
                 <span className="mt-1 block text-[0.9375rem]">
@@ -77,10 +75,7 @@ function LawPage() {
         <Timeline entries={deadlines.map((d) => ({ ...d, mine: true }))} asOf={asOf} />
       </section>
 
-      <LegalFooter
-        verified={acts.every((a) => a.verification) ? (acts.map((a) => a.verification ?? "").toSorted()[0] ?? null) : null}
-        retrieved={asOf}
-      />
+      <LegalFooter retrieved={asOf} />
     </>
   );
 }

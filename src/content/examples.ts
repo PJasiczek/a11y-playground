@@ -1,5 +1,5 @@
 import { type } from "arktype";
-import { type Fail, IsoDate, readVerification, splitFrontmatter, Status, type Verification } from "./markdown";
+import { type Fail, splitFrontmatter } from "./markdown";
 import { createRenderer } from "./render";
 import { isSimulationId, type SimulationId } from "./simulations";
 import { type CriterionId, isCriterionId } from "./wcag";
@@ -37,8 +37,6 @@ const Frontmatter = type({
   "motion?": "boolean",
   /** What a simulator shows on this example, keyed by the ?symulacja= id. Plain text. */
   "simulations?": { "[string]": "string > 0" },
-  status: Status,
-  "lastVerified?": IsoDate,
   bad: BadVariant,
   good: Variant,
   "+": "reject",
@@ -51,7 +49,7 @@ export type ExampleVariant = {
   source: string;
 };
 
-export type Example = Verification & {
+export type Example = {
   slug: string;
   title: string;
   summary: string;
@@ -91,7 +89,6 @@ export function parseExample(
 
   const { terms, render } = createRenderer(fail);
   return {
-    ...readVerification(meta, fail),
     slug,
     title: meta.title,
     summary: meta.summary,

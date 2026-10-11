@@ -2,7 +2,7 @@ import { type } from "arktype";
 import { pages } from "./before-after-document";
 import { harmedIds, type Harmed } from "./before-after-labels";
 import { examples } from "./examples";
-import { type Fail, IsoDate, readVerification, splitFrontmatter, Status, type Verification } from "./markdown";
+import { type Fail, splitFrontmatter } from "./markdown";
 import { patterns } from "./patterns";
 import { createRenderer, renderSections } from "./render";
 import { type CriterionId, isCriterionId } from "./wcag";
@@ -23,8 +23,6 @@ const Frontmatter = type({
   /** The practice example and the ARIA pattern that show the same thing on its own. */
   "example?": "string",
   "pattern?": "string",
-  status: Status,
-  "lastVerified?": IsoDate,
   "+": "reject",
 });
 
@@ -35,7 +33,7 @@ const sections = [
 
 type Link = { slug: string; title: string };
 
-export type Problem = Verification & {
+export type Problem = {
   number: number;
   title: string;
   criteria: CriterionId[];
@@ -82,7 +80,6 @@ export function parseProblem(file: string, source: string): Problem {
   if (!rendered.problem || !rendered.rozwiazanie) throw fail("both ## Problem and ## Rozwiązanie are required");
 
   return {
-    ...readVerification(meta, fail),
     number: Number(number),
     title: meta.title,
     criteria: meta.criteria.filter(isCriterionId),

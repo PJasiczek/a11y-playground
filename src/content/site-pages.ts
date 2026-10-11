@@ -21,8 +21,8 @@ export type SiteContent = {
 /** One page of the app. `index` says whether search engines should list it (and so the sitemap). */
 export type SitePage = { path: string; index: boolean };
 
-/** Routes without parameters. Files like /search-index.json are not pages. */
-type StaticPath = Exclude<keyof FileRoutesByTo, `${string}$${string}` | `${string}.${string}`>;
+/** Routes without parameters. Files like /search-index.json and endpoints under /api are not pages. */
+type StaticPath = Exclude<keyof FileRoutesByTo, `${string}$${string}` | `${string}.${string}` | `/api/${string}`>;
 
 /**
  * Every route without parameters and whether it is indexed. A new route fails `tsc` until it is

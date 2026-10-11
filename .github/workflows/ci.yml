@@ -8,6 +8,10 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
+    # The content comes from Notion, see scripts/import-notion.ts.
+    env:
+      NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+      NOTION_ROOT_PAGE_ID: ${{ secrets.NOTION_ROOT_PAGE_ID }}
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6

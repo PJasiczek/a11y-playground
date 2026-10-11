@@ -19,20 +19,7 @@ export function NewBadge() {
   );
 }
 
-/** Content written but not yet checked by a person. Dashed border and a glyph, so not colour alone. */
-export function DraftBadge({ long = false }: { long?: boolean }) {
-  return (
-    <span className="rounded-xs border border-dashed border-ink px-1.5 py-1 font-mono text-xs leading-none font-semibold whitespace-nowrap text-ink">
-      <span aria-hidden="true">✎ </span>
-      {long ? "szkic, czeka na weryfikację" : "szkic"}
-    </span>
-  );
-}
-
-/**
- * Marks content about a W3C Working Draft (WCAG 3.0). A double rule and a clock glyph, so it
- * reads differently from the dashed DraftBadge, which means our own unverified content.
- */
+/** Marks content about a W3C Working Draft (WCAG 3.0). A double rule and a clock glyph, so not colour alone. */
 export function WorkingDraftBadge() {
   return (
     <span className="rounded-xs border-3 border-double border-ink px-1.5 py-1 font-mono text-xs leading-none font-bold whitespace-nowrap text-ink">

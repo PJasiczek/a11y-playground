@@ -1,6 +1,5 @@
 import { JSDOM } from "jsdom";
 import { describe, expect, test } from "vitest";
-import { staleEntries } from "./markdown";
 import { parsePattern, patterns, patternsFor, patternsForExample } from "./patterns";
 import { readingOrder } from "./reading-order";
 
@@ -23,7 +22,6 @@ aria:
     meaning: Czy otwarte.
 sources:
   deque: https://dequeuniversity.com/library/aria/button
-status: szkic
 ---
 ## Kiedy używać
 
@@ -37,9 +35,8 @@ const files = { index, source: "<button>Zapisz</button>" };
 
 describe("pattern files", () => {
   // Loading the module parses every folder in content/wzorce and throws on the first bad one.
-  test("all parse, and verified ones are fresh", () => {
+  test("all parse", () => {
     expect(patterns.size).toBeGreaterThan(0);
-    expect(staleEntries(patterns)).toEqual([]);
   });
 
   // The selectors tell the frame which element's value to report in the ARIA table.

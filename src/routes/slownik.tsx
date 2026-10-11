@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { DraftBadge } from "~/components/level-badge";
 import { getGlossary } from "~/content/content.functions";
 import { countOf } from "~/lib/plural";
 import { pageHead } from "~/lib/seo";
@@ -79,11 +78,6 @@ function GlossaryPage() {
                 </h3>
                 {entry.also.length > 0 ? (
                   <p className="mt-1 font-mono text-[0.8125rem] text-ink-2">potocznie: {entry.also.join(", ")}</p>
-                ) : null}
-                {entry.status === "szkic" ? (
-                  <p className="mt-2">
-                    <DraftBadge />
-                  </p>
                 ) : null}
               </div>
               <div>

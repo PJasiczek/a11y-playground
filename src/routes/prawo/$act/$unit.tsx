@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { DraftBadge, LevelBadge } from "~/components/level-badge";
+import { LevelBadge } from "~/components/level-badge";
 import { LegalFooter, StrengthLabel } from "~/components/legal";
 import { TermTips } from "~/components/term-tips";
 import { formatDate } from "~/content/legal";
@@ -44,7 +44,7 @@ export const Route = createFileRoute("/prawo/$act/$unit")({
  * Rows carry `id="ust-3"` anchors for links from summaries and the mapping.
  */
 function ArticlePage() {
-  const { act, unit, title, leadHtml, rows, criteria, prev, next, terms, draft } = Route.useLoaderData();
+  const { act, unit, title, leadHtml, rows, criteria, prev, next, terms } = Route.useLoaderData();
   const isAnnex = unit.slug === "zal";
   const notes = [...new Set(criteria.flatMap((c) => (c.note && criteria.every((o) => o.note === c.note) ? [c.note] : [])))];
   const strengths = [...new Set(criteria.map((c) => c.strength))];
@@ -77,7 +77,6 @@ function ArticlePage() {
         </h1>
         <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-ink-2">
           <span>{act.title}</span>
-          {draft ? <DraftBadge /> : null}
         </p>
       </header>
 
@@ -222,7 +221,7 @@ function ArticlePage() {
         ) : null}
       </nav>
 
-      <LegalFooter verified={act.verification} retrieved={act.retrieved} />
+      <LegalFooter retrieved={act.retrieved} />
     </article>
   );
 }

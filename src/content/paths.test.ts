@@ -1,5 +1,4 @@
 import { describe, expect, test } from "vitest";
-import { staleEntries, type Verification } from "./markdown";
 import { learningPaths, parseLesson, parsePath, parseQuiz } from "./paths";
 
 const quiz = `
@@ -29,7 +28,6 @@ criteria: ["2.1.1"]
 examples: [okno-modalne-i-fokus]
 law: [ustawa-2019-848/art-5]
 keep: [Jedno., Drugie.]
-status: szkic
 ---
 Treść lekcji.
 `;
@@ -39,7 +37,6 @@ title: Programista
 role: programista
 summary: Krótko.
 lessons: [a, b]
-status: szkic
 ---
 Wstęp.
 `;
@@ -48,12 +45,8 @@ const fail = (reason: string) => new Error(reason);
 
 describe("path files", () => {
   // Loading the module parses every folder in content/sciezki and throws on the first bad one.
-  test("all parse, and verified ones are fresh", () => {
-    const entries = [...learningPaths.values()].flatMap((path): [string, Verification][] => [
-      [path.slug, path],
-      ...path.lessons.map((l): [string, Verification] => [`${path.slug}/${l.slug}`, l]),
-    ]);
-    expect(staleEntries(entries)).toEqual([]);
+  test("all parse", () => {
+    expect(learningPaths.size).toBeGreaterThan(0);
   });
 });
 
@@ -91,7 +84,6 @@ describe("parseLesson", () => {
     ["an unknown example", lesson.replace("okno-modalne-i-fokus", "nie-ma"), quiz, /unknown examples: nie-ma/],
     ["an unknown provision", lesson.replace("art-5]", "art-999]"), quiz, /unknown provisions/],
     ["a single keep line", lesson.replace("keep: [Jedno., Drugie.]", "keep: [Jedno.]"), quiz, /keep/],
-    ["a verified lesson without a date", lesson.replace("status: szkic", "status: zweryfikowane"), quiz, /lastVerified/],
   ])("rejects %s", (_, source, quizSource, message) => {
     expect(() => parseLesson("a.md", "a", source, quizSource)).toThrow(message);
   });

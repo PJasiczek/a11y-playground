@@ -7,7 +7,7 @@ import { problems } from "./before-after";
 
 /** Every problem as a row of the list, in page order. */
 export const getProblemRows = createServerFn({ method: "GET" }).handler(() =>
-  problems.map(({ number, title, criteria, who, axe, status }) => ({ number, title, criteria, who, axe, status })),
+  problems.map(({ number, title, criteria, who, axe }) => ({ number, title, criteria, who, axe })),
 );
 
 /** One problem with its neighbours' numbers and titles, or null for a number that has no problem. */

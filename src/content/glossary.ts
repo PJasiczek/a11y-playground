@@ -1,6 +1,6 @@
 import { type } from "arktype";
 import { marked } from "marked";
-import { type Fail, IsoDate, readVerification, splitFrontmatter, Status, type Verification } from "./markdown";
+import { type Fail, splitFrontmatter } from "./markdown";
 import { wcagGlossary } from "./wcag-text.gen";
 
 /**
@@ -12,12 +12,10 @@ const Frontmatter = type({
   term: "string > 0",
   "also?": "string[]",
   "normative?": "string",
-  status: Status,
-  "lastVerified?": IsoDate,
   "+": "reject",
 });
 
-export type GlossaryEntry = Verification & {
+export type GlossaryEntry = {
   slug: string;
   term: string;
   /** Everyday names ("dostępna nazwa"), shown under the term and matched by search. */
@@ -39,7 +37,6 @@ export function parseGlossaryMarkdown(file: string, slug: string, source: string
   if (body.trim() === "") throw fail("the explanation is empty");
 
   return {
-    ...readVerification(meta, fail),
     slug,
     term: meta.term,
     also: meta.also ?? [],

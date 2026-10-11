@@ -110,7 +110,7 @@ function StandardPage() {
         </ul>
       </section>
 
-      <LegalFooter verified={null} />
+      <LegalFooter />
     </article>
   );
 }
