@@ -18,6 +18,7 @@ import { Route as SlownikRouteImport } from './routes/slownik'
 import { Route as SymulatoryRouteImport } from './routes/symulatory'
 import { Route as SzukajRouteImport } from './routes/szukaj'
 import { Route as Wcag3RouteImport } from './routes/wcag-3'
+import { Route as ApiNotionWebhookRouteImport } from './routes/api/notion-webhook'
 import { Route as KryteriaIndexRouteImport } from './routes/kryteria/index'
 import { Route as KryteriaCriterionIdRouteImport } from './routes/kryteria/$criterionId'
 import { Route as PraktykaIndexRouteImport } from './routes/praktyka/index'
@@ -81,6 +82,11 @@ const SzukajRoute = SzukajRouteImport.update({
 const Wcag3Route = Wcag3RouteImport.update({
   id: '/wcag-3',
   path: '/wcag-3',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiNotionWebhookRoute = ApiNotionWebhookRouteImport.update({
+  id: '/api/notion-webhook',
+  path: '/api/notion-webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
 const KryteriaIndexRoute = KryteriaIndexRouteImport.update({
@@ -189,6 +195,7 @@ export interface FileRoutesByFullPath {
   '/symulatory': typeof SymulatoryRoute
   '/szukaj': typeof SzukajRoute
   '/wcag-3': typeof Wcag3Route
+  '/api/notion-webhook': typeof ApiNotionWebhookRoute
   '/kryteria/$criterionId': typeof KryteriaCriterionIdRoute
   '/praktyka/$slug': typeof PraktykaSlugRoute
   '/prawo/en-301-549': typeof PrawoEn301549Route
@@ -219,6 +226,7 @@ export interface FileRoutesByTo {
   '/symulatory': typeof SymulatoryRoute
   '/szukaj': typeof SzukajRoute
   '/wcag-3': typeof Wcag3Route
+  '/api/notion-webhook': typeof ApiNotionWebhookRoute
   '/kryteria/$criterionId': typeof KryteriaCriterionIdRoute
   '/praktyka/$slug': typeof PraktykaSlugRoute
   '/prawo/en-301-549': typeof PrawoEn301549Route
@@ -250,6 +258,7 @@ export interface FileRoutesById {
   '/symulatory': typeof SymulatoryRoute
   '/szukaj': typeof SzukajRoute
   '/wcag-3': typeof Wcag3Route
+  '/api/notion-webhook': typeof ApiNotionWebhookRoute
   '/kryteria/$criterionId': typeof KryteriaCriterionIdRoute
   '/praktyka/$slug': typeof PraktykaSlugRoute
   '/prawo/en-301-549': typeof PrawoEn301549Route
@@ -282,6 +291,7 @@ export interface FileRouteTypes {
     | '/symulatory'
     | '/szukaj'
     | '/wcag-3'
+    | '/api/notion-webhook'
     | '/kryteria/$criterionId'
     | '/praktyka/$slug'
     | '/prawo/en-301-549'
@@ -312,6 +322,7 @@ export interface FileRouteTypes {
     | '/symulatory'
     | '/szukaj'
     | '/wcag-3'
+    | '/api/notion-webhook'
     | '/kryteria/$criterionId'
     | '/praktyka/$slug'
     | '/prawo/en-301-549'
@@ -342,6 +353,7 @@ export interface FileRouteTypes {
     | '/symulatory'
     | '/szukaj'
     | '/wcag-3'
+    | '/api/notion-webhook'
     | '/kryteria/$criterionId'
     | '/praktyka/$slug'
     | '/prawo/en-301-549'
@@ -373,6 +385,7 @@ export interface RootRouteChildren {
   SymulatoryRoute: typeof SymulatoryRoute
   SzukajRoute: typeof SzukajRoute
   Wcag3Route: typeof Wcag3Route
+  ApiNotionWebhookRoute: typeof ApiNotionWebhookRoute
   KryteriaCriterionIdRoute: typeof KryteriaCriterionIdRoute
   PraktykaSlugRoute: typeof PraktykaSlugRoute
   PrawoEn301549Route: typeof PrawoEn301549Route
@@ -457,6 +470,13 @@ declare module '@tanstack/react-router' {
       path: '/wcag-3'
       fullPath: '/wcag-3'
       preLoaderRoute: typeof Wcag3RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/notion-webhook': {
+      id: '/api/notion-webhook'
+      path: '/api/notion-webhook'
+      fullPath: '/api/notion-webhook'
+      preLoaderRoute: typeof ApiNotionWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/kryteria/': {
@@ -605,6 +625,7 @@ const rootRouteChildren: RootRouteChildren = {
   SymulatoryRoute: SymulatoryRoute,
   SzukajRoute: SzukajRoute,
   Wcag3Route: Wcag3Route,
+  ApiNotionWebhookRoute: ApiNotionWebhookRoute,
   KryteriaCriterionIdRoute: KryteriaCriterionIdRoute,
   PraktykaSlugRoute: PraktykaSlugRoute,
   PrawoEn301549Route: PrawoEn301549Route,
