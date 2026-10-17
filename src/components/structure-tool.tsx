@@ -122,7 +122,7 @@ export function StructureTool() {
       <button
         type="button"
         popoverTarget="struktura-panel"
-        className="fixed right-4 bottom-4 z-40 inline-flex in-data-[consent=open]:max-sm:hidden min-h-11 items-center gap-2 rounded border-2 border-ink bg-surface px-3.5 font-semibold shadow-[0_4px_16px_rgb(0_0_0/0.18)] hover:bg-paper-2"
+        className="fixed right-4 bottom-[calc(var(--dock-height)+1rem)] z-40 inline-flex in-data-[consent=open]:max-sm:hidden min-h-11 items-center gap-2 rounded border-2 border-ink bg-surface px-3.5 font-semibold shadow-[0_4px_16px_rgb(0_0_0/0.18)] hover:bg-paper-2"
       >
         <span aria-hidden="true" className="font-mono">
           ◫
@@ -137,8 +137,8 @@ export function StructureTool() {
         popover="auto"
         aria-labelledby="struktura-title"
         // The UA puts a popover in the middle of the viewport; this one sits above its button.
-        style={{ inset: "auto 1rem 4.5rem auto", margin: 0 }}
-        className="max-h-[calc(100dvh-6rem)] w-[min(24rem,calc(100vw-2rem))] overflow-y-auto border-2 border-ink bg-surface p-4 text-ink shadow-[0_6px_24px_rgb(0_0_0/0.18)]"
+        style={{ inset: "auto 1rem calc(var(--dock-height) + 4.5rem) auto", margin: 0 }}
+        className="max-h-[calc(100dvh-6rem-var(--dock-height))] w-[min(24rem,calc(100vw-2rem))] overflow-y-auto border-2 border-ink bg-surface p-4 text-ink shadow-[0_6px_24px_rgb(0_0_0/0.18)]"
       >
         <h2 id="struktura-title" className="text-lg font-bold tracking-tight">
           Struktura strony

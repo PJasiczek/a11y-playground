@@ -48,19 +48,34 @@
   --font-mono: ui-monospace, "Cascadia Mono", Consolas, "SF Mono", monospace;
 }
 
+/*
+ * Phones tall enough to spare the height: the main navigation docks to the bottom edge
+ * (src/components/site-header.tsx). --dock-height is what it takes there, 0 everywhere else,
+ * and everything else fixed to the bottom sits above it.
+ */
+@custom-variant docked (@media (width < 40rem) and (height >= 30rem));
+
+:root {
+  --dock-height: 0px;
+
+  @variant docked {
+    --dock-height: calc(3.5rem + 1px);
+  }
+}
+
 @layer base {
   /* 2.4.11: the "Struktura strony" button is fixed to the bottom corner, so focus scrolled into view stops above it. */
   html {
-    scroll-padding-bottom: 4.5rem;
+    scroll-padding-bottom: calc(4.5rem + var(--dock-height));
   }
 
   /* While the consent banner shows (src/components/consent.tsx), focus also stops above it. */
   html[data-consent="open"] {
-    scroll-padding-bottom: max(4.5rem, calc(var(--consent-height, 0px) + 2rem));
+    scroll-padding-bottom: calc(max(4.5rem, var(--consent-height, 0px) + 2rem) + var(--dock-height));
   }
 
   body {
-    @apply bg-paper font-sans text-ink antialiased;
+    @apply bg-paper pb-(--dock-height) font-sans text-ink antialiased;
   }
 
   /* 2.4.13 Focus Appearance (AAA): 3px solid outline, at least 3:1 against both states. */

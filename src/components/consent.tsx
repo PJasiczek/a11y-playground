@@ -10,7 +10,7 @@ function useConsent() {
 
 /**
  * The consent banner, variant B of the cookie consent mocks: a card in the bottom left corner,
- * opposite "Struktura strony". Not a modal, so it never traps focus. While it shows, the root
+ * opposite "Struktura strony", and above the docked navigation on phones. Not a modal, so it never traps focus. While it shows, the root
  * gets data-consent="open" and --consent-height, which keep focused elements clear of it (2.4.11)
  * and, on narrow screens, hide "Struktura strony" underneath. Also switches GA on and off as the
  * choice changes. Render once, in the root layout, after <main>.
@@ -58,7 +58,7 @@ export function ConsentBanner() {
       ref={region}
       aria-labelledby="zgoda-tytul"
       tabIndex={-1}
-      className="fixed right-4 bottom-4 left-4 z-40 rounded border-2 border-ink bg-surface p-4 text-ink shadow-[0_6px_24px_rgb(0_0_0/0.18)] sm:right-auto sm:w-[22rem]"
+      className="fixed right-4 bottom-[calc(var(--dock-height)+1rem)] left-4 z-40 rounded border-2 border-ink bg-surface p-4 text-ink shadow-[0_6px_24px_rgb(0_0_0/0.18)] sm:right-auto sm:w-[22rem]"
     >
       <h2 id="zgoda-tytul" className="text-[1.0625rem] font-bold tracking-tight">
         Statystyki odwiedzin

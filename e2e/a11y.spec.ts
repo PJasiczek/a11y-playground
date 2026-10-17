@@ -56,6 +56,7 @@ for (const route of routes) {
   });
 
   // 2.5.5 Target Size (Enhanced), which we opt into. Inline links in running text are exempt,
+  // in a paragraph or in a list item of rendered Markdown ("Sprawy zawodowe: linkedin.com/…"),
   // and so is the skip link while it is visually hidden (keyboard.spec.ts checks it on focus).
   test(`${route} has 44px targets`, async ({ page }) => {
     await page.goto(route);
@@ -64,7 +65,7 @@ for (const route of routes) {
       .locator("a, button, input, select, summary")
       .evaluateAll((elements) =>
         elements
-          .filter((el) => !el.closest("p") && !el.matches(".sr-only") && el.getClientRects().length > 0)
+          .filter((el) => !el.closest("p, .prose li") && !el.matches(".sr-only") && el.getClientRects().length > 0)
           .map((el) => {
             // A link stretched with an absolute ::after is as big as its positioned card, and a
             // radio or checkbox is as big as the label that wraps it: both activate the control.
