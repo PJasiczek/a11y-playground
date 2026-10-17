@@ -122,7 +122,7 @@ export function StructureTool() {
       <button
         type="button"
         popoverTarget="struktura-panel"
-        className="fixed right-4 bottom-4 z-40 inline-flex min-h-11 items-center gap-2 rounded border-2 border-ink bg-surface px-3.5 font-semibold shadow-[0_4px_16px_rgb(0_0_0/0.18)] hover:bg-paper-2"
+        className="fixed right-4 bottom-4 z-40 inline-flex in-data-[consent=open]:max-sm:hidden min-h-11 items-center gap-2 rounded border-2 border-ink bg-surface px-3.5 font-semibold shadow-[0_4px_16px_rgb(0_0_0/0.18)] hover:bg-paper-2"
       >
         <span aria-hidden="true" className="font-mono">
           ◫

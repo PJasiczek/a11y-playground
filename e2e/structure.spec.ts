@@ -12,7 +12,8 @@ test.describe("Struktura strony", () => {
     await expect(landmarks).toHaveAttribute("aria-pressed", "true");
     await expect(page.locator("header").first()).toHaveAttribute("data-a11y-landmark", "baner");
     await expect(page.getByRole("navigation", { name: "Główna" })).toHaveAttribute("data-a11y-landmark", "nawigacja: Główna");
-    await expect(panel.getByText("Brak stopki", { exact: false })).toBeVisible();
+    await expect(page.getByRole("contentinfo")).toHaveAttribute("data-a11y-landmark", "informacje o zawartości");
+    await expect(panel.getByText("Bez uwag.")).toBeVisible();
 
     const { violations } = await new AxeBuilder({ page }).withTags(tags).exclude(brokenExamples).analyze();
     expect(violations).toEqual([]);
