@@ -50,6 +50,7 @@ The interface is in Polish. This README is in English.
 - **Quizzes** show one question at a time. "Sprawdź" explains every option, right or wrong, and announces the verdict to screen readers without moving focus; "Następne pytanie" moves focus to the next question. The score shows at the end.
 - **Visit statistics only with consent.** Google Analytics 4 is not even downloaded until the reader picks "Zgadzam się" on a card in the bottom left corner (variant B of the [cookie consent mocks](docs/design/2026-10-14-cookie-consent-mocks/cookie-consent-mocks.html)). "Odrzuć" looks the same as "Zgadzam się", the card is not a modal and traps no focus, and while it shows, focus scrolled into view stops above it (2.4.11). The choice lives in `localStorage`; "Ustawienia cookies" in the footer of every page shows the card again, and refusing deletes the GA cookies.
 - **Privacy policy** (`/prywatnosc`, linked from the footer and the card), edited in Notion like the rest of the content.
+- **Contact** (`/kontakt`, linked from the footer), edited in Notion. The address is shown large above the text, with "Kopiuj adres" for readers whose browser has no mail program set up; "Skopiowano adres" is announced to screen readers and stays on screen (variant B of the [contact mocks](docs/design/2026-10-17-contact-mocks/contact-mocks.html)).
 - **Progress** (lessons marked done, the last quiz score) is stored in `localStorage` under one key, in the shape planned for the Convex tables, so accounts can import it later. `/sciezki` says so and offers "Wyczyść postęp". With storage blocked, progress lasts until the tab closes.
 
 | Light | Dark | Mobile |
@@ -96,9 +97,9 @@ The interface is in Polish. This README is in English.
 | --- | --- | --- |
 | ![Criterion 1.4.6 compared with 1.4.3, with the AAA note and the difference in one line](docs/screenshots/criterion-aaa.png) | ![The WCAG 3.0 page with the working draft badge, the dates and the comparison with 2.2](docs/screenshots/wcag3.png) | ![The WCAG 3.0 mapping filtered to guidelines new in 3.0](docs/screenshots/wcag3-mapping.png) |
 
-| Consent card | Consent card, mobile | Privacy policy |
-| --- | --- | --- |
-| ![The statistics consent card in the bottom left corner of the home page, with Odrzuć and Zgadzam się](docs/screenshots/consent-banner.png) | ![The consent card across the full width of a 390px screen in dark mode](docs/screenshots/consent-banner-mobile.png) | ![The privacy policy page with the footer links Polityka prywatności and Ustawienia cookies](docs/screenshots/privacy.png) |
+| Consent card | Consent card, mobile | Privacy policy | Contact |
+| --- | --- | --- | --- |
+| ![The statistics consent card in the bottom left corner of the home page, with Odrzuć and Zgadzam się](docs/screenshots/consent-banner.png) | ![The consent card across the full width of a 390px screen in dark mode](docs/screenshots/consent-banner-mobile.png) | ![The privacy policy page with the footer links Kontakt, Polityka prywatności and Ustawienia cookies](docs/screenshots/privacy.png) | ![The contact page with the address in large type, Kopiuj adres and the message Skopiowano adres](docs/screenshots/contact.png) |
 
 | Glossary preview | Glossary | Search |
 | --- | --- | --- |
@@ -150,7 +151,7 @@ To set up publishing on a new deploy:
 
 ### Standalone pages
 
-`content/strony/<slug>.md`, the `strony` page in Notion. Only `prywatnosc`, the privacy policy at `/prywatnosc`, so far. The build fails without it.
+`content/strony/<slug>.md`, the `strony` page in Notion: `prywatnosc`, the privacy policy at `/prywatnosc`, and `kontakt`, the contact page at `/kontakt`. The build fails without either. Each page has its own frontmatter schema in `src/content/pages.ts`, which rejects keys it does not list.
 
 ```markdown
 ---
@@ -163,6 +164,21 @@ updated: 2026-10-17   # shown as "Ostatnia zmiana"; change it with the text
 
 ...
 ```
+
+The contact page has one more key, and shows no date. Its `description` is also the lead under the heading:
+
+```markdown
+---
+title: Kontakt
+description: Masz pytanie o dostępność, widzisz błąd w treści albo przykład, który nie działa? Napisz do mnie.
+updated: 2026-10-17
+email: kontakt@przyklad.pl   # shown above the text; an invalid address fails the build
+---
+
+Odpowiadam zwykle w ciągu tygodnia.
+```
+
+A link whose text is its own address, like `[github.com/x](https://github.com/x)`, comes back from Notion as plain text, because Notion links anything that looks like a domain. Give links descriptive text.
 
 ### Criteria
 
@@ -545,7 +561,7 @@ content/         Markdown files written from Notion (git-ignored), quizzes and H
   sciezki/       one folder per learning path: lessons and their quizzes
   symulatory/    one Markdown file per kind of simulator
   wcag3/         the WCAG 3.0 draft overview and one file per guideline group
-  strony/        standalone pages: the privacy policy
+  strony/        standalone pages: the privacy policy and the contact page
 scripts/
   import-wcag.ts   generates src/content/wcag.gen.ts and wcag-text.gen.ts
   import-legal.ts  generates src/content/legal.gen.ts and legal-text.gen.ts
