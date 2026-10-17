@@ -48,6 +48,7 @@ The interface is in Polish. This README is in English.
 - **Law on criterion pages:** the "Prawo" section says, for each situation, whether a provision requires the criterion, which one, and since when, or why nothing does (AAA, new in 2.2, excluded for apps).
 - **Paths** (`/sciezki`): five ordered sets of lessons, for the developer, the designer, the content author, the tester, and the legal minimum for a public body. 30 lessons, each with a "Zapamiętaj" box, links to the criteria, examples and provisions it covers, and a quiz at the end. Paths are ungated: the quiz never blocks the next lesson. Criterion pages link to the lessons that teach them.
 - **Quizzes** show one question at a time. "Sprawdź" explains every option, right or wrong, and announces the verdict to screen readers without moving focus; "Następne pytanie" moves focus to the next question. The score shows at the end.
+- **Privacy policy** (`/prywatnosc`), edited in Notion like the rest of the content.
 - **Progress** (lessons marked done, the last quiz score) is stored in `localStorage` under one key, in the shape planned for the Convex tables, so accounts can import it later. `/sciezki` says so and offers "Wyczyść postęp". With storage blocked, progress lasts until the tab closes.
 
 | Light | Dark | Mobile |
@@ -141,6 +142,22 @@ To set up publishing on a new deploy:
 2. In the Notion integration settings, add a webhook subscription to `https://<domain>/api/notion-webhook` for page events. Notion sends a verification token; the endpoint writes it to the Vercel function log.
 3. Paste the token into Notion to verify the subscription, add it to Vercel as `NOTION_WEBHOOK_SECRET` and redeploy. From then on the endpoint accepts only requests signed with it.
 4. In GitHub, add `NOTION_TOKEN` and `NOTION_ROOT_PAGE_ID` as Actions secrets, for CI.
+
+### Standalone pages
+
+`content/strony/<slug>.md`, the `strony` page in Notion. Only `prywatnosc`, the privacy policy at `/prywatnosc`, so far. The build fails without it.
+
+```markdown
+---
+title: Polityka prywatności
+description: Jakie dane zbiera a11y playground, po co, i jak wycofać zgodę na statystyki odwiedzin.
+updated: 2026-10-17   # shown as "Ostatnia zmiana"; change it with the text
+---
+
+## Kto odpowiada za dane
+
+...
+```
 
 ### Criteria
 
@@ -515,6 +532,7 @@ content/         Markdown files written from Notion (git-ignored), quizzes and H
   sciezki/       one folder per learning path: lessons and their quizzes
   symulatory/    one Markdown file per kind of simulator
   wcag3/         the WCAG 3.0 draft overview and one file per guideline group
+  strony/        standalone pages: the privacy policy
 scripts/
   import-wcag.ts   generates src/content/wcag.gen.ts and wcag-text.gen.ts
   import-legal.ts  generates src/content/legal.gen.ts and legal-text.gen.ts

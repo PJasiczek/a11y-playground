@@ -38,6 +38,7 @@ const staticPages = {
   "/praktyka/przed-i-po/lista": false,
   "/prawo": true,
   "/prawo/en-301-549": true,
+  "/prywatnosc": true,
   "/mapowanie": true,
   "/sciezki": true,
   "/slownik": true,

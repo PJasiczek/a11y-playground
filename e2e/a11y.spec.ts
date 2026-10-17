@@ -18,6 +18,7 @@ const routes = [
   "/prawo/ustawa-2019-848/zal",
   "/prawo/ustawa-2024-731/art-20",
   "/prawo/en-301-549",
+  "/prywatnosc",
   "/mapowanie",
   "/praktyka",
   "/praktyka/ikona-jako-przycisk",
