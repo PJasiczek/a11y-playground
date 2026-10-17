@@ -5,3 +5,6 @@ import { standalonePage } from "./pages";
 
 /** The privacy policy for /prywatnosc. */
 export const getPrivacyPolicy = createServerFn({ method: "GET" }).handler(() => standalonePage("prywatnosc"));
+
+/** The contact page for /kontakt. */
+export const getContactPage = createServerFn({ method: "GET" }).handler(() => standalonePage("kontakt"));

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan: strona Kontakt edytowana w Notion</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1.25rem 6rem;
+    background: #000; color: #fff;
+    font: 16px/1.65 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  main { max-width: 82ch; margin: 0 auto; }
+  h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 .5rem; letter-spacing: -.02em; }
+  h2 { font-size: 1.2rem; margin: 3rem 0 .75rem; padding-top: 1rem; border-top: 1px solid #262626; letter-spacing: -.01em; }
+  h3 { font-size: 1rem; margin: 1.75rem 0 .5rem; }
+  p, li, dd { color: #e5e5e5; }
+  a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  ul, ol { padding-left: 1.3rem; }
+  li { margin: .3rem 0; }
+  code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .875em; background: #141414; border: 1px solid #262626; border-radius: 3px; padding: .08em .3em; }
+  pre { background: #0b0b0b; border: 1px solid #262626; border-radius: 4px; padding: .9rem 1rem; overflow-x: auto; }
+  pre code { background: none; border: 0; padding: 0; font-size: .82rem; line-height: 1.55; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; display: block; overflow-x: auto; }
+  th, td { border: 1px solid #262626; padding: .45rem .6rem; text-align: left; vertical-align: top; }
+  th { background: #101010; font-weight: 600; }
+  .meta { color: #a3a3a3; font-size: .85rem; margin: 0 0 1.5rem; }
+  .meta a { color: #fff; }
+  .flag { border-left: 2px solid #737373; padding: .1rem 0 .1rem .85rem; margin: 1rem 0; color: #d4d4d4; font-size: .93rem; }
+  .toc { border: 1px solid #262626; padding: 1rem 1rem 1rem 2.4rem; margin: 1.5rem 0 0; }
+  .toc li { margin: .15rem 0; }
+  @media (max-width: 40rem) { body { padding: 1.25rem .9rem 4rem; } h1 { font-size: 1.45rem; } }
+</style>
+</head>
+<body>
+<main>
+
+<p class="meta"><a href="contact-page.en.html" hreflang="en">English version</a></p>
+
+<h1>Plan: strona Kontakt edytowana w Notion</h1>
+<p class="meta">Zlecenie: dodać sekcję Kontakt, której treść zmieniasz w podstronie Notion. Wersja planu: 2026-10-17. Mockupy: <code>docs/design/2026-10-17-contact-mocks/contact-mocks.html</code>.</p>
+
+<p class="flag">Ustalone przed planem: tylko e-mail i linki, bez formularza. Link w nawigacji głównej i w stopce. Bez osobnego bloku „Zgłoś problem z dostępnością”.</p>
+
+<p class="flag">Decyzje z 2026-10-17: wybrany wariant B. Kontakt na razie tylko w stopce. Z dziewięcioma pozycjami nawigacja nie mieści się w jednym wierszu (potrzeba 985 px, jest 924 px), więc „Kontakt” trafi do nawigacji razem z rozwijanym menu, w osobnej pracy. Opis strony z Notion jest zarazem wstępem pod nagłówkiem.</p>
+
+<ol class="toc">
+  <li><a href="#stan">Stan dzisiaj</a></li>
+  <li><a href="#zakres">Zakres</a></li>
+  <li><a href="#notion">Strona w Notion</a></li>
+  <li><a href="#kod">Kod</a></li>
+  <li><a href="#a11y">Dostępność</a></li>
+  <li><a href="#testy">Testy i README</a></li>
+  <li><a href="#kolejnosc">Kolejność wdrożenia</a></li>
+  <li><a href="#commity">Gałąź i commity</a></li>
+  <li><a href="#decyzje">Decyzje</a></li>
+  <li><a href="#poza">Poza zakresem</a></li>
+</ol>
+
+<h2 id="stan">1. Stan dzisiaj</h2>
+<ul>
+  <li>Polityka prywatności to pierwsza „strona samodzielna”: podstrona <code>prywatnosc</code> pod <code>strony</code> w Notion, import zapisuje ją do <code>content/strony/prywatnosc.md</code>, a <code>src/content/pages.ts</code> parsuje frontmatter (<code>title</code>, <code>description</code>, <code>updated</code>) i renderuje treść.</li>
+  <li>Zapis w Notion wysyła webhook do <code>/api/notion-webhook</code>, który uruchamia deploy na Vercelu. Zmiana jest na stronie po kilku minutach, bez commita.</li>
+  <li>Stopka ma „Polityka prywatności” i „Ustawienia cookies”. Nawigacja „Główna” ma osiem pozycji.</li>
+  <li>Polityka prywatności ma jeszcze zaślepkę „kontakt: [adres e-mail]”.</li>
+</ul>
+<p>Mechanizm już jest. Kontakt to druga strona tego samego rodzaju.</p>
+
+<h2 id="zakres">2. Zakres</h2>
+<ul>
+  <li>Strona <code>/kontakt</code> z treścią z podstrony <code>strony/kontakt</code> w Notion.</li>
+  <li>„Kontakt” jako ostatnia pozycja nawigacji „Główna” i pierwszy link w stopce.</li>
+  <li>Strona w sitemapie i indeksowana.</li>
+  <li>Układ według wybranego wariantu A, B albo C z mockupów.</li>
+</ul>
+
+<h2 id="notion">3. Strona w Notion</h2>
+<p>Nowa podstrona o tytule <code>kontakt</code> pod <code>strony</code>, obok <code>prywatnosc</code>. Tytuł podstrony w Notion to slug pliku, tak jak dziś. Format bez zmian: blok kodu yaml na początku, potem treść.</p>
+
+<h3>Wariant A</h3>
+<pre><code>```yaml
+title: Kontakt
+description: Jak napisać do autora a11y playground.
+updated: 2026-10-17
+```
+
+Masz pytanie o dostępność, widzisz błąd w treści albo przykład, który nie działa? Napisz do mnie.
+
+## E-mail
+
+kontakt@przyklad.pl. Odpowiadam zwykle w ciągu tygodnia.
+
+## Gdzie jeszcze
+
+- Błędy w aplikacji: [github.com/PJasiczek](https://github.com/PJasiczek)
+- Sprawy zawodowe: [linkedin.com/in/przyklad](https://linkedin.com/in/przyklad)</code></pre>
+<p>Goły adres e-mail w treści zamienia się w link <code>mailto:</code> (autolink GFM w <code>marked</code>). Import już dziś skraca link, którego tekst jest adresem, do samego adresu.</p>
+
+<h3>Wariant B: dodatkowe pole</h3>
+<pre><code>email: kontakt@przyklad.pl</code></pre>
+<p>Adres w treści nie jest wtedy potrzebny. Literówka w adresie zatrzymuje build (<code>string.email</code> w ArkType), więc strona zostaje na ostatniej dobrej wersji.</p>
+
+<h3>Wariant C: dodatkowa lista</h3>
+<pre><code>links:
+  - { label: E-mail, href: "mailto:kontakt@przyklad.pl", note: Odpowiadam zwykle w ciągu tygodnia. }
+  - { label: GitHub, href: "https://github.com/PJasiczek", note: Błędy w aplikacji. }
+  - { label: LinkedIn, href: "https://linkedin.com/in/przyklad", note: Sprawy zawodowe. }</code></pre>
+<p>Tekst linku powstaje z <code>href</code> bez <code>mailto:</code> i <code>https://</code>, żeby adres i tekst nie mogły się rozjechać. <code>href</code> musi zaczynać się od <code>mailto:</code> albo <code>https://</code>, inaczej build się zatrzymuje.</p>
+
+<h2 id="kod">4. Kod</h2>
+<h3>Wspólne dla wariantów</h3>
+<table>
+  <thead><tr><th>Plik</th><th>Zmiana</th></tr></thead>
+  <tbody>
+    <tr><td><code>src/routes/kontakt.tsx</code></td><td>Nowa trasa: loader, <code>pageHead</code>, <code>h1</code> i treść. Bez „Ostatnia zmiana”.</td></tr>
+    <tr><td><code>src/content/pages.functions.ts</code></td><td><code>getContactPage</code> obok <code>getPrivacyPolicy</code>.</td></tr>
+    <tr><td><code>src/content/pages.ts</code></td><td>Komentarz „Only the privacy policy so far” do aktualizacji.</td></tr>
+    <tr><td><code>src/content/site-pages.ts</code></td><td><code>"/kontakt": true</code>. Bez tego <code>tsc</code> nie przejdzie, więc sitemap nie pominie strony.</td></tr>
+    <tr><td><code>src/components/site-header.tsx</code></td><td><code>{ to: "/kontakt", label: "Kontakt" }</code> na końcu <code>navItems</code>.</td></tr>
+    <tr><td><code>src/components/site-footer.tsx</code></td><td>Link „Kontakt” przed „Polityka prywatności”; komentarz komponentu do aktualizacji.</td></tr>
+    <tr><td><code>src/routeTree.gen.ts</code></td><td>Wygenerowany przez router.</td></tr>
+  </tbody>
+</table>
+
+<h3>A: nic więcej</h3>
+<p>Trasa renderuje HTML z <code>standalonePage("kontakt")</code> w <code>.prose</code>, jak polityka prywatności.</p>
+
+<h3>B: pole <code>email</code> i przycisk kopiowania</h3>
+<ul>
+  <li><code>standalonePage</code> przyjmuje opcjonalne rozszerzenie schematu (<code>Frontmatter.merge(...)</code>), a typ wyniku wynika z niego. Polityka prywatności nic nie przekazuje i działa jak dziś.</li>
+  <li><code>src/components/copy-address.tsx</code>: przycisk „Kopiuj adres”, <code>navigator.clipboard.writeText</code>, komunikat „Skopiowano adres” w <code>role="status"</code>. Bez JavaScriptu przycisk jest ukryty, a link <code>mailto:</code> działa.</li>
+</ul>
+
+<h3>C: lista <code>links</code></h3>
+<ul>
+  <li>To samo rozszerzenie schematu co w B, z typowaną listą <code>{ label, href, note? }</code>.</li>
+  <li>Lista renderowana w trasie jako <code>ul</code> z wierszami; bez nowego komponentu, dopóki używa jej jedna strona.</li>
+</ul>
+
+<h2 id="a11y">5. Dostępność</h2>
+<ul>
+  <li>Jeden <code>h1</code> „Kontakt”, sekcje z Notion jako <code>h2</code>. Kolejność nagłówków sprawdza istniejący skan axe.</li>
+  <li>Tekst linku to sam adres, więc mówi, dokąd prowadzi (2.4.4).</li>
+  <li>Linki w nawigacji, stopce i wierszach B/C mają 44 px wysokości (2.5.5). Linki w akapitach są w tekście i korzystają z wyjątku dla linków w treści.</li>
+  <li>Aktywna pozycja nawigacji: pogrubienie i podkreślenie oraz <code>aria-current="page"</code>, nie sam kolor (1.4.1). Bez zmian w kodzie, robi to <code>Link</code>.</li>
+  <li>B: komunikat po skopiowaniu w <code>role="status"</code> (4.1.3), fokus zostaje na przycisku, ikona ✓ ma <code>aria-hidden</code>. Komunikat nie znika sam.</li>
+  <li>Długi adres łamie się (<code>overflow-wrap: anywhere</code>), bez przewijania w poziomie przy 320 px (1.4.10).</li>
+  <li>Kolory wyłącznie z istniejących tokenów, które spełniają 7:1 dla tekstu.</li>
+  <li>Nawigacja z dziewięcioma pozycjami: na telefonie zawija się w kolejny wiersz, tak jak dziś. Przy ok. 1000 px wiersz desktopowy jest blisko pełny; sprawdzam zrzutami przy 1024 i 768 px.</li>
+</ul>
+
+<h2 id="testy">6. Testy i README</h2>
+<ul>
+  <li><code>e2e/a11y.spec.ts</code>: <code>/kontakt</code> na liście stron skanowanych przez axe. Dla A to cały nowy test.</li>
+  <li>B: test jednostkowy schematu (zły adres zatrzymuje parsowanie) w <code>pages.test.ts</code>; test e2e, że „Kopiuj adres” pokazuje komunikat (z uprawnieniem do schowka w Playwright).</li>
+  <li>C: test jednostkowy, że <code>href</code> spoza <code>mailto:</code>/<code>https://</code> zatrzymuje parsowanie, i że tekst linku powstaje z <code>href</code>.</li>
+  <li>README: punkt „Contact” w liście funkcji, linia o <code>content/strony</code> wymienia <code>kontakt</code>, nowy zrzut <code>docs/screenshots/contact.png</code>. Zrzut <code>home-*.png</code> odświeżam, bo zmienia się nagłówek.</li>
+</ul>
+
+<h2 id="kolejnosc">7. Kolejność wdrożenia</h2>
+<p>Build zatrzymuje się, gdy brakuje <code>content/strony/kontakt.md</code>, a CI importuje treść z Notion. Dlatego podstrona w Notion musi powstać przed testami na gałęzi.</p>
+<ol>
+  <li>Tworzysz podstronę <code>kontakt</code> pod <code>strony</code> w Notion (albo ja przez API, jeśli dasz zgodę; to żywa treść, więc pytam). To uruchomi deploy produkcji, ale obecny kod ignoruje nieznane pliki w <code>content/strony</code>, więc produkcja się nie zmieni.</li>
+  <li>Kod na gałęzi, lint, build i testy lokalnie.</li>
+  <li>Po scaleniu każda zmiana w Notion trafia na <code>/kontakt</code> przez webhook.</li>
+</ol>
+
+<h2 id="commity">8. Gałąź i commity</h2>
+<p>Gałąź <code>feat/contact-page</code> od <code>master</code>. Utworzę ją dopiero po Twojej zgodzie.</p>
+<ol>
+  <li><code>docs(design): add contact page plan and mocks</code>: ten plan i mockupy.</li>
+  <li><code>feat(content): add contact page edited in Notion</code>: trasa, server function, <code>site-pages</code>, nagłówek, stopka, testy, README i zrzuty. Jeden commit: to jedna funkcja, a typowane linki do <code>/kontakt</code> nie kompilują się bez trasy.</li>
+</ol>
+
+<h2 id="decyzje">9. Decyzje</h2>
+<ul>
+  <li><strong>Wariant:</strong> A, B czy C. Polecam A: cała strona edytowana w Notion, zero nowego kodu do utrzymania. B, jeśli chcesz, żeby adres był najważniejszą rzeczą na stronie i dał się skopiować. C, jeśli spodziewasz się kilku kanałów.</li>
+  <li><strong>Kto tworzy podstronę w Notion:</strong> Ty czy ja przez API.</li>
+  <li><strong>Polityka prywatności:</strong> czy zamienić „kontakt: [adres e-mail]” na link do <code>/kontakt</code>. To zmiana treści w Notion, poza tym kodem.</li>
+</ul>
+
+<h2 id="poza">10. Poza zakresem</h2>
+<ul>
+  <li>Formularz kontaktowy i wszystko, czego by wymagał (endpoint, ochrona przed spamem, zmiana polityki prywatności).</li>
+  <li>Blok „Zgłoś problem z dostępnością” i deklaracja dostępności.</li>
+  <li>Zmiany w innych stronach w Notion.</li>
+</ul>
+
+</main>
+</body>
+</html>

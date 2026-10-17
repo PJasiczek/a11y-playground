@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mocks: contact page edited in Notion</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 2rem 1.25rem 6rem; background: #000; color: #fff; font: 16px/1.6 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif; }
+  main { max-width: 1240px; margin: 0 auto; }
+  h1 { font-size: 1.6rem; margin: 0 0 .5rem; letter-spacing: -.02em; }
+  h2 { font-size: 1.2rem; margin: 3rem 0 .5rem; padding-top: 1rem; border-top: 1px solid #262626; }
+  main > p, main > ul > li { color: #e5e5e5; max-width: 80ch; }
+  main > ul { padding-left: 1.3rem; }
+  code { font-family: ui-monospace, Consolas, monospace; font-size: .875em; background: #141414; border: 1px solid #262626; border-radius: 3px; padding: .05em .3em; }
+  .row { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 1.25rem; align-items: start; margin: 1rem 0; }
+  @media (max-width: 900px) { .row { grid-template-columns: 1fr; } .row figure:last-child { max-width: 360px; } }
+  figure { margin: 0; }
+  figcaption { font-size: .8rem; color: #a3a3a3; margin-top: .35rem; }
+
+  /* ---------- Site frame, colours from src/styles.css ---------- */
+  .site { --paper: #fbfaf7; --paper-2: #f1efe8; --surface: #fff; --ink: #14171a; --ink-2: #484d52; --rule: #dfdbd1; --control: #857f72; --accent: #2c36a8; --good: #145537;
+    position: relative; overflow: hidden; background: var(--paper); color: var(--ink); border: 1px solid #333;
+    font: 15px/1.55 "Inter Variable", Inter, "Segoe UI", system-ui, sans-serif; }
+  .site.dark { --paper: #121416; --paper-2: #1b1e21; --surface: #1f2226; --ink: #f3f1ec; --ink-2: #b4b9be; --rule: #2e3236; --control: #7a8088; --accent: #aeb5ff; --good: #7fd1a6; }
+  .site.phone { font-size: 14px; }
+  .mono { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; }
+
+  .hdr { border-bottom: 1px solid var(--rule); display: flex; flex-wrap: wrap; align-items: center; gap: .25rem 1rem; padding: .5rem 1.5rem; }
+  .hdr .mark { font-weight: 700; min-height: 44px; display: inline-flex; align-items: center; }
+  .hdr nav { margin-left: auto; display: flex; flex-wrap: wrap; gap: .25rem; }
+  .hdr nav span { min-height: 44px; display: inline-flex; align-items: center; padding: 0 .5rem; color: var(--ink-2); font-size: .94em; }
+  .hdr nav span.cur { color: var(--ink); font-weight: 600; box-shadow: inset 0 -2px var(--ink); }
+  .phone .hdr { padding: .5rem 1rem; }
+  .phone .hdr nav { order: 3; width: 100%; margin: 0; }
+  .phone .hdr .tt { margin-left: auto; }
+  .tt { width: 44px; height: 44px; border: 1px solid var(--control); border-radius: 6px; display: grid; place-items: center; }
+
+  .ftr { border-top: 1px solid var(--rule); display: flex; flex-wrap: wrap; align-items: center; gap: 0 1.25rem; padding: .5rem 1.5rem 1rem; font-size: .94em; }
+  .ftr .who { margin-right: auto; color: var(--ink-2); }
+  .ftr a, .ftr .lnk { min-height: 44px; display: inline-flex; align-items: center; color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+  .ftr .lnk.cur { font-weight: 600; }
+  .phone .ftr { padding: .5rem 1rem 1rem; }
+
+  .content { padding: 2rem 1.5rem 2.5rem; max-width: 760px; }
+  .phone .content { padding: 1.5rem 1rem 2rem; }
+  .content h3 { margin: 0; font-size: 1.875em; font-weight: 700; letter-spacing: -.02em; line-height: 1.2; }
+  .content .lead { margin: .75rem 0 0; max-width: 60ch; }
+  .content a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+  .focus { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+  /* .prose from src/styles.css */
+  .prose h4 { margin: 1.75rem 0 .5rem; font-size: 1.25em; font-weight: 700; letter-spacing: -.01em; }
+  .prose p { margin: 0; max-width: 68ch; }
+  .prose p + p { margin-top: 1rem; }
+  .prose ul { list-style: none; margin: 0; padding: 0; }
+  .prose ul > li { position: relative; padding: .35rem 0 .35rem 1.6rem; }
+  .prose ul > li::before { content: "→"; position: absolute; left: 0; font-family: ui-monospace, Consolas, monospace; color: var(--accent); }
+
+  /* B: address first */
+  .addr { margin: 1.5rem 0 .5rem; padding: 1.25rem 0; border-top: 2px solid var(--ink); border-bottom: 1px solid var(--rule); }
+  .addr .lbl { font-family: ui-monospace, Consolas, monospace; font-size: .75em; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+  .addr .big { display: inline-block; margin: .25rem 0 .9rem; font-size: 1.6em; font-weight: 700; letter-spacing: -.01em; overflow-wrap: anywhere; }
+  .phone .addr .big { font-size: 1.35em; }
+  .addr .acts { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; }
+  .btn { min-height: 44px; min-width: 44px; padding: 0 1.1rem; display: inline-flex; align-items: center; gap: .5rem; border: 2px solid var(--ink); background: var(--paper); color: var(--ink); border-radius: 6px; font: inherit; font-weight: 600; }
+  .status { color: var(--good); font-weight: 600; display: inline-flex; align-items: center; gap: .35rem; }
+
+  /* C: channel list */
+  .chan { list-style: none; margin: 1.5rem 0 0; padding: 0; border-top: 2px solid var(--ink); }
+  .chan li { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); align-items: center; gap: .25rem 1rem; min-height: 56px; padding: .5rem 0; border-bottom: 1px solid var(--rule); }
+  .chan .lbl { font-family: ui-monospace, Consolas, monospace; font-size: .75em; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+  .chan a { font-size: 1.1em; font-weight: 600; overflow-wrap: anywhere; min-height: 44px; display: inline-flex; align-items: center; }
+  .chan .note { grid-column: 2; margin: -.4rem 0 .1rem; color: var(--ink-2); font-size: .94em; }
+  .phone .chan li { grid-template-columns: 1fr; gap: 0; padding: .6rem 0; }
+  .phone .chan .note { grid-column: 1; margin: 0; }
+
+  @media (prefers-reduced-motion: no-preference) { .btn { transition: background-color .15s; } }
+</style>
+</head>
+<body>
+<main>
+<h1>Mocks: contact page edited in Notion</h1>
+<p>A new page at <code>/kontakt</code>. Its text lives in Notion as <code>strony/kontakt</code>, like the privacy policy, and reaches the site through the existing webhook and import. Linked from the main navigation and the footer. Only an e-mail address and links, no form. Pick a variant: A, B or C. Each one is shown on desktop in the light theme and on a phone in the dark theme. Colours, type and sizes come from <code>src/styles.css</code>, so nothing here adds a token.</p>
+<p>The address and profile links are placeholders. The final wording is yours to write in Notion; the copy here only shows how the layout carries it.</p>
+<p>Plan: <code>docs/design/2026-10-17-contact-page/contact-page.en.html</code></p>
+
+<!-- ============================ A ============================ -->
+<h2>A. Plain text, like the privacy policy (recommended)</h2>
+<ul>
+  <li>The whole page is Markdown from Notion, rendered with the existing <code>.prose</code> styles. The address is an ordinary link in the text, the profiles a list.</li>
+  <li>Code: one route and one server function. Nothing new to style or test beyond the a11y scan.</li>
+  <li>Trade-off: the address does not stand out more than any other link.</li>
+</ul>
+<div class="row">
+  <figure>
+    <div class="site">
+      <div class="hdr"><span class="mark"><span class="mono">a11y</span>&nbsp;playground</span>
+        <nav><span>Start</span><span>Kryteria</span><span>WCAG 3.0</span><span>Prawo</span><span>Praktyka</span><span>Symulatory</span><span>Ścieżki</span><span>Słownik</span><span class="cur">Kontakt</span></nav>
+        <span class="tt" aria-hidden="true">◐</span></div>
+      <div class="content">
+        <h3>Kontakt</h3>
+        <div class="prose">
+          <p class="lead">Masz pytanie o dostępność, widzisz błąd w treści albo przykład, który nie działa? Napisz do mnie.</p>
+          <h4>E-mail</h4>
+          <p><a href="#a">kontakt@przyklad.pl</a>. Odpowiadam zwykle w ciągu tygodnia.</p>
+          <h4>Gdzie jeszcze</h4>
+          <ul>
+            <li>Błędy w aplikacji: <a href="#a">github.com/PJasiczek</a></li>
+            <li>Sprawy zawodowe: <a href="#a">linkedin.com/in/przyklad</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="ftr"><span class="who"><span class="mono">a11y</span>&nbsp;playground</span><span class="lnk cur">Kontakt</span><span class="lnk">Polityka prywatności</span><span class="lnk">Ustawienia cookies</span></div>
+    </div>
+    <figcaption>A, desktop, light. "Kontakt" is current in the nav (bold plus underline, not colour alone).</figcaption>
+  </figure>
+  <figure>
+    <div class="site dark phone">
+      <div class="hdr"><span class="mark"><span class="mono">a11y</span>&nbsp;playground</span><span class="tt" aria-hidden="true">◐</span>
+        <nav><span>Start</span><span>Kryteria</span><span>WCAG 3.0</span><span>Prawo</span><span>Praktyka</span><span>Symulatory</span><span>Ścieżki</span><span>Słownik</span><span class="cur">Kontakt</span></nav></div>
+      <div class="content">
+        <h3>Kontakt</h3>
+        <div class="prose">
+          <p class="lead">Masz pytanie o dostępność, widzisz błąd w treści albo przykład, który nie działa? Napisz do mnie.</p>
+          <h4>E-mail</h4>
+          <p><a href="#a">kontakt@przyklad.pl</a>. Odpowiadam zwykle w ciągu tygodnia.</p>
+          <h4>Gdzie jeszcze</h4>
+          <ul>
+            <li>Błędy w aplikacji: <a href="#a">github.com/PJasiczek</a></li>
+            <li>Sprawy zawodowe: <a href="#a">linkedin.com/in/przyklad</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="ftr"><span class="who"><span class="mono">a11y</span>&nbsp;playground</span><span class="lnk cur">Kontakt</span><span class="lnk">Polityka prywatności</span><span class="lnk">Ustawienia cookies</span></div>
+    </div>
+    <figcaption>A, phone, dark. The nav wraps to a third row with nine items.</figcaption>
+  </figure>
+</div>
+
+<!-- ============================ B ============================ -->
+<h2>B. The address first, with a copy button</h2>
+<ul>
+  <li>The address comes from the yaml block in Notion (<code>email:</code>) and is shown large, above the text. "Kopiuj adres" copies it for people without a mail program set up, where <code>mailto:</code> does nothing.</li>
+  <li>After copying, "Skopiowano adres" appears in a <code>role="status"</code> region, so screen readers announce it (4.1.3). The text stays; it is not a toast that disappears.</li>
+  <li>Code: a frontmatter field for this page, one small client component, a unit and an e2e test.</li>
+</ul>
+<div class="row">
+  <figure>
+    <div class="site">
+      <div class="hdr"><span class="mark"><span class="mono">a11y</span>&nbsp;playground</span>
+        <nav><span>Start</span><span>Kryteria</span><span>WCAG 3.0</span><span>Prawo</span><span>Praktyka</span><span>Symulatory</span><span>Ścieżki</span><span>Słownik</span><span class="cur">Kontakt</span></nav>
+        <span class="tt" aria-hidden="true">◐</span></div>
+      <div class="content">
+        <h3>Kontakt</h3>
+        <p class="lead">Masz pytanie o dostępność, widzisz błąd w treści albo przykład, który nie działa? Napisz do mnie.</p>
+        <div class="addr">
+          <div class="lbl">E-mail</div>
+          <a class="big" href="#b">kontakt@przyklad.pl</a>
+          <div class="acts"><span class="btn focus">Kopiuj adres</span><span class="status"><span aria-hidden="true">✓</span> Skopiowano adres</span></div>
+        </div>
+        <div class="prose">
+          <p>Odpowiadam zwykle w ciągu tygodnia.</p>
+          <h4>Gdzie jeszcze</h4>
+          <ul>
+            <li>Błędy w aplikacji: <a href="#b">github.com/PJasiczek</a></li>
+            <li>Sprawy zawodowe: <a href="#b">linkedin.com/in/przyklad</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="ftr"><span class="who"><span class="mono">a11y</span>&nbsp;playground</span><span class="lnk cur">Kontakt</span><span class="lnk">Polityka prywatności</span><span class="lnk">Ustawienia cookies</span></div>
+    </div>
+    <figcaption>B, desktop, light, right after pressing "Kopiuj adres" (focus stays on the button; the tick is decorative, the text carries the meaning).</figcaption>
+  </figure>
+  <figure>
+    <div class="site dark phone">
+      <div class="hdr"><span class="mark"><span class="mono">a11y</span>&nbsp;playground</span><span class="tt" aria-hidden="true">◐</span>
+        <nav><span>Start</span><span>Kryteria</span><span>WCAG 3.0</span><span>Prawo</span><span>Praktyka</span><span>Symulatory</span><span>Ścieżki</span><span>Słownik</span><span class="cur">Kontakt</span></nav></div>
+      <div class="content">
+        <h3>Kontakt</h3>
+        <p class="lead">Masz pytanie o dostępność, widzisz błąd w treści albo przykład, który nie działa? Napisz do mnie.</p>
+        <div class="addr">
+          <div class="lbl">E-mail</div>
+          <a class="big" href="#b">kontakt@przyklad.pl</a>
+          <div class="acts"><span class="btn">Kopiuj adres</span></div>
+        </div>
+        <div class="prose">
+          <p>Odpowiadam zwykle w ciągu tygodnia.</p>
+          <h4>Gdzie jeszcze</h4>
+          <ul>
+            <li>Błędy w aplikacji: <a href="#b">github.com/PJasiczek</a></li>
+            <li>Sprawy zawodowe: <a href="#b">linkedin.com/in/przyklad</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="ftr"><span class="who"><span class="mono">a11y</span>&nbsp;playground</span><span class="lnk cur">Kontakt</span><span class="lnk">Polityka prywatności</span><span class="lnk">Ustawienia cookies</span></div>
+    </div>
+    <figcaption>B, phone, dark, before copying. A long address wraps instead of overflowing (1.4.10).</figcaption>
+  </figure>
+</div>
+
+<!-- ============================ C ============================ -->
+<h2>C. A list of channels</h2>
+<ul>
+  <li>The channels come from the yaml block in Notion (<code>links:</code>, each with a label, an address and an optional note) and render as rows: label in the mono caps the app uses for codes, the address as a large link. The rest of the Notion text follows as prose.</li>
+  <li>Every channel looks the same, so adding Mastodon or a second address is one line in Notion.</li>
+  <li>Code: a typed frontmatter list for this page, one list component, a unit test.</li>
+</ul>
+<div class="row">
+  <figure>
+    <div class="site">
+      <div class="hdr"><span class="mark"><span class="mono">a11y</span>&nbsp;playground</span>
+        <nav><span>Start</span><span>Kryteria</span><span>WCAG 3.0</span><span>Prawo</span><span>Praktyka</span><span>Symulatory</span><span>Ścieżki</span><span>Słownik</span><span class="cur">Kontakt</span></nav>
+        <span class="tt" aria-hidden="true">◐</span></div>
+      <div class="content">
+        <h3>Kontakt</h3>
+        <p class="lead">Masz pytanie o dostępność, widzisz błąd w treści albo przykład, który nie działa? Napisz do mnie.</p>
+        <ul class="chan">
+          <li><span class="lbl">E-mail</span><a href="#c">kontakt@przyklad.pl</a><span class="note">Odpowiadam zwykle w ciągu tygodnia.</span></li>
+          <li><span class="lbl">GitHub</span><a href="#c" class="focus">github.com/PJasiczek</a><span class="note">Błędy w aplikacji.</span></li>
+          <li><span class="lbl">LinkedIn</span><a href="#c">linkedin.com/in/przyklad</a><span class="note">Sprawy zawodowe.</span></li>
+        </ul>
+      </div>
+      <div class="ftr"><span class="who"><span class="mono">a11y</span>&nbsp;playground</span><span class="lnk cur">Kontakt</span><span class="lnk">Polityka prywatności</span><span class="lnk">Ustawienia cookies</span></div>
+    </div>
+    <figcaption>C, desktop, light, focus on the GitHub link. The link text is the address itself, so it says where it goes (2.4.4).</figcaption>
+  </figure>
+  <figure>
+    <div class="site dark phone">
+      <div class="hdr"><span class="mark"><span class="mono">a11y</span>&nbsp;playground</span><span class="tt" aria-hidden="true">◐</span>
+        <nav><span>Start</span><span>Kryteria</span><span>WCAG 3.0</span><span>Prawo</span><span>Praktyka</span><span>Symulatory</span><span>Ścieżki</span><span>Słownik</span><span class="cur">Kontakt</span></nav></div>
+      <div class="content">
+        <h3>Kontakt</h3>
+        <p class="lead">Masz pytanie o dostępność, widzisz błąd w treści albo przykład, który nie działa? Napisz do mnie.</p>
+        <ul class="chan">
+          <li><span class="lbl">E-mail</span><a href="#c">kontakt@przyklad.pl</a><span class="note">Odpowiadam zwykle w ciągu tygodnia.</span></li>
+          <li><span class="lbl">GitHub</span><a href="#c">github.com/PJasiczek</a><span class="note">Błędy w aplikacji.</span></li>
+          <li><span class="lbl">LinkedIn</span><a href="#c">linkedin.com/in/przyklad</a><span class="note">Sprawy zawodowe.</span></li>
+        </ul>
+      </div>
+      <div class="ftr"><span class="who"><span class="mono">a11y</span>&nbsp;playground</span><span class="lnk cur">Kontakt</span><span class="lnk">Polityka prywatności</span><span class="lnk">Ustawienia cookies</span></div>
+    </div>
+    <figcaption>C, phone, dark. Rows stack: label, link, note.</figcaption>
+  </figure>
+</div>
+
+<!-- ============================ Shared ============================ -->
+<h2>Shared by all variants</h2>
+<ul>
+  <li><strong>Nav:</strong> "Kontakt" is the ninth and last item of "Główna". On a phone the list already wraps instead of hiding behind a menu; it gets one more row (see the phone frames). At about 1000 px the desktop row is close to full; the build step checks 1024 px and 768 px with screenshots.</li>
+  <li><strong>Footer:</strong> "Kontakt" goes first, before "Polityka prywatności" and "Ustawienia cookies". Same 44 px link height as today.</li>
+  <li><strong>Headings:</strong> one <code>h1</code> "Kontakt", then <code>h2</code> sections from Notion. No skipped levels.</li>
+  <li><strong>No date:</strong> unlike the privacy policy, "Ostatnia zmiana" is not shown; it means nothing on a contact page.</li>
+  <li><strong>Links in the text</strong> (A, and the prose under B and C) are inline, so they fall under the inline exception of 2.5.8 and 2.5.5. Links in the nav, footer, B and C rows are 44 px high.</li>
+</ul>
+</main>
+</body>
+</html>

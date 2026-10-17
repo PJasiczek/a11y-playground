@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as KontaktRouteImport } from './routes/kontakt'
 import { Route as MapowanieRouteImport } from './routes/mapowanie'
 import { Route as PrywatnoscRouteImport } from './routes/prywatnosc'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
@@ -43,6 +44,11 @@ import { Route as SciezkiPathLessonRouteImport } from './routes/sciezki/$path/$l
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KontaktRoute = KontaktRouteImport.update({
+  id: '/kontakt',
+  path: '/kontakt',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MapowanieRoute = MapowanieRouteImport.update({
@@ -193,6 +199,7 @@ const SciezkiPathLessonRoute = SciezkiPathLessonRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/kontakt': typeof KontaktRoute
   '/mapowanie': typeof MapowanieRoute
   '/prywatnosc': typeof PrywatnoscRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -225,6 +232,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/kontakt': typeof KontaktRoute
   '/mapowanie': typeof MapowanieRoute
   '/prywatnosc': typeof PrywatnoscRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -258,6 +266,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/kontakt': typeof KontaktRoute
   '/mapowanie': typeof MapowanieRoute
   '/prywatnosc': typeof PrywatnoscRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -292,6 +301,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/kontakt'
     | '/mapowanie'
     | '/prywatnosc'
     | '/robots.txt'
@@ -324,6 +334,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/kontakt'
     | '/mapowanie'
     | '/prywatnosc'
     | '/robots.txt'
@@ -356,6 +367,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/kontakt'
     | '/mapowanie'
     | '/prywatnosc'
     | '/robots.txt'
@@ -389,6 +401,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  KontaktRoute: typeof KontaktRoute
   MapowanieRoute: typeof MapowanieRoute
   PrywatnoscRoute: typeof PrywatnoscRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
@@ -427,6 +440,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kontakt': {
+      id: '/kontakt'
+      path: '/kontakt'
+      fullPath: '/kontakt'
+      preLoaderRoute: typeof KontaktRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mapowanie': {
@@ -637,6 +657,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  KontaktRoute: KontaktRoute,
   MapowanieRoute: MapowanieRoute,
   PrywatnoscRoute: PrywatnoscRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
