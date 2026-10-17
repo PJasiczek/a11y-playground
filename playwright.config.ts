@@ -18,6 +18,8 @@ export default defineConfig({
     command: `pnpm build && pnpm preview --port ${String(port)} --strictPort`,
     port,
     reuseExistingServer: !process.env.CI,
+    // The build imports every page from Notion first, which alone can take a minute.
+    timeout: 300_000,
     // A made-up ID, so the build includes the banner; consent.spec.ts stubs gtag.js.
     env: { VITE_GA_MEASUREMENT_ID: "G-TEST000000" },
   },
