@@ -24,8 +24,8 @@ The interface is in Polish. This README is in English.
 ### What works today
 
 - **Home page** following screen 0 of design variant A: it opens with the six cheapest fixes as cards, then the remaining examples as a list.
-- Main navigation that wraps onto its own row on narrow screens instead of hiding behind a menu button.
-- Light and dark mode. It follows the operating system by default, and the header toggle stores an explicit choice.
+- **Main navigation on phones** docks to the bottom edge, in reach of the thumb: Kryteria, Praktyka and Ścieżki as tabs, and "Więcej" for the rest (variant C of the [mobile menu mocks](docs/design/2026-10-17-mobile-menu-mocks/mobile-menu-mocks.html)). "Więcej" opens a sheet with WCAG 3.0, Prawo, Symulatory, Słownik and the theme toggle; it is a native modal `dialog`, so Escape, "Zamknij" or a tap outside closes it and focus returns to "Więcej". The consent card and "Struktura strony" sit above the bar. On screens shorter than 480px (landscape, 400% zoom) the bar stays a row in the header instead of covering the page.
+- Light and dark mode. It follows the operating system by default, and the toggle in the header (in "Więcej" on phones) stores an explicit choice.
 - Skip link, a stable landmark structure, and focus moved to the new `h1` with the page title announced after every client-side route change.
 - **Struktura strony**, a button in the bottom right corner of every page, after the W3C [landmarks example](https://www.w3.org/WAI/ARIA/apg/patterns/landmarks/examples/general-principles.html). Its panel has two switches, "Punkty orientacyjne" and "Nagłówki", which outline the landmarks and headings of the page you are on, each with a label naming its role or level. The panel lists the same as text, with what is wrong (no `main`, two navigations nobody can tell apart, a skipped heading level), and every row moves focus to its element, the way a screen reader jumps with D or H. The switches last for the browser tab.
 - **Criteria list** (`/kryteria`) with filters for WCAG version, level, principle and role. The filters are native radio buttons and checkboxes, their state lives in the URL, and the result count is announced to screen readers.
@@ -48,14 +48,14 @@ The interface is in Polish. This README is in English.
 - **Law on criterion pages:** the "Prawo" section says, for each situation, whether a provision requires the criterion, which one, and since when, or why nothing does (AAA, new in 2.2, excluded for apps).
 - **Paths** (`/sciezki`): five ordered sets of lessons, for the developer, the designer, the content author, the tester, and the legal minimum for a public body. 30 lessons, each with a "Zapamiętaj" box, links to the criteria, examples and provisions it covers, and a quiz at the end. Paths are ungated: the quiz never blocks the next lesson. Criterion pages link to the lessons that teach them.
 - **Quizzes** show one question at a time. "Sprawdź" explains every option, right or wrong, and announces the verdict to screen readers without moving focus; "Następne pytanie" moves focus to the next question. The score shows at the end.
-- **Visit statistics only with consent.** Google Analytics 4 is not even downloaded until the reader picks "Zgadzam się" on a card in the bottom left corner (variant B of the [cookie consent mocks](docs/design/2026-10-14-cookie-consent-mocks/cookie-consent-mocks.html)). "Odrzuć" looks the same as "Zgadzam się", the card is not a modal and traps no focus, and while it shows, focus scrolled into view stops above it (2.4.11). The choice lives in `localStorage`; "Ustawienia cookies" in the footer of every page shows the card again, and refusing deletes the GA cookies.
+- **Visit statistics only with consent.** Google Analytics 4 is not even downloaded until the reader picks "Zgadzam się" on a card in the bottom left corner, above the navigation bar on phones (variant B of the [cookie consent mocks](docs/design/2026-10-14-cookie-consent-mocks/cookie-consent-mocks.html)). "Odrzuć" looks the same as "Zgadzam się", the card is not a modal and traps no focus, and while it shows, focus scrolled into view stops above it (2.4.11). The choice lives in `localStorage`; "Ustawienia cookies" in the footer of every page shows the card again, and refusing deletes the GA cookies.
 - **Privacy policy** (`/prywatnosc`, linked from the footer and the card), edited in Notion like the rest of the content.
 - **Contact** (`/kontakt`, linked from the footer), edited in Notion. The address is shown large above the text, with "Kopiuj adres" for readers whose browser has no mail program set up; "Skopiowano adres" is announced to screen readers and stays on screen (variant B of the [contact mocks](docs/design/2026-10-17-contact-mocks/contact-mocks.html)).
 - **Progress** (lessons marked done, the last quiz score) is stored in `localStorage` under one key, in the shape planned for the Convex tables, so accounts can import it later. `/sciezki` says so and offers "Wyczyść postęp". With storage blocked, progress lasts until the tab closes.
 
-| Light | Dark | Mobile |
-| --- | --- | --- |
-| ![Home, light mode](docs/screenshots/home-light.png) | ![Home, dark mode](docs/screenshots/home-dark.png) | ![Home on a 390px wide screen](docs/screenshots/home-mobile.png) |
+| Light | Dark | Mobile | Mobile, "Więcej" open |
+| --- | --- | --- | --- |
+| ![Home, light mode](docs/screenshots/home-light.png) | ![Home, dark mode](docs/screenshots/home-dark.png) | ![Home on a 390px wide screen with the Kryteria, Praktyka, Ścieżki and Więcej bar at the bottom](docs/screenshots/home-mobile.png) | ![The Więcej sheet over the Prawo page, with Prawo marked tu jesteś and the theme toggle below the links](docs/screenshots/phone-nav-more.png) |
 
 | Criteria list | Criterion page |
 | --- | --- |
@@ -99,7 +99,7 @@ The interface is in Polish. This README is in English.
 
 | Consent card | Consent card, mobile | Privacy policy | Contact |
 | --- | --- | --- | --- |
-| ![The statistics consent card in the bottom left corner of the home page, with Odrzuć and Zgadzam się](docs/screenshots/consent-banner.png) | ![The consent card across the full width of a 390px screen in dark mode](docs/screenshots/consent-banner-mobile.png) | ![The privacy policy page with the footer links Kontakt, Polityka prywatności and Ustawienia cookies](docs/screenshots/privacy.png) | ![The contact page with the address in large type, Kopiuj adres and the message Skopiowano adres](docs/screenshots/contact.png) |
+| ![The statistics consent card in the bottom left corner of the home page, with Odrzuć and Zgadzam się](docs/screenshots/consent-banner.png) | ![The consent card across the full width of a 390px screen in dark mode, above the navigation bar](docs/screenshots/consent-banner-mobile.png) | ![The privacy policy page with the footer links Kontakt, Polityka prywatności and Ustawienia cookies](docs/screenshots/privacy.png) | ![The contact page with the address in large type, Kopiuj adres and the message Skopiowano adres](docs/screenshots/contact.png) |
 
 | Glossary preview | Glossary | Search |
 | --- | --- | --- |
