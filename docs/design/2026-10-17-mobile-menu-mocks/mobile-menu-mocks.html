@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mocks: mobile menu</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 2rem 1.25rem 6rem; background: #000; color: #fff; font: 16px/1.6 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif; }
+  main { max-width: 1240px; margin: 0 auto; }
+  h1 { font-size: 1.6rem; margin: 0 0 .5rem; letter-spacing: -.02em; }
+  h2 { font-size: 1.2rem; margin: 3rem 0 .5rem; padding-top: 1rem; border-top: 1px solid #262626; }
+  main > p, main > ul > li { color: #e5e5e5; max-width: 80ch; }
+  main > ul { padding-left: 1.3rem; }
+  code { font-family: ui-monospace, Consolas, monospace; font-size: .875em; background: #141414; border: 1px solid #262626; border-radius: 3px; padding: .05em .3em; }
+  table { border-collapse: collapse; margin: 1rem 0; font-size: .9rem; }
+  th, td { text-align: left; padding: .4rem .9rem .4rem 0; border-bottom: 1px solid #262626; vertical-align: top; }
+  th { font-weight: 600; }
+  .row { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 340px)); gap: 1.25rem; margin: 1rem 0; }
+  figure { margin: 0; }
+  figcaption { font-size: .8rem; color: #a3a3a3; margin-top: .35rem; }
+
+  /* ---------- Site frame, colours from src/styles.css ---------- */
+  .site { --paper: #fbfaf7; --paper-2: #f1efe8; --surface: #fff; --ink: #14171a; --ink-2: #484d52; --rule: #dfdbd1; --control: #857f72; --accent: #2c36a8;
+    position: relative; overflow: hidden; height: 620px; background: var(--paper); color: var(--ink); border: 1px solid #333;
+    font: 14px/1.55 "Inter Variable", Inter, "Segoe UI", system-ui, sans-serif; }
+  .site.dark { --paper: #121416; --paper-2: #1b1e21; --surface: #1f2226; --ink: #f3f1ec; --ink-2: #b4b9be; --rule: #2e3236; --control: #7a8088; --accent: #aeb5ff; }
+  .mono { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; }
+  .focus { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+  .hdr { border-bottom: 1px solid var(--rule); display: flex; flex-wrap: wrap; align-items: center; gap: .25rem .5rem; padding: .5rem 1rem; background: var(--paper); }
+  .mark { font-weight: 700; font-size: 1.07em; letter-spacing: -.01em; min-height: 44px; display: inline-flex; align-items: center; margin-right: auto; }
+  .btn { min-height: 44px; min-width: 44px; padding: 0 .8rem; display: inline-flex; align-items: center; justify-content: center; gap: .45rem; border: 1px solid var(--control); background: var(--surface); color: var(--ink); border-radius: 6px; font: inherit; font-weight: 600; }
+  .btn svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; }
+
+  /* Current header: list wraps onto its own row */
+  .wrapnav { order: 3; width: 100%; display: flex; flex-wrap: wrap; gap: .25rem; }
+  .wrapnav span { min-height: 44px; display: inline-flex; align-items: center; padding: 0 .5rem; color: var(--ink-2); font-size: .94em; }
+  .wrapnav span.cur, .scrollnav span.cur { color: var(--ink); font-weight: 600; box-shadow: inset 0 -2px var(--ink); }
+
+  .content { padding: 1.5rem 1rem 2rem; }
+  .content .eyebrow { font-family: ui-monospace, Consolas, monospace; font-size: .75em; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+  .content h3 { margin: .25rem 0 0; font-size: 1.75em; font-weight: 700; letter-spacing: -.02em; line-height: 1.2; }
+  .content p { margin: .75rem 0 0; }
+  .content .bar { height: .7em; margin: .9rem 0 0; background: var(--paper-2); border-radius: 2px; }
+  .content .bar.s { width: 70%; margin-top: .5rem; }
+
+  /* Shared vertical link list (A, B, C sheet) */
+  .list { list-style: none; margin: 0; padding: 0; }
+  .list li { border-bottom: 1px solid var(--rule); }
+  .list span { min-height: 48px; display: flex; align-items: center; padding: 0 1rem; border-left: 4px solid transparent; color: var(--ink); }
+  .list span.cur { border-left-color: var(--ink); font-weight: 700; background: var(--paper-2); }
+  .list .here { margin-left: auto; font-family: ui-monospace, Consolas, monospace; font-size: .75em; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); font-weight: 400; }
+  .tools { padding: .75rem 1rem; display: flex; }
+
+  /* A: disclosure panel pushes content */
+  .panel { border-bottom: 2px solid var(--ink); background: var(--surface); }
+
+  /* B: full-screen dialog */
+  .sheet-full { position: absolute; inset: 0; background: var(--paper); display: flex; flex-direction: column; }
+  .sheet-full .list span { min-height: 56px; font-size: 1.3em; font-weight: 600; letter-spacing: -.01em; }
+  .sheet-full .list span.cur { font-weight: 800; }
+  .sheet-full .tools { margin-top: auto; border-top: 1px solid var(--rule); }
+
+  /* C: bottom tab bar + sheet */
+  .tabbar { position: absolute; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--rule); background: var(--surface); }
+  .tabbar span { min-height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: .8em; color: var(--ink-2); border-top: 3px solid transparent; }
+  .tabbar span.cur { color: var(--ink); font-weight: 700; border-top-color: var(--ink); }
+  .tabbar svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .scrim { position: absolute; inset: 0; background: rgb(0 0 0 / .45); }
+  .bsheet { position: absolute; left: 0; right: 0; bottom: 0; background: var(--surface); border-top: 2px solid var(--ink); border-radius: 12px 12px 0 0; }
+  .bsheet .top { display: flex; align-items: center; justify-content: space-between; padding: .5rem .5rem .5rem 1rem; border-bottom: 1px solid var(--rule); }
+  .bsheet .top b { font-size: 1.05em; }
+
+  /* D: one scrolling row */
+  .scrollnav { order: 3; width: calc(100% + 2rem); margin: 0 -1rem; display: flex; gap: .25rem; overflow: hidden; padding: 0 1rem; position: relative; border-top: 1px solid var(--rule); }
+  .scrollnav span { flex: none; min-height: 44px; display: inline-flex; align-items: center; padding: 0 .55rem; color: var(--ink-2); font-size: .94em; }
+  .scrollnav::after { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 2.5rem; background: linear-gradient(to right, transparent, var(--paper)); }
+  .count { font-family: ui-monospace, Consolas, monospace; font-size: .75em; color: var(--ink-2); padding: .2rem 1rem; background: var(--paper-2); border-bottom: 1px solid var(--rule); }
+</style>
+</head>
+<body>
+<main>
+<h1>Mocks: mobile menu</h1>
+<p>The header below <code>sm</code> (640px). Today the eight links wrap onto two rows under the wordmark, which costs about 150px of every phone screen before the content starts. Pick a variant: A, B, C or D. Each one is shown at 340px, closed and open, in light and dark. Colours, type and sizes come from <code>src/styles.css</code>. Desktop stays as it is.</p>
+<p>Defaults I chose where your answers were still open: the breakpoint stays at 640px, and the theme toggle moves into the menu in A, B and C (it doesn't fit in the bar next to a menu button without dropping its text label).</p>
+
+<!-- ============================ Baseline ============================ -->
+<h2>Today, for reference</h2>
+<div class="row">
+  <figure>
+    <div class="site">
+      <div class="hdr"><span class="mark"><span class="mono">a11y</span>&nbsp;playground</span>
+        <span class="btn">○ Tryb ciemny</span>
+        <div class="wrapnav"><span>Start</span><span class="cur">Kryteria</span><span>WCAG 3.0</span><span>Prawo</span><span>Praktyka</span><span>Symulatory</span><span>Ścieżki</span><span>Słownik</span></div></div>
+      <div class="content"><div class="eyebrow">WCAG 2.2</div><h3>Kryteria sukcesu</h3><p>86 kryteriów w czterech zasadach. Filtruj po poziomie i szukaj po numerze albo nazwie.</p><div class="bar"></div><div class="bar s"></div></div>
+    </div>
+    <figcaption>Current header on a phone. The wordmark row plus two rows of links before the heading.</figcaption>
+  </figure>
+</div>
+
+<!-- ============================ A ============================ -->
+<h2>A. "Menu" button, list opens under the bar (recommended)</h2>
+<ul>
+  <li>A <code>&lt;button aria-expanded aria-controls&gt;</code> labelled "Menu" shows a full-width list under the bar and pushes the page down. This is the disclosure pattern the site already teaches in <code>/praktyka/wzorce/rozwin-zwin</code>.</li>
+  <li>No focus trap and no <code>inert</code>. Tab moves from the button straight into the links and then on to the page. Escape closes the list and returns focus to the button. Navigating to another page closes it.</li>
+  <li>The label stays "Menu" in both states, so the accessible name doesn't change. Only <code>aria-expanded</code> and the chevron do.</li>
+  <li>Bar height when closed: 61px instead of about 150px. At 400% zoom the list scrolls with the page, so nothing is cut off.</li>
+  <li>Code: one small client component with one <code>useState</code>, plus an e2e test for keyboard and Escape.</li>
+</ul>
+<div class="row">
+  <figure>
+    <div class="site">
+      <div class="hdr"><span class="mark"><span class="mono">a11y</span>&nbsp;playground</span>
+        <span class="btn"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 5h12M3 9h12M3 13h12"/></svg>Menu</span></div>
+      <div class="content"><div class="eyebrow">WCAG 2.2</div><h3>Kryteria sukcesu</h3><p>86 kryteriów w czterech zasadach. Filtruj po poziomie i szukaj po numerze albo nazwie.</p><div class="bar"></div><div class="bar s"></div><div class="bar"></div><div class="bar s"></div></div>
+    </div>
+    <figcaption>A, closed, light. The heading starts right under the bar.</figcaption>
+  </figure>
+  <figure>
+    <div class="site">
+      <div class="hdr"><span class="mark"><span class="mono">a11y</span>&nbsp;playground</span>
+        <span class="btn focus"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M4 11l5-5 5 5"/></svg>Menu</span></div>
+      <nav class="panel" aria-label="Główna">
+        <ul class="list">
+          <li><span>Start</span></li>
+          <li><span class="cur">Kryteria <span class="here">tu jesteś</span></span></li>
+          <li><span>WCAG 3.0</span></li>
+          <li><span>Prawo</span></li>
+          <li><span>Praktyka</span></li>
+          <li><span>Symulatory</span></li>
+          <li><span>Ścieżki</span></li>
+          <li><span>Słownik</span></li>
+        </ul>
+        <div class="tools"><span class="btn">○ Tryb ciemny</span></div>
+      </nav>
+      <div class="content"><div class="eyebrow">WCAG 2.2</div><h3>Kryteria sukcesu</h3></div>
+    </div>
+    <figcaption>A, open, light, focus on the button. The current page has a bar, bold text and the words "tu jesteś" (aria-current="page"), not colour alone.</figcaption>
+  </figure>
+  <figure>
+    <div class="site dark">
+      <div class="hdr"><span class="mark"><span class="mono">a11y</span>&nbsp;playground</span>
+        <span class="btn"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M4 11l5-5 5 5"/></svg>Menu</span></div>
+      <nav class="panel" aria-label="Główna">
+        <ul class="list">
+          <li><span>Start</span></li>
+          <li><span>Kryteria</span></li>
+          <li><span>WCAG 3.0</span></li>
+          <li><span>Prawo</span></li>
+          <li><span class="cur">Praktyka <span class="here">tu jesteś</span></span></li>
+          <li><span>Symulatory</span></li>
+          <li><span>Ścieżki</span></li>
+          <li><span>Słownik</span></li>
+        </ul>
+        <div class="tools"><span class="btn">● Tryb ciemny</span></div>
+      </nav>
+    </div>
+    <figcaption>A, open, dark.</figcaption>
+  </figure>
+</div>
+
+<!-- ============================ B ============================ -->
+<h2>B. Full-screen menu in a dialog</h2>
+<ul>
+  <li>"Menu" opens a native <code>&lt;dialog&gt;</code> with <code>showModal()</code>. The page behind becomes inert, focus goes to the first link, and Escape or "Zamknij" closes it and returns focus to "Menu".</li>
+  <li>Large type: links are 56px high and easier to hit. This is the strongest "app" feel of the four.</li>
+  <li>Trade-off: the reader loses sight of the page, and it is a modal for something that doesn't need to be one. Opening and closing must not animate under <code>prefers-reduced-motion</code>.</li>
+  <li>Code: a bit more than A (dialog ref, closing on route change), and a focus-return test.</li>
+</ul>
+<div class="row">
+  <figure>
+    <div class="site">
+      <div class="hdr"><span class="mark"><span class="mono">a11y</span>&nbsp;playground</span>
+        <span class="btn"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 5h12M3 9h12M3 13h12"/></svg>Menu</span></div>
+      <div class="content"><div class="eyebrow">WCAG 2.2</div><h3>Kryteria sukcesu</h3><p>86 kryteriów w czterech zasadach. Filtruj po poziomie i szukaj po numerze albo nazwie.</p><div class="bar"></div><div class="bar s"></div></div>
+    </div>
+    <figcaption>B, closed. Same bar as A.</figcaption>
+  </figure>
+  <figure>
+    <div class="site">
+      <div class="sheet-full">
+        <div class="hdr"><span class="mark"><span class="mono">a11y</span>&nbsp;playground</span>
+          <span class="btn"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M4 4l10 10M14 4L4 14"/></svg>Zamknij</span></div>
+        <nav aria-label="Główna">
+          <ul class="list">
+            <li><span class="focus">Start</span></li>
+            <li><span class="cur">Kryteria <span class="here">tu jesteś</span></span></li>
+            <li><span>WCAG 3.0</span></li>
+            <li><span>Prawo</span></li>
+            <li><span>Praktyka</span></li>
+            <li><span>Symulatory</span></li>
+            <li><span>Ścieżki</span></li>
+            <li><span>Słownik</span></li>
+          </ul>
+        </nav>
+        <div class="tools"><span class="btn">○ Tryb ciemny</span></div>
+      </div>
+    </div>
+    <figcaption>B, open, light. Focus starts on the first link.</figcaption>
+  </figure>
+  <figure>
+    <div class="site dark">
+      <div class="sheet-full">
+        <div class="hdr"><span class="mark"><span class="mono">a11y</span>&nbsp;playground</span>
+          <span class="btn"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M4 4l10 10M14 4L4 14"/></svg>Zamknij</span></div>
+        <nav aria-label="Główna">
+          <ul class="list">
+            <li><span>Start</span></li>
+            <li><span>Kryteria</span></li>
+            <li><span>WCAG 3.0</span></li>
+            <li><span>Prawo</span></li>
+            <li><span>Praktyka</span></li>
+            <li><span>Symulatory</span></li>
+            <li><span class="cur">Ścieżki <span class="here">tu jesteś</span></span></li>
+            <li><span>Słownik</span></li>
+          </ul>
+        </nav>
+        <div class="tools"><span class="btn">● Tryb ciemny</span></div>
+      </div>
+    </div>
+    <figcaption>B, open, dark.</figcaption>
+  </figure>
+</div>
+
+<!-- ============================ C ============================ -->
+<h2>C. Bottom bar for the thumb, the rest under "Więcej"</h2>
+<ul>
+  <li>A fixed bar at the bottom of the screen with the three most-used sections and "Więcej". "Więcej" opens a sheet with the remaining four links and the theme toggle. "Start" is the wordmark at the top.</li>
+  <li>Easiest to reach with one hand. The top bar shrinks to just the wordmark.</li>
+  <li>Trade-offs: two navigations instead of one, and someone has to decide which sections count as main. It collides with the cookie banner, which also sits at the bottom, and with <code>scroll-padding-bottom</code> (2.4.11 Focus Not Obscured). At 400% zoom a fixed bar takes a large part of the screen, so it would have to unfix itself in landscape and short viewports.</li>
+  <li>Code: the most of the four. The sheet is a dialog like B, plus the bar, plus layout fixes for the banner.</li>
+</ul>
+<div class="row">
+  <figure>
+    <div class="site">
+      <div class="hdr"><span class="mark"><span class="mono">a11y</span>&nbsp;playground</span></div>
+      <div class="content"><div class="eyebrow">WCAG 2.2</div><h3>Kryteria sukcesu</h3><p>86 kryteriów w czterech zasadach. Filtruj po poziomie i szukaj po numerze albo nazwie.</p><div class="bar"></div><div class="bar s"></div><div class="bar"></div></div>
+      <nav class="tabbar" aria-label="Główna">
+        <span class="cur"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 5h12M4 10h12M4 15h8"/></svg>Kryteria</span>
+        <span><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3" y="4" width="14" height="12" rx="2"/><path d="M7 8l-2 2 2 2M13 8l2 2-2 2"/></svg>Praktyka</span>
+        <span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 16c3-8 9-4 12-12"/><circle cx="4" cy="16" r="1.5"/><circle cx="16" cy="4" r="1.5"/></svg>Ścieżki</span>
+        <span><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="5" cy="10" r="1.2"/><circle cx="10" cy="10" r="1.2"/><circle cx="15" cy="10" r="1.2"/></svg>Więcej</span>
+      </nav>
+    </div>
+    <figcaption>C, closed, light. Icons always come with a text label.</figcaption>
+  </figure>
+  <figure>
+    <div class="site dark">
+      <div class="hdr"><span class="mark"><span class="mono">a11y</span>&nbsp;playground</span></div>
+      <div class="content"><div class="eyebrow">WCAG 2.2</div><h3>Kryteria sukcesu</h3></div>
+      <div class="scrim"></div>
+      <div class="bsheet">
+        <div class="top"><b>Więcej</b><span class="btn"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M4 4l10 10M14 4L4 14"/></svg>Zamknij</span></div>
+        <ul class="list">
+          <li><span class="focus">WCAG 3.0</span></li>
+          <li><span>Prawo</span></li>
+          <li><span>Symulatory</span></li>
+          <li><span>Słownik</span></li>
+        </ul>
+        <div class="tools"><span class="btn">● Tryb ciemny</span></div>
+      </div>
+    </div>
+    <figcaption>C, "Więcej" open, dark. The sheet covers the bar while it is open.</figcaption>
+  </figure>
+</div>
+
+<!-- ============================ D ============================ -->
+<h2>D. No button: one row that scrolls sideways</h2>
+<ul>
+  <li>Keeps today's idea that every link is visible without an extra tap, but in one row of 44px instead of three. The current page is scrolled into view on load.</li>
+  <li>The fade on the right edge is the only hint that there is more. Readers who don't swipe sideways may never find "Słownik". With a keyboard it works: Tab moves through the links and the row scrolls along.</li>
+  <li>Trade-off: hidden content with a weak signal. A "1 z 8" style counter helps a little but adds noise. 1.4.10 Reflow allows this, but it isn't great.</li>
+  <li>Code: CSS only plus one <code>scrollIntoView</code>. No state.</li>
+</ul>
+<div class="row">
+  <figure>
+    <div class="site">
+      <div class="hdr"><span class="mark"><span class="mono">a11y</span>&nbsp;playground</span>
+        <span class="btn" style="padding:0 .6rem">○ <span style="font-weight:600">Ciemny</span></span>
+        <div class="scrollnav"><span>Start</span><span class="cur">Kryteria</span><span>WCAG 3.0</span><span>Prawo</span><span>Praktyka</span><span>Symulatory</span><span>Ścieżki</span><span>Słownik</span></div></div>
+      <div class="content"><div class="eyebrow">WCAG 2.2</div><h3>Kryteria sukcesu</h3><p>86 kryteriów w czterech zasadach. Filtruj po poziomie i szukaj po numerze albo nazwie.</p><div class="bar"></div><div class="bar s"></div></div>
+    </div>
+    <figcaption>D, light. The toggle label gets shorter to fit next to the wordmark.</figcaption>
+  </figure>
+  <figure>
+    <div class="site dark">
+      <div class="hdr"><span class="mark"><span class="mono">a11y</span>&nbsp;playground</span>
+        <span class="btn" style="padding:0 .6rem">● <span style="font-weight:600">Ciemny</span></span>
+        <div class="scrollnav" style="justify-content:flex-end"><span>Praktyka</span><span>Symulatory</span><span class="cur">Ścieżki</span><span>Słownik</span></div></div>
+      <div class="content"><div class="eyebrow">Ścieżki nauki</div><h3>Programista</h3><p>Osiem lekcji, od semantyki do treści, które się zmieniają.</p><div class="bar"></div></div>
+    </div>
+    <figcaption>D, dark, on "Ścieżki": the row has scrolled so the current item is visible.</figcaption>
+  </figure>
+</div>
+
+<h2>Side by side</h2>
+<table>
+  <thead><tr><th scope="col"></th><th scope="col">A</th><th scope="col">B</th><th scope="col">C</th><th scope="col">D</th></tr></thead>
+  <tbody>
+    <tr><th scope="row">Header height, closed</th><td>61px</td><td>61px</td><td>61px + 56px at the bottom</td><td>106px</td></tr>
+    <tr><th scope="row">Taps to any link</th><td>2</td><td>2</td><td>1 or 2</td><td>1, plus a swipe</td></tr>
+    <tr><th scope="row">Focus management</th><td>none needed</td><td>modal, inert page</td><td>modal for the sheet</td><td>none needed</td></tr>
+    <tr><th scope="row">Risk at 400% zoom</th><td>low</td><td>low (the dialog scrolls)</td><td>high (fixed bar)</td><td>medium</td></tr>
+    <tr><th scope="row">Amount of code</th><td>small</td><td>medium</td><td>large</td><td>smallest</td></tr>
+  </tbody>
+</table>
+<p>My pick is A: it solves the space problem with the least code and no modal, and it is a pattern the site already teaches.</p>
+</main>
+</body>
+</html>
