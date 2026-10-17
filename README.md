@@ -48,6 +48,8 @@ The interface is in Polish. This README is in English.
 - **Law on criterion pages:** the "Prawo" section says, for each situation, whether a provision requires the criterion, which one, and since when, or why nothing does (AAA, new in 2.2, excluded for apps).
 - **Paths** (`/sciezki`): five ordered sets of lessons, for the developer, the designer, the content author, the tester, and the legal minimum for a public body. 30 lessons, each with a "Zapamiętaj" box, links to the criteria, examples and provisions it covers, and a quiz at the end. Paths are ungated: the quiz never blocks the next lesson. Criterion pages link to the lessons that teach them.
 - **Quizzes** show one question at a time. "Sprawdź" explains every option, right or wrong, and announces the verdict to screen readers without moving focus; "Następne pytanie" moves focus to the next question. The score shows at the end.
+- **Visit statistics only with consent.** Google Analytics 4 is not even downloaded until the reader picks "Zgadzam się" on a card in the bottom left corner (variant B of the [cookie consent mocks](docs/design/2026-10-14-cookie-consent-mocks/cookie-consent-mocks.html)). "Odrzuć" looks the same as "Zgadzam się", the card is not a modal and traps no focus, and while it shows, focus scrolled into view stops above it (2.4.11). The choice lives in `localStorage`; "Ustawienia cookies" in the footer of every page shows the card again, and refusing deletes the GA cookies.
+- **Privacy policy** (`/prywatnosc`, linked from the footer and the card), edited in Notion like the rest of the content.
 - **Progress** (lessons marked done, the last quiz score) is stored in `localStorage` under one key, in the shape planned for the Convex tables, so accounts can import it later. `/sciezki` says so and offers "Wyczyść postęp". With storage blocked, progress lasts until the tab closes.
 
 | Light | Dark | Mobile |
@@ -93,6 +95,10 @@ The interface is in Polish. This README is in English.
 | AAA criterion | WCAG 3.0 | New in WCAG 3.0 |
 | --- | --- | --- |
 | ![Criterion 1.4.6 compared with 1.4.3, with the AAA note and the difference in one line](docs/screenshots/criterion-aaa.png) | ![The WCAG 3.0 page with the working draft badge, the dates and the comparison with 2.2](docs/screenshots/wcag3.png) | ![The WCAG 3.0 mapping filtered to guidelines new in 3.0](docs/screenshots/wcag3-mapping.png) |
+
+| Consent card | Consent card, mobile | Privacy policy |
+| --- | --- | --- |
+| ![The statistics consent card in the bottom left corner of the home page, with Odrzuć and Zgadzam się](docs/screenshots/consent-banner.png) | ![The consent card across the full width of a 390px screen in dark mode](docs/screenshots/consent-banner-mobile.png) | ![The privacy policy page with the footer links Polityka prywatności and Ustawienia cookies](docs/screenshots/privacy.png) |
 
 | Glossary preview | Glossary | Search |
 | --- | --- | --- |
@@ -141,6 +147,22 @@ To set up publishing on a new deploy:
 2. In the Notion integration settings, add a webhook subscription to `https://<domain>/api/notion-webhook` for page events. Notion sends a verification token; the endpoint writes it to the Vercel function log.
 3. Paste the token into Notion to verify the subscription, add it to Vercel as `NOTION_WEBHOOK_SECRET` and redeploy. From then on the endpoint accepts only requests signed with it.
 4. In GitHub, add `NOTION_TOKEN` and `NOTION_ROOT_PAGE_ID` as Actions secrets, for CI.
+
+### Standalone pages
+
+`content/strony/<slug>.md`, the `strony` page in Notion. Only `prywatnosc`, the privacy policy at `/prywatnosc`, so far. The build fails without it.
+
+```markdown
+---
+title: Polityka prywatności
+description: Jakie dane zbiera a11y playground, po co, i jak wycofać zgodę na statystyki odwiedzin.
+updated: 2026-10-17   # shown as "Ostatnia zmiana"; change it with the text
+---
+
+## Kto odpowiada za dane
+
+...
+```
 
 ### Criteria
 
@@ -450,6 +472,14 @@ The normative text of criteria and the glossary definitions come only from the a
 
 Run the import by hand and review the diff of the generated files in a PR.
 
+## Analytics
+
+Google Analytics runs only on the production deploy and only after consent (see `src/lib/consent.ts`). Its measurement ID comes from `VITE_GA_MEASUREMENT_ID`, read at build time. Without it, as in local development and preview deploys, there is no banner, no "Ustawienia cookies" and no script.
+
+To turn it on, add `VITE_GA_MEASUREMENT_ID=G-2DGTWE359W` to the Vercel environment variables for Production only, and redeploy. Page views of client-side navigation come from GA4's enhanced measurement ("Page changes based on browser history events", on by default in the data stream settings).
+
+The e2e suite builds with a made-up ID: every test starts with statistics refused, except `e2e/consent.spec.ts`, which stubs `gtag.js`.
+
 ## Scripts
 
 | Command | What it does |
@@ -515,6 +545,7 @@ content/         Markdown files written from Notion (git-ignored), quizzes and H
   sciezki/       one folder per learning path: lessons and their quizzes
   symulatory/    one Markdown file per kind of simulator
   wcag3/         the WCAG 3.0 draft overview and one file per guideline group
+  strony/        standalone pages: the privacy policy
 scripts/
   import-wcag.ts   generates src/content/wcag.gen.ts and wcag-text.gen.ts
   import-legal.ts  generates src/content/legal.gen.ts and legal-text.gen.ts
@@ -526,11 +557,11 @@ src/
   content/       WCAG structure, the WCAG 3.0 mapping, acts and the legal mapping, Markdown parsing and validation, the live log of pattern frames, server functions
   search/        search options, index builder and relevance tests
   progress/      reading progress and quiz scores in localStorage
-  lib/           the site address, page head tags, Polish plural forms, quiz scoring
+  lib/           the site address, page head tags, Polish plural forms, quiz scoring, statistics consent and Google Analytics
   routes/        file-based routes (__root.tsx holds the layout)
-  components/    header, theme toggle, route announcer, badges, filter chips, the AAA comparison, glossary previews, example and pattern frames and cards, the screen reader log, the simulator list, the quiz
+  components/    header, footer, consent card, theme toggle, route announcer, badges, filter chips, the AAA comparison, glossary previews, example and pattern frames and cards, the screen reader log, the simulator list, the quiz
   styles.css     Tailwind setup, colour tokens, styles for rendered Markdown
-e2e/             Playwright tests: axe, target size, animations, keyboard, example isolation, simulators, a whole path from the keyboard, WCAG 3.0, every pattern exercise, the before and after page, the sitemap and noindex
+e2e/             Playwright tests: axe, target size, animations, keyboard, statistics consent, example isolation, simulators, a whole path from the keyboard, WCAG 3.0, every pattern exercise, the before and after page, the sitemap and noindex
 docs/
   accessibility.md   the accessibility checklist
   design/            dated plans and mocks

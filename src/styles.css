@@ -54,6 +54,11 @@
     scroll-padding-bottom: 4.5rem;
   }
 
+  /* While the consent banner shows (src/components/consent.tsx), focus also stops above it. */
+  html[data-consent="open"] {
+    scroll-padding-bottom: max(4.5rem, calc(var(--consent-height, 0px) + 2rem));
+  }
+
   body {
     @apply bg-paper font-sans text-ink antialiased;
   }

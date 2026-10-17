@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MapowanieRouteImport } from './routes/mapowanie'
+import { Route as PrywatnoscRouteImport } from './routes/prywatnosc'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as SearchIndexDotjsonRouteImport } from './routes/search-index[.]json'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
@@ -47,6 +48,11 @@ const IndexRoute = IndexRouteImport.update({
 const MapowanieRoute = MapowanieRouteImport.update({
   id: '/mapowanie',
   path: '/mapowanie',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrywatnoscRoute = PrywatnoscRouteImport.update({
+  id: '/prywatnosc',
+  path: '/prywatnosc',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
@@ -188,6 +194,7 @@ const SciezkiPathLessonRoute = SciezkiPathLessonRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/mapowanie': typeof MapowanieRoute
+  '/prywatnosc': typeof PrywatnoscRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/search-index.json': typeof SearchIndexDotjsonRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -219,6 +226,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/mapowanie': typeof MapowanieRoute
+  '/prywatnosc': typeof PrywatnoscRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/search-index.json': typeof SearchIndexDotjsonRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -251,6 +259,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/mapowanie': typeof MapowanieRoute
+  '/prywatnosc': typeof PrywatnoscRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/search-index.json': typeof SearchIndexDotjsonRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -284,6 +293,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/mapowanie'
+    | '/prywatnosc'
     | '/robots.txt'
     | '/search-index.json'
     | '/sitemap.xml'
@@ -315,6 +325,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/mapowanie'
+    | '/prywatnosc'
     | '/robots.txt'
     | '/search-index.json'
     | '/sitemap.xml'
@@ -346,6 +357,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/mapowanie'
+    | '/prywatnosc'
     | '/robots.txt'
     | '/search-index.json'
     | '/sitemap.xml'
@@ -378,6 +390,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   MapowanieRoute: typeof MapowanieRoute
+  PrywatnoscRoute: typeof PrywatnoscRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SearchIndexDotjsonRoute: typeof SearchIndexDotjsonRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -421,6 +434,13 @@ declare module '@tanstack/react-router' {
       path: '/mapowanie'
       fullPath: '/mapowanie'
       preLoaderRoute: typeof MapowanieRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/prywatnosc': {
+      id: '/prywatnosc'
+      path: '/prywatnosc'
+      fullPath: '/prywatnosc'
+      preLoaderRoute: typeof PrywatnoscRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/robots.txt': {
@@ -618,6 +638,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   MapowanieRoute: MapowanieRoute,
+  PrywatnoscRoute: PrywatnoscRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SearchIndexDotjsonRoute: SearchIndexDotjsonRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,

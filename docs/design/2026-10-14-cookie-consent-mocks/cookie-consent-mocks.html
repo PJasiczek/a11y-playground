@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mocks: cookie consent banner for Google Analytics</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 2rem 1.25rem 6rem; background: #000; color: #fff; font: 16px/1.6 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif; }
+  main { max-width: 1240px; margin: 0 auto; }
+  h1 { font-size: 1.6rem; margin: 0 0 .5rem; letter-spacing: -.02em; }
+  h2 { font-size: 1.2rem; margin: 3rem 0 .5rem; padding-top: 1rem; border-top: 1px solid #262626; }
+  p, li { color: #e5e5e5; max-width: 80ch; }
+  code { font-family: ui-monospace, Consolas, monospace; font-size: .875em; background: #141414; border: 1px solid #262626; border-radius: 3px; padding: .05em .3em; }
+  .row { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 1.25rem; align-items: start; margin: 1rem 0; }
+  @media (max-width: 900px) { .row { grid-template-columns: 1fr; } .row figure:last-child { max-width: 360px; } }
+  figure { margin: 0; }
+  figcaption { font-size: .8rem; color: #a3a3a3; margin-top: .35rem; }
+
+  /* ---------- Site frame, colours from src/styles.css ---------- */
+  .site { --paper: #fbfaf7; --paper-2: #f1efe8; --surface: #fff; --ink: #14171a; --ink-2: #484d52; --rule: #dfdbd1; --control: #857f72; --accent: #2c36a8;
+    position: relative; overflow: hidden; height: 560px; background: var(--paper); color: var(--ink); border: 1px solid #333;
+    font: 15px/1.55 "Inter Variable", Inter, "Segoe UI", system-ui, sans-serif; }
+  .site.dark { --paper: #121416; --paper-2: #1b1e21; --surface: #1f2226; --ink: #f3f1ec; --ink-2: #b4b9be; --rule: #2e3236; --control: #7a8088; --accent: #aeb5ff; }
+  .site.phone { height: 680px; font-size: 14px; }
+  .mono { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; }
+
+  .hdr { border-bottom: 1px solid var(--rule); display: flex; flex-wrap: wrap; align-items: center; gap: .25rem 1rem; padding: .5rem 1.5rem; }
+  .hdr .mark { font-weight: 700; min-height: 44px; display: inline-flex; align-items: center; }
+  .hdr nav { margin-left: auto; display: flex; flex-wrap: wrap; gap: .25rem; }
+  .hdr nav span { min-height: 44px; display: inline-flex; align-items: center; padding: 0 .5rem; color: var(--ink-2); font-size: .94em; }
+  .hdr nav span.cur { color: var(--ink); font-weight: 600; box-shadow: inset 0 -2px var(--ink); }
+  .phone .hdr { padding: .5rem 1rem; }
+  .phone .hdr nav { order: 3; width: 100%; margin: 0; }
+  .phone .hdr .tt { margin-left: auto; }
+  .tt { width: 44px; height: 44px; border: 1px solid var(--control); border-radius: 6px; display: grid; place-items: center; }
+
+  .content { padding: 1.5rem; max-width: 760px; }
+  .phone .content { padding: 1rem; }
+  .content h3 { margin: 0 0 .5rem; font-size: 1.85em; letter-spacing: -.02em; line-height: 1.15; }
+  .content p { color: var(--ink-2); margin: 0 0 .75rem; max-width: 60ch; }
+  .content .line { height: .7em; background: var(--paper-2); border-radius: 2px; margin: .55rem 0; }
+
+  .struct { position: absolute; right: 1rem; bottom: 1rem; min-height: 44px; padding: 0 1rem; display: inline-flex; align-items: center; background: var(--surface); border: 1px solid var(--control); border-radius: 6px; font-weight: 600; font-size: .9em; }
+
+  /* ---------- Banner parts shared by all variants ---------- */
+  .cc { background: var(--surface); color: var(--ink); }
+  .cc h4 { margin: 0 0 .25rem; font-size: 1.05em; }
+  .cc p { margin: 0; color: var(--ink-2); max-width: 62ch; }
+  .cc a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+  .btns { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .btn { min-height: 44px; min-width: 44px; padding: 0 1.1rem; display: inline-flex; align-items: center; justify-content: center; border: 2px solid var(--ink); background: var(--paper); color: var(--ink); border-radius: 6px; font: inherit; font-weight: 600; }
+  .btn.focus { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+  /* A: sticky bar at the bottom */
+  .va { position: absolute; left: 0; right: 0; bottom: 0; border-top: 2px solid var(--ink); padding: 1rem 1.5rem; display: flex; gap: 1rem 2rem; align-items: center; flex-wrap: wrap; }
+  .va .txt { flex: 1 1 380px; }
+  .phone .va { padding: 1rem; }
+  .phone .va .btns .btn { flex: 1 1 0; }
+  .site.with-a .struct { bottom: calc(var(--a-h) + 1rem); }
+
+  /* B: card in the bottom-left corner */
+  .vb { position: absolute; left: 1rem; bottom: 1rem; width: 360px; border: 2px solid var(--ink); border-radius: 8px; padding: 1rem; display: grid; gap: .75rem; box-shadow: 0 6px 24px rgb(0 0 0 / .18); }
+  .phone .vb { left: .75rem; right: .75rem; width: auto; bottom: .75rem; }
+  .phone .vb .btns .btn { flex: 1 1 0; }
+  .phone.with-b .struct { display: none; }
+
+  /* C: bar above the header, in normal flow */
+  .vc { border-bottom: 2px solid var(--ink); background: var(--paper-2); }
+  .vc .in { padding: .9rem 1.5rem; display: flex; gap: .75rem 2rem; align-items: center; flex-wrap: wrap; }
+  .vc .txt { flex: 1 1 380px; }
+  .vc.cc { background: var(--paper-2); }
+  .phone .vc .in { padding: .9rem 1rem; }
+  .phone .vc .btns .btn { flex: 1 1 0; }
+
+  /* Footer with the way back to the choice */
+  .ftr { border-top: 1px solid var(--rule); padding: 1rem 1.5rem; display: flex; flex-wrap: wrap; gap: .25rem 1.25rem; font-size: .9em; color: var(--ink-2); }
+  .ftr span.l { min-height: 44px; display: inline-flex; align-items: center; color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+  .ftr .copy { margin-right: auto; min-height: 44px; display: inline-flex; align-items: center; }
+  .site.footer-only { height: auto; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Cookie consent banner: variants A, B, C</h1>
+  <p>Google Analytics <code>G-2DGTWE359W</code> with Consent Mode v2, default <code>denied</code>. Each variant: desktop in light theme, 360 px in dark theme. Colours from <code>src/styles.css</code>. Shared rules: the banner is a labelled region, not a modal, so focus is never trapped; "Odrzuć" and "Zgadzam się" look identical; targets are at least 44×44 px; no animation; after a choice focus moves to <code>#main</code>; the choice lives in <code>localStorage</code>. The focus ring on "Odrzuć" shows 2.4.13.</p>
+
+  <!-- ===================== A ===================== -->
+  <h2>A. Sticky bar at the bottom</h2>
+  <p>The most familiar pattern. It covers the bottom of the viewport, so while it is open "Struktura strony" moves above it and <code>scroll-padding-bottom</code> grows by the bar height (2.4.11).</p>
+  <div class="row">
+    <figure>
+      <div class="site with-a" style="--a-h: 92px">
+        <div class="hdr">
+          <span class="mark"><span class="mono">a11y</span>&nbsp;playground</span>
+          <nav><span class="cur">Start</span><span>Kryteria</span><span>WCAG 3.0</span><span>Prawo</span><span>Praktyka</span><span>Symulatory</span><span>Ścieżki</span><span>Słownik</span></nav>
+          <span class="tt">☾</span>
+        </div>
+        <div class="content">
+          <h3>Dostępność cyfrowa w praktyce</h3>
+          <p>Kryteria WCAG 2.2 po polsku, z przykładami, symulatorami i ścieżkami nauki.</p>
+          <div class="line" style="width:92%"></div><div class="line" style="width:84%"></div><div class="line" style="width:88%"></div><div class="line" style="width:60%"></div>
+        </div>
+        <span class="struct">Struktura strony</span>
+        <section class="cc va" aria-labelledby="a1">
+          <div class="txt">
+            <h4 id="a1">Statystyki odwiedzin</h4>
+            <p>Za Twoją zgodą liczymy odwiedziny przez Google Analytics, żeby wiedzieć, które strony są przydatne. <a>Polityka prywatności</a></p>
+          </div>
+          <div class="btns"><span class="btn focus">Odrzuć</span><span class="btn">Zgadzam się</span></div>
+        </section>
+      </div>
+      <figcaption>A, desktop, light</figcaption>
+    </figure>
+    <figure>
+      <div class="site dark phone with-a" style="--a-h: 232px">
+        <div class="hdr">
+          <span class="mark"><span class="mono">a11y</span>&nbsp;playground</span>
+          <span class="tt">☀</span>
+          <nav><span class="cur">Start</span><span>Kryteria</span><span>WCAG 3.0</span><span>Prawo</span><span>Praktyka</span><span>Symulatory</span><span>Ścieżki</span><span>Słownik</span></nav>
+        </div>
+        <div class="content">
+          <h3>Dostępność cyfrowa w praktyce</h3>
+          <p>Kryteria WCAG 2.2 po polsku, z przykładami.</p>
+          <div class="line" style="width:92%"></div><div class="line" style="width:80%"></div>
+        </div>
+        <span class="struct">Struktura strony</span>
+        <section class="cc va" aria-labelledby="a2">
+          <div class="txt">
+            <h4 id="a2">Statystyki odwiedzin</h4>
+            <p>Za Twoją zgodą liczymy odwiedziny przez Google Analytics, żeby wiedzieć, które strony są przydatne. <a>Polityka prywatności</a></p>
+          </div>
+          <div class="btns" style="width:100%"><span class="btn focus">Odrzuć</span><span class="btn">Zgadzam się</span></div>
+        </section>
+      </div>
+      <figcaption>A, 360 px, dark</figcaption>
+    </figure>
+  </div>
+
+  <!-- ===================== B ===================== -->
+  <h2>B. Card in the bottom-left corner</h2>
+  <p>Opposite corner from "Struktura strony". Covers the least content on desktop. On a phone it becomes full width and takes about a third of the screen; "Struktura strony" hides until the choice is made.</p>
+  <div class="row">
+    <figure>
+      <div class="site">
+        <div class="hdr">
+          <span class="mark"><span class="mono">a11y</span>&nbsp;playground</span>
+          <nav><span class="cur">Start</span><span>Kryteria</span><span>WCAG 3.0</span><span>Prawo</span><span>Praktyka</span><span>Symulatory</span><span>Ścieżki</span><span>Słownik</span></nav>
+          <span class="tt">☾</span>
+        </div>
+        <div class="content">
+          <h3>Dostępność cyfrowa w praktyce</h3>
+          <p>Kryteria WCAG 2.2 po polsku, z przykładami, symulatorami i ścieżkami nauki.</p>
+          <div class="line" style="width:92%"></div><div class="line" style="width:84%"></div><div class="line" style="width:88%"></div><div class="line" style="width:60%"></div>
+        </div>
+        <span class="struct">Struktura strony</span>
+        <section class="cc vb" aria-labelledby="b1">
+          <div>
+            <h4 id="b1">Statystyki odwiedzin</h4>
+            <p>Za Twoją zgodą liczymy odwiedziny przez Google Analytics, żeby wiedzieć, które strony są przydatne. <a>Polityka prywatności</a></p>
+          </div>
+          <div class="btns"><span class="btn focus">Odrzuć</span><span class="btn">Zgadzam się</span></div>
+        </section>
+      </div>
+      <figcaption>B, desktop, light</figcaption>
+    </figure>
+    <figure>
+      <div class="site dark phone with-b">
+        <div class="hdr">
+          <span class="mark"><span class="mono">a11y</span>&nbsp;playground</span>
+          <span class="tt">☀</span>
+          <nav><span class="cur">Start</span><span>Kryteria</span><span>WCAG 3.0</span><span>Prawo</span><span>Praktyka</span><span>Symulatory</span><span>Ścieżki</span><span>Słownik</span></nav>
+        </div>
+        <div class="content">
+          <h3>Dostępność cyfrowa w praktyce</h3>
+          <p>Kryteria WCAG 2.2 po polsku, z przykładami.</p>
+          <div class="line" style="width:92%"></div><div class="line" style="width:80%"></div>
+        </div>
+        <span class="struct">Struktura strony</span>
+        <section class="cc vb" aria-labelledby="b2">
+          <div>
+            <h4 id="b2">Statystyki odwiedzin</h4>
+            <p>Za Twoją zgodą liczymy odwiedziny przez Google Analytics, żeby wiedzieć, które strony są przydatne. <a>Polityka prywatności</a></p>
+          </div>
+          <div class="btns"><span class="btn focus">Odrzuć</span><span class="btn">Zgadzam się</span></div>
+        </section>
+      </div>
+      <figcaption>B, 360 px, dark</figcaption>
+    </figure>
+  </div>
+
+  <!-- ===================== C ===================== -->
+  <h2>C. Bar above the header, in normal flow (recommended)</h2>
+  <p>Pushes the page down instead of covering it, adds nothing sticky, so 2.4.11 is not at risk. It sits right after the skip link: first in Tab order and reading order. After a choice it disappears and focus moves to <code>#main</code>.</p>
+  <div class="row">
+    <figure>
+      <div class="site">
+        <section class="cc vc" aria-labelledby="c1">
+          <div class="in">
+            <div class="txt">
+              <h4 id="c1">Statystyki odwiedzin</h4>
+              <p>Za Twoją zgodą liczymy odwiedziny przez Google Analytics, żeby wiedzieć, które strony są przydatne. <a>Polityka prywatności</a></p>
+            </div>
+            <div class="btns"><span class="btn focus">Odrzuć</span><span class="btn">Zgadzam się</span></div>
+          </div>
+        </section>
+        <div class="hdr">
+          <span class="mark"><span class="mono">a11y</span>&nbsp;playground</span>
+          <nav><span class="cur">Start</span><span>Kryteria</span><span>WCAG 3.0</span><span>Prawo</span><span>Praktyka</span><span>Symulatory</span><span>Ścieżki</span><span>Słownik</span></nav>
+          <span class="tt">☾</span>
+        </div>
+        <div class="content">
+          <h3>Dostępność cyfrowa w praktyce</h3>
+          <p>Kryteria WCAG 2.2 po polsku, z przykładami, symulatorami i ścieżkami nauki.</p>
+          <div class="line" style="width:92%"></div><div class="line" style="width:84%"></div><div class="line" style="width:88%"></div>
+        </div>
+        <span class="struct">Struktura strony</span>
+      </div>
+      <figcaption>C, desktop, light</figcaption>
+    </figure>
+    <figure>
+      <div class="site dark phone">
+        <section class="cc vc" aria-labelledby="c2">
+          <div class="in">
+            <div class="txt">
+              <h4 id="c2">Statystyki odwiedzin</h4>
+              <p>Za Twoją zgodą liczymy odwiedziny przez Google Analytics, żeby wiedzieć, które strony są przydatne. <a>Polityka prywatności</a></p>
+            </div>
+            <div class="btns" style="width:100%"><span class="btn focus">Odrzuć</span><span class="btn">Zgadzam się</span></div>
+          </div>
+        </section>
+        <div class="hdr">
+          <span class="mark"><span class="mono">a11y</span>&nbsp;playground</span>
+          <span class="tt">☀</span>
+          <nav><span class="cur">Start</span><span>Kryteria</span><span>WCAG 3.0</span><span>Prawo</span><span>Praktyka</span><span>Symulatory</span><span>Ścieżki</span><span>Słownik</span></nav>
+        </div>
+        <div class="content">
+          <h3>Dostępność cyfrowa w praktyce</h3>
+          <p>Kryteria WCAG 2.2 po polsku, z przykładami.</p>
+        </div>
+        <span class="struct">Struktura strony</span>
+      </div>
+      <figcaption>C, 360 px, dark</figcaption>
+    </figure>
+  </div>
+
+  <!-- ===================== Footer ===================== -->
+  <h2>Shared: footer with a way back to the choice</h2>
+  <p>The layout has no footer today. Withdrawing consent must be as easy as giving it, so every variant needs a permanent "Ustawienia cookies" control. It is a button that shows the banner again, with the current choice stated in the text.</p>
+  <div class="row">
+    <figure>
+      <div class="site footer-only">
+        <div class="ftr"><span class="copy">a11y playground</span><span class="l">Polityka prywatności</span><span class="l">Ustawienia cookies (odrzucone)</span></div>
+      </div>
+      <figcaption>Footer, desktop, light</figcaption>
+    </figure>
+    <figure>
+      <div class="site dark phone footer-only">
+        <div class="ftr"><span class="copy">a11y playground</span><span class="l">Polityka prywatności</span><span class="l">Ustawienia cookies (odrzucone)</span></div>
+      </div>
+      <figcaption>Footer, 360 px, dark</figcaption>
+    </figure>
+  </div>
+</main>
+</body>
+</html>

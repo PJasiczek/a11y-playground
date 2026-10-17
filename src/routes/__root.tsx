@@ -1,5 +1,7 @@
 import { createRootRoute, HeadContent, Link, Outlet, Scripts } from "@tanstack/react-router";
+import { ConsentBanner } from "~/components/consent";
 import { RouteAnnouncer } from "~/components/route-announcer";
+import { SiteFooter } from "~/components/site-footer";
 import { SiteHeader } from "~/components/site-header";
 import { StructureTool } from "~/components/structure-tool";
 import { themeInitScript } from "~/components/theme-toggle";
@@ -53,6 +55,8 @@ function RootDocument() {
         <main id="main" tabIndex={-1} className="mx-auto max-w-245 px-4 pb-16 outline-none sm:px-7">
           <Outlet />
         </main>
+        <ConsentBanner />
+        <SiteFooter />
         <RouteAnnouncer />
         <StructureTool />
         <Scripts />
