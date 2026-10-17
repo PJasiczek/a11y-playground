@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan: contact page edited in Notion</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1.25rem 6rem;
+    background: #000; color: #fff;
+    font: 16px/1.65 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  main { max-width: 82ch; margin: 0 auto; }
+  h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 .5rem; letter-spacing: -.02em; }
+  h2 { font-size: 1.2rem; margin: 3rem 0 .75rem; padding-top: 1rem; border-top: 1px solid #262626; letter-spacing: -.01em; }
+  h3 { font-size: 1rem; margin: 1.75rem 0 .5rem; }
+  p, li, dd { color: #e5e5e5; }
+  a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  ul, ol { padding-left: 1.3rem; }
+  li { margin: .3rem 0; }
+  code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .875em; background: #141414; border: 1px solid #262626; border-radius: 3px; padding: .08em .3em; }
+  pre { background: #0b0b0b; border: 1px solid #262626; border-radius: 4px; padding: .9rem 1rem; overflow-x: auto; }
+  pre code { background: none; border: 0; padding: 0; font-size: .82rem; line-height: 1.55; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; display: block; overflow-x: auto; }
+  th, td { border: 1px solid #262626; padding: .45rem .6rem; text-align: left; vertical-align: top; }
+  th { background: #101010; font-weight: 600; }
+  .meta { color: #a3a3a3; font-size: .85rem; margin: 0 0 1.5rem; }
+  .meta a { color: #fff; }
+  .flag { border-left: 2px solid #737373; padding: .1rem 0 .1rem .85rem; margin: 1rem 0; color: #d4d4d4; font-size: .93rem; }
+  .toc { border: 1px solid #262626; padding: 1rem 1rem 1rem 2.4rem; margin: 1.5rem 0 0; }
+  .toc li { margin: .15rem 0; }
+  @media (max-width: 40rem) { body { padding: 1.25rem .9rem 4rem; } h1 { font-size: 1.45rem; } }
+</style>
+</head>
+<body>
+<main>
+
+<p class="meta"><a href="contact-page.pl.html" hreflang="pl">Wersja polska</a></p>
+
+<h1>Plan: contact page edited in Notion</h1>
+<p class="meta">Brief: add a Contact section whose text you change in a Notion subpage. Plan version: 2026-10-17. Mocks: <code>docs/design/2026-10-17-contact-mocks/contact-mocks.html</code>.</p>
+
+<p class="flag">Settled before the plan: e-mail and links only, no form. Linked from the main navigation and the footer. No separate "Report an accessibility problem" block.</p>
+
+<p class="flag">Decisions of 2026-10-17: variant B is picked. Contact is in the footer only for now. With nine items the navigation does not fit on one row (it needs 985 px and has 924 px), so "Kontakt" joins the navigation together with a collapsible menu, as separate work. The page description from Notion doubles as the lead under the heading.</p>
+
+<ol class="toc">
+  <li><a href="#stan">Today</a></li>
+  <li><a href="#zakres">Scope</a></li>
+  <li><a href="#notion">The Notion page</a></li>
+  <li><a href="#kod">Code</a></li>
+  <li><a href="#a11y">Accessibility</a></li>
+  <li><a href="#testy">Tests and README</a></li>
+  <li><a href="#kolejnosc">Rollout order</a></li>
+  <li><a href="#commity">Branch and commits</a></li>
+  <li><a href="#decyzje">Decisions</a></li>
+  <li><a href="#poza">Out of scope</a></li>
+</ol>
+
+<h2 id="stan">1. Today</h2>
+<ul>
+  <li>The privacy policy is the first "standalone page": the <code>prywatnosc</code> subpage under <code>strony</code> in Notion. The import writes it to <code>content/strony/prywatnosc.md</code>, and <code>src/content/pages.ts</code> parses the frontmatter (<code>title</code>, <code>description</code>, <code>updated</code>) and renders the body.</li>
+  <li>Saving in Notion sends a webhook to <code>/api/notion-webhook</code>, which starts a Vercel deploy. The change is live a few minutes later, without a commit.</li>
+  <li>The footer has "Polityka prywatności" and "Ustawienia cookies". The "Główna" navigation has eight items.</li>
+  <li>The privacy policy still has a placeholder, "kontakt: [adres e-mail]".</li>
+</ul>
+<p>The mechanism exists. Contact is a second page of the same kind.</p>
+
+<h2 id="zakres">2. Scope</h2>
+<ul>
+  <li>A <code>/kontakt</code> page with its text from the <code>strony/kontakt</code> subpage in Notion.</li>
+  <li>"Kontakt" as the last item of the "Główna" navigation and the first link in the footer.</li>
+  <li>The page is in the sitemap and indexed.</li>
+  <li>Layout per the chosen variant A, B or C from the mocks.</li>
+</ul>
+
+<h2 id="notion">3. The Notion page</h2>
+<p>A new subpage titled <code>kontakt</code> under <code>strony</code>, next to <code>prywatnosc</code>. The subpage title in Notion is the file slug, as today. The format does not change: a yaml code block first, then the body.</p>
+
+<h3>Variant A</h3>
+<pre><code>```yaml
+title: Kontakt
+description: Jak napisać do autora a11y playground.
+updated: 2026-10-17
+```
+
+Masz pytanie o dostępność, widzisz błąd w treści albo przykład, który nie działa? Napisz do mnie.
+
+## E-mail
+
+kontakt@przyklad.pl. Odpowiadam zwykle w ciągu tygodnia.
+
+## Gdzie jeszcze
+
+- Błędy w aplikacji: [github.com/PJasiczek](https://github.com/PJasiczek)
+- Sprawy zawodowe: [linkedin.com/in/przyklad](https://linkedin.com/in/przyklad)</code></pre>
+<p>A bare e-mail address in the body becomes a <code>mailto:</code> link (GFM autolink in <code>marked</code>). The import already shortens a link whose text is its address to the bare address.</p>
+
+<h3>Variant B: one more field</h3>
+<pre><code>email: kontakt@przyklad.pl</code></pre>
+<p>The address is then not needed in the body. A typo in it fails the build (<code>string.email</code> in ArkType), so the site keeps the last good version.</p>
+
+<h3>Variant C: one more list</h3>
+<pre><code>links:
+  - { label: E-mail, href: "mailto:kontakt@przyklad.pl", note: Odpowiadam zwykle w ciągu tygodnia. }
+  - { label: GitHub, href: "https://github.com/PJasiczek", note: Błędy w aplikacji. }
+  - { label: LinkedIn, href: "https://linkedin.com/in/przyklad", note: Sprawy zawodowe. }</code></pre>
+<p>The link text is derived from <code>href</code> without <code>mailto:</code> and <code>https://</code>, so the address and the text cannot drift apart. <code>href</code> must start with <code>mailto:</code> or <code>https://</code>, otherwise the build fails.</p>
+
+<h2 id="kod">4. Code</h2>
+<h3>Shared by all variants</h3>
+<table>
+  <thead><tr><th>File</th><th>Change</th></tr></thead>
+  <tbody>
+    <tr><td><code>src/routes/kontakt.tsx</code></td><td>New route: loader, <code>pageHead</code>, <code>h1</code> and body. No "Ostatnia zmiana".</td></tr>
+    <tr><td><code>src/content/pages.functions.ts</code></td><td><code>getContactPage</code> next to <code>getPrivacyPolicy</code>.</td></tr>
+    <tr><td><code>src/content/pages.ts</code></td><td>Update the "Only the privacy policy so far" comment.</td></tr>
+    <tr><td><code>src/content/site-pages.ts</code></td><td><code>"/kontakt": true</code>. <code>tsc</code> fails without it, so the sitemap cannot miss the page.</td></tr>
+    <tr><td><code>src/components/site-header.tsx</code></td><td><code>{ to: "/kontakt", label: "Kontakt" }</code> at the end of <code>navItems</code>.</td></tr>
+    <tr><td><code>src/components/site-footer.tsx</code></td><td>"Kontakt" link before "Polityka prywatności"; update the component comment.</td></tr>
+    <tr><td><code>src/routeTree.gen.ts</code></td><td>Generated by the router.</td></tr>
+  </tbody>
+</table>
+
+<h3>A: nothing more</h3>
+<p>The route renders the HTML from <code>standalonePage("kontakt")</code> inside <code>.prose</code>, like the privacy policy.</p>
+
+<h3>B: the <code>email</code> field and a copy button</h3>
+<ul>
+  <li><code>standalonePage</code> takes an optional schema extension (<code>Frontmatter.merge(...)</code>) and infers its return type from it. The privacy policy passes nothing and works as today.</li>
+  <li><code>src/components/copy-address.tsx</code>: a "Kopiuj adres" button, <code>navigator.clipboard.writeText</code>, and "Skopiowano adres" in a <code>role="status"</code> region. Without JavaScript the button is hidden and the <code>mailto:</code> link still works.</li>
+</ul>
+
+<h3>C: the <code>links</code> list</h3>
+<ul>
+  <li>The same schema extension as B, with a typed list of <code>{ label, href, note? }</code>.</li>
+  <li>The list renders in the route as a <code>ul</code> of rows; no new component while only one page uses it.</li>
+</ul>
+
+<h2 id="a11y">5. Accessibility</h2>
+<ul>
+  <li>One <code>h1</code> "Kontakt", the Notion sections as <code>h2</code>. The existing axe scan checks the heading order.</li>
+  <li>The link text is the address itself, so it says where it goes (2.4.4).</li>
+  <li>Links in the nav, the footer and the B/C rows are 44 px high (2.5.5). Links inside paragraphs are inline and fall under the inline exception.</li>
+  <li>The current nav item: bold, underline and <code>aria-current="page"</code>, not colour alone (1.4.1). No code change; <code>Link</code> already does it.</li>
+  <li>B: the message after copying is in <code>role="status"</code> (4.1.3), focus stays on the button, the ✓ icon is <code>aria-hidden</code>. The message does not disappear on its own.</li>
+  <li>A long address wraps (<code>overflow-wrap: anywhere</code>), with no horizontal scrolling at 320 px (1.4.10).</li>
+  <li>Colours only from the existing tokens, which meet 7:1 for text.</li>
+  <li>Nine nav items: on a phone the list wraps onto another row, as it does today. At about 1000 px the desktop row is close to full; I check with screenshots at 1024 and 768 px.</li>
+</ul>
+
+<h2 id="testy">6. Tests and README</h2>
+<ul>
+  <li><code>e2e/a11y.spec.ts</code>: <code>/kontakt</code> on the list of pages axe scans. For A that is the whole new test.</li>
+  <li>B: a unit test of the schema (a bad address fails parsing) in <code>pages.test.ts</code>; an e2e test that "Kopiuj adres" shows the message (with the clipboard permission in Playwright).</li>
+  <li>C: a unit test that an <code>href</code> outside <code>mailto:</code>/<code>https://</code> fails parsing, and that the link text is derived from <code>href</code>.</li>
+  <li>README: a "Contact" item in the feature list, the <code>content/strony</code> line names <code>kontakt</code>, a new <code>docs/screenshots/contact.png</code>. I refresh <code>home-*.png</code>, because the header changes.</li>
+</ul>
+
+<h2 id="kolejnosc">7. Rollout order</h2>
+<p>The build fails without <code>content/strony/kontakt.md</code>, and CI imports the content from Notion. So the Notion subpage has to exist before the tests run on the branch.</p>
+<ol>
+  <li>You create the <code>kontakt</code> subpage under <code>strony</code> in Notion (or I do it through the API if you say so; it is live content, so I ask). That starts a production deploy, but the current code ignores unknown files in <code>content/strony</code>, so production does not change.</li>
+  <li>Code on the branch, lint, build and tests locally.</li>
+  <li>After the merge, every change in Notion reaches <code>/kontakt</code> through the webhook.</li>
+</ol>
+
+<h2 id="commity">8. Branch and commits</h2>
+<p>Branch <code>feat/contact-page</code> from <code>master</code>. I create it only after your go-ahead.</p>
+<ol>
+  <li><code>docs(design): add contact page plan and mocks</code>: this plan and the mocks.</li>
+  <li><code>feat(content): add contact page edited in Notion</code>: route, server function, <code>site-pages</code>, header, footer, tests, README and screenshots. One commit: it is one feature, and typed links to <code>/kontakt</code> do not compile without the route.</li>
+</ol>
+
+<h2 id="decyzje">9. Decisions</h2>
+<ul>
+  <li><strong>Variant:</strong> A, B or C. I recommend A: the whole page is edited in Notion, with no new code to maintain. B if you want the address to be the main thing on the page and easy to copy. C if you expect several channels.</li>
+  <li><strong>Who creates the Notion subpage:</strong> you, or me through the API.</li>
+  <li><strong>Privacy policy:</strong> whether to replace "kontakt: [adres e-mail]" with a link to <code>/kontakt</code>. That is a content change in Notion, outside this code.</li>
+</ul>
+
+<h2 id="poza">10. Out of scope</h2>
+<ul>
+  <li>A contact form and everything it would need (an endpoint, spam protection, a privacy policy change).</li>
+  <li>A "Report an accessibility problem" block and an accessibility statement.</li>
+  <li>Changes to other Notion pages.</li>
+</ul>
+
+</main>
+</body>
+</html>
