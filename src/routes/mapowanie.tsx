@@ -89,7 +89,7 @@ function ObligationsPage() {
           <table className="w-full border-collapse text-[0.9375rem]">
             <caption className="py-2 text-left text-ink-2">Kryteria WCAG w sytuacji: {picked.label.toLowerCase()}</caption>
             <thead>
-              <tr className="border-b border-ink text-left font-mono text-xs tracking-wide text-ink-2 uppercase">
+              <tr className="border-b border-ink text-left text-xs tracking-wide text-ink-2 uppercase">
                 <th scope="col" className="py-2 pr-3">
                   Kryterium
                 </th>
@@ -112,7 +112,7 @@ function ObligationsPage() {
                         params={{ criterionId: edge.criterion }}
                         className="inline-flex min-h-11 items-center gap-1.5 underline underline-offset-3"
                       >
-                        <b className="font-mono">{edge.criterion}</b> {criterion?.name}
+                        <b>{edge.criterion}</b> {criterion?.name}
                       </Link>{" "}
                       {criterion ? <LevelBadge level={criterion.level} /> : null}
                     </th>

@@ -4,6 +4,7 @@ import { AaaNote, AppMeets, EnhancesStrip } from "~/components/aaa";
 import { ProblemLinks } from "~/components/before-after";
 import { ProvisionLink, StrengthLabel } from "~/components/legal";
 import { LevelBadge, NewBadge, WorkingDraftBadge } from "~/components/level-badge";
+import { type Kind, KindIcon, kinds } from "~/components/kinds";
 import { TermTips } from "~/components/term-tips";
 import { appMeets } from "~/content/app-meets";
 import { getCriterionPage } from "~/content/content.functions";
@@ -44,17 +45,19 @@ export const Route = createFileRoute("/kryteria/$criterionId")({
 /**
  * Fixed order, so the page can be read by habit. Sections with a `content` key come from the
  * Markdown file; the rest come from the normative text, the examples and the legal mapping.
+ * `kind` colours the section's tab by what it holds (DESIGN.md, "Colour meanings"): the norm and
+ * the law are plum, errors lollipop, the example slide, how to meet it grass.
  */
 const pageSections = [
-  { id: "kogo-dotyczy", title: "Kogo to dotyczy", content: "kogo-dotyczy" },
-  { id: "tresc-normy", title: "Treść normy" },
-  { id: "jak-spelnic", title: "Jak to spełnić", content: "jak-spelnic" },
-  { id: "typowe-bledy", title: "Typowe błędy", content: "typowe-bledy" },
-  { id: "przyklad", title: "Przykład" },
-  { id: "jak-sprawdzic", title: "Jak sprawdzić", content: "jak-sprawdzic" },
-  { id: "prawo", title: "Prawo" },
-  { id: "powiazane", title: "Powiązane" },
-] as const satisfies readonly { id: string; title: string; content?: SectionKey }[];
+  { id: "kogo-dotyczy", title: "Kogo to dotyczy", content: "kogo-dotyczy", kind: "kryteria" },
+  { id: "tresc-normy", title: "Treść normy", kind: "prawo" },
+  { id: "jak-spelnic", title: "Jak to spełnić", content: "jak-spelnic", kind: "sciezki" },
+  { id: "typowe-bledy", title: "Typowe błędy", content: "typowe-bledy", kind: "symulatory" },
+  { id: "przyklad", title: "Przykład", kind: "praktyka" },
+  { id: "jak-sprawdzic", title: "Jak sprawdzić", content: "jak-sprawdzic", kind: "wcag3" },
+  { id: "prawo", title: "Prawo", kind: "prawo" },
+  { id: "powiazane", title: "Powiązane", kind: "kryteria" },
+] as const satisfies readonly { id: string; title: string; content?: SectionKey; kind: Kind }[];
 
 const chipClass =
   "inline-flex min-h-11 items-center gap-2 rounded border border-control bg-surface px-3 text-[0.9375rem] hover:border-ink";
@@ -81,7 +84,7 @@ function CriterionPage() {
       key: id,
       node: related ? (
         <Link to="/kryteria/$criterionId" params={{ criterionId: id }} className={chipClass}>
-          <b className="font-mono">{id}</b> {related.name} <LevelBadge level={related.level} />
+          <b>{id}</b> {related.name} <LevelBadge level={related.level} />
         </Link>
       ) : null,
     };
@@ -107,12 +110,12 @@ function CriterionPage() {
         key: g.num,
         node: (
           <Link to="/wcag-3" hash={g.anchor} className={chipClass}>
-            <b className="font-mono">{g.num}</b> {g.title}
+            <b>{g.num}</b> {g.title}
           </Link>
         ),
       })),
       note: (
-        <p className="mt-2 flex flex-wrap items-center gap-2 font-mono text-[0.8125rem] text-ink-2">
+        <p className="mt-2 flex flex-wrap items-center gap-2 text-[0.8125rem] text-ink-2">
           <WorkingDraftBadge /> przypisanie nasze, wersja robocza może je zmienić
         </p>
       ),
@@ -129,7 +132,7 @@ function CriterionPage() {
         </summary>
         <div className="px-4 pb-4">
           <div className="normative" dangerouslySetInnerHTML={{ __html: normative }} />
-          <p className="mt-3 font-mono text-[0.8125rem] text-ink-2">
+          <p className="mt-3 text-[0.8125rem] text-ink-2">
             <a href="https://www.w3.org/Translations/WCAG21-pl/" className="underline underline-offset-3">
               Autoryzowane tłumaczenie WCAG 2.1 (W3C)
             </a>
@@ -174,7 +177,7 @@ function CriterionPage() {
         <ProblemLinks problems={beforeAfter} />
         {lessons.length > 0 ? (
           <>
-            <h3 className="mt-5 font-mono text-xs font-semibold tracking-widest text-ink-2 uppercase">W ścieżkach</h3>
+            <h3 className="mt-5 text-xs font-semibold tracking-widest text-ink-2 uppercase">W ścieżkach</h3>
             <ul className="mt-2 flex flex-wrap gap-2">
               {lessons.map((lesson) => (
                 <li key={`${lesson.path}/${lesson.lesson}`}>
@@ -200,7 +203,7 @@ function CriterionPage() {
           <table className="w-full border-collapse text-[0.9375rem]">
             <caption className="sr-only">Kto musi spełnić kryterium {criterion.id}</caption>
             <thead>
-              <tr className="border-b border-ink text-left font-mono text-xs tracking-wide text-ink-2 uppercase">
+              <tr className="border-b border-ink text-left text-xs tracking-wide text-ink-2 uppercase">
                 <th scope="col" className="py-2 pr-3 font-semibold">
                   Sytuacja
                 </th>
@@ -235,14 +238,14 @@ function CriterionPage() {
                     ) : null}
                     {row.note ? <span className="mt-0.5 block text-ink-2">{row.note}</span> : null}
                   </td>
-                  <td className="py-3 font-mono whitespace-nowrap">{row.since ? formatDate(row.since) : "—"}</td>
+                  <td className="py-3 whitespace-nowrap">{row.since ? formatDate(row.since) : "—"}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
         <p className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 text-[0.9375rem]">
-          {clause ? <span className="font-mono text-[0.8125rem] text-ink-2">Technicznie: EN 301 549, punkt {clause}</span> : null}
+          {clause ? <span className="text-[0.8125rem] text-ink-2">Technicznie: EN 301 549, punkt {clause}</span> : null}
           <Link to="/mapowanie" className="inline-flex min-h-11 items-center text-accent underline underline-offset-3">
             Co obowiązuje twój produkt
           </Link>
@@ -256,7 +259,7 @@ function CriterionPage() {
           <dl>
             {relations.map(({ label, links, note }) => (
               <div key={label} className="grid gap-x-4 gap-y-1 border-t border-rule py-3 sm:grid-cols-[10rem_1fr]">
-                <dt className="font-mono text-[0.8125rem] font-semibold text-ink-2 sm:pt-3">{label}</dt>
+                <dt className="text-[0.8125rem] font-semibold text-ink-2 sm:pt-3">{label}</dt>
                 <dd>
                   <ul className="flex flex-wrap gap-2">
                     {links.map(({ key, node }) => (
@@ -277,57 +280,64 @@ function CriterionPage() {
 
   return (
     <article>
-      <nav aria-label="Okruszki" className="pt-4 font-mono text-[0.8125rem] text-ink-2">
-        <ol className="flex flex-wrap items-center gap-x-2">
-          <li>
-            <Link to="/kryteria" className="inline-flex min-h-11 items-center underline underline-offset-3">
-              Kryteria
-            </Link>
-          </li>
-          <li aria-hidden="true">/</li>
-          <li>
-            <span aria-current="page">{criterion.id}</span>
-          </li>
-        </ol>
-      </nav>
+      {/* The band in the kind's colour (DESIGN.md, "Reference"): ink text only, 9:1 or more on the fill. */}
+      <div className={`${kinds.kryteria.className} mt-5 rounded-lg bg-kind px-5 pb-8 sm:px-8`}>
+        <nav aria-label="Okruszki" className="pt-3 text-[0.8125rem]">
+          <ol className="flex flex-wrap items-center gap-x-2">
+            <li>
+              <Link to="/kryteria" className="inline-flex min-h-11 min-w-11 items-center underline underline-offset-3">
+                Kryteria
+              </Link>
+            </li>
+            <li aria-hidden="true">/</li>
+            <li>
+              <span aria-current="page">{criterion.id}</span>
+            </li>
+          </ol>
+        </nav>
 
-      <header className="border-b border-rule pt-4 pb-8">
-        <h1 className="text-[clamp(1.5rem,4vw,2.125rem)] leading-tight font-bold tracking-tight">
-          <span className="mb-2 block font-mono text-[clamp(2.5rem,8vw,4rem)] leading-[0.9] tracking-tighter">
-            {criterion.id}
-          </span>{" "}
-          {criterion.name}
-        </h1>
-        <p className="mt-4 flex flex-wrap items-center gap-2 font-mono text-[0.8125rem] text-ink-2">
-          <LevelBadge level={criterion.level} />
-          {isNewIn22(criterion) ? <NewBadge /> : null}
-          {isObsolete(criterion) ? <span>wycofane w WCAG 2.2</span> : <span>od WCAG {criterion.versions[0]}</span>}
-          <span aria-hidden="true">·</span>
-          <span>
-            {principle.num}. {principle.name}, {guideline.num} {guideline.name}
-          </span>
-          {content && content.roles.length > 0 ? (
-            <>
-              <span aria-hidden="true">·</span>
-              <span>dotyczy: {content.roles.join(", ")}</span>
-            </>
-          ) : null}
-        </p>
-        {content ? <p className="mt-7 max-w-[56ch] text-xl leading-normal">{content.summary}</p> : null}
+        <header className="pt-3">
+          <h1 className="text-[clamp(1.75rem,4vw,2.75rem)] leading-[1.08] font-extrabold tracking-[-0.03em]">
+            <span className="mb-3 inline-block rounded-sm bg-surface px-3 py-1 text-[clamp(2rem,6vw,3rem)] leading-none font-semibold tracking-tight shadow-[0_3px_0_0_var(--kind-d)]">
+              {criterion.id}
+            </span>{" "}
+            <span className="block">{criterion.name}</span>
+          </h1>
+          <p className="mt-4 flex flex-wrap items-center gap-2 text-[0.8125rem]">
+            <LevelBadge level={criterion.level} />
+            {isNewIn22(criterion) ? <NewBadge /> : null}
+            {isObsolete(criterion) ? <span>wycofane w WCAG 2.2</span> : <span>od WCAG {criterion.versions[0]}</span>}
+            <span aria-hidden="true">·</span>
+            <span>
+              {principle.num}. {principle.name}, {guideline.num} {guideline.name}
+            </span>
+            {content && content.roles.length > 0 ? (
+              <>
+                <span aria-hidden="true">·</span>
+                <span>dotyczy: {content.roles.join(", ")}</span>
+              </>
+            ) : null}
+          </p>
+          {content ? <p className="mt-6 max-w-[56ch] text-xl leading-normal font-semibold">{content.summary}</p> : null}
+        </header>
+      </div>
+      <div>
         {criterion.level === "AAA" ? <AaaNote /> : null}
         {meets ? <AppMeets note={meets} /> : null}
         {content?.enhances ? <EnhancesStrip criterion={criterion} enhances={content.enhances} /> : null}
-      </header>
+      </div>
 
       <div className="grid gap-10 pt-8 lg:grid-cols-[1fr_13rem] lg:gap-12">
-        <nav aria-labelledby="toc-title" className="self-start lg:order-2">
-          <h2 id="toc-title" className="mb-2 font-mono text-xs font-semibold tracking-widest text-ink-2 uppercase">
+        {/* The pocket: contents in reach while reading, sticky from 1024px up. */}
+        <nav aria-labelledby="toc-title" className="self-start rounded-lg bg-surface p-4 shadow-[0_1px_0_var(--rule)] lg:sticky lg:top-4 lg:order-2">
+          <h2 id="toc-title" className="mb-1 text-[0.9375rem] font-extrabold">
             Na tej stronie
           </h2>
           <ol>
-            {pageSections.map(({ id, title }) => (
-              <li key={id} className="border-t border-rule">
-                <a href={`#${id}`} className="flex min-h-11 items-center text-sm text-ink-2 hover:text-ink">
+            {pageSections.map(({ id, title, kind }) => (
+              <li key={id} className={kinds[kind].className}>
+                <a href={`#${id}`} className="flex min-h-11 items-center gap-2.5 text-sm text-ink-2 hover:text-ink">
+                  <span aria-hidden="true" className="size-2.5 shrink-0 rounded-full bg-kind-d" />
                   {title}
                 </a>
               </li>
@@ -338,8 +348,18 @@ function CriterionPage() {
         <div>
 <TermTips terms={terms}>
           {pageSections.map((section) => (
-            <section key={section.id} id={section.id} aria-labelledby={`${section.id}-title`} className="pb-9">
-              <h2 id={`${section.id}-title`} className="mb-3 border-t-2 border-ink pt-5 text-xl font-bold tracking-tight">
+            <section
+              key={section.id}
+              id={section.id}
+              aria-labelledby={`${section.id}-title`}
+              className={`${kinds[section.kind].className} relative mt-12 scroll-mt-14 rounded-lg rounded-tl-none bg-surface p-5 shadow-[0_1px_0_var(--rule)] first:mt-11 sm:p-6`}
+            >
+              {/* The heading is the section's tab, in the colour of what the section holds. */}
+              <h2
+                id={`${section.id}-title`}
+                className="absolute bottom-full left-0 inline-flex items-center gap-2 rounded-t-md bg-kind px-4 py-1.5 text-[1.0625rem] font-extrabold tracking-tight"
+              >
+                <KindIcon kind={section.kind} className="size-4.5 text-kind-d" />
                 {section.title}
               </h2>
               {body[section.id]}
@@ -347,7 +367,7 @@ function CriterionPage() {
           ))}
 </TermTips>
 
-          <footer className="font-mono text-[0.8125rem] text-ink-2">
+          <footer className="mt-8 text-[0.8125rem] text-ink-2">
             <p>
               Nazwa kryterium:{" "}
               {criterion.nameSource === "w3c" ? (

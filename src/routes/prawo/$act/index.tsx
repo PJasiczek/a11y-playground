@@ -36,7 +36,7 @@ function ActPage() {
 
   return (
     <article>
-      <nav aria-label="Okruszki" className="pt-4 font-mono text-[0.8125rem] text-ink-2">
+      <nav aria-label="Okruszki" className="pt-4 text-[0.8125rem] text-ink-2">
         <ol className="flex flex-wrap items-center gap-x-2">
           <li>
             <Link to="/prawo" className="inline-flex min-h-11 min-w-11 items-center underline underline-offset-3">
@@ -53,14 +53,14 @@ function ActPage() {
       <header className="border-b border-rule pt-3 pb-7">
         <h1 className="text-[clamp(1.5rem,4vw,2.125rem)] leading-tight font-bold tracking-tight">{act.short}</h1>
         <p className="mt-2 max-w-[70ch] text-ink-2">{act.title}</p>
-        <p className="mt-3 flex flex-wrap items-center gap-2 font-mono text-[0.8125rem] text-ink-2">
+        <p className="mt-3 flex flex-wrap items-center gap-2 text-[0.8125rem] text-ink-2">
           <span>{act.address}</span>
           <span aria-hidden="true">·</span>
           <span>
             {act.consolidated ? `tekst jednolity: ${act.consolidated.address}` : "tekst pierwotny"}, pobrano {formatDate(act.retrieved)}
           </span>
           <span aria-hidden="true">·</span>
-          <a href={act.isap} className="inline-flex min-h-11 items-center underline underline-offset-3">
+          <a href={act.isap} className="inline-flex min-h-11 min-w-11 items-center underline underline-offset-3">
             ISAP
           </a>
         </p>
@@ -87,7 +87,7 @@ function ActPage() {
           <ul className="mt-3">
             {deadlines.map((d) => (
               <li key={`${d.date}-${d.unit}`} className="grid gap-x-5 border-b border-rule py-3 sm:grid-cols-[9.5rem_1fr]">
-                <span className="font-mono font-semibold">{d.yearly ? `co rok, ${formatDate(d.date).slice(0, 5)}` : formatDate(d.date)}</span>
+                <span className="font-semibold">{d.yearly ? `co rok, ${formatDate(d.date).slice(0, 5)}` : formatDate(d.date)}</span>
                 <p>
                   {d.what} <span className="text-ink-2">(</span>
                   <ProvisionLink id={d.unit}>{d.unitLabel.toLowerCase()}</ProvisionLink>
@@ -111,7 +111,7 @@ function ActPage() {
         {toc.map((chapter) => (
           <div key={chapter.number} className="mt-4">
             {chapter.title ? (
-              <h3 className="font-mono text-xs font-semibold tracking-widest text-ink-2 uppercase">
+              <h3 className="text-xs font-semibold tracking-widest text-ink-2 uppercase">
                 Rozdział {chapter.number}. {chapter.title}
               </h3>
             ) : null}
@@ -120,7 +120,7 @@ function ActPage() {
                 <li key={entry.slug} className="border-b border-rule">
                   {entry.stub ? (
                     <span className="flex min-h-11 items-center gap-4 px-1 text-ink-2">
-                      <span className="w-20 shrink-0 font-mono text-sm">{entry.label}</span>
+                      <span className="w-20 shrink-0 text-sm">{entry.label}</span>
                       <span className="text-[0.9375rem]">uchylony lub pominięty</span>
                     </span>
                   ) : (
@@ -129,7 +129,7 @@ function ActPage() {
                       params={{ act: act.slug, unit: entry.slug }}
                       className="flex min-h-11 items-center gap-4 px-1 py-2 hover:bg-surface"
                     >
-                      <span className="w-20 shrink-0 font-mono text-sm font-semibold">{entry.label}</span>
+                      <span className="w-20 shrink-0 text-sm font-semibold">{entry.label}</span>
                       <span>{entry.title || <span className="text-ink-2">bez streszczenia</span>}</span>
                     </Link>
                   )}

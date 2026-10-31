@@ -77,7 +77,7 @@ export function PatternCard({ card }: { card: PatternCardData }) {
             {card.title}
           </Link>
         </h3>
-        <p lang="en" className="mt-0.5 font-mono text-[0.8125rem] text-ink-2">
+        <p lang="en" className="mt-0.5 text-[0.8125rem] text-ink-2">
           {card.en}
         </p>
         <p className="mt-2 text-[0.9375rem]">
@@ -87,7 +87,7 @@ export function PatternCard({ card }: { card: PatternCardData }) {
         <p className="mt-auto flex flex-wrap items-center gap-1.5 pt-3">
           <span className="sr-only">Kryteria: </span>
           {card.criteria.map((id) => (
-            <span key={id} className="rounded-xs border border-control bg-surface px-1.5 py-1 font-mono text-xs font-semibold">
+            <span key={id} className="rounded-xs border border-control bg-surface px-1.5 py-1 text-xs font-semibold">
               {id}
             </span>
           ))}
@@ -109,13 +109,13 @@ export function PatternLog({ lines, onClear }: { lines: Announcement[]; onClear:
   return (
     <section aria-labelledby="log-title" className="rounded-xs bg-ink px-4 pt-3 pb-4 text-paper">
       <div className="flex items-center justify-between gap-3">
-        <h2 id="log-title" className="font-mono text-[0.8125rem] font-bold tracking-wider uppercase">
+        <h2 id="log-title" className="text-[0.8125rem] font-bold tracking-wider uppercase">
           Co słyszy czytnik
         </h2>
         <button
           type="button"
           onClick={onClear}
-          className="inline-flex min-h-11 items-center rounded-xs border border-paper px-3 font-mono text-xs font-semibold focus-visible:outline-paper"
+          className="inline-flex min-h-11 items-center rounded-xs border border-paper px-3 text-xs font-semibold focus-visible:outline-paper"
         >
           Wyczyść
         </button>
@@ -125,7 +125,7 @@ export function PatternLog({ lines, onClear }: { lines: Announcement[]; onClear:
         regionach na żywo ogłaszają później albo wcale.
       </p>
       {lines.length > 0 ? (
-        <ol className="font-mono text-sm leading-snug">
+        <ol className="text-sm leading-snug">
           {lines.map((line, index) => (
             <li key={index} className="grid grid-cols-[2rem_6.5rem_minmax(0,1fr)] gap-2 border-t border-paper/30 py-2">
               <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
@@ -254,7 +254,7 @@ export function Exercise({ steps, done, onRestart }: { steps: readonly StepData[
               key={index}
               className={`grid grid-cols-[2rem_minmax(0,1fr)] gap-x-3 gap-y-2 border-t border-rule px-4 py-3 first:border-t-0 sm:grid-cols-[2rem_minmax(0,1fr)_minmax(0,1fr)] ${status === "now" ? "outline-2 -outline-offset-2 outline-ink" : ""}`}
             >
-              <span className={`font-mono font-bold ${status === "todo" ? "text-ink-2" : ""}`}>
+              <span className={`font-bold ${status === "todo" ? "text-ink-2" : ""}`}>
                 <span aria-hidden="true">{stepStatus[status].glyph}</span>
                 <span className="sr-only">{stepStatus[status].words}</span>
               </span>
@@ -262,7 +262,7 @@ export function Exercise({ steps, done, onRestart }: { steps: readonly StepData[
                 {step.keys.map((key, k) => (
                   <span key={key}>
                     {k > 0 ? " albo " : null}
-                    <kbd className="rounded-[3px] border border-b-2 border-control bg-paper px-1.5 font-mono text-[0.8125rem] font-semibold whitespace-nowrap">
+                    <kbd className="rounded-[3px] border border-b-2 border-control bg-paper px-1.5 text-[0.8125rem] font-semibold whitespace-nowrap">
                       {key}
                     </kbd>
                   </span>
@@ -270,7 +270,7 @@ export function Exercise({ steps, done, onRestart }: { steps: readonly StepData[
                 {step.do}
               </span>
               <span
-                className={`col-start-2 border-l-3 bg-paper-2 px-2 py-1 font-mono text-sm sm:col-start-3 ${status === "todo" ? "border-dashed border-control" : "border-ink"}`}
+                className={`col-start-2 border-l-3 bg-paper-2 px-2 py-1 text-sm sm:col-start-3 ${status === "todo" ? "border-dashed border-control" : "border-ink"}`}
               >
                 <span className="sr-only">Usłyszysz: </span>
                 {step.hear}

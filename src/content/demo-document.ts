@@ -22,7 +22,7 @@ const baseStyles = `
   html[data-symulacja="achromatopsja"] { filter: grayscale(1); }
   html[data-symulacja="slabe-widzenie"] { filter: blur(1.5px) contrast(0.6); }
   html[data-symulacja="tekst-200"] { font-size: 200%; }
-  .a11y-sim-badge { position: absolute; z-index: 2147483647; min-width: 1.5rem; height: 1.5rem; padding: 0 0.3rem; border-radius: 0.75rem; background: #2c36a8; color: #fff; font: 700 0.8125rem/1.5rem ui-monospace, Consolas, monospace; text-align: center; box-shadow: 0 0 0 2px #fff; pointer-events: none; }
+  .a11y-sim-badge { position: absolute; z-index: 2147483647; min-width: 1.5rem; height: 1.5rem; padding: 0 0.3rem; border-radius: 0.75rem; background: #2c36a8; color: #fff; font: 700 0.8125rem/1.5rem "Segoe UI", system-ui, sans-serif; text-align: center; box-shadow: 0 0 0 2px #fff; pointer-events: none; }
   .a11y-sim-notice { position: fixed; z-index: 2147483647; left: 0.5rem; right: 0.5rem; bottom: 0.5rem; margin: 0; padding: 0.5rem 0.75rem; border: 2px solid #14171a; background: #f4e75b; color: #14171a; font-weight: 600; }
 `;
 

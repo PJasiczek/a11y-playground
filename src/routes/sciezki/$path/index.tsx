@@ -45,10 +45,10 @@ function PathPage() {
 
   return (
     <>
-      <nav aria-label="Okruszki" className="pt-4 font-mono text-[0.8125rem] text-ink-2">
+      <nav aria-label="Okruszki" className="pt-4 text-[0.8125rem] text-ink-2">
         <ol className="flex flex-wrap items-center gap-x-2">
           <li>
-            <Link to="/sciezki" className="inline-flex min-h-11 items-center underline underline-offset-3">
+            <Link to="/sciezki" className="inline-flex min-h-11 min-w-11 items-center underline underline-offset-3">
               Ścieżki
             </Link>
           </li>
@@ -100,7 +100,7 @@ function PathPage() {
               key={lesson.slug}
               className={`grid grid-cols-[2.5rem_1fr] gap-x-5 gap-y-1 border-b border-rule py-4 sm:grid-cols-[3rem_1fr_auto] ${isNext ? "bg-surface shadow-[inset_3px_0_0_var(--ink)]" : ""}`}
             >
-              <span aria-hidden="true" className={`pt-0.5 font-mono text-lg font-bold ${isNext ? "pl-2" : ""}`}>
+              <span aria-hidden="true" className={`pt-0.5 text-lg font-bold ${isNext ? "pl-2" : ""}`}>
                 {lessonNumber(i + 1)}
               </span>
               <div>
@@ -115,7 +115,7 @@ function PathPage() {
                 </h2>
                 <p className="max-w-[62ch] text-ink-2">{lesson.summary}</p>
                 {lesson.criteria.length > 0 || lesson.law.length > 0 ? (
-                  <p className="mt-2 flex flex-wrap gap-1.5 font-mono text-xs text-ink-2">
+                  <p className="mt-2 flex flex-wrap gap-1.5 text-xs text-ink-2">
                     <span className="sr-only">
                       {lesson.law.length === 0 ? "Kryteria:" : lesson.criteria.length === 0 ? "Przepisy:" : "Kryteria i przepisy:"}
                     </span>
@@ -127,7 +127,7 @@ function PathPage() {
                   </p>
                 ) : null}
               </div>
-              <p className="col-start-2 flex min-h-5 flex-wrap gap-x-4 font-mono text-[0.8125rem] sm:col-start-3 sm:grid sm:content-start sm:justify-items-end sm:text-right">
+              <p className="col-start-2 flex min-h-5 flex-wrap gap-x-4 text-[0.8125rem] sm:col-start-3 sm:grid sm:content-start sm:justify-items-end sm:text-right">
                 {isDone(lesson.slug) ? (
                   <span className="font-semibold">
                     <span aria-hidden="true">✓ </span>ukończona

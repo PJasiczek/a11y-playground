@@ -47,7 +47,7 @@ const FrameMessage = type({
   .or({ a11yState: "(string | null)[]" })
   .or({ a11yBlockedClick: "true" });
 
-const chip = "inline-flex min-h-11 items-center rounded border border-control bg-surface px-3 font-mono text-sm font-semibold hover:border-ink";
+const chip = "inline-flex min-h-11 items-center rounded border border-control bg-surface px-3 text-sm font-semibold hover:border-ink";
 
 /**
  * One pattern (variant 1C of the phase 9 mocks): the working pattern in a sandboxed frame, the
@@ -101,16 +101,16 @@ function PatternPage() {
 
   return (
     <article>
-      <nav aria-label="Okruszki" className="pt-4 font-mono text-[0.8125rem] text-ink-2">
+      <nav aria-label="Okruszki" className="pt-4 text-[0.8125rem] text-ink-2">
         <ol className="flex flex-wrap items-center gap-x-2">
           <li>
-            <Link to="/praktyka" className="inline-flex min-h-11 items-center underline underline-offset-3">
+            <Link to="/praktyka" className="inline-flex min-h-11 min-w-11 items-center underline underline-offset-3">
               Praktyka
             </Link>
           </li>
           <li aria-hidden="true">/</li>
           <li>
-            <Link to="/praktyka/wzorce" className="inline-flex min-h-11 items-center underline underline-offset-3">
+            <Link to="/praktyka/wzorce" className="inline-flex min-h-11 min-w-11 items-center underline underline-offset-3">
               Wzorce komponentów
             </Link>
           </li>
@@ -123,7 +123,7 @@ function PatternPage() {
 
       <header className="pt-3 pb-2">
         <h1 className="text-[clamp(1.5rem,4vw,2rem)] leading-tight font-bold tracking-tight">{pattern.title}</h1>
-        <p lang="en" className="mt-1 font-mono text-sm font-semibold text-ink-2">
+        <p lang="en" className="mt-1 text-sm font-semibold text-ink-2">
           {pattern.en}
         </p>
         <p className="mt-3 max-w-[68ch]">{pattern.summary}</p>
@@ -172,7 +172,7 @@ function PatternPage() {
             />
             {keyboardOnly ? (
               <>
-                <p className="mt-2 font-mono text-sm">Zablokowane kliknięcia: {blocked}</p>
+                <p className="mt-2 text-sm">Zablokowane kliknięcia: {blocked}</p>
                 <p aria-live="polite" className="sr-only">
                   {blocked > 0 ? `Kliknięcie zablokowane, ${String(blocked)}. W tym trybie działa tylko klawiatura.` : ""}
                 </p>

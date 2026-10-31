@@ -261,7 +261,8 @@ const hues = {
 } as const satisfies Record<LandmarkRole, readonly [string, string]>;
 
 const hatch = "repeating-linear-gradient(135deg, color-mix(in srgb, var(--a11y-l) 8%, transparent) 0 6px, transparent 6px 12px)";
-const mono = 'ui-monospace, "Cascadia Mono", Consolas, monospace';
+// The app's sans face where the tool runs on our pages, the system one inside demo frames.
+const sans = 'var(--font-sans, "Segoe UI", system-ui, sans-serif)';
 
 // Variant 2C of the landmarks mocks: a hue per role, a faint hatch so nesting reads as layers,
 // and the label in the top right corner. Colour is never the only cue, the label names the role.
@@ -279,7 +280,7 @@ const styles = `
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     padding: 0.125rem 0.375rem; border: 2px solid var(--a11y-l); border-block-start: 0; border-inline-end: 0;
     background: Canvas; color: var(--a11y-l);
-    font: 700 0.75rem/1.4 ${mono}; letter-spacing: 0; text-transform: none;
+    font: 700 0.75rem/1.4 ${sans}; letter-spacing: 0; text-transform: none;
     pointer-events: none;
   }
   [data-a11y-stack="1"]::before { top: 1.375rem; }
@@ -291,7 +292,7 @@ const styles = `
     content: attr(data-a11y-heading); content: attr(data-a11y-heading) / "";
     display: inline-block; margin-inline-end: 0.5em; padding: 0.125rem 0.375rem; border-radius: 2px;
     background: CanvasText; color: Canvas; vertical-align: 0.2em;
-    font: 700 0.75rem/1.3 ${mono}; letter-spacing: 0; text-transform: none;
+    font: 700 0.75rem/1.3 ${sans}; letter-spacing: 0; text-transform: none;
   }
   [data-a11y-skip]::before { background: light-dark(#9a1b1b, #ffa3a3); }
   :is([data-a11y-landmark], [data-a11y-heading]):focus-visible { outline: 3px solid light-dark(#2c36a8, #aeb5ff); outline-offset: 2px; }

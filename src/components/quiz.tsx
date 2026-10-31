@@ -112,7 +112,7 @@ export function Quiz({ lessonKey, questions }: { lessonKey: LessonKey; questions
               focusTarget.current = el;
             }}
             tabIndex={-1}
-            className="font-mono text-3xl font-bold tracking-tight"
+            className="text-3xl font-bold tracking-tight"
           >
             <span className="sr-only">Wynik: </span>
             {String(score)} z {String(total)}
@@ -120,7 +120,7 @@ export function Quiz({ lessonKey, questions }: { lessonKey: LessonKey; questions
           <ol className="mt-3 grid gap-1">
             {questions.map((q, i) => (
               <li key={q.id}>
-                <span className={`font-mono text-sm font-semibold ${results[i] ? "text-good" : "text-bad"}`}>
+                <span className={`text-sm font-semibold ${results[i] ? "text-good" : "text-bad"}`}>
                   <span aria-hidden="true">{results[i] ? "✓ " : "✗ "}</span>
                   {results[i] ? "dobrze" : "źle"}
                 </span>{" "}
@@ -154,7 +154,7 @@ export function Quiz({ lessonKey, questions }: { lessonKey: LessonKey; questions
               tabIndex={-1}
               className="max-w-[66ch] text-[1.0625rem] font-bold"
             >
-              <span className="block font-mono text-[0.8125rem] font-semibold text-ink-2">
+              <span className="block text-[0.8125rem] font-semibold text-ink-2">
                 Pytanie {String(step + 1)} z {String(total)} · {question.multiple ? "kilka odpowiedzi" : "jedna odpowiedź"}
               </span>
               {question.prompt}
@@ -198,7 +198,7 @@ export function Quiz({ lessonKey, questions }: { lessonKey: LessonKey; questions
                       <span>
                         {option.criterion ? (
                           <>
-                            <span className="font-mono font-semibold">{option.criterion}</span>
+                            <span className="font-semibold">{option.criterion}</span>
                             {option.label.slice(option.criterion.length)}
                           </>
                         ) : (
@@ -208,7 +208,7 @@ export function Quiz({ lessonKey, questions }: { lessonKey: LessonKey; questions
                     </label>
                     {look ? (
                       <p className="mt-1 mb-1 ml-10 max-w-[62ch] text-[0.9375rem]">
-                        <span className={`mr-1.5 font-mono text-[0.8125rem] font-bold ${look.tone}`}>
+                        <span className={`mr-1.5 text-[0.8125rem] font-bold ${look.tone}`}>
                           {look.glyph ? <span aria-hidden="true">{look.glyph} </span> : null}
                           {look.word}
                         </span>

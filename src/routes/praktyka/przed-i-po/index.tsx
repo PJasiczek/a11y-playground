@@ -25,13 +25,13 @@ export const Route = createFileRoute("/praktyka/przed-i-po/")({
 function Step({ number, title, locked = false, children }: { number: number; title: string; locked?: boolean; children: ReactNode }) {
   return (
     <li className="border-rule py-4 sm:px-4 sm:first:pl-0 sm:last:pr-0 sm:[&+li]:border-l max-sm:[&+li]:border-t">
-      <span aria-hidden="true" className="block font-mono text-[2.5rem] leading-none font-bold">
+      <span aria-hidden="true" className="block text-[2.5rem] leading-none font-bold">
         {number}
       </span>
       <h3 className="mt-2 text-lg font-bold">{title}</h3>
       {children}
       {locked ? (
-        <p className="mt-3 font-mono text-sm font-semibold">
+        <p className="mt-3 text-sm font-semibold">
           <span aria-hidden="true">🔒 </span>Zablokowane do końca sprawdzania
         </p>
       ) : null}
@@ -72,7 +72,7 @@ function BeforeAfterPage() {
           {checking ? (
             <>
               {notes.length > 0 ? (
-                <p className="mt-3 font-mono text-sm">Sprawdzasz · {countOf(notes.length, ["notatka", "notatki", "notatek"])}</p>
+                <p className="mt-3 text-sm">Sprawdzasz · {countOf(notes.length, ["notatka", "notatki", "notatek"])}</p>
               ) : null}
               <p className="mt-3 flex flex-wrap gap-2">
                 <a href="/demo/przed-i-po/przed" className={primaryButton}>
@@ -94,7 +94,7 @@ function BeforeAfterPage() {
             </>
           ) : (
             <>
-              <p className="mt-3 font-mono text-sm">Sprawdzanie zakończone</p>
+              <p className="mt-3 text-sm">Sprawdzanie zakończone</p>
               <p className="mt-3">
                 <a href="/demo/przed-i-po/przed-znaczniki" className={secondaryButton}>
                   Strona zepsuta ze znacznikami

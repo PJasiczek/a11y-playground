@@ -117,7 +117,7 @@ function SearchPage() {
         </p>
       </noscript>
 
-      <p role="status" className="mt-4 font-mono text-sm text-ink-2">
+      <p role="status" className="mt-4 text-sm text-ink-2">
         {status}
       </p>
 
@@ -140,7 +140,7 @@ function SearchPage() {
                 params={{ criterionId: hit.ref }}
                 className="grid grid-cols-[5.5rem_1fr] gap-x-4 gap-y-1 px-1 py-3.5 hover:bg-surface max-sm:grid-cols-1"
               >
-                <span className="font-mono text-[0.8125rem] font-semibold text-ink-2">{hit.ref}</span>
+                <span className="text-[0.8125rem] font-semibold text-ink-2">{hit.ref}</span>
                 <span className="text-[1.0625rem] font-semibold">
                   {hit.title}
                   {hit.summary ? <span className="mt-1 block text-[0.9375rem] font-normal text-ink-2">{hit.summary}</span> : null}
@@ -160,7 +160,7 @@ function SearchPage() {
                 hash={hit.ref}
                 className="grid grid-cols-[5.5rem_1fr] gap-x-4 gap-y-1 px-1 py-3.5 hover:bg-surface max-sm:grid-cols-1"
               >
-                <span className="font-mono text-[0.8125rem] font-semibold text-ink-2">WCAG 3.0</span>
+                <span className="text-[0.8125rem] font-semibold text-ink-2">WCAG 3.0</span>
                 <span className="text-[1.0625rem] font-semibold">
                   {hit.title}
                   <span className="mt-1 block text-[0.9375rem] font-normal text-ink-2">{hit.summary}</span>
@@ -180,7 +180,7 @@ function SearchPage() {
                 params={{ slug: hit.ref }}
                 className="grid grid-cols-[5.5rem_1fr] gap-x-4 gap-y-1 px-1 py-3.5 hover:bg-surface max-sm:grid-cols-1"
               >
-                <span className="font-mono text-[0.8125rem] font-semibold text-ink-2">przykład</span>
+                <span className="text-[0.8125rem] font-semibold text-ink-2">przykład</span>
                 <span className="text-[1.0625rem] font-semibold">
                   {hit.title}
                   <span className="mt-1 block text-[0.9375rem] font-normal text-ink-2">{hit.summary}</span>
@@ -200,7 +200,7 @@ function SearchPage() {
                 params={{ slug: hit.ref }}
                 className="grid grid-cols-[5.5rem_1fr] gap-x-4 gap-y-1 px-1 py-3.5 hover:bg-surface max-sm:grid-cols-1"
               >
-                <span className="font-mono text-[0.8125rem] font-semibold text-ink-2">wzorzec</span>
+                <span className="text-[0.8125rem] font-semibold text-ink-2">wzorzec</span>
                 <span className="text-[1.0625rem] font-semibold">
                   {hit.title}
                   <span className="mt-1 block text-[0.9375rem] font-normal text-ink-2">{hit.summary}</span>
@@ -220,7 +220,7 @@ function SearchPage() {
                 params={{ problem: hit.ref }}
                 className="grid grid-cols-[5.5rem_1fr] gap-x-4 gap-y-1 px-1 py-3.5 hover:bg-surface max-sm:grid-cols-1"
               >
-                <span className="font-mono text-[0.8125rem] font-semibold text-ink-2">problem {hit.ref}</span>
+                <span className="text-[0.8125rem] font-semibold text-ink-2">problem {hit.ref}</span>
                 <span className="text-[1.0625rem] font-semibold">
                   {hit.title}
                   <span className="mt-1 block text-[0.9375rem] font-normal text-ink-2">{hit.summary}</span>
@@ -242,7 +242,7 @@ function SearchPage() {
                   params={{ act, unit }}
                   className="grid grid-cols-[5.5rem_1fr] gap-x-4 gap-y-1 px-1 py-3.5 hover:bg-surface max-sm:grid-cols-1"
                 >
-                  <span className="font-mono text-[0.8125rem] font-semibold text-ink-2">przepis</span>
+                  <span className="text-[0.8125rem] font-semibold text-ink-2">przepis</span>
                   <span className="text-[1.0625rem] font-semibold">
                     {hit.title}
                     <span className="mt-1 block text-[0.9375rem] font-normal text-ink-2">{hit.summary}</span>
@@ -265,7 +265,7 @@ function SearchPage() {
                   params={{ path, lesson }}
                   className="grid grid-cols-[5.5rem_1fr] gap-x-4 gap-y-1 px-1 py-3.5 hover:bg-surface max-sm:grid-cols-1"
                 >
-                  <span className="font-mono text-[0.8125rem] font-semibold text-ink-2">lekcja</span>
+                  <span className="text-[0.8125rem] font-semibold text-ink-2">lekcja</span>
                   <span className="text-[1.0625rem] font-semibold">
                     {hit.title}
                     <span className="mt-1 block text-[0.9375rem] font-normal text-ink-2">{hit.summary}</span>
@@ -286,7 +286,7 @@ function SearchPage() {
                 hash={hit.ref}
                 className="grid grid-cols-[5.5rem_1fr] gap-x-4 gap-y-1 px-1 py-3.5 hover:bg-surface max-sm:grid-cols-1"
               >
-                <span className="font-mono text-[0.8125rem] font-semibold text-ink-2">pojęcie</span>
+                <span className="text-[0.8125rem] font-semibold text-ink-2">pojęcie</span>
                 <span className="text-[1.0625rem] font-semibold">
                   {hit.title}
                   <span className="mt-1 block text-[0.9375rem] font-normal text-ink-2">{hit.summary}</span>
@@ -305,7 +305,7 @@ function ResultGroup({ title, children }: { title: string; children: ReactNode }
   const id = `wyniki-${title.replace(/[\s,.]+/g, "-")}`;
   return (
     <section aria-labelledby={id} className="mt-8">
-      <h2 id={id} className="mb-2 font-mono text-xs font-semibold tracking-widest text-ink-2 uppercase">
+      <h2 id={id} className="mb-2 text-xs font-semibold tracking-widest text-ink-2 uppercase">
         {title}
       </h2>
       <ul>{children}</ul>

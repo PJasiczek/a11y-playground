@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 export function FilterGroup({ legend, children }: { legend: string; children: ReactNode }) {
   return (
     <fieldset className="flex flex-wrap items-center gap-2">
-      <legend className="float-left mr-1 font-mono text-xs font-semibold tracking-widest text-ink-2 uppercase">
+      <legend className="float-left mr-1 text-xs font-semibold tracking-widest text-ink-2 uppercase">
         {legend}
       </legend>
       {children}
@@ -33,7 +33,7 @@ export function Chip({
     <label className="inline-flex min-h-11 cursor-pointer items-center rounded border border-control bg-surface px-3 text-sm font-medium has-checked:border-on-marker has-checked:bg-marker has-checked:font-bold has-checked:text-on-marker has-focus-visible:outline-3 has-focus-visible:outline-offset-2 has-focus-visible:outline-accent">
       <input type={type} name={name} checked={checked} onChange={onChange} className="sr-only" />
       {checked ? (
-        <span aria-hidden="true" className="mr-1 font-mono">
+        <span aria-hidden="true" className="mr-1">
           ✓
         </span>
       ) : null}

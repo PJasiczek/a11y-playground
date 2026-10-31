@@ -124,11 +124,11 @@ export function StructureTool() {
         popoverTarget="struktura-panel"
         className="fixed right-4 bottom-[calc(var(--dock-height)+1rem)] z-40 inline-flex in-data-[consent=open]:max-sm:hidden min-h-11 items-center gap-2 rounded border-2 border-ink bg-surface px-3.5 font-semibold shadow-[0_4px_16px_rgb(0_0_0/0.18)] hover:bg-paper-2"
       >
-        <span aria-hidden="true" className="font-mono">
+        <span aria-hidden="true">
           ◫
         </span>
         Struktura strony
-        {on ? <span className="font-mono text-[0.8125rem] font-normal text-ink-2">włączona</span> : null}
+        {on ? <span className="text-[0.8125rem] font-normal text-ink-2">włączona</span> : null}
       </button>
 
       <div
@@ -170,7 +170,7 @@ export function StructureTool() {
           <>
             {view.landmarks ? (
               <>
-                <h3 className="mt-4 font-mono text-xs font-semibold tracking-widest text-ink-2 uppercase">Punkty orientacyjne</h3>
+                <h3 className="mt-4 text-xs font-semibold tracking-widest text-ink-2 uppercase">Punkty orientacyjne</h3>
                 {scan.landmarks.length > 0 ? (
                   <LandmarkTree landmarks={scan.landmarks} onJump={jump} />
                 ) : (
@@ -180,7 +180,7 @@ export function StructureTool() {
             ) : null}
             {view.headings ? (
               <>
-                <h3 className="mt-4 font-mono text-xs font-semibold tracking-widest text-ink-2 uppercase">Nagłówki</h3>
+                <h3 className="mt-4 text-xs font-semibold tracking-widest text-ink-2 uppercase">Nagłówki</h3>
                 <ul className="mt-1 border-t border-rule">
                   {scan.headings.map(({ heading, label }, index) => (
                     <li key={index}>
@@ -192,7 +192,7 @@ export function StructureTool() {
                         style={{ paddingInlineStart: `${String(0.25 + (heading.level - 1) * 0.75)}rem` }}
                         className="flex min-h-11 w-full items-baseline gap-2 border-b border-rule py-1.5 pr-1 text-left text-[0.9375rem] hover:bg-paper-2"
                       >
-                        <span className={`shrink-0 font-mono text-[0.8125rem] font-semibold ${heading.after ? "text-bad" : "text-ink-2"}`}>
+                        <span className={`shrink-0 text-[0.8125rem] font-semibold ${heading.after ? "text-bad" : "text-ink-2"}`}>
                           {label}
                         </span>
                         <span>{heading.text || "(bez tekstu)"}</span>
@@ -205,7 +205,7 @@ export function StructureTool() {
             {scan.findings.length > 0 ? (
               <div className="mt-4 border-2 border-l-[6px] border-bad px-3 py-2">
                 <h3 className="font-bold text-bad">
-                  <span aria-hidden="true" className="font-mono">
+                  <span aria-hidden="true">
                     !{" "}
                   </span>
                   Uwagi: {scan.findings.length}
@@ -218,7 +218,7 @@ export function StructureTool() {
               </div>
             ) : (
               <p className="mt-4 border-2 border-l-[6px] border-good px-3 py-2 font-bold text-good">
-                <span aria-hidden="true" className="font-mono">
+                <span aria-hidden="true">
                   ✓{" "}
                 </span>
                 Bez uwag.
@@ -247,7 +247,7 @@ function LandmarkTree({ landmarks, onJump, nested = false }: { landmarks: readon
             className="flex min-h-11 w-full items-center gap-2 border-b border-rule px-1 py-1.5 text-left text-[0.9375rem] hover:bg-paper-2"
           >
             <span aria-hidden="true" data-a11y-swatch={landmark.role} />
-            <span className="shrink-0 font-mono text-[0.8125rem] font-semibold text-ink-2">{polishRoles[landmark.role]}</span>
+            <span className="shrink-0 text-[0.8125rem] font-semibold text-ink-2">{polishRoles[landmark.role]}</span>
             <span>{landmark.name}</span>
           </button>
           {landmark.children.length > 0 ? <LandmarkTree landmarks={landmark.children} onJump={onJump} nested /> : null}

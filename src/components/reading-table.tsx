@@ -28,9 +28,9 @@ function ReadingTable({ caption, rows }: { caption: string; rows: Variants }) {
   return (
     <div className="mt-4 overflow-x-auto">
       <table className="w-full border-collapse bg-surface text-[0.9375rem]">
-        <caption className="mb-2 text-left font-mono text-xs font-semibold tracking-widest text-ink-2 uppercase">{caption}</caption>
+        <caption className="mb-2 text-left text-xs font-semibold tracking-widest text-ink-2 uppercase">{caption}</caption>
         <thead>
-          <tr className="bg-paper-2 font-mono text-[0.8125rem] tracking-wider uppercase">
+          <tr className="bg-paper-2 text-[0.8125rem] tracking-wider uppercase">
             <th scope="col" className="w-20 border border-rule px-3 py-2 text-left">
               Krok
             </th>
@@ -56,7 +56,7 @@ function ReadingTable({ caption, rows }: { caption: string; rows: Variants }) {
               const differs = spoken(bad) !== spoken(good);
               return (
                 <tr key={index} className={differs ? "bg-marker/25" : undefined}>
-                  <th scope="row" className="border border-rule px-3 py-2 text-left font-mono text-[0.8125rem] font-normal text-ink-2">
+                  <th scope="row" className="border border-rule px-3 py-2 text-left text-[0.8125rem] font-normal text-ink-2">
                     {index + 1}
                     {differs ? (
                       <>
@@ -93,10 +93,10 @@ function Announcement({ line }: { line: Line | undefined }) {
   return (
     <>
       {line.missing === "nazwa" ? <span className="font-semibold text-bad">bez nazwy</span> : line.text}
-      {line.role ? <span className="font-mono text-[0.8125rem]">{line.text || line.missing ? ", " : ""}{line.role}</span> : null}
+      {line.role ? <span className="text-[0.8125rem]">{line.text || line.missing ? ", " : ""}{line.role}</span> : null}
       {line.missing === "rola" ? " " : null}
       {line.missing === "rola" ? (
-        <span className="font-mono text-[0.8125rem] font-semibold text-bad">
+        <span className="text-[0.8125rem] font-semibold text-bad">
           (tekst, nie przycisk)
         </span>
       ) : null}

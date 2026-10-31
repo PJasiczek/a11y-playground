@@ -21,7 +21,7 @@ function PrivacyPage() {
     <>
       <h1 className="pt-8 text-[1.875rem] font-bold tracking-tight">{title}</h1>
       <p className="mt-1 text-ink-2">
-        Ostatnia zmiana: <time dateTime={updated} className="font-mono">{formatDate(updated)}</time>
+        Ostatnia zmiana: <time dateTime={updated}>{formatDate(updated)}</time>
       </p>
       <div className="prose mt-4" dangerouslySetInnerHTML={{ __html: html }} />
     </>

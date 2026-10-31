@@ -82,7 +82,7 @@ function CriteriaPage() {
     <>
       <div className="flex flex-wrap items-baseline gap-x-5 gap-y-2 pt-8 pb-4">
         <h1 className="text-[1.875rem] font-bold tracking-tight">Kryteria</h1>
-        <p role="status" className="font-mono text-sm text-ink-2">
+        <p role="status" className="text-sm text-ink-2">
           Pokazuję {shown.length} z {inScope.length} kryteriów WCAG {version}
         </p>
       </div>
@@ -138,7 +138,7 @@ function CriteriaPage() {
                 params={{ criterionId: c.id }}
                 className="grid grid-cols-[4.75rem_1fr] items-baseline gap-x-4 gap-y-1.5 px-2 py-4 hover:bg-surface sm:grid-cols-[4.75rem_1fr_auto]"
               >
-                <span className="font-mono text-lg font-bold tracking-tight">{c.id}</span>
+                <span className="text-lg font-bold tracking-tight">{c.id}</span>
                 <span className="text-[1.0625rem] font-semibold tracking-tight">
                   {c.name}
                   {overview[c.id] ? (
@@ -147,7 +147,7 @@ function CriteriaPage() {
                 </span>
                 <span className="col-start-2 flex flex-wrap items-center gap-1.5 sm:col-start-auto">
                   {isNewIn22(c) ? <NewBadge /> : null}
-                  {isObsolete(c) ? <span className="font-mono text-xs text-ink-2">wycofane w 2.2</span> : null}
+                  {isObsolete(c) ? <span className="text-xs text-ink-2">wycofane w 2.2</span> : null}
                   <LevelBadge level={c.level} />
                 </span>
               </Link>

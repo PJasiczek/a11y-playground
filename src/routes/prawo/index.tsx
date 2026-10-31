@@ -44,7 +44,7 @@ function LawPage() {
               <Link to="/prawo/$act" params={{ act: act.slug }} className="block px-1 py-4 hover:bg-surface">
                 <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
                   <span className="text-[1.0625rem] font-semibold">{act.short}</span>
-                  <span className="font-mono text-[0.8125rem] text-ink-2">{act.address}</span>
+                  <span className="text-[0.8125rem] text-ink-2">{act.address}</span>
                 </span>
                 <span className="mt-1 block max-w-[66ch] text-[0.9375rem] text-ink-2">{act.summary}</span>
                 <span className="mt-1 block text-[0.9375rem]">
@@ -57,7 +57,7 @@ function LawPage() {
             <Link to="/prawo/en-301-549" className="block px-1 py-4 hover:bg-surface">
               <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
                 <span className="text-[1.0625rem] font-semibold">EN 301 549</span>
-                <span className="font-mono text-[0.8125rem] text-ink-2">norma europejska</span>
+                <span className="text-[0.8125rem] text-ink-2">norma europejska</span>
               </span>
               <span className="mt-1 block max-w-[66ch] text-[0.9375rem] text-ink-2">
                 Norma, która powtarza kryteria WCAG i łączy je z ustawami. Nie jest ustawą, ale kto ją spełnia, spełnia

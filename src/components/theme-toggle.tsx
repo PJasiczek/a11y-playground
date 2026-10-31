@@ -1,4 +1,5 @@
-import { useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore } from "react";
+import { SwitchTrack } from "./switch-track";
 
 type Theme = "light" | "dark";
 
@@ -33,8 +34,10 @@ function getTheme(): Theme {
 export function ThemeToggle() {
   const theme = useSyncExternalStore(subscribe, getTheme, () => "light");
   const isDark = theme === "dark";
+  const [moved, setMoved] = useState(false);
 
   function toggle() {
+    setMoved(true);
     const next: Theme = isDark ? "light" : "dark";
     document.documentElement.dataset.theme = next;
     try {
@@ -49,12 +52,13 @@ export function ThemeToggle() {
       type="button"
       aria-pressed={isDark}
       onClick={toggle}
-      className="inline-flex min-h-11 items-center gap-2 rounded border border-control bg-surface px-3 text-[0.9375rem] font-semibold text-ink hover:border-ink"
+      className="inline-flex min-h-11 items-center gap-2 rounded-full border-2 border-control bg-surface pr-3 pl-3.5 text-[0.9375rem] font-bold text-ink hover:border-ink"
     >
-      <span aria-hidden="true" className="font-mono">
-        {isDark ? "●" : "○"}
-      </span>
+      <svg viewBox="0 0 20 20" aria-hidden="true" className="size-4.5 shrink-0 fill-none stroke-current stroke-[1.8] [stroke-linecap:round] [stroke-linejoin:round]">
+        <path d="M16 12.2A6.5 6.5 0 0 1 7.8 4a6.5 6.5 0 1 0 8.2 8.2z" />
+      </svg>
       Tryb ciemny
+      <SwitchTrack on={isDark} moved={moved} />
     </button>
   );
 }

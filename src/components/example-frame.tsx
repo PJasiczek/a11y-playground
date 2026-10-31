@@ -100,7 +100,7 @@ export function ExampleFrame({
   return (
     <div>
       {label ? (
-        <p className="mb-1 inline-block bg-ink px-2 py-0.5 font-mono text-xs font-semibold text-paper">{label}</p>
+        <p className="mb-1 inline-block bg-ink px-2 py-0.5 text-xs font-semibold text-paper">{label}</p>
       ) : null}
       <div className={narrow ? "overflow-x-auto" : undefined}>
         <iframe
@@ -130,7 +130,7 @@ export function ExampleFrame({
           ) : (
             <p className="mt-1 text-ink-2">Przejdź do ramki klawiszem Tab. Każdy przystanek pojawi się tutaj.</p>
           )}
-          <p className="mt-2 font-mono text-sm">Zablokowane kliknięcia: {blocked}</p>
+          <p className="mt-2 text-sm">Zablokowane kliknięcia: {blocked}</p>
           <p aria-live="polite" className="sr-only">
             {blocked > 0 ? `Kliknięcie zablokowane, ${String(blocked)}. W tym trybie działa tylko klawiatura.` : ""}
           </p>
@@ -175,7 +175,7 @@ function StructureList({ title, summary }: { title: string; summary: StructureSu
         <ul className="mt-1">
           {rows.map(({ label, depth, text }, index) => (
             <li key={index} style={{ paddingInlineStart: `${String(depth * 1.25)}rem` }}>
-              <span className="font-mono text-[0.8125rem] font-semibold">{label}</span>
+              <span className="text-[0.8125rem] font-semibold">{label}</span>
               {text ? ` ${text}` : null}
             </li>
           ))}

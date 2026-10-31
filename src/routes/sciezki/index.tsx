@@ -47,7 +47,7 @@ function PathsPage() {
                 <p className="max-w-[62ch] text-ink-2">{path.summary}</p>
               </div>
               <div className="grid justify-items-start gap-1 sm:justify-items-end sm:text-right">
-                <span className="font-mono text-[0.8125rem] text-ink-2">
+                <span className="text-[0.8125rem] text-ink-2">
                   {done === 0 ? countOf(total, lessonForms) : `ukończono ${String(done)} z ${String(total)}`}
                 </span>
                 {done > 0 ? (
@@ -65,7 +65,7 @@ function PathsPage() {
                   </Link>
                 ) : null}
                 {next === null ? (
-                  <span className="font-mono text-[0.8125rem] font-semibold">
+                  <span className="text-[0.8125rem] font-semibold">
                     <span aria-hidden="true">✓ </span>ukończona
                   </span>
                 ) : null}
