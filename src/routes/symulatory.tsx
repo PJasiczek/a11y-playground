@@ -49,7 +49,7 @@ function SimulatorsPage() {
                 {simulator.title}
               </a>
               <p className="text-[0.9375rem] text-ink-2">{simulator.summary}</p>
-              <p className="mt-auto pt-1 font-mono text-[0.8125rem]">{simulator.criteria.join(" · ")}</p>
+              <p className="mt-auto pt-1 text-[0.8125rem]">{simulator.criteria.join(" · ")}</p>
             </div>
           </li>
         ))}
@@ -72,7 +72,7 @@ function SimulatorsPage() {
                 <Link
                   to="/kryteria/$criterionId"
                   params={{ criterionId: id }}
-                  className="inline-flex min-h-11 items-center rounded border border-control bg-surface px-3 font-mono text-sm font-semibold hover:border-ink"
+                  className="inline-flex min-h-11 items-center rounded border border-control bg-surface px-3 text-sm font-semibold hover:border-ink"
                 >
                   {id}
                 </Link>
@@ -81,7 +81,7 @@ function SimulatorsPage() {
           </ul>
           {simulator.examples.length > 0 ? (
             <>
-              <h3 className="mt-5 font-mono text-xs font-semibold tracking-widest text-ink-2 uppercase">Wypróbuj na</h3>
+              <h3 className="mt-5 text-xs font-semibold tracking-widest text-ink-2 uppercase">Wypróbuj na</h3>
               <ul className="mt-1">
                 {simulator.examples.map((example) => (
                   <li key={example.slug}>
@@ -131,7 +131,7 @@ const samples: Record<SimulationKind, ReactNode> = {
     </div>
   ),
   klawiatura: (
-    <div className="flex items-center gap-2 font-mono text-sm font-semibold">
+    <div className="flex items-center gap-2 text-sm font-semibold">
       <span className="rounded-xs border-2 border-ink bg-surface px-2 py-0.5">Tab</span>
       {[1, 2, 3].map((n) => (
         <span key={n} className="grid size-6 place-items-center rounded-full bg-[#2c36a8] text-xs text-white">
@@ -140,19 +140,19 @@ const samples: Record<SimulationKind, ReactNode> = {
       ))}
     </div>
   ),
-  czytnik: <span className="border border-rule bg-surface px-3 py-1.5 font-mono text-[0.8125rem]">Zamknij komunikat, przycisk</span>,
+  czytnik: <span className="border border-rule bg-surface px-3 py-1.5 text-[0.8125rem]">Zamknij komunikat, przycisk</span>,
   "waski-ekran": (
-    <div className="relative grid size-20 place-items-center border-2 border-ink bg-surface font-mono text-xs">
+    <div className="relative grid size-20 place-items-center border-2 border-ink bg-surface text-xs">
       320
       <span className="absolute top-5 left-4 h-8 w-28 border-2 border-dashed border-bad" />
     </div>
   ),
   struktura: (
     <div className="relative h-20 w-40 border-2 border-[light-dark(#0a6363,#6fd3d3)] bg-surface">
-      <span className="absolute top-0 right-0 border-b-2 border-l-2 border-[light-dark(#0a6363,#6fd3d3)] bg-surface px-1.5 font-mono text-xs font-bold text-[light-dark(#0a6363,#6fd3d3)]">
+      <span className="absolute top-0 right-0 border-b-2 border-l-2 border-[light-dark(#0a6363,#6fd3d3)] bg-surface px-1.5 text-xs font-bold text-[light-dark(#0a6363,#6fd3d3)]">
         nawigacja
       </span>
-      <span className="absolute bottom-2.5 left-2.5 rounded-xs bg-ink px-1.5 font-mono text-xs font-bold text-paper">H2</span>
+      <span className="absolute bottom-2.5 left-2.5 rounded-xs bg-ink px-1.5 text-xs font-bold text-paper">H2</span>
     </div>
   ),
 };

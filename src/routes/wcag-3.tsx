@@ -55,7 +55,7 @@ function Wcag3Page() {
 
   return (
     <>
-      <p className="flex flex-wrap items-center gap-x-3 gap-y-2 pt-8 font-mono text-[0.8125rem] text-ink-2">
+      <p className="flex flex-wrap items-center gap-x-3 gap-y-2 pt-8 text-[0.8125rem] text-ink-2">
         <WorkingDraftBadge />
         <span>
           z{" "}
@@ -82,7 +82,7 @@ function Wcag3Page() {
               WCAG 2.2 i wersja robocza 3.0
             </caption>
             <thead>
-              <tr className="border-b-2 border-ink text-left font-mono text-xs tracking-wide text-ink-2 uppercase">
+              <tr className="border-b-2 border-ink text-left text-xs tracking-wide text-ink-2 uppercase">
                 <td className="py-2 pr-3" />
                 <th scope="col" className="py-2 pr-3 font-semibold">
                   WCAG 2.2
@@ -112,7 +112,7 @@ function Wcag3Page() {
           <h2 id="mapowanie" className="text-xl font-bold tracking-tight">
             Co odpowiada czemu
           </h2>
-          <p role="status" className="font-mono text-sm text-ink-2">
+          <p role="status" className="text-sm text-ink-2">
             Pokazuję {shown} z {total} wytycznych
           </p>
         </div>
@@ -147,7 +147,7 @@ function Wcag3Page() {
               Wytyczne WCAG 3.0 i odpowiadające im kryteria WCAG 2.2
             </caption>
             <thead>
-              <tr className="border-b-2 border-ink text-left font-mono text-xs tracking-wide text-ink-2 uppercase">
+              <tr className="border-b-2 border-ink text-left text-xs tracking-wide text-ink-2 uppercase">
                 <th scope="col" className="py-2 pr-3 pl-2 font-semibold">
                   Nr
                 </th>
@@ -166,15 +166,15 @@ function Wcag3Page() {
               <tbody key={group.num}>
                 <tr className="border-b border-rule bg-paper-2">
                   <th scope="rowgroup" colSpan={4} className="px-2 py-2.5 text-left font-bold">
-                    <span className="font-mono">{group.num}</span> {group.title}{" "}
-                    <span lang="en" className="font-mono text-[0.8125rem] font-normal text-ink-2">
+                    <span>{group.num}</span> {group.title}{" "}
+                    <span lang="en" className="text-[0.8125rem] font-normal text-ink-2">
                       {group.en}
                     </span>
                   </th>
                 </tr>
                 {group.guidelines.map((g) => (
                   <tr key={g.num} id={g.anchor} className="scroll-mt-4 border-b border-rule align-top target:bg-surface target:outline-3 target:outline-accent">
-                    <td className="py-3 pr-3 pl-2 font-mono font-semibold whitespace-nowrap">{g.num}</td>
+                    <td className="py-3 pr-3 pl-2 font-semibold whitespace-nowrap">{g.num}</td>
                     <th scope="row" className="py-3 pr-3 text-left font-semibold">
                       {g.title}
                     </th>
@@ -189,7 +189,7 @@ function Wcag3Page() {
                               <Link
                                 to="/kryteria/$criterionId"
                                 params={{ criterionId: id }}
-                                className="inline-flex min-h-11 min-w-11 items-center justify-center font-mono text-accent underline underline-offset-3"
+                                className="inline-flex min-h-11 min-w-11 items-center justify-center text-accent underline underline-offset-3"
                               >
                                 {id}
                                 <span className="sr-only"> {findCriterion(id)?.name}</span>
@@ -199,7 +199,7 @@ function Wcag3Page() {
                         </ul>
                       ) : (
                         <p className="py-1.5">
-                          <span className="rounded-xs border-2 border-ink bg-paper-2 px-1.5 py-1 font-mono text-xs leading-none font-bold">
+                          <span className="rounded-xs border-2 border-ink bg-paper-2 px-1.5 py-1 text-xs leading-none font-bold">
                             Nowe w 3.0
                           </span>
                         </p>

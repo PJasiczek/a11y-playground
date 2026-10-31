@@ -24,7 +24,7 @@ export const Route = createFileRoute("/praktyka/przed-i-po/$problem")({
 });
 
 const chip =
-  "inline-flex min-h-11 items-center rounded border border-control bg-surface px-3 font-mono text-sm font-semibold hover:border-ink";
+  "inline-flex min-h-11 items-center rounded border border-control bg-surface px-3 text-sm font-semibold hover:border-ink";
 const link = "inline-flex min-h-11 items-center text-accent underline underline-offset-3";
 
 /**
@@ -38,16 +38,16 @@ function ProblemPage() {
   if (!revealedAt) return <CheckGate subject="Opis problemu" revealLabel="Pokaż opis mimo to" />;
   return (
     <article>
-      <nav aria-label="Okruszki" className="pt-4 font-mono text-[0.8125rem] text-ink-2">
+      <nav aria-label="Okruszki" className="pt-4 text-[0.8125rem] text-ink-2">
         <ol className="flex flex-wrap items-center gap-x-2">
           <li>
-            <Link to="/praktyka/przed-i-po" className="inline-flex min-h-11 items-center underline underline-offset-3">
+            <Link to="/praktyka/przed-i-po" className="inline-flex min-h-11 min-w-11 items-center underline underline-offset-3">
               Strona przed i po
             </Link>
           </li>
           <li aria-hidden="true">/</li>
           <li>
-            <Link to="/praktyka/przed-i-po/lista" className="inline-flex min-h-11 items-center underline underline-offset-3">
+            <Link to="/praktyka/przed-i-po/lista" className="inline-flex min-h-11 min-w-11 items-center underline underline-offset-3">
               Lista problemów
             </Link>
           </li>
@@ -59,7 +59,7 @@ function ProblemPage() {
       </nav>
 
       <header className="pt-3">
-        <p className="font-mono text-sm text-ink-2">
+        <p className="text-sm text-ink-2">
           Problem {problem.number} z {count}
         </p>
         <h1 id="tytul" tabIndex={-1} className="mt-1 text-[clamp(1.5rem,4vw,2rem)] leading-tight font-bold tracking-tight outline-none">
@@ -101,7 +101,7 @@ function ProblemPage() {
             ] as const
           ).map(([key, label, tone]) => (
             <figure key={key} className="m-0 min-w-0">
-              <figcaption className="font-mono text-xs font-semibold tracking-widest text-ink-2 uppercase">{label}</figcaption>
+              <figcaption className="text-xs font-semibold tracking-widest text-ink-2 uppercase">{label}</figcaption>
               {/* Wrapped, not scrolled: a scrolling block would need to take focus (2.1.1). */}
               <pre className={`mt-1 rounded border-t-4 ${tone} bg-[#101314] px-4 py-3 break-words whitespace-pre-wrap text-[#e8e6e1]`}>
                 <code className="font-mono text-[0.8125rem] leading-relaxed">{problem.code[key]}</code>

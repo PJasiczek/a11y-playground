@@ -29,7 +29,7 @@ export function CopyAddress({ email }: { email: string }) {
 
   return (
     <div className="mt-6 border-t-2 border-ink border-b border-b-rule py-5">
-      <p className="font-mono text-xs font-semibold tracking-[0.08em] text-ink-2 uppercase">E-mail</p>
+      <p className="text-xs font-semibold tracking-[0.08em] text-ink-2 uppercase">E-mail</p>
       <a
         href={`mailto:${email}`}
         className="mt-1 inline-flex min-h-11 items-center text-[1.375rem] font-bold tracking-tight wrap-anywhere text-accent underline underline-offset-3 sm:text-[1.625rem]"

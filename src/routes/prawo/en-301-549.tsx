@@ -38,7 +38,7 @@ const chapters = [
 function StandardPage() {
   return (
     <article>
-      <nav aria-label="Okruszki" className="pt-4 font-mono text-[0.8125rem] text-ink-2">
+      <nav aria-label="Okruszki" className="pt-4 text-[0.8125rem] text-ink-2">
         <ol className="flex flex-wrap items-center gap-x-2">
           <li>
             <Link to="/prawo" className="inline-flex min-h-11 min-w-11 items-center underline underline-offset-3">
@@ -70,7 +70,7 @@ function StandardPage() {
         </h2>
         <dl className="mt-3">
           <div className="grid gap-x-6 border-b border-rule py-3 sm:grid-cols-[9rem_1fr]">
-            <dt className="font-mono font-semibold">V3.2.1 (2021)</dt>
+            <dt className="font-semibold">V3.2.1 (2021)</dt>
             <dd>
               <p>
                 Oparta na WCAG 2.1. Wskazuje ją{" "}
@@ -80,7 +80,7 @@ function StandardPage() {
             </dd>
           </div>
           <div className="grid gap-x-6 border-b border-rule py-3 sm:grid-cols-[9rem_1fr]">
-            <dt className="font-mono font-semibold">V4.1.1 (2026)</dt>
+            <dt className="font-semibold">V4.1.1 (2026)</dt>
             <dd>
               <p>
                 Oparta na WCAG 2.2, pierwsza przygotowana z myślą o Europejskim Akcie o Dostępności. Opublikowana we wrześniu
@@ -103,7 +103,7 @@ function StandardPage() {
         <ul className="mt-2">
           {chapters.map(([number, topic]) => (
             <li key={number} className="grid grid-cols-[3rem_1fr] gap-x-4 border-b border-rule py-2.5">
-              <span className="font-mono font-bold">{number}</span>
+              <span className="font-bold">{number}</span>
               <span>{topic}</span>
             </li>
           ))}

@@ -1,23 +1,89 @@
 @import "tailwindcss";
-@import "@fontsource-variable/inter";
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/atkinson-hyperlegible-mono";
+@import "./home.css";
+@import "./header.css";
 
 /*
- * Colour tokens. Every pair used for text meets 7:1 (WCAG 1.4.6, AAA),
- * control borders meet 3:1 (1.4.11). light-dark() follows color-scheme,
- * which the theme toggle sets on <html>.
+ * Colour tokens, as specified in DESIGN.md. Every pair used for text meets 7:1 (WCAG 1.4.6, AAA),
+ * control borders meet 3:1 (1.4.11). light-dark() follows color-scheme, which the theme toggle
+ * sets on <html>.
  */
 :root {
   color-scheme: light dark;
-  --paper: light-dark(#fbfaf7, #121416);
-  --paper-2: light-dark(#f1efe8, #1b1e21);
-  --surface: light-dark(#ffffff, #1f2226);
-  --ink: light-dark(#14171a, #f3f1ec);
-  --ink-2: light-dark(#484d52, #b4b9be);
-  --rule: light-dark(#dfdbd1, #2e3236);
-  --control: light-dark(#857f72, #7a8088);
-  --accent: light-dark(#2c36a8, #aeb5ff);
-  --good: light-dark(#145537, #7fd1a6);
-  --bad: light-dark(#9a1b1b, #ffa3a3);
+  /* Ground: sand, its darker band, white cards, ink. */
+  --paper: light-dark(#fdfbf6, oklch(18% 0.03 285));
+  --paper-2: light-dark(oklch(96% 0.016 85), oklch(22% 0.035 285));
+  --surface: light-dark(oklch(99.3% 0.008 85), oklch(25% 0.04 285));
+  --ink: light-dark(#06316b, oklch(96% 0.02 85));
+  --ink-2: light-dark(#184b7f, oklch(83% 0.025 85));
+  --rule: light-dark(oklch(88% 0.03 82), oklch(32% 0.04 285));
+  --control: light-dark(oklch(52% 0.03 285), oklch(66% 0.03 285));
+  --accent: light-dark(oklch(40% 0.15 250), oklch(82% 0.1 245));
+  --focus: light-dark(oklch(40% 0.15 250), oklch(88% 0.14 95));
+  /* The solid edge under the primary button. Decorative, the button's fill already has 15:1. */
+  --edge: light-dark(oklch(90% 0.15 95), oklch(44% 0.09 80));
+  /* Text-safe grass and lollipop: a step darker than the deep shades, so they hold 7:1 on the band too. */
+  --good: light-dark(oklch(38% 0.11 145), oklch(82% 0.13 140));
+  --bad: light-dark(oklch(40% 0.16 0), oklch(82% 0.1 355));
+
+  /*
+   * The seven kinds of content, one toy colour each: a fill for surfaces with ink text on them
+   * (8.9:1 or more) and a deep shade for their icons and edges (4.4:1 or more on the fill).
+   */
+  --sky: light-dark(#a8dffc, oklch(34% 0.08 240));
+  --sky-d: light-dark(oklch(40% 0.15 250), oklch(80% 0.11 235));
+  --slide: light-dark(#ffd2aa, oklch(36% 0.09 40));
+  --slide-d: light-dark(oklch(44% 0.16 38), oklch(80% 0.12 50));
+  --grass: light-dark(#acf0b6, oklch(35% 0.08 145));
+  --grass-d: light-dark(oklch(41% 0.12 145), oklch(82% 0.13 140));
+  --plum: light-dark(#d0b9fa, oklch(35% 0.09 305));
+  --plum-d: light-dark(oklch(42% 0.16 300), oklch(80% 0.1 305));
+  --pop: light-dark(#ffbcd8, oklch(36% 0.1 0));
+  --pop-d: light-dark(oklch(44% 0.17 0), oklch(82% 0.1 355));
+  --sun: light-dark(#ffe78a, oklch(38% 0.07 90));
+  --sun-d: light-dark(oklch(44% 0.09 80), oklch(88% 0.14 95));
+  --sea: light-dark(#92e5e7, oklch(35% 0.06 195));
+  --sea-d: light-dark(oklch(41% 0.09 200), oklch(82% 0.09 190));
+}
+
+/*
+ * Spokój (src/components/calm-toggle.tsx), 2.3.3: no animation, no transition, and the kind
+ * fills fall back to the sand band. Icons and words keep every meaning. Without an explicit
+ * choice it follows the system's reduced motion setting.
+ */
+:root[data-calm="on"] {
+  --sky: var(--paper-2);
+  --slide: var(--paper-2);
+  --grass: var(--paper-2);
+  --plum: var(--paper-2);
+  --pop: var(--paper-2);
+  --sun: var(--paper-2);
+  --sea: var(--paper-2);
+  & *,
+  & *::before,
+  & *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-calm="off"]) {
+    --sky: var(--paper-2);
+    --slide: var(--paper-2);
+    --grass: var(--paper-2);
+    --plum: var(--paper-2);
+    --pop: var(--paper-2);
+    --sun: var(--paper-2);
+    --sea: var(--paper-2);
+    & *,
+    & *::before,
+    & *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
 }
 
 :root[data-theme="light"] {
@@ -39,13 +105,52 @@
   --color-accent: var(--accent);
   --color-good: var(--good);
   --color-bad: var(--bad);
-  /* The marker keeps one meaning across the app: what the user gains. Always paired with dark ink. */
-  --color-marker: #f4e75b;
-  --color-on-marker: #14171a;
+  --color-focus: var(--focus);
+  --color-edge: var(--edge);
+  --color-sky: var(--sky);
+  --color-sky-d: var(--sky-d);
+  --color-slide: var(--slide);
+  --color-slide-d: var(--slide-d);
+  --color-grass: var(--grass);
+  --color-grass-d: var(--grass-d);
+  --color-plum: var(--plum);
+  --color-plum-d: var(--plum-d);
+  --color-pop: var(--pop);
+  --color-pop-d: var(--pop-d);
+  --color-sun: var(--sun);
+  --color-sun-d: var(--sun-d);
+  --color-sea: var(--sea);
+  --color-sea-d: var(--sea-d);
+  /* The kind of the element or its nearest ancestor, set by the .kind-* classes below. */
+  --color-kind: var(--kind);
+  --color-kind-d: var(--kind-d);
+  /* A pale wash of the kind for whole cards and tiles, and their border. Ink and ink-2 keep 7:1 on it. */
+  --color-kind-soft: color-mix(in oklab, var(--kind) 30%, var(--surface));
+  --color-kind-line: color-mix(in oklab, var(--kind) 60%, var(--surface));
+  /*
+   * The marker is the highlight: the skip link, "nowe w 2.2", key words in statute summaries.
+   * Light sun with dark ink in both modes (12:1).
+   */
+  --color-marker: oklch(90% 0.15 95);
+  /* The sparkle strokes drawn around headings and bands. Decorative only, never text. */
+  --color-spark: oklch(82% 0.16 85);
+  --color-on-marker: oklch(29% 0.11 255);
 
-  --font-sans: "Inter Variable", "Segoe UI", system-ui, sans-serif;
-  /* Criterion numbers, article numbers and dates are codes, so they get the system monospace. */
-  --font-mono: ui-monospace, "Cascadia Mono", Consolas, "SF Mono", monospace;
+  /* Rounder than Tailwind's defaults, so the whole app takes the playground shapes. */
+  --radius-xs: 0.375rem;
+  --radius-sm: 0.5rem;
+  --radius: 0.75rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1.125rem;
+  --radius-xl: 1.5rem;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-press: cubic-bezier(0.2, 0.7, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --font-sans: "Geist Variable", "Segoe UI", system-ui, sans-serif;
+  /* Code only: code blocks, inline code and attribute values. It tells I, l, 1, O and 0 apart. */
+  --font-mono: "Atkinson Hyperlegible Mono Variable", ui-monospace, "Cascadia Mono", Consolas, monospace;
 }
 
 /*
@@ -80,13 +185,141 @@
 
   /* 2.4.13 Focus Appearance (AAA): 3px solid outline, at least 3:1 against both states. */
   :focus-visible {
-    outline: 3px solid var(--accent);
+    outline: 3px solid var(--focus);
     outline-offset: 2px;
   }
 
   @media (forced-colors: active) {
     :focus-visible {
       outline-color: Highlight;
+    }
+  }
+
+  /* Without a kind, coloured pieces fall back to the sand band and ink. */
+  :root {
+    --kind: var(--paper-2);
+    --kind-d: var(--ink);
+  }
+}
+
+/*
+ * The seven kinds of content (src/lib/kinds.ts). A kind class sets --kind and --kind-d, and every
+ * coloured piece inside reads them through bg-kind, text-kind-d, border-kind-d and so on.
+ */
+@layer components {
+  .kind-kryteria {
+    --kind: var(--sky);
+    --kind-d: var(--sky-d);
+  }
+  .kind-praktyka {
+    --kind: var(--slide);
+    --kind-d: var(--slide-d);
+  }
+  .kind-sciezki {
+    --kind: var(--grass);
+    --kind-d: var(--grass-d);
+  }
+  .kind-prawo {
+    --kind: var(--plum);
+    --kind-d: var(--plum-d);
+  }
+  .kind-symulatory {
+    --kind: var(--pop);
+    --kind-d: var(--pop-d);
+  }
+  .kind-slownik {
+    --kind: var(--sun);
+    --kind-d: var(--sun-d);
+  }
+  .kind-wcag3 {
+    --kind: var(--sea);
+    --kind-d: var(--sea-d);
+  }
+
+  /*
+   * The glossy finish of the home page graphic, for the logo bars, icon discs and path icons: the
+   * deep shade, lit from the top left. Decorative surfaces; the glyph on a disc is the card colour.
+   */
+  .glossy {
+    background:
+      radial-gradient(circle at 30% 20%, color-mix(in oklab, var(--kind-d) 35%, white) 0, transparent 45%),
+      linear-gradient(to bottom, color-mix(in oklab, var(--kind-d) 62%, white), color-mix(in oklab, var(--kind-d) 92%, white));
+    box-shadow: inset 0 -2px 0 rgb(0 0 0 / 0.14);
+  }
+  .disc {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    border-radius: 9999px;
+    color: var(--surface);
+    box-shadow:
+      inset 0 -3px 0 rgb(0 0 0 / 0.14),
+      0 6px 14px -8px var(--kind-d);
+  }
+
+  /* The four bars of the logo ring once, one after another, on hover (src/components/kinds.tsx). */
+  .group:hover .xylo-mark > span {
+    animation: xylo-ding 420ms var(--ease-out);
+  }
+  .group:hover .xylo-mark > span:nth-child(2) {
+    animation-delay: 90ms;
+  }
+  .group:hover .xylo-mark > span:nth-child(3) {
+    animation-delay: 180ms;
+  }
+  .group:hover .xylo-mark > span:nth-child(4) {
+    animation-delay: 270ms;
+  }
+
+  /*
+   * Buttons from DESIGN.md. The primary one is ink with a sun edge under it and presses down onto
+   * the edge; the secondary one is a card with a control ring. One primary button per view.
+   */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+    min-height: 3rem;
+    padding: 0 1.35rem;
+    border-radius: 9999px;
+    font-weight: 800;
+    cursor: pointer;
+    color: var(--paper);
+    background: var(--ink);
+    box-shadow: 0 4px 0 0 var(--edge);
+    transition:
+      transform 140ms var(--ease-press),
+      box-shadow 140ms var(--ease-press);
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 0 var(--edge);
+    }
+    &:active {
+      transform: translateY(4px);
+      box-shadow: 0 0 0 0 var(--edge);
+      transition-duration: 70ms;
+    }
+    &:focus-visible {
+      outline-offset: 3px;
+    }
+  }
+
+  .btn-secondary {
+    color: var(--ink);
+    background: var(--surface);
+    box-shadow:
+      inset 0 0 0 2px var(--control),
+      0 4px 0 0 var(--control);
+    &:hover {
+      box-shadow:
+        inset 0 0 0 2px var(--ink),
+        0 6px 0 0 var(--ink);
+    }
+    &:active {
+      box-shadow:
+        inset 0 0 0 2px var(--ink),
+        0 0 0 0 var(--ink);
     }
   }
 }
@@ -115,7 +348,6 @@
     }
     & h3 {
       margin: 1.1rem 0 0.3rem;
-      font-family: var(--font-mono);
       font-size: 0.75rem;
       font-weight: 600;
       letter-spacing: 0.08em;
@@ -133,7 +365,6 @@
       content: "→" / "";
       position: absolute;
       left: 0;
-      font-family: var(--font-mono);
       color: var(--accent);
     }
     & ol {
@@ -201,7 +432,7 @@
     border-radius: 9999px;
     background: var(--surface);
     color: var(--ink);
-    font: 700 0.75rem/1 var(--font-mono);
+    font: 700 0.75rem/1 var(--font-sans);
     cursor: pointer;
   }
 
@@ -235,7 +466,6 @@
   .disclosure > summary::before {
     content: "▸" / "";
     margin-right: 0.5rem;
-    font-family: var(--font-mono);
   }
 
   .disclosure[open] > summary::before {
@@ -262,7 +492,6 @@
       padding: 0.35rem 0.7rem;
     }
     & .p-img {
-      font-family: var(--font-mono);
       font-size: 0.8125rem;
     }
     & .p-input {
@@ -285,7 +514,6 @@
       box-shadow: 0 6px 16px rgb(0 0 0 / 0.12);
     }
     & .p-slides {
-      font-family: var(--font-mono);
       letter-spacing: 0.3em;
       color: #6f6f6a;
     }
@@ -379,7 +607,6 @@
       }
     }
     & .p-tree {
-      font-family: var(--font-mono);
       font-size: 0.8125rem;
       line-height: 1.7;
       color: var(--ink);
@@ -467,4 +694,95 @@
     color: var(--color-on-marker);
     padding: 0 0.15em;
   }
+}
+
+@keyframes xylo-ding {
+  40% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Pastel playground reference, shared across all route families. Demo iframes keep
+   their deliberate good/bad styles; these surfaces belong to the application. */
+@layer components {
+  .playground-hero { display:grid; grid-template-columns: .95fr 1.2fr; align-items:center; gap:1rem; padding:2rem 0 3rem; }
+  .hero-copy h1 { margin-top:.7rem; font-size:clamp(2.3rem,3.5vw,3.15rem); font-weight:800; letter-spacing:-.045em; line-height:1.06; }
+  .possibility { color:var(--accent); }
+  .hero-lede { max-width:42ch; margin-top:1rem; color:var(--ink-2); line-height:1.65; }
+  .hero-search { display:flex; align-items:center; gap:.5rem; border:1px solid var(--control); border-radius:999px; background:var(--surface); padding:.3rem .3rem .3rem 1rem; margin-top:1.2rem; }
+  .hero-search input { min-width:0; width:100%; min-height:44px; background:transparent; font-size:.8rem; }
+  .hero-search input::placeholder { color:var(--ink-2); }
+  .hero-search .btn { min-height:44px; padding-inline:1.2rem; font-size:.875rem; }
+  .hero-suggestions { display:flex; align-items:center; flex-wrap:wrap; gap:.5rem; margin-top:.8rem; font-size:.75rem; color:var(--ink-2); }
+  .hero-suggestions a { display:inline-flex; align-items:center; min-height:44px; padding:0 .8rem; border:1px solid var(--control); border-radius:999px; background:var(--surface); }
+  .playground-scene { position:relative; min-width:0; padding:5rem 3rem 2rem; }
+  .scene-decor { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+  .hero-blocks { position:relative; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.55rem; }
+  .hero-blocks li:first-child { grid-column:1/-1; width:70%; justify-self:center; transform:rotate(3deg); }
+  .hero-blocks li:nth-child(2) { transform:rotate(2deg); }
+  .hero-blocks li:nth-child(3) { transform:rotate(-2deg); }
+  .hero-blocks li:last-child { grid-column:1/-1; }
+  .hero-block { display:flex; align-items:center; gap:.7rem; min-height:100px; padding:1rem; border-radius:1.8rem; color:var(--ink); background:linear-gradient(145deg,color-mix(in oklab,var(--kind) 65%,var(--surface)),var(--kind)); border:2px solid color-mix(in oklab,var(--kind) 75%,var(--surface)); box-shadow:inset 3px 4px 4px color-mix(in oklab,var(--surface) 65%,transparent), inset -2px -4px 4px color-mix(in oklab,var(--kind-d) 15%,transparent),0 5px 8px -5px var(--kind-d); transition:transform 180ms var(--ease-out); }
+  .hero-block:hover { transform:translateY(-4px); }
+  .hero-icon { display:grid; place-items:center; width:3rem; height:3rem; flex-shrink:0; border-radius:50%; color:var(--kind-d); background:var(--kind); box-shadow:inset 2px 3px 4px color-mix(in oklab,var(--surface) 70%,transparent); }
+  .hero-block strong,.category-tile strong { display:block; font-size:1rem; }
+  .hero-block small,.category-tile small { display:block; margin-top:.35rem; font-size:.7rem; }
+  .block-arrow { display:grid; place-items:center; margin-left:auto; flex-shrink:0; width:2rem; height:2rem; border-radius:50%; background:var(--surface); }
+  .category-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1rem; }
+  .category-tile { display:flex; align-items:center; gap:.75rem; height:100%; padding:1rem; border:1px solid color-mix(in oklab,var(--kind) 65%,var(--surface)); border-radius:1rem; background:color-mix(in oklab,var(--kind) 25%,var(--surface)); }
+  .category-tile > svg { margin-left:auto; flex-shrink:0; }
+  .playground-quote { padding:1rem 1.5rem; border-radius:1rem; background:var(--paper-2); font-weight:700; }
+  .playground-quote span { font-size:1.5rem; }
+  .learning-and-law { display:grid; grid-template-columns:2fr 1fr; align-items:start; gap:1rem; }
+  .learning-and-law > section { min-width:0; }
+  .learning-and-law > section:last-child { margin-top:3rem; padding:1.5rem; }
+  .learning-and-law > section:last-child > span,.learning-and-law > section:last-child > svg { display:none; }
+  .learning-and-law h2 { font-size:1.35rem; }
+  .learning-and-law p { font-size:.85rem; }
+  .learning-and-law ul { grid-template-columns:repeat(5,minmax(0,1fr)); }
+  .learning-and-law li { padding:.8rem .8rem 3rem; }
+  .learning-and-law h3 { font-size:.85rem; }
+  #main[data-page="content"] { padding-top:1.5rem; }
+  #main[data-page="content"] h1 { font-size:clamp(2rem,4vw,3rem); font-weight:800; letter-spacing:-.035em; }
+  #main[data-page="content"] > h1,
+  #main[data-page="content"] > div:has(> h1),
+  #main[data-page="content"] > section:has(> h1) { border-radius:1.5rem; background:linear-gradient(120deg,color-mix(in oklab,var(--kind) 32%,var(--surface)),var(--surface)); padding:1.5rem; margin-bottom:1.5rem; border:1px solid var(--rule); }
+  #main[data-page="content"] :is(article,section,aside).bg-surface { box-shadow:0 5px 22px -18px var(--kind-d); }
+  .btn:not(.btn-secondary) { background:linear-gradient(180deg,color-mix(in oklab,var(--ink) 90%,var(--accent)),var(--ink)); box-shadow:inset 0 2px 2px rgb(255 255 255 / .2),0 3px 8px rgb(0 30 75 / .15); }
+  @media (max-width:63.99rem) {
+    .playground-hero { grid-template-columns:1fr 1fr; }
+    .playground-scene { padding:4rem 0 2rem; }
+    .hero-block { padding:.7rem; gap:.4rem; }
+    .hero-block .hero-icon { width:2.4rem; height:2.4rem; }
+    .category-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .learning-and-law { grid-template-columns:1fr; }
+    .learning-and-law > section:last-child { margin-top:0; }
+  }
+  @media (max-width:39.99rem) {
+    .playground-hero { grid-template-columns:1fr; padding-top:1rem; }
+    .hero-copy h1 { font-size:clamp(2rem,9vw,3rem); }
+    .playground-scene { padding:3rem 1rem 1.5rem; }
+    .hero-block { min-height:90px; }
+    .category-grid { gap:.65rem; }
+    .category-tile { padding:.75rem; flex-wrap:wrap; }
+    .category-tile small { overflow-wrap:anywhere; }
+    .learning-and-law ul { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  }
+  :root[data-calm="on"] .scene-decor { display:none; }
+  :root[data-calm="on"] .hero-block { background:var(--paper-2); box-shadow:none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+ :root:not([data-calm="off"]) .scene-decor { display:none; }
+}
+
+@layer components {
+ .hero-block > span:nth-child(2) { min-width:0; overflow-wrap:anywhere; }
+ @media (max-width:39.99rem) {
+  .hero-block { position:relative; padding:.8rem .6rem 2.2rem; }
+  .hero-block .block-arrow { position:absolute; right:.6rem; bottom:.4rem; width:1.5rem; height:1.5rem; }
+  .hero-block strong { font-size:.85rem; }
+  .hero-block .hero-icon { width:2rem; height:2rem; }
+  .hero-block .hero-icon svg { width:1.3rem; height:1.3rem; }
+ }
 }

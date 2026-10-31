@@ -21,12 +21,12 @@ export function SimulationPicker({
 
   return (
     <fieldset>
-      <legend className="mb-2 font-mono text-xs font-semibold tracking-widest text-ink-2 uppercase">Symulacja</legend>
+      <legend className="mb-2 text-xs font-semibold tracking-widest text-ink-2 uppercase">Symulacja</legend>
       <ul className="border-t-2 border-ink">
         {options.map(({ id, label, hint }) => (
           <li key={id ?? "brak"} className="border-b border-rule">
             {id === firstStructure ? (
-              <span className="block border-b border-rule pt-4 pb-1 font-mono text-xs font-semibold tracking-widest text-ink-2 uppercase">
+              <span className="block border-b border-rule pt-4 pb-1 text-xs font-semibold tracking-widest text-ink-2 uppercase">
                 Struktura strony
               </span>
             ) : null}

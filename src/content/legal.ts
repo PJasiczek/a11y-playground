@@ -45,7 +45,7 @@ export function unitsOf(act: ActSlug) {
   return legalUnits.filter((u) => u.act === act);
 }
 
-/** "23.06.2021" from an ISO date. Dates in this module are codes, shown in the monospace face. */
+/** "23.06.2021" from an ISO date. */
 export function formatDate(iso: string) {
   const [year, month, day] = iso.split("-");
   return `${String(day)}.${String(month)}.${String(year)}`;

@@ -13,7 +13,7 @@ const strengthGlyphs = { wprost: "■", posrednio: "◧", powiazane: "□" } as 
  */
 export function StrengthLabel({ strength }: { strength: Strength | null }) {
   return (
-    <span className="font-mono text-xs font-semibold tracking-wide whitespace-nowrap uppercase">
+    <span className="text-xs font-semibold tracking-wide whitespace-nowrap uppercase">
       <span aria-hidden="true">{strength ? strengthGlyphs[strength] : "·"} </span>
       {strength ? strengthLabels[strength] : "nie wymaga"}
     </span>
@@ -38,7 +38,7 @@ export function LegalFooter({ retrieved }: { retrieved?: string }) {
   return (
     <footer className="mt-10 flex flex-wrap justify-between gap-x-8 gap-y-2 border-t border-rule pt-4 text-sm text-ink-2">
       <p>Materiał edukacyjny, nie porada prawna. Wiążące jest brzmienie z Dziennika Ustaw.</p>
-      {retrieved ? <p className="font-mono text-[0.8125rem]">Tekst pobrano {formatDate(retrieved)}</p> : null}
+      {retrieved ? <p className="text-[0.8125rem]">Tekst pobrano {formatDate(retrieved)}</p> : null}
     </footer>
   );
 }
@@ -84,7 +84,7 @@ export function Timeline({ entries, asOf }: { entries: TimelineEntry[]; asOf: st
         aria-hidden="true"
         className={`absolute top-5 -left-[7px] size-3 rounded-full border-2 border-ink ${isPast ? "bg-ink" : "bg-paper"}`}
       />
-      <span className="font-mono font-semibold">
+      <span className="font-semibold">
         {entry.yearly ? `co rok, ${formatDate(entry.date).slice(0, 5)}` : formatDate(entry.date)}
         {!isPast ? <span className="mt-0.5 block text-xs font-normal text-ink-2">{until(asOf, entry.date)}</span> : null}
       </span>
@@ -92,7 +92,7 @@ export function Timeline({ entries, asOf }: { entries: TimelineEntry[]; asOf: st
         <span className={entry.mine ? "text-[1.0625rem] font-semibold" : "text-ink-2"}>
           {entry.what}
           {!entry.mine ? (
-            <span className="ml-2 rounded-xs border border-dashed border-control px-1 font-mono text-[0.6875rem] whitespace-nowrap text-ink-2">
+            <span className="ml-2 rounded-xs border border-dashed border-control px-1 text-[0.6875rem] whitespace-nowrap text-ink-2">
               inna sytuacja
             </span>
           ) : null}
@@ -109,7 +109,7 @@ export function Timeline({ entries, asOf }: { entries: TimelineEntry[]; asOf: st
       {past.map((e) => item(e, true))}
       <li className="relative py-2 pl-5">
         <span aria-hidden="true" className="absolute top-[1.05rem] -left-[9px] h-0.5 w-4 bg-ink" />
-        <span className="font-mono font-bold">stan prawny na {formatDate(asOf)}</span>
+        <span className="font-bold">stan prawny na {formatDate(asOf)}</span>
       </li>
       {future.map((e) => item(e, false))}
     </ol>

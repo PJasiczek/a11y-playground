@@ -25,7 +25,8 @@ async function answerQuiz(page: Page) {
 
 test("the developer path can be completed from the keyboard and survives a reload", async ({ page }) => {
   await page.goto("/sciezki");
-  await press(page, page.getByRole("link", { name: "Programista", exact: true }), "Enter");
+  // Scope the action to the learning-path list in the main content.
+  await press(page, page.getByRole("main").getByRole("link", { name: "Programista", exact: true }), "Enter");
   await expect(page.getByRole("heading", { level: 1, name: /Programista/ })).toBeFocused();
   await press(page, page.getByRole("link", { name: /^Zacznij: 01/ }), "Enter");
 

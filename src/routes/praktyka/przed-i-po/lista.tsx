@@ -55,10 +55,10 @@ function ProblemListPage() {
 
   return (
     <>
-      <nav aria-label="Okruszki" className="pt-4 font-mono text-[0.8125rem] text-ink-2">
+      <nav aria-label="Okruszki" className="pt-4 text-[0.8125rem] text-ink-2">
         <ol className="flex flex-wrap items-center gap-x-2">
           <li>
-            <Link to="/praktyka/przed-i-po" className="inline-flex min-h-11 items-center underline underline-offset-3">
+            <Link to="/praktyka/przed-i-po" className="inline-flex min-h-11 min-w-11 items-center underline underline-offset-3">
               Strona przed i po
             </Link>
           </li>
@@ -105,7 +105,7 @@ function ProblemListPage() {
           ))}
         </FilterGroup>
       </div>
-      <p role="status" className="mt-3 font-mono text-sm text-ink-2">
+      <p role="status" className="mt-3 text-sm text-ink-2">
         {status}
       </p>
 
@@ -113,7 +113,7 @@ function ProblemListPage() {
         <table className="w-full border-collapse text-[0.9375rem]">
           <thead>
             <tr className="border-b-2 border-ink text-left">
-              <th scope="col" className="py-2 pr-3 font-mono text-xs">
+              <th scope="col" className="py-2 pr-3 text-xs">
                 Nr
               </th>
               <th scope="col" className="py-2 pr-3">
@@ -135,7 +135,7 @@ function ProblemListPage() {
               const others = row.who.filter((who) => who !== komu);
               return (
                 <tr key={row.number} className="border-b border-rule align-top">
-                  <td className="py-1 pr-3 font-mono font-bold">
+                  <td className="py-1 pr-3 font-bold">
                     <span className="inline-flex min-h-11 items-center">{row.number}</span>
                   </td>
                   <td className="py-1 pr-3">
@@ -147,7 +147,7 @@ function ProblemListPage() {
                       {row.title}
                     </Link>
                   </td>
-                  <td className="py-3 pr-3 font-mono text-sm whitespace-nowrap">{row.criteria.join(" · ")}</td>
+                  <td className="py-3 pr-3 text-sm whitespace-nowrap">{row.criteria.join(" · ")}</td>
                   <td className="py-3 pr-3 whitespace-nowrap">{row.axe.length > 0 ? "zgłasza" : "nie widzi"}</td>
                   <td className="py-3 text-ink-2">{others.length > 0 ? others.map((who) => harmedLabels[who]).join(", ") : "nikomu więcej"}</td>
                 </tr>

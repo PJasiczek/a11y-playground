@@ -49,16 +49,16 @@ function LessonPage() {
 
   return (
     <article>
-      <nav aria-label="Okruszki" className="pt-4 font-mono text-[0.8125rem] text-ink-2">
+      <nav aria-label="Okruszki" className="pt-4 text-[0.8125rem] text-ink-2">
         <ol className="flex flex-wrap items-center gap-x-2">
           <li>
-            <Link to="/sciezki" className="inline-flex min-h-11 items-center underline underline-offset-3">
+            <Link to="/sciezki" className="inline-flex min-h-11 min-w-11 items-center underline underline-offset-3">
               Ścieżki
             </Link>
           </li>
           <li aria-hidden="true">/</li>
           <li>
-            <Link to="/sciezki/$path" params={{ path: path.slug }} className="inline-flex min-h-11 items-center underline underline-offset-3">
+            <Link to="/sciezki/$path" params={{ path: path.slug }} className="inline-flex min-h-11 min-w-11 items-center underline underline-offset-3">
               {path.title}
             </Link>
           </li>
@@ -103,13 +103,13 @@ function LessonPage() {
           <dl className="mt-3 grid gap-x-4 gap-y-3 sm:grid-cols-[9rem_1fr]">
             {criteria.length > 0 ? (
               <>
-                <dt className="font-mono text-xs font-semibold tracking-widest text-ink-2 uppercase sm:pt-3.5">Kryteria</dt>
+                <dt className="text-xs font-semibold tracking-widest text-ink-2 uppercase sm:pt-3.5">Kryteria</dt>
                 <dd>
                   <ul className="flex flex-wrap gap-2">
                     {criteria.map(({ id, name }) => (
                       <li key={id}>
                         <Link to="/kryteria/$criterionId" params={{ criterionId: id }} className={chip}>
-                          <span className="font-mono text-sm font-semibold">{id}</span>
+                          <span className="text-sm font-semibold">{id}</span>
                           <span className="ml-2 text-sm">{name}</span>
                         </Link>
                       </li>
@@ -120,7 +120,7 @@ function LessonPage() {
             ) : null}
             {examples.length > 0 ? (
               <>
-                <dt className="font-mono text-xs font-semibold tracking-widest text-ink-2 uppercase sm:pt-3.5">Przykłady</dt>
+                <dt className="text-xs font-semibold tracking-widest text-ink-2 uppercase sm:pt-3.5">Przykłady</dt>
                 <dd>
                   <ul className="flex flex-wrap gap-2">
                     {examples.map((example) => (
@@ -136,13 +136,13 @@ function LessonPage() {
             ) : null}
             {law.length > 0 ? (
               <>
-                <dt className="font-mono text-xs font-semibold tracking-widest text-ink-2 uppercase sm:pt-3.5">Przepisy</dt>
+                <dt className="text-xs font-semibold tracking-widest text-ink-2 uppercase sm:pt-3.5">Przepisy</dt>
                 <dd>
                   <ul className="flex flex-wrap gap-2">
                     {law.map((unit) => (
                       <li key={unit.id}>
                         <ProvisionLink id={unit.id} className={chip}>
-                          <span className="font-mono text-sm font-semibold">{unit.label}</span>
+                          <span className="text-sm font-semibold">{unit.label}</span>
                           <span className="ml-2 text-sm">
                             {unit.title ? `${unit.title}, ` : ""}
                             {unit.act}
@@ -184,7 +184,7 @@ function LessonPage() {
               params={{ path: path.slug, lesson: previous.slug }}
               className="inline-flex min-h-13 flex-col justify-center rounded border border-control bg-surface px-4 py-1 hover:border-ink"
             >
-              <span className="font-mono text-xs text-ink-2">← Poprzednia</span>
+              <span className="text-xs text-ink-2">← Poprzednia</span>
               <span className="font-semibold">{previous.title}</span>
             </Link>
           ) : null}
@@ -194,7 +194,7 @@ function LessonPage() {
               params={{ path: path.slug, lesson: next.slug }}
               className="inline-flex min-h-13 flex-col justify-center rounded border border-ink bg-ink px-4 py-1 text-paper"
             >
-              <span className="font-mono text-xs">Następna →</span>
+              <span className="text-xs">Następna →</span>
               <span className="font-semibold">{next.title}</span>
             </Link>
           ) : (
@@ -203,7 +203,7 @@ function LessonPage() {
               params={{ path: path.slug }}
               className="inline-flex min-h-13 flex-col justify-center rounded border border-ink bg-ink px-4 py-1 text-paper"
             >
-              <span className="font-mono text-xs">Koniec ścieżki</span>
+              <span className="text-xs">Koniec ścieżki</span>
               <span className="font-semibold">Wróć do ścieżki</span>
             </Link>
           )}

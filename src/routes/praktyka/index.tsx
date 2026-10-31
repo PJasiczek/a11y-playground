@@ -26,10 +26,10 @@ function PracticePage() {
     <>
       <h1 className="pt-8 pb-2 text-[1.875rem] font-bold tracking-tight">Praktyka</h1>
       <PracticeTabs />
-      <p className="mb-2 font-mono text-sm text-ink-2">{countOf(cards.length, ["przykład", "przykłady", "przykładów"])}, od najtańszej poprawki</p>
+      <p className="mb-2 text-sm text-ink-2">{countOf(cards.length, ["przykład", "przykłady", "przykładów"])}, od najtańszej poprawki</p>
       <p className="mb-6 max-w-[60ch] text-ink-2">
-        Ten sam fragment interfejsu dwa razy: zepsuty i poprawny, z kodem i z tym, co usłyszy czytnik ekranu. Żółta
-        krawędź mówi, co zyskuje użytkownik. Nakład to szacunek na jedno miejsce w kodzie.
+        Ten sam fragment interfejsu dwa razy: zepsuty i poprawny, z kodem i z tym, co usłyszy czytnik ekranu. Zielony
+        znak mówi, co zyskuje użytkownik. Nakład to szacunek na jedno miejsce w kodzie.
       </p>
       <p className="mb-6 max-w-[60ch] text-ink-2">
         Każdy przykład obejrzysz też bez kolorów, bez myszy, przez czytnik ekranu albo na wąskim ekranie.{" "}

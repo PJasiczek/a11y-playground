@@ -68,7 +68,7 @@ function PatternsPage() {
             </Chip>
           ))}
         </FilterGroup>
-        <p role="status" className="font-mono text-sm text-ink-2">
+        <p role="status" className="text-sm text-ink-2">
           Pokazuję {shown.length} z {cards.length} wzorców
         </p>
       </div>

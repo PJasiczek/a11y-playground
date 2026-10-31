@@ -19,13 +19,16 @@ a11y playground is a learning app for people who build digital products in Polan
 The interface is in Polish. This README is in English.
 
 > [!NOTE]
-> Phase 11 (a whole page before and after) is complete: the home page of a fictional transport operator, broken in 20 ways and fixed, with notes for checking it yourself and the answers hidden until you are done. Phase 10 added a "Struktura strony" button on every page that outlines its landmarks and headings. All 30 patterns of the Deque University list run in Praktyka with a live log of what a screen reader would say. Every criterion of WCAG 2.2, A to AAA, has a plain-language explanation, and `/wcag-3` tracks the WCAG 3.0 Working Draft with our mapping to today's criteria. Twelve common faults have a broken and a fixed example, each viewable through six kinds of simulator. Three Polish acts are in the app with the statute text and our summaries, and five learning paths walk through them lesson by lesson. Phase 5 (accounts) is postponed, so progress is kept in the browser.
+> The whole app has a new look: seven colours, one per kind of content, a home page that tours every section, and Spokój to turn motion off ([`DESIGN.md`](DESIGN.md)). Phase 11 (a whole page before and after) is complete: the home page of a fictional transport operator, broken in 20 ways and fixed, with notes for checking it yourself and the answers hidden until you are done. Phase 10 added a "Struktura strony" button on every page that outlines its landmarks and headings. All 30 patterns of the Deque University list run in Praktyka with a live log of what a screen reader would say. Every criterion of WCAG 2.2, A to AAA, has a plain-language explanation, and `/wcag-3` tracks the WCAG 3.0 Working Draft with our mapping to today's criteria. Twelve common faults have a broken and a fixed example, each viewable through six kinds of simulator. Three Polish acts are in the app with the statute text and our summaries, and five learning paths walk through them lesson by lesson. Phase 5 (accounts) is postponed, so progress is kept in the browser.
 
 ### What works today
 
-- **Home page** following screen 0 of design variant A: it opens with the six cheapest fixes as cards, then the remaining examples as a list.
-- **Main navigation on phones** docks to the bottom edge, in reach of the thumb: Kryteria, Praktyka and Ścieżki as tabs, and "Więcej" for the rest (variant C of the [mobile menu mocks](docs/design/2026-10-17-mobile-menu-mocks/mobile-menu-mocks.html)). "Więcej" opens a sheet with WCAG 3.0, Prawo, Symulatory, Słownik and the theme toggle; it is a native modal `dialog`, so Escape, "Zamknij" or a tap outside closes it and focus returns to "Więcej". The consent card and "Struktura strony" sit above the bar. On screens shorter than 480px (landscape, 400% zoom) the bar stays a row in the header instead of covering the page.
+- **Look and feel** follows the supplied pastel playground reference and [`DESIGN.md`](DESIGN.md). See the [current redesign plan](docs/design/2026-10-31-pastel-redesign.md) for coverage and historical decisions. Cream ground, navy text, softly lit pastel blocks and seven consistent content colours apply across the app. Geist is used for interface text and numbers; Atkinson Hyperlegible Mono is reserved for code. Dark mode, calm mode, keyboard focus and live content counts remain part of the design.
+- **Home page** as a tour of the app: a split hero with a real search form and six linked illustrated blocks; a mobile-specific character illustration and pastel navigation cards; four curated starter materials; an interactive contrast sample; seven section categories; five learning paths with local progress; a separate law callout; and recent materials with repository feature dates. Counts come from content. The header contains navigation and preference controls; search lives on the home page and its own route.
+- **Header** with the logo (four bars and "a11y playground" on two lines, also the favicon), search on every page, Spokój and the theme toggle, and the main navigation below as text links; the current page is underlined in its kind's colour. The footer repeats the logo and the seven sections, with contact, privacy and the cookie settings.
+- **Main navigation on phones** docks to the bottom edge, in reach of the thumb: Kryteria, Praktyka and Ścieżki as tabs, and "Więcej" for the rest (variant C of the [mobile menu mocks](docs/design/2026-10-17-mobile-menu-mocks/mobile-menu-mocks.html)). "Więcej" opens a sheet with Prawo, Symulatory, WCAG 3.0, Słownik, Spokój and the theme toggle; it is a native modal `dialog`, so Escape, "Zamknij" or a tap outside closes it and focus returns to "Więcej". The consent card and "Struktura strony" sit above the bar. On screens shorter than 480px (landscape, 400% zoom) the bar stays a row in the header instead of covering the page.
 - Light and dark mode. It follows the operating system by default, and the toggle in the header (in "Więcej" on phones) stores an explicit choice.
+- **Spokój** (calm mode), next to the theme toggle: it stops every animation and transition and flattens the kind colours to the sand band, while icons and words keep their meaning. Without a stored choice it follows the system's reduced motion setting. The interface moves only in answer to the reader (cards lift, buttons press down, the switches slide), never on its own.
 - Skip link, a stable landmark structure, and focus moved to the new `h1` with the page title announced after every client-side route change.
 - **Struktura strony**, a button in the bottom right corner of every page, after the W3C [landmarks example](https://www.w3.org/WAI/ARIA/apg/patterns/landmarks/examples/general-principles.html). Its panel has two switches, "Punkty orientacyjne" and "Nagłówki", which outline the landmarks and headings of the page you are on, each with a label naming its role or level. The panel lists the same as text, with what is wrong (no `main`, two navigations nobody can tell apart, a skipped heading level), and every row moves focus to its element, the way a screen reader jumps with D or H. The switches last for the browser tab.
 - **Criteria list** (`/kryteria`) with filters for WCAG version, level, principle and role. The filters are native radio buttons and checkboxes, their state lives in the URL, and the result count is announced to screen readers.
@@ -55,7 +58,7 @@ The interface is in Polish. This README is in English.
 
 | Light | Dark | Mobile | Mobile, "Więcej" open |
 | --- | --- | --- | --- |
-| ![Home, light mode](docs/screenshots/home-light.png) | ![Home, dark mode](docs/screenshots/home-dark.png) | ![Home on a 390px wide screen with the Kryteria, Praktyka, Ścieżki and Więcej bar at the bottom](docs/screenshots/home-mobile.png) | ![The Więcej sheet over the Prawo page, with Prawo marked tu jesteś and the theme toggle below the links](docs/screenshots/phone-nav-more.png) |
+| ![Home, light mode, with the split illustrated hero, pastel categories and spacious learning sections](docs/screenshots/home-light.png) | ![Home, dark mode](docs/screenshots/home-dark.png) | ![Home on a 390px wide screen with the Kryteria, Praktyka, Ścieżki and Więcej bar at the bottom](docs/screenshots/home-mobile.png) | ![The Więcej sheet over the Prawo page, with Prawo filled in its plum colour and marked tu jesteś, and Spokój and the theme toggle below the links](docs/screenshots/phone-nav-more.png) |
 
 | Criteria list | Criterion page |
 | --- | --- |
@@ -67,7 +70,7 @@ The interface is in Polish. This README is in English.
 
 | Patterns | Pattern page |
 | --- | --- |
-| ![Pattern catalogue with a still of each pattern and the native element filter](docs/screenshots/patterns.png) | ![The expand and collapse pattern with the exercise half done and the screen reader log beside it](docs/screenshots/pattern-page.png) |
+| ![Pattern catalogue with a still of each pattern and the native element filter](docs/screenshots/patterns.png) | ![The expand and collapse pattern with its keyboard exercise, the ARIA table and the screen reader log beside it](docs/screenshots/pattern-page.png) |
 
 | Before and after: entry | Checking, with notes |
 | --- | --- |
@@ -83,7 +86,7 @@ The interface is in Polish. This README is in English.
 
 | Colour vision | Screen reader | Simulators |
 | --- | --- | --- |
-| ![The form example through deuteranopia after a wrong address: the broken field's red border turns olive, the fixed one still says Błąd](docs/screenshots/simulation-colour.png) | ![Table of what a screen reader reads in both variants, differing rows marked](docs/screenshots/simulation-reader.png) | ![The simulators page with a card per simulator](docs/screenshots/simulators.png) |
+| ![The form example with the deuteranopia simulation picked in the list beside the broken and the fixed variant](docs/screenshots/simulation-colour.png) | ![Table of what a screen reader reads in both variants, differing rows marked](docs/screenshots/simulation-reader.png) | ![The simulators page with a card per simulator](docs/screenshots/simulators.png) |
 
 | Article page | What applies to me | Law on a criterion page |
 | --- | --- | --- |
@@ -422,7 +425,7 @@ Strona i aplikacja muszą spełniać **wymagania z załącznika**.
 
 - `deadlines` feed the timeline. `unit` is the article the date comes from, `situations` are any of `strona-publiczna`, `aplikacja-publiczna`, `produkt-ue`, `start: true` marks the date shown as "od" on criterion pages, and `yearly: true` a date that repeats every year.
 - Each `## Art. N. Title` section summarises one article; the title is ours and optional. `### ust. N` sections pair a summary with one ustęp in the parallel view. `## Załącznik` covers the annex.
-- Bold in a summary gets the yellow marker: use it for the one phrase that matters to the reader.
+- Bold in a summary gets the sun-coloured marker: use it for the one phrase that matters to the reader.
 - Link a provision as `[art. 5](prawo:ustawa-2019-848/art-5)`, optionally with `#ust-3`. Unknown acts, articles and ustępy fail the build.
 
 Which provision requires which criterion lives in `src/content/legal-map.ts`, typed against both the criterion and the article ids. A test checks that no act requires an AAA criterion or one new in 2.2.
@@ -516,7 +519,8 @@ CI runs `lint`, `build` and `test` on every pull request and on pushes to `maste
 
 - [TanStack Start](https://tanstack.com/start) with file-based routes, on Vite and pnpm.
 - [Tailwind CSS](https://tailwindcss.com) v4. Colour tokens live in `src/styles.css` as CSS variables using `light-dark()`, so themes and forced colours mode are handled in one place.
-- Inter, self-hosted through `@fontsource-variable/inter`. Criterion numbers, article numbers and dates use the system monospace font.
+- Geist and Atkinson Hyperlegible Mono, self-hosted through `@fontsource-variable`. Geist sets all text; the mono, made for low vision, sets code only.
+- The design system is written down in [`DESIGN.md`](DESIGN.md): colours with their contrast ratios, type, shapes, components and motion. UI changes read it first.
 - [Nitro](https://nitro.build) for the server build. It picks the Vercel preset automatically when the build runs on Vercel.
 - [ArkType](https://arktype.io) to validate content files and URL filters, [marked](https://marked.js.org) to render Markdown on the server.
 - [MiniSearch](https://lucaong.github.io/minisearch/) for search. The index is built at prerender time into a static `/search-index.json`, loaded only on `/szukaj`.
@@ -526,8 +530,8 @@ CI runs `lint`, `build` and `test` on every pull request and on pushes to `maste
 
 The baseline is WCAG 2.2 Level AA, plus 2.3.3 and 2.5.5 at AAA. See [`docs/accessibility.md`](docs/accessibility.md). Because this is an app about accessibility, it also goes further in a few places, and the pages of these AAA criteria say so ("Ta aplikacja to spełnia", from `src/content/app-meets.ts`):
 
-- **1.4.6 Contrast (Enhanced), AAA.** Every text colour pair reaches at least 7:1 in both themes, and axe runs with the AAA rule set.
-- **2.3.3 Animation from Interactions, AAA.** The interface does not animate, and a test checks that no page runs an animation. Examples that move start only on request.
+- **1.4.6 Contrast (Enhanced), AAA.** Body text reaches at least 7:1 and large text at least 4.5:1 in both themes; axe runs with the AAA rule set.
+- **2.3.3 Animation from Interactions, AAA.** The interface moves only in answer to the reader, and Spokój (or, without a choice, the system's reduced motion setting) turns all of it off. Tests check that no page runs an animation at rest and that Spokój stops the motion of a pressed switch. Examples that move start only on request.
 - **2.4.13 Focus Appearance, AAA.** A 3px solid outline on every focusable element, switched to the system `Highlight` colour in forced colours mode. A keyboard test checks the outline at every Tab stop of a criterion page.
 - **2.5.5 Target Size (Enhanced), AAA.** Interactive elements are at least 44 by 44 pixels, and a test checks this on every route.
 - Zoom is never blocked, and no information is carried by colour alone.
@@ -575,9 +579,11 @@ src/
   progress/      reading progress and quiz scores in localStorage
   lib/           the site address, page head tags, Polish plural forms, quiz scoring, statistics consent and Google Analytics
   routes/        file-based routes (__root.tsx holds the layout)
-  components/    header, footer, consent card, theme toggle, route announcer, badges, filter chips, the AAA comparison, glossary previews, example and pattern frames and cards, the screen reader log, the simulator list, the quiz
-  styles.css     Tailwind setup, colour tokens, styles for rendered Markdown
+  components/    header, footer, the logo, the kinds of content and their icons, consent card, theme toggle, Spokój, the contrast toy, route announcer, badges, filter chips, the AAA comparison, glossary previews, example and pattern frames and cards, the screen reader log, the simulator list, the quiz
+  styles.css     Tailwind setup, colour tokens from DESIGN.md, kind classes, buttons, Spokój, styles for rendered Markdown
 e2e/             Playwright tests: axe, target size, animations, keyboard, statistics consent, example isolation, simulators, a whole path from the keyboard, WCAG 3.0, every pattern exercise, the before and after page, the sitemap and noindex
+public/          favicon.svg, the logo's four bars
+DESIGN.md          the design system: colours, type, shapes, components, motion
 docs/
   accessibility.md   the accessibility checklist
   design/            dated plans and mocks

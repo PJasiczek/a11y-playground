@@ -34,7 +34,7 @@ function GlossaryPage() {
     <>
       <div className="flex flex-wrap items-baseline gap-x-5 gap-y-2 pt-8 pb-4">
         <h1 className="text-[1.875rem] font-bold tracking-tight">Słownik</h1>
-        <p className="font-mono text-sm text-ink-2">{countOf(entries.length, ["pojęcie", "pojęcia", "pojęć"])}</p>
+        <p className="text-sm text-ink-2">{countOf(entries.length, ["pojęcie", "pojęcia", "pojęć"])}</p>
       </div>
       <p className="max-w-[60ch] text-ink-2">
         Pojęcia, na których najczęściej potyka się ktoś, kto czyta WCAG pierwszy raz. Przy każdym najpierw wyjaśnienie
@@ -48,12 +48,12 @@ function GlossaryPage() {
               {present.has(letter) ? (
                 <a
                   href={`#litera-${letter}`}
-                  className="inline-flex size-11 items-center justify-center rounded border border-control bg-surface font-mono font-bold hover:border-ink"
+                  className="inline-flex size-11 items-center justify-center rounded border border-control bg-surface font-bold hover:border-ink"
                 >
                   {letter}
                 </a>
               ) : (
-                <span className="inline-flex size-11 items-center justify-center font-mono text-ink-2">{letter}</span>
+                <span className="inline-flex size-11 items-center justify-center text-ink-2">{letter}</span>
               )}
             </li>
           ))}
@@ -62,7 +62,7 @@ function GlossaryPage() {
 
       {groups.map((group) => (
         <section key={group.letter} aria-labelledby={`litera-${group.letter}`}>
-          <h2 id={`litera-${group.letter}`} className="mt-8 mb-1 font-mono text-4xl font-bold tracking-tighter">
+          <h2 id={`litera-${group.letter}`} className="mt-8 mb-1 text-4xl font-bold tracking-tighter">
             {group.letter}
           </h2>
           {group.entries.map((entry) => (
@@ -77,14 +77,14 @@ function GlossaryPage() {
                   {entry.term}
                 </h3>
                 {entry.also.length > 0 ? (
-                  <p className="mt-1 font-mono text-[0.8125rem] text-ink-2">potocznie: {entry.also.join(", ")}</p>
+                  <p className="mt-1 text-[0.8125rem] text-ink-2">potocznie: {entry.also.join(", ")}</p>
                 ) : null}
               </div>
               <div>
                 <div className="prose" dangerouslySetInnerHTML={{ __html: entry.html }} />
                 {entry.normativeHtml ? (
                   <div className="mt-4">
-                    <p className="font-mono text-xs font-semibold tracking-widest text-ink-2 uppercase">W normie</p>
+                    <p className="text-xs font-semibold tracking-widest text-ink-2 uppercase">W normie</p>
                     <div
                       className="normative mt-1 border-l-3 border-rule pl-3 text-[0.9375rem]"
                       dangerouslySetInnerHTML={{ __html: entry.normativeHtml }}
@@ -98,7 +98,7 @@ function GlossaryPage() {
                         <Link
                           to="/kryteria/$criterionId"
                           params={{ criterionId: id }}
-                          className="inline-flex min-h-11 items-center rounded border border-control bg-surface px-3 font-mono text-sm font-semibold hover:border-ink"
+                          className="inline-flex min-h-11 items-center rounded border border-control bg-surface px-3 text-sm font-semibold hover:border-ink"
                         >
                           {id}
                         </Link>

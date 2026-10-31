@@ -43,7 +43,7 @@ const barStyles = `
   #demo-pasek { position: relative; z-index: 100; display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; padding: .5rem 1rem; background: #14171a; color: #fbfaf7; font: 15px/1.5 "Segoe UI", system-ui, sans-serif; }
   #demo-pasek *, #demo-znaczniki * { box-sizing: border-box; }
   #demo-pasek :focus-visible, #demo-znaczniki :focus-visible { outline: 3px solid #f4e75b; outline-offset: 2px; }
-  #demo-pasek .demo-etykieta { font: 700 .75rem/1.4 ui-monospace, Consolas, monospace; letter-spacing: .08em; text-transform: uppercase; background: #f4e75b; color: #14171a; padding: .2rem .5rem; }
+  #demo-pasek .demo-etykieta { font: 700 .75rem/1.4 "Segoe UI", system-ui, sans-serif; letter-spacing: .08em; text-transform: uppercase; background: #f4e75b; color: #14171a; padding: .2rem .5rem; }
   #demo-pasek .demo-etykieta.demo-po { background: #bfe3cc; }
   #demo-pasek p { margin: 0; flex: 1 1 20rem; }
   #demo-pasek a { color: #fff; text-decoration: underline; text-underline-offset: 3px; display: inline-flex; align-items: center; min-height: 44px; }
@@ -58,12 +58,12 @@ const barStyles = `
   #demo-notatki :focus-visible { outline-color: #2c36a8; }
   #demo-notatki p { flex: none; margin: 0; }
   #demo-notatki .demo-tytul { font-size: 1.1rem; font-weight: 700; }
-  #demo-notatki .demo-drobne { font: .8rem ui-monospace, Consolas, monospace; color: #484d52; margin-bottom: .8rem; }
+  #demo-notatki .demo-drobne { font: .8rem "Segoe UI", system-ui, sans-serif; color: #484d52; margin-bottom: .8rem; }
   #demo-notatki label { display: block; font-weight: 700; margin-bottom: .25rem; }
   #demo-notatki textarea { display: block; width: 100%; min-height: 5rem; margin-bottom: .5rem; padding: .4rem .5rem; font: inherit; color: #14171a; background: #fff; border: 2px solid #14171a; border-radius: 2px; }
   #demo-notatki button { color: #14171a; background: #fff; border-color: #857f72; }
   #demo-notatki button.demo-glowny { color: #fbfaf7; background: #14171a; border-color: #14171a; }
-  #demo-liczba { font: 600 .85rem ui-monospace, Consolas, monospace; margin: 1rem 0 .3rem !important; }
+  #demo-liczba { font: 600 .85rem "Segoe UI", system-ui, sans-serif; margin: 1rem 0 .3rem !important; }
   #demo-lista { list-style: none; margin: 0 0 1rem; padding: 0; }
   #demo-lista li { border-top: 1px solid #dfdbd1; padding: .5rem 0; }
   #demo-lista li p { margin: 0 0 .2rem; }
@@ -74,7 +74,7 @@ const barStyles = `
     html.demo-notatki-otwarte body { margin-right: 22rem; }
     #demo-notatki { position: fixed; top: 0; right: 0; bottom: 0; width: 22rem; border-left: 2px solid #14171a; }
   }
-  #demo-znaczniki a { position: absolute; z-index: 99; display: flex; align-items: center; justify-content: center; min-width: 44px; height: 44px; padding: 0 .4rem; border-radius: 22px; background: #14171a; color: #fff; font: 700 1rem ui-monospace, Consolas, monospace; text-decoration: none; box-shadow: 0 0 0 3px #f4e75b; }
+  #demo-znaczniki a { position: absolute; z-index: 99; display: flex; align-items: center; justify-content: center; min-width: 44px; height: 44px; padding: 0 .4rem; border-radius: 22px; background: #14171a; color: #fff; font: 700 1rem "Segoe UI", system-ui, sans-serif; text-decoration: none; box-shadow: 0 0 0 3px #f4e75b; }
 `;
 
 const back = `<a href="/praktyka/przed-i-po">Wróć do aplikacji</a>`;

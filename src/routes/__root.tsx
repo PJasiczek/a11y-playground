@@ -1,4 +1,6 @@
-import { createRootRoute, HeadContent, Link, Outlet, Scripts } from "@tanstack/react-router";
+import { createRootRoute, HeadContent, Link, Outlet, Scripts, useRouterState } from "@tanstack/react-router";
+import { kindOfPath, kinds } from "~/components/kinds";
+import { calmInitScript } from "~/components/calm-toggle";
 import { ConsentBanner } from "~/components/consent";
 import { RouteAnnouncer } from "~/components/route-announcer";
 import { SiteFooter } from "~/components/site-footer";
@@ -21,7 +23,11 @@ export const Route = createRootRoute({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
-    links: [{ rel: "stylesheet", href: stylesUrl }],
+    links: [
+      { rel: "stylesheet", href: stylesUrl },
+      // The four bars of the logo on a sand tile (src/components/kinds.tsx, BrandMark).
+      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg?v=pastel-2" },
+    ],
   }),
   component: RootDocument,
   notFoundComponent: NotFound,
@@ -42,19 +48,23 @@ function NotFound() {
   );
 }
 
+function PageContent() {
+  const pathname = useRouterState({ select: state => state.location.pathname });
+  const kind = kindOfPath(pathname);
+  return <main id="main" tabIndex={-1} data-page={pathname === "/" ? "home" : "content"} className={`${kind ? kinds[kind].className : ""} mx-auto max-w-280 px-4 pb-16 outline-none sm:px-7`}><Outlet /></main>;
+}
+
 function RootDocument() {
   return (
-    // The init script sets data-theme before hydration, hence the suppressed warning.
+    // The init scripts set data-theme and data-calm before hydration, hence the suppressed warning.
     <html lang="pl" suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript + calmInitScript }} />
         <HeadContent />
       </head>
       <body>
         <SiteHeader />
-        <main id="main" tabIndex={-1} className="mx-auto max-w-245 px-4 pb-16 outline-none sm:px-7">
-          <Outlet />
-        </main>
+        <PageContent />
         <ConsentBanner />
         <SiteFooter />
         <RouteAnnouncer />

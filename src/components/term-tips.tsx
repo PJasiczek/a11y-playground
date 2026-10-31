@@ -103,7 +103,7 @@ export function TermTips({ terms, children }: { terms: Record<string, Term>; chi
                 close(true);
               }}
               aria-label="Zamknij definicję"
-              className="absolute top-1 right-1 inline-flex size-11 items-center justify-center font-mono text-base font-bold"
+              className="absolute top-1 right-1 inline-flex size-11 items-center justify-center text-base font-bold"
             >
               ✕
             </button>

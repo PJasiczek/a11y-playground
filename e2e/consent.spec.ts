@@ -54,7 +54,8 @@ test("consent can be withdrawn from the footer, which deletes the GA cookies", a
   await banner(page).getByRole("button", { name: "Odrzuć" }).click();
 
   await expect(page.getByRole("button", { name: "Ustawienia cookies (odrzucone)" })).toBeFocused();
-  expect((await context.cookies()).map((cookie) => cookie.name)).not.toContain("_ga");
+  // Consent is applied by a React effect after focus has already returned to the footer.
+  await expect.poll(async () => (await context.cookies()).map((cookie) => cookie.name)).not.toContain("_ga");
 });
 
 test("focus scrolled into view stops above the banner (2.4.11)", async ({ page }) => {

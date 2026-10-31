@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="cyan" x2="0" y2="1"><stop stop-color="#5edcfa"/><stop offset="1" stop-color="#00abe8"/></linearGradient>
+    <linearGradient id="mint" x2="0" y2="1"><stop stop-color="#74e9bd"/><stop offset="1" stop-color="#26c886"/></linearGradient>
+    <linearGradient id="violet" x2="0" y2="1"><stop stop-color="#f6a5f1"/><stop offset=".5" stop-color="#bd66eb"/><stop offset="1" stop-color="#8d43dc"/></linearGradient>
+    <linearGradient id="orange" x2="0" y2="1"><stop stop-color="#ffb44c"/><stop offset="1" stop-color="#ff911c"/></linearGradient>
+    <clipPath id="bars"><rect x="9" y="15" width="10" height="38" rx="5"/><rect x="21" y="11" width="10" height="42" rx="5"/><rect x="33" y="14" width="10" height="39" rx="5"/><rect x="45" y="13" width="10" height="40" rx="5"/></clipPath>
+  </defs>
+  <rect x=".5" y=".5" width="63" height="63" rx="17" fill="#fffdf7" stroke="#e5edf1"/>
+  <rect x="9" y="15" width="10" height="38" rx="5" fill="url(#cyan)"/>
+  <rect x="21" y="11" width="10" height="42" rx="5" fill="url(#mint)"/>
+  <rect x="33" y="14" width="10" height="39" rx="5" fill="url(#violet)"/>
+  <rect x="45" y="13" width="10" height="40" rx="5" fill="url(#orange)"/>
+  <path d="M6 36Q18 26 30 33T58 29V56H6z" fill="#002f84" opacity=".12" clip-path="url(#bars)"/>
+</svg>

@@ -60,10 +60,10 @@ function ExamplePage() {
 
   return (
     <article>
-      <nav aria-label="Okruszki" className="pt-4 font-mono text-[0.8125rem] text-ink-2">
+      <nav aria-label="Okruszki" className="pt-4 text-[0.8125rem] text-ink-2">
         <ol className="flex flex-wrap items-center gap-x-2">
           <li>
-            <Link to="/praktyka" className="inline-flex min-h-11 items-center underline underline-offset-3">
+            <Link to="/praktyka" className="inline-flex min-h-11 min-w-11 items-center underline underline-offset-3">
               Praktyka
             </Link>
           </li>
@@ -85,7 +85,7 @@ function ExamplePage() {
               <Link
                 to="/kryteria/$criterionId"
                 params={{ criterionId: id }}
-                className="inline-flex min-h-11 items-center rounded border border-control bg-surface px-3 font-mono text-sm font-semibold hover:border-ink"
+                className="inline-flex min-h-11 items-center rounded border border-control bg-surface px-3 text-sm font-semibold hover:border-ink"
               >
                 {id}
               </Link>
@@ -152,7 +152,7 @@ function ExamplePage() {
               const data = example[variant];
               return (
                 <section key={variant} aria-labelledby={`${variant}-title`} className="min-w-0 bg-surface px-5 pt-4 pb-6">
-                  <h2 id={`${variant}-title`} className={`font-mono text-[0.8125rem] font-bold tracking-wider uppercase ${tone}`}>
+                  <h2 id={`${variant}-title`} className={`text-[0.8125rem] font-bold tracking-wider uppercase ${tone}`}>
                     <span aria-hidden="true">{glyph} </span>
                     {heading}
                   </h2>
@@ -171,7 +171,7 @@ function ExamplePage() {
                     </pre>
                   </details>
                   <div className="mt-4 border-t border-rule pt-3">
-                    <h3 className="font-mono text-xs font-semibold tracking-widest text-ink-2 uppercase">Czytnik ekranu powie</h3>
+                    <h3 className="text-xs font-semibold tracking-widest text-ink-2 uppercase">Czytnik ekranu powie</h3>
                     <p className="mt-1 text-[0.9375rem]">{data.announces}</p>
                   </div>
                 </section>

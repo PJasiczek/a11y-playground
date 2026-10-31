@@ -36,6 +36,34 @@ test("theme toggle works from the keyboard and survives a reload", async ({ page
   await expect(toggle).toHaveAttribute("aria-pressed", "true");
 });
 
+// 2.3.3: the switch knobs slide when pressed; with Spokój on, nothing moves.
+test("Spokój works from the keyboard, survives a reload and stops motion", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference", colorScheme: "light" });
+  await page.goto("/");
+  const calm = page.getByRole("button", { name: "Spokój" });
+  const theme = page.getByRole("button", { name: "Tryb ciemny" });
+  const running = () => page.evaluate(() => document.getAnimations().length);
+
+  await expect(calm).toHaveAttribute("aria-pressed", "false");
+  await theme.click();
+  expect(await running()).toBeGreaterThan(0);
+
+  await calm.focus();
+  await page.keyboard.press("Space");
+  await expect(calm).toHaveAttribute("aria-pressed", "true");
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-calm", "on");
+  await expect(calm).toHaveAttribute("aria-pressed", "true");
+  await theme.click();
+  expect(await running()).toBe(0);
+});
+
+test("Spokój follows the system's reduced motion until the reader chooses", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  await expect(page.getByRole("button", { name: "Spokój" })).toHaveAttribute("aria-pressed", "true");
+});
+
 test("criteria filters work from the keyboard, keep focus and survive a reload", async ({ page }) => {
   await page.goto("/kryteria");
   const status = page.getByRole("status");
@@ -93,6 +121,17 @@ test("the role filter works from the keyboard", async ({ page }) => {
   await expect(page.getByRole("link", { name: /^2\.1\.1 Klawiatura/ })).toBeVisible();
   await expect(page.getByRole("link", { name: /^1\.2\.3 / })).toHaveCount(0);
   await expect(tester).toBeFocused();
+});
+
+test("the contrast swing on the home page works from the keyboard and says the verdict", async ({ page }) => {
+  await page.goto("/");
+  const weak = page.getByRole("radio", { name: "2:1" });
+  await expect(page.getByRole("radio", { name: "4,5:1" })).toBeChecked();
+  await expect(page.locator(".contrast-verdict")).toHaveText("✓Spełnia 1.4.3, poziom AA.");
+  await page.getByRole("radio", { name: "4,5:1" }).focus();
+  await page.keyboard.press("ArrowLeft");
+  await expect(weak).toBeChecked();
+  await expect(page.locator(".contrast-verdict")).toHaveText("✕Za słabo. Nie spełnia 1.4.3.");
 });
 
 test("search from the home page works from the keyboard", async ({ page }) => {

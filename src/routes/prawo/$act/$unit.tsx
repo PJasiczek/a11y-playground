@@ -51,7 +51,7 @@ function ArticlePage() {
 
   return (
     <article>
-      <nav aria-label="Okruszki" className="pt-4 font-mono text-[0.8125rem] text-ink-2">
+      <nav aria-label="Okruszki" className="pt-4 text-[0.8125rem] text-ink-2">
         <ol className="flex flex-wrap items-center gap-x-2">
           <li>
             <Link to="/prawo" className="inline-flex min-h-11 min-w-11 items-center underline underline-offset-3">
@@ -60,7 +60,7 @@ function ArticlePage() {
           </li>
           <li aria-hidden="true">/</li>
           <li>
-            <Link to="/prawo/$act" params={{ act: act.slug }} className="inline-flex min-h-11 items-center underline underline-offset-3">
+            <Link to="/prawo/$act" params={{ act: act.slug }} className="inline-flex min-h-11 min-w-11 items-center underline underline-offset-3">
               {act.short}
             </Link>
           </li>
@@ -73,7 +73,7 @@ function ArticlePage() {
 
       <header className="pt-3 pb-6">
         <h1 className="text-[clamp(1.5rem,4vw,2rem)] leading-tight font-bold tracking-tight">
-          <span className="font-mono">{unit.label}.</span> {title}
+          <span>{unit.label}.</span> {title}
         </h1>
         <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-ink-2">
           <span>{act.title}</span>
@@ -85,7 +85,7 @@ function ArticlePage() {
 
         {rows.length > 0 && !isAnnex ? (
           <div className="border-t-2 border-ink">
-            <div aria-hidden="true" className="hidden grid-cols-[3.2rem_1fr_1fr] gap-x-6 border-b border-rule py-2.5 font-mono text-xs font-semibold tracking-widest text-ink-2 uppercase md:grid">
+            <div aria-hidden="true" className="hidden grid-cols-[3.2rem_1fr_1fr] gap-x-6 border-b border-rule py-2.5 text-xs font-semibold tracking-widest text-ink-2 uppercase md:grid">
               <span>Ust.</span>
               <span>Nasze streszczenie</span>
               <span>Brzmienie ustawy</span>
@@ -97,11 +97,11 @@ function ArticlePage() {
                 aria-label={row.ust ? `Ustęp ${row.ust}` : unit.label}
                 className="grid scroll-mt-4 grid-cols-[2.4rem_1fr] gap-x-6 gap-y-3 border-b border-rule py-5 md:grid-cols-[3.2rem_1fr_1fr]"
               >
-                <span className="font-mono font-bold" aria-hidden="true">
+                <span className="font-bold" aria-hidden="true">
                   {row.ust ?? ""}
                 </span>
                 <div>
-                  <h2 className="mb-1 font-mono text-[0.6875rem] font-semibold tracking-widest text-ink-2 uppercase md:sr-only">
+                  <h2 className="mb-1 text-[0.6875rem] font-semibold tracking-widest text-ink-2 uppercase md:sr-only">
                     Nasze streszczenie
                   </h2>
                   {row.summaryHtml ? (
@@ -111,7 +111,7 @@ function ArticlePage() {
                   )}
                 </div>
                 <div className="col-start-2 border-l-3 border-rule pl-4 md:col-start-auto md:border-l-0 md:pl-0">
-                  <h2 className="mb-1 font-mono text-[0.6875rem] font-semibold tracking-widest text-ink-2 uppercase md:sr-only">
+                  <h2 className="mb-1 text-[0.6875rem] font-semibold tracking-widest text-ink-2 uppercase md:sr-only">
                     Brzmienie ustawy
                   </h2>
                   {row.lines.map((line, i) => (
@@ -120,7 +120,7 @@ function ArticlePage() {
                       className="max-w-[68ch] py-0.5 text-[0.9375rem] leading-relaxed text-ink-2"
                       style={{ paddingLeft: `${String(line.depth * 1.25)}rem` }}
                     >
-                      {line.label ? <span className="mr-1.5 font-mono text-ink">{line.label}</span> : null}
+                      {line.label ? <span className="mr-1.5 text-ink">{line.label}</span> : null}
                       {line.text}
                     </p>
                   ))}
@@ -131,7 +131,7 @@ function ArticlePage() {
         ) : null}
       </TermTips>
 
-      <p className="mt-3 font-mono text-[0.8125rem] text-ink-2">
+      <p className="mt-3 text-[0.8125rem] text-ink-2">
         {isAnnex ? "Źródło: tabela z tekstu jednolitego (PDF), " : "Tekst: "}
         {act.consolidated ? `tekst jednolity ${act.consolidated.address}` : act.address} · pobrano {formatDate(act.retrieved)} ·{" "}
         <a href={act.isap} className="underline underline-offset-3">
@@ -159,7 +159,7 @@ function ArticlePage() {
             const group = criteria.filter((c) => c.principle === principle.num);
             return group.length > 0 ? (
               <div key={principle.num} className="mt-5">
-                <h3 className="font-mono text-xs font-semibold tracking-widest text-ink-2 uppercase">
+                <h3 className="text-xs font-semibold tracking-widest text-ink-2 uppercase">
                   {principle.num}. {principle.name} · {group.length}
                 </h3>
                 <ul className="mt-1">
@@ -170,11 +170,11 @@ function ArticlePage() {
                         params={{ criterionId: c.criterion }}
                         className="grid min-h-11 grid-cols-[4.5rem_1fr_auto] items-center gap-x-3 px-1 py-2 hover:bg-surface"
                       >
-                        <span className="font-mono font-bold">{c.criterion}</span>
+                        <span className="font-bold">{c.criterion}</span>
                         <span>
                           {c.name}
                           {!c.applies.includes("aplikacja-publiczna") && c.applies.includes("strona-publiczna") ? (
-                            <span className="ml-2 rounded-xs border border-dashed border-control px-1 font-mono text-[0.6875rem] whitespace-nowrap text-ink-2">
+                            <span className="ml-2 rounded-xs border border-dashed border-control px-1 text-[0.6875rem] whitespace-nowrap text-ink-2">
                               tylko strony
                             </span>
                           ) : null}
