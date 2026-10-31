@@ -47,8 +47,9 @@ for (const route of routes) {
     });
   }
 
-  // 2.3.3 Animation from Interactions, claimed in src/content/app-meets.ts: the interface itself
-  // never animates. Example frames are separate documents and do not count here.
+  // 2.3.3 Animation from Interactions, claimed in src/content/app-meets.ts: nothing moves until
+  // the reader does something (keyboard.spec.ts checks that Spokój stops that motion too).
+  // Example frames are separate documents and do not count here.
   test(`${route} runs no animations`, async ({ page }) => {
     await page.goto(route);
     await page.waitForLoadState("networkidle");
