@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan: nowy wygląd całej aplikacji</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1.25rem 6rem;
+    background: #000; color: #fff;
+    font: 16px/1.65 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  main { max-width: 82ch; margin: 0 auto; }
+  h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 .5rem; letter-spacing: -.02em; }
+  h2 { font-size: 1.2rem; margin: 3rem 0 .75rem; padding-top: 1rem; border-top: 1px solid #262626; letter-spacing: -.01em; }
+  h3 { font-size: 1rem; margin: 1.75rem 0 .5rem; }
+  p, li, dd { color: #e5e5e5; }
+  a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  ul, ol { padding-left: 1.3rem; }
+  li { margin: .3rem 0; }
+  code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .875em; background: #141414; border: 1px solid #262626; border-radius: 3px; padding: .08em .3em; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; display: block; overflow-x: auto; }
+  th, td { border: 1px solid #262626; padding: .45rem .6rem; text-align: left; vertical-align: top; }
+  th { background: #101010; font-weight: 600; }
+  .meta { color: #a3a3a3; font-size: .85rem; margin: 0 0 1.5rem; }
+  .meta a { color: #fff; }
+  .flag { border-left: 2px solid #737373; padding: .1rem 0 .1rem .85rem; margin: 1rem 0; color: #d4d4d4; font-size: .93rem; }
+  .toc { border: 1px solid #262626; padding: 1rem 1rem 1rem 2.4rem; margin: 1.5rem 0 0; }
+  .toc li { margin: .15rem 0; }
+  @media (max-width: 40rem) { body { padding: 1.25rem .9rem 4rem; } h1 { font-size: 1.45rem; } }
+</style>
+</head>
+<body>
+<aside style="padding:16px;background:#fff4bc;color:#103b73;font:600 16px/1.5 system-ui">Updated 2026-10-31: superseded by the pastel playground reference. See <a href="../2026-10-31-pastel-redesign.md">current plan</a> and DESIGN.md.</aside>
+<main>
+
+<p class="meta"><a href="app-redesign.en.html" hreflang="en">English version</a></p>
+
+<h1>Plan: nowy wygląd całej aplikacji</h1>
+<p class="meta">Zlecenie: przebudować wygląd całej aplikacji skillem Hallmark, trzy warianty interfejsu, plan w HTML. Wersja planu: 2026-10-17. Mockupy: <code>docs/design/2026-10-17-app-redesign-mocks/app-redesign-mocks.html</code>.</p>
+
+<p class="flag">Ustalone przed planem: prosto i intuicyjnie, ale ciekawie dla oka, z animacjami, które oddają hasło „plac zabaw”. Treści każdego rodzaju mają się znajdować szybko i łatwo, także dla osób neuroróżnorodnych i korzystających z ułatwień dostępu. Ton: zabawowy. Fonty i paleta do wyboru.</p>
+
+<p class="flag">Dodane 2026-10-17: dwa kolejne warianty w bardziej profesjonalnym tonie, D i E. A, B i C zostają zabawowe.</p>
+
+<p class="flag">Dodane 2026-10-17: F i G, zbudowane z twojego konceptu (podzielony nagłówek, ilustracja placu zabaw, cztery karty placów, indygo i mięta), oraz sześć pomysłów na favicon przerysowanych w SVG.</p>
+
+<p class="flag"><strong>Decyzja z 2026-10-17: wariant A, z własnymi kolorami i układem.</strong> Pierwsza wersja zbyt wiernie trzymała się systemu PostHog (shadcn.io/design/posthog) i dlatego odpadła; z PostHog zostają tylko zasady (spokojne tło, białe karty, hierarchia przez grubość, kilka rodzajów ramek). System jest zapisany w <code>DESIGN.md</code> i narysowany jako „A · final v2” na początku mockupów: piaskowe tło, siedem kolorów zabawek (jeden na rodzaj treści, ciemny tekst na każdym, co najmniej 7:1), Plus Jakarta Sans z Atkinson Hyperlegible Mono, ksylofon działów na stronie głównej, strony kryteriów z pasem w kolorze działu, kartami z zakładkami i kartą „kieszeń”. Punkty od 3 do 10 opisują wszystkie opcje tak, jak je porównywaliśmy; tam, gdzie różnią się od <code>DESIGN.md</code>, obowiązuje <code>DESIGN.md</code>.</p>
+
+<ol class="toc">
+  <li><a href="#today">Stan dzisiaj</a></li>
+  <li><a href="#scope">Zakres</a></li>
+  <li><a href="#variants">Trzy warianty</a></li>
+  <li><a href="#shared">Wspólne dla wszystkich wariantów</a></li>
+  <li><a href="#motion">Ruch</a></li>
+  <li><a href="#a11y">Dostępność</a></li>
+  <li><a href="#code">Kod</a></li>
+  <li><a href="#order">Kolejność wdrożenia</a></li>
+  <li><a href="#commits">Gałąź i commity</a></li>
+  <li><a href="#decisions">Decyzje</a></li>
+  <li><a href="#out">Poza zakresem</a></li>
+</ol>
+
+<h2 id="today">1. Stan dzisiaj</h2>
+<ul>
+  <li>TanStack Start, React 19, Tailwind v4. Tokeny są w <code>src/styles.css</code>: wartości hex przez <code>light-dark()</code>, podpięte do <code>@theme inline</code>. Każda para tekstu ma 7:1, ramki kontrolek 3:1.</li>
+  <li>Kroje: Inter Variable (<code>@fontsource-variable/inter</code>) i systemowy monospace dla numerów kryteriów, artykułów i dat.</li>
+  <li>Akcent to granat <code>#2c36a8</code>. Żółty <code>--color-marker</code> ma jedno znaczenie: co zyskuje użytkownik.</li>
+  <li>Bez biblioteki do animacji. Aplikacja respektuje <code>prefers-reduced-motion</code>, spełnia 2.3.3, 2.4.13 i 2.5.5 i pisze o tym na stronach tych kryteriów.</li>
+  <li>Elementy stałe: link „Przejdź do treści”, fokus na nowym <code>h1</code> po zmianie trasy, „Struktura strony”, nawigacja przyklejona do dołu na telefonach z „Więcej”, karta zgody na cookies, przełącznik trybu jasnego i ciemnego (<code>data-theme</code> na <code>html</code>, ustawiany przed malowaniem przez <code>themeInitScript</code>).</li>
+  <li>Wygląd jest spokojny i redakcyjny: złamana biel, cienkie linie, kanciaste karty. Dobrze się czyta, ale nic nie mówi o placu zabaw.</li>
+</ul>
+
+<h2 id="scope">2. Zakres</h2>
+<ul>
+  <li>Nowy system wyglądu dla każdej strony: paleta, kroje, kształty, komponenty, ruch. Jeden system w całej aplikacji, a nie inny wygląd na każdej stronie.</li>
+  <li>Trasy, treści, import z Notion, wyszukiwarka, zapis postępu i testy zachowania zostają bez zmian.</li>
+  <li>Układ strony głównej i stron kryteriów zmienia się według wybranego wariantu. Pozostałe strony dostają nowe komponenty bez nowego układu.</li>
+  <li>Nowy przełącznik „Spokój”, opisany w punkcie 4.</li>
+</ul>
+
+<h2 id="variants">3. Pięć wariantów</h2>
+<p>Wszystkie pięć jest w pliku z mockupami. Każdy pokazuje stronę główną, stronę kryterium <code>/kryteria/1.4.3</code> i telefon o szerokości 360 px, w trybie jasnym i ciemnym, z działającym „Spokojem”.</p>
+<table>
+  <thead><tr><th scope="col"></th><th scope="col">A · Piaskownica</th><th scope="col">B · Mapa placu</th><th scope="col">C · Klocki</th></tr></thead>
+  <tbody>
+    <tr><th scope="row">Strona główna</th><td>Najpierw wyszukiwarka, potem siatka siedmiu kafli działów, potem sześć poprawek o największym zysku (jedna duża, pięć na liście)</td><td>Plan siedmiu miejsc połączonych kredowymi ścieżkami, potem pierwsza trasa w trzech krokach</td><td>Duże pole wyszukiwania z filtrami rodzaju treści, spis wszystkich wejść w czterech kolumnach, wieże postępu</td></tr>
+    <tr><th scope="row">Nawigacja</th><td>Górny pasek z polem wyszukiwania (<code>/</code>), pięcioma linkami i „Więcej”</td><td>Boczna szyna na każdej stronie: siedem miejsc, wyszukiwarka, ustawienia; „Na tej stronie” rozwija się w niej</td><td>Górny pasek z grubą dolną krawędzią, bieżąca strona podkreślona żółtą belką</td></tr>
+    <tr><th scope="row">Strona kryterium</th><td>Zaokrąglone karty dla sekcji, spis treści z kropką wypełnianą po każdej przeczytanej sekcji, blok „Co dalej”</td><td>Trasa z numerowanymi przystankami: za tobą, tu jesteś, przed tobą</td><td>Instrukcja składania: numerowane klocki-kroki i boczna wieża, która rośnie w trakcie czytania</td></tr>
+    <tr><th scope="row">Paleta</th><td>Krem, żółć gruszki, błękit, koral, mięta i lawenda jako tła (motyw Hum z Hallmarka)</td><td>Miętowy papier, ciemnozielony tekst, pomarańcz zjeżdżalni, błękit (własna)</td><td>Najpierw granat nocy, czerwone, żółte, niebieskie i zielone klocki (własna)</td></tr>
+    <tr><th scope="row">Kroje</th><td>Plus Jakarta Sans, JetBrains Mono</td><td>Bricolage Grotesque w nagłówkach, Atkinson Hyperlegible Next w tekście</td><td>Lexend, Atkinson Hyperlegible Mono</td></tr>
+    <tr><th scope="row">Kształty</th><td>Promień 22 px, przyciski-pigułki wciskane na pełną krawędź</td><td>Każde miejsce ma własny obrys, ramki 2 px, przerywane linie kredą</td><td>Klocki z wypustkami i twardą dolną krawędzią</td></tr>
+    <tr><th scope="row">Mocna strona</th><td>Przeglądanie, pierwsze wizyty</td><td>Orientacja: zawsze ta sama szyna, widać długość każdej strony</td><td>Szybkość: kto wie, czego chce, dociera tam jednym ruchem</td></tr>
+    <tr><th scope="row">Ryzyko</th><td>Najbardziej znajomy, najmniej wyrazisty</td><td>Mapa jest trudniejsza przy powiększeniu 400%, więc wtedy zamienia się w listę; szyna zajmuje 248 px szerokości</td><td>Ciemny wygląd na start to największa zmiana dla obecnych czytelników</td></tr>
+  </tbody>
+</table>
+<h3>Wersje profesjonalne</h3>
+<table>
+  <thead><tr><th scope="col"></th><th scope="col">D · Pracownia</th><th scope="col">E · Przewodnik</th></tr></thead>
+  <tbody>
+    <tr><th scope="row">Strona główna</th><td>Wyszukiwarka poleceń, jeden działający komponent z tym, co mówi czytnik ekranu, działy w tabeli z liczbami, najważniejsze poprawki i częste wyszukiwania</td><td>Start od roli, pytania, które ludzie naprawdę zadają, każdy dział w jednym zdaniu</td></tr>
+    <tr><th scope="row">Nawigacja</th><td>Górny pasek z wyszukiwarką poleceń (<code>Ctrl K</code>) i pięcioma linkami; na stronach kryteriów drzewo wszystkich kryteriów po lewej</td><td>Ciemny pasek nagłówka z niebieskim paskiem pod spodem, bieżąca strona zaznaczona żółtą belką</td></tr>
+    <tr><th scope="row">Strona kryterium</th><td>Układ dokumentacji: drzewo, tabela właściwości (poziom, od kiedy, zasada, role), przykłady z zakładkami „Podgląd / Kod / Symulatory”, „Na tej stronie” po prawej</td><td>Jedna kolumna: podpis, streszczenie w ramce, spis treści na górze, przykład z „Źle / Dobrze”, „Co dalej”</td></tr>
+    <tr><th scope="row">Paleta</th><td>Ciepła szarość, grafitowy tekst, jeden głęboki koral (własna, gatunek modern-minimal w Hallmarku)</td><td>Biel, ciemny pasek, urzędowy niebieski, żółty fokus (własna, na wzór GOV.UK i USWDS)</td></tr>
+    <tr><th scope="row">Kroje</th><td>Geist, Geist Mono</td><td>Source Serif 4 w nagłówkach, Public Sans w tekście</td></tr>
+    <tr><th scope="row">Plac zabaw</th><td>Tylko w działających przykładach: komponent na stronie głównej, zakładki na stronach kryteriów</td><td>Brak w wyglądzie; uczy sama treść</td></tr>
+    <tr><th scope="row">Mocna strona</th><td>Programiści i projektanci, którzy wiedzą, czego szukają; porównywanie sąsiednich kryteriów</td><td>Podmioty publiczne i osoby, które są tu pierwszy raz; najbardziej przewidywalny układ przy powiększeniu 400%</td></tr>
+    <tr><th scope="row">Ryzyko</th><td>Może wyglądać jak każda dokumentacja dla programistów</td><td>Najmniej zabawowy; szeryfowy krój najmocniej zmienia charakter</td></tr>
+  </tbody>
+</table>
+<h3>Z twojego konceptu</h3>
+<p>Odczytane jak analiza obrazu: podzielony nagłówek z tekstem po lewej i ilustracją po prawej, rząd czterech kart placów zabaw z etykietami, pasek zamykający. Ciężki, geometryczny bezszeryfowy krój (odtworzony Manrope), indygo jako kolor główny w jasnym trybie, mięta w ciemnym, błękit w drugiej linii nagłówka, wielobarwne kształty logo.</p>
+<table>
+  <thead><tr><th scope="col"></th><th scope="col">F · Plac zabaw</th><th scope="col">G · Plac wieczorem</th></tr></thead>
+  <tbody>
+    <tr><th scope="row">Jak blisko konceptu</th><td>Blisko: ta sama kolejność sekcji, ten sam nagłówek, te same karty i pasek</td><td>Przerobiony: ciemny na start, wyszukiwarka przed ilustracją, karta z listą kontrolną jako działająca zabawka, ścieżki z postępem</td></tr>
+    <tr><th scope="row">Strona główna</th><td>„Zepsuj coś. Sprawdź dostępność. Zbuduj lepiej.”, dwa przyciski, trzy prawdziwe zapewnienia, plac zabaw w SVG z kartą kodu i prawdziwym pomiarem kontrastu</td><td>Ten sam nagłówek nad dużą wyszukiwarką, lista pięciu kontroli do zaznaczenia, cztery karty placów, pięć ścieżek</td></tr>
+    <tr><th scope="row">Strona kryterium</th><td>Tytuł z etykietami, obok karta „Sprawdź sam”, karty dla sekcji, „Na tej stronie” po lewej</td><td>Nie narysowana; byłaby stroną z F w kolorach G</td></tr>
+    <tr><th scope="row">Paleta</th><td colspan="2">Jasny: prawie biel, indygo jako kolor główny (biały tekst 8,2:1), błękit w drugiej linii (duży tekst, co najmniej 4,6:1). Ciemny: granat, mięta jako kolor główny (ciemny tekst 12,7:1), błękit co najmniej 9,5:1. Kolory logo tylko na kształtach, nigdy na tekście</td></tr>
+    <tr><th scope="row">Kroje</th><td colspan="2">Manrope 800 w nagłówkach, 400–700 w tekście, JetBrains Mono w kodzie</td></tr>
+    <tr><th scope="row">Czego nie przenoszę</th><td colspan="2">Pigułki nad nagłówkiem, tekstu z gradientem (ekran ciemny), kropek okna na karcie kodu, wymyślonego „Accessibility score 92”, „Real-time feedback” (aplikacja tego nie ma), angielskich tekstów, małego tekstu o niskim kontraście w kartach</td></tr>
+    <tr><th scope="row">Ryzyko</th><td>Cztery równe karty i podzielony nagłówek to najczęstszy układ stron produktowych; wygląda bardziej na produkt niż na aplikację do nauki</td><td>Ciemny wygląd na start to największa zmiana dla obecnych czytelników, tak jak w C</td></tr>
+  </tbody>
+</table>
+<h3>Favicon</h3>
+<p>Sześć pomysłów z obrazu jest w mockupach w rozmiarach 96, 48, 32 i 16 px, na jasnej i ciemnej karcie przeglądarki. Przy 16 px czytelne zostają pomysł 1 (A z dwóch kresek) i pomysł 3 (kod i ptaszek); 2, 4, 5 i 6 tracą szczegóły. F i G używają pomysłu 1. Przy wdrożeniu doszłyby <code>favicon.svg</code>, PNG 32 px i ikona Apple 180 px.</p>
+<p>Warianty da się łączyć tam, gdzie się nie gryzą, na przykład spis i wyszukiwarka z C w wyglądzie A. Wybór jest w punkcie 10.</p>
+
+<h2 id="shared">4. Wspólne dla wszystkich wariantów</h2>
+<ul>
+  <li><strong>Spokój.</strong> Przełącznik w nagłówku (na telefonach w „Więcej”). Zatrzymuje wszystkie animacje i przejścia, a ozdobne tła zamienia na zwykły papier. Ustawia <code>data-calm</code> na <code>html</code> przed malowaniem i zapisuje wybór w <code>localStorage</code>, tak jak motyw. Bez zapisanego wyboru idzie za <code>prefers-reduced-motion</code>. Cel: osoba wrażliwa na ruch albo kolor wyłącza je w jednym miejscu, bez grzebania w ustawieniach systemu.</li>
+  <li><strong>Jeden znak dla każdego rodzaju treści.</strong> Kryteria, Praktyka, Ścieżki, Prawo, Symulatory, Słownik i WCAG 3.0 dostają ikonę, nazwę i kolor. Są takie same w nawigacji, wynikach wyszukiwania, kaflach i linkach „Co dalej”. Kolor nigdy nie występuje bez ikony i nazwy (1.4.1).</li>
+  <li><strong>Wyszukiwarka wszędzie.</strong> W nagłówku każdej strony, <code>/</code> przenosi do niej fokus. Skrót jest opisany obok pola i da się go wyłączyć (2.1.4).</li>
+  <li><strong>„Co dalej” na końcu strony kryterium.</strong> Powiązany przykład, lekcja i mocniejsze kryterium, do których strona już dziś linkuje, zebrane w jednym bloku. Nikt nie musi przeszukiwać strony, żeby znaleźć następny krok.</li>
+  <li><strong>Bez zmian:</strong> link „Przejdź do treści”, punkty orientacyjne, fokus po zmianie trasy, „Struktura strony”, dolna nawigacja na telefonach i „Więcej”, karta zgody na cookies, obrys fokusu 3 px, monospace dla kodów i jedno znaczenie markera, czyli „co zyskuje użytkownik” (gruszka w A, pomarańcz w B, żółty w C, koralowa belka w D, żółty w E).</li>
+</ul>
+
+<h2 id="motion">5. Ruch</h2>
+<p>Ruch robi z tego plac zabaw, więc każdy wariant go ma. To jednak ruch najczęściej przeszkadza osobom neuroróżnorodnym. Zasady dla wszystkich pięciu:</p>
+<ul>
+  <li>Tylko w odpowiedzi na działanie czytelnika albo raz przy wczytaniu strony. Nic się nie zapętla, nic nie rusza się samo po pierwszej sekundzie, bez paralaksy i bez przejmowania przewijania.</li>
+  <li>Tylko <code>transform</code> i <code>opacity</code>, najdłużej 620 ms, bez błysków.</li>
+  <li>„Spokój” i <code>prefers-reduced-motion</code> wyłączają wszystko (2.3.3). Nic nie zależy od ruchu: każdy stan widać i bez niego.</li>
+</ul>
+<table>
+  <thead><tr><th scope="col">Wariant</th><th scope="col">Przy wczytaniu</th><th scope="col">Po najechaniu i wciśnięciu</th><th scope="col">Po sukcesie</th></tr></thead>
+  <tbody>
+    <tr><td>A</td><td>Liczba 86 na kaflu Kryteria nabija się od zera (1,2 s)</td><td>Piłka w logo raz podskakuje, kafle unoszą się o 4 px, przyciski wciskają się o 3 px na swoją krawędź, strzałka przesuwa się w prawo</td><td>Huśtawka kontrastu: tekst przechodzi płynnie do wybranego stosunku</td></tr>
+    <tr><td>B</td><td>Miejsca na mapie pojawiają się po kolei (najwyżej 5 opóźnień)</td><td>Miejsce unosi się i przechyla o 0,6°, rośnie jego cień; przycisk wciska się w swój cień</td><td>Przystanek trasy zamienia się w ptaszek</td></tr>
+    <tr><td>C</td><td>Klocki postępu spadają na wieżę</td><td>Klocek unosi się o 2 px, po wciśnięciu opada na krawędź; wciśnięty filtr zostaje na dole</td><td>Ukończona lekcja dokłada klocek na szczyt wieży</td></tr>
+    <tr><td>D</td><td>Brak</td><td>Wiersze tabeli się podświetlają, główny przycisk zmienia kolor na koral, zakładki przesuwają podkreślenie</td><td>Działający komponent zmienia stan i to, co mówi czytnik</td></tr>
+    <tr><td>E</td><td>Brak</td><td>Podkreślenie linków grubieje</td><td>Brak</td></tr>
+  </tbody>
+</table>
+
+<h2 id="a11y">6. Dostępność</h2>
+<p>Sprawdzone z <code>docs/accessibility.md</code>. Nowe elementy i to, czego wymagają:</p>
+<ul>
+  <li><strong>Kontrast.</strong> Każdą parę tekstu we wszystkich siedmiu wariantach i obu trybach policzyłem w OKLCH: tekst co najmniej 7:1 (tekst w A jasnym 7,8:1, tekst drugorzędny w B jasnym 7,4:1, najniżej 7,2:1 w A ciemnym). Tekst na kolorowych tłach: ciemny na gruszce 12:1, na pomarańczu 7,6:1, na klockach C od 7,7 do 12,4:1. Ramki kontrolek co najmniej 3,6:1. D: tekst co najmniej 7,5:1 (tekst w kolorze korala 7,5:1, biały na koralowym przycisku 8,4:1), ramki kontrolek 4,2:1. E: tekst co najmniej 7,8:1, linki 7,8:1 w jasnym i 8,9:1 w ciemnym. F i G: tekst co najmniej 7,3:1; błękitna druga linia nagłówka to duży tekst i ma co najmniej 4,5:1 (1.4.6 dla dużego tekstu). Dzięki temu aplikacja dalej spełnia 1.4.6, o czym dziś pisze.</li>
+  <li><strong>Cele.</strong> Co najmniej 44 px dla każdej kontrolki i linku w nawigacji, 32 px dla etykiet z odstępami (2.5.5 i 2.5.8).</li>
+  <li><strong>Fokus.</strong> Obrys 3 px z odstępem 2 px, w kolorze o kontraście 3:1 zarówno do strony, jak i do kontrolki (2.4.13): granat w jasnym, żółty w ciemnym. E używa zamiast tego stylu usług publicznych: żółte wypełnienie z grubą ciemną belką pod elementem, tak samo w obu trybach.</li>
+  <li><strong>Najpierw dosłowne nazwy.</strong> Plac zabaw siedzi w kształtach i ruchu, nigdy w nazwach. Miejsca na mapie B nazywają się „Kryteria” i „Prawo”, nie „Huśtawki”. Piaskownica, mapa i klocki to ozdoba. Metafory bywają trudne dla części osób w spektrum autyzmu, więc nigdy nie niosą informacji.</li>
+  <li><strong>Przewidywalność.</strong> Nawigacja, wyszukiwarka i „Spokój” są w tym samym miejscu na każdej stronie (3.2.3), ikony mają jedno znaczenie (3.2.4), nic nie zmienia się przy samym fokusie (3.2.1).</li>
+  <li><strong>Mapa w B.</strong> W kodzie to uporządkowana lista linków ułożona siatką CSS. Kredowe ścieżki to SVG z <code>aria-hidden</code>. Czytnik ekranu, kolejność klawiatury i powiększenie 400% (1.4.10) dostają tę samą listę.</li>
+  <li><strong>Filtry w C.</strong> Prawdziwe przyciski z <code>aria-pressed</code>. Liczba wyników jest ogłaszana tak jak dziś przy filtrach kryteriów.</li>
+  <li><strong>Kroje.</strong> Atkinson Hyperlegible (B i monospace w C) powstał dla osób słabowidzących i odróżnia litery łatwe do pomylenia (I l 1, O 0). Lexend (C) projektowano z myślą o płynności czytania. Plus Jakarta Sans (A) ma otwarte kształty i dużą wysokość małych liter. Public Sans (E) powstał dla serwisów rządu USA. Geist (D) to neutralny grotesk z pasującym krojem monospace. Wszystkie mają polskie znaki (sprawdzone w zestawie latin-ext).</li>
+  <li><strong>Odstępy w tekście.</strong> Żadnych stałych wysokości na kontenerach z tekstem, więc nadpisania z 1.4.12 niczego nie ucinają.</li>
+</ul>
+
+<h2 id="code">7. Kod</h2>
+<ul>
+  <li><code>src/styles.css</code>: nowe wartości tokenów pod tymi samymi nazwami (<code>--paper</code>, <code>--ink</code>, <code>--accent</code> i reszta), do tego tokeny dla rodzajów treści (<code>--kind-kryteria</code> i tak dalej), promienie, cienie, krzywe i czasy animacji. <code>light-dark()</code> zostaje. Kolory zapisane w OKLCH.</li>
+  <li><code>design.md</code> w katalogu głównym: wybrany system w formacie Hallmarka (paleta, kroje, kształty, ruch, co strony mają wspólnego). Każda późniejsza zmiana interfejsu zaczyna od jego przeczytania.</li>
+  <li>Kroje z pakietów <code>@fontsource</code>, w miejsce <code>@fontsource-variable/inter</code>. Nazwy pakietów potwierdzę przy instalacji.</li>
+  <li>Nowe: <code>src/components/calm-toggle.tsx</code> z <code>calmInitScript</code> obok <code>themeInitScript</code> i <code>@custom-variant calm</code> w CSS. Mapa rodzajów treści w <code>src/lib/</code> (nazwa, ikona, token dla każdego rodzaju), typowana z istniejącej listy działów.</li>
+  <li>Zmienione: <code>site-header.tsx</code> (wyszukiwarka, „Spokój”, w B szyna), <code>site-footer.tsx</code>, <code>routes/index.tsx</code>, <code>routes/kryteria/$criterionId.tsx</code>, <code>level-badge.tsx</code>, <code>fix-card.tsx</code>, <code>filters.tsx</code>, <code>paths.tsx</code>. Żaden plik nie jest usuwany.</li>
+  <li>Bez biblioteki do animacji: przejścia CSS, <code>@keyframes</code> i <code>@property</code> do licznika.</li>
+</ul>
+
+<h2 id="order">8. Kolejność wdrożenia</h2>
+<ol>
+  <li>Wybór wariantu (albo połączenia) w mockupach.</li>
+  <li>Tokeny, kroje, <code>design.md</code>. Aplikacja wygląda inaczej, ale ma te same układy. Testy axe i Playwright przechodzą.</li>
+  <li>„Spokój” i mapa rodzajów treści.</li>
+  <li>Nagłówek, stopka i nawigacja na telefonach.</li>
+  <li>Strona główna.</li>
+  <li>Strony kryteriów.</li>
+  <li>Pozostałe strony dostają komponenty: lista kryteriów, praktyka, wzorce, przed i po, ścieżki, prawo, symulatory, słownik, wyszukiwarka, kontakt, prywatność.</li>
+  <li>Odświeżone zrzuty w <code>docs/screenshots/</code>, usunięte nieaktualne, zaktualizowane README.</li>
+</ol>
+<p>Po każdym kroku aplikacja działa. Kroki od 2 do 7 mogą być osobnymi pull requestami.</p>
+
+<h2 id="commits">9. Gałąź i commity</h2>
+<p>Jesteśmy na <code>master</code>. Te mockupy i ten plan trafią na osobną gałąź, po twojej zgodzie:</p>
+<ul>
+  <li>Gałąź: <code>docs/app-redesign-mocks</code></li>
+  <li><code>docs(design): add app redesign mocks</code> (plik z mockupami)</li>
+  <li><code>docs(design): add app redesign plan</code> (oba pliki planu)</li>
+  <li><code>docs: add DESIGN.md for the picked redesign</code></li>
+</ul>
+<p>Wdrożenie pójdzie potem na <code>feat/redesign-&lt;wariant&gt;</code>: jeden commit na krok z punktu 8, testy razem z kodem, który sprawdzają, a wymiana pakietów z krojami jako osobny commit <code>chore(deps)</code>.</p>
+
+<h2 id="decisions">10. Decyzje</h2>
+<ol>
+  <li>Który wariant: od A do G czy połączenie (nazwij, które części). D i E mogą też wziąć jeden zabawowy element z A–C, na przykład wieżę postępu z C w E.</li>
+  <li>Który favicon: pomysł 1 (w F i G), 3 czy inny.</li>
+  <li>Dla F: zostaje ilustracja w SVG czy zamawiamy taką jak scena 3D z konceptu?</li>
+  <li>Czy „Spokój” ma być domyślnie włączony dla wszystkich, czy tylko przy <code>prefers-reduced-motion</code>? Proponuję: tylko przy ustawieniu systemowym.</li>
+  <li>Dla C: ciemny na start jak w mockupie, czy za systemem jak dziś? Proponuję: za systemem, mockup tylko pokazuje najpierw ciemny.</li>
+  <li>Nagłówek strony głównej „Zacznij od tego, co psuje najwięcej.” zostaje w A, warianty od B do E proponują nowe. Baner „Nowość” w E to przykład; trzeba zdecydować, kto będzie go aktualizował. Zmiany tekstów przechodzą przez ciebie, z wariantami brzmienia na czacie.</li>
+  <li>„Trasa na 15 minut” w B potrzebuje prawdziwej liczby z długości lekcji albo traci liczbę.</li>
+</ol>
+
+<h2 id="out">11. Poza zakresem</h2>
+<ul>
+  <li>Treści, trasy, logika wyszukiwania, zapis postępu, import z Notion.</li>
+  <li>Strony demonstracyjne pod <code>/demo/</code> (przykłady zepsute i naprawione, wzorce, przed i po): pokazują własny temat i zostają bez zmian. Nowy wygląd dostaje tylko pasek nad nimi.</li>
+  <li>Maskotka i ilustracje poza kształtami z CSS.</li>
+</ul>
+
+</main>
+</body>
+</html>

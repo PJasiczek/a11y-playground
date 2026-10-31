@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan: redesign of the whole app</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1.25rem 6rem;
+    background: #000; color: #fff;
+    font: 16px/1.65 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  main { max-width: 82ch; margin: 0 auto; }
+  h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 .5rem; letter-spacing: -.02em; }
+  h2 { font-size: 1.2rem; margin: 3rem 0 .75rem; padding-top: 1rem; border-top: 1px solid #262626; letter-spacing: -.01em; }
+  h3 { font-size: 1rem; margin: 1.75rem 0 .5rem; }
+  p, li, dd { color: #e5e5e5; }
+  a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  ul, ol { padding-left: 1.3rem; }
+  li { margin: .3rem 0; }
+  code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .875em; background: #141414; border: 1px solid #262626; border-radius: 3px; padding: .08em .3em; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; display: block; overflow-x: auto; }
+  th, td { border: 1px solid #262626; padding: .45rem .6rem; text-align: left; vertical-align: top; }
+  th { background: #101010; font-weight: 600; }
+  .meta { color: #a3a3a3; font-size: .85rem; margin: 0 0 1.5rem; }
+  .meta a { color: #fff; }
+  .flag { border-left: 2px solid #737373; padding: .1rem 0 .1rem .85rem; margin: 1rem 0; color: #d4d4d4; font-size: .93rem; }
+  .toc { border: 1px solid #262626; padding: 1rem 1rem 1rem 2.4rem; margin: 1.5rem 0 0; }
+  .toc li { margin: .15rem 0; }
+  @media (max-width: 40rem) { body { padding: 1.25rem .9rem 4rem; } h1 { font-size: 1.45rem; } }
+</style>
+</head>
+<body>
+<aside style="padding:16px;background:#fff4bc;color:#103b73;font:600 16px/1.5 system-ui">Updated 2026-10-31: superseded by the pastel playground reference. See <a href="../2026-10-31-pastel-redesign.md">current plan</a> and DESIGN.md.</aside>
+<main>
+
+<p class="meta"><a href="app-redesign.pl.html" hreflang="pl">Wersja polska</a></p>
+
+<h1>Plan: redesign of the whole app</h1>
+<p class="meta">Request: rebuild the look of the whole app with the Hallmark skill, three interface variants, plan in HTML. Plan version: 2026-10-17. Mocks: <code>docs/design/2026-10-17-app-redesign-mocks/app-redesign-mocks.html</code>.</p>
+
+<p class="flag">Agreed before the plan: simple and intuitive, but fun to look at, with motion that says "playground". Content of every kind found fast and easily, for neurodivergent readers and people using accessibility features. Tone: playful. Fonts and palette are open.</p>
+
+<p class="flag">Added on 2026-10-17: two more variants at the professional end, D and E. A, B and C stay playful.</p>
+
+<p class="flag">Added on 2026-10-17: F and G, built from your concept image (split hero, playground illustration, four playground cards, indigo and mint), and its six favicon ideas redrawn as SVG.</p>
+
+<p class="flag"><strong>Decision on 2026-10-17: variant A, with its own colours and layout.</strong> A first take followed the PostHog system (shadcn.io/design/posthog) closely and was dropped for that; PostHog now gives principles only (calm ground, white cards, hierarchy by weight, a few callout kinds). The system is locked in <code>DESIGN.md</code> and drawn as "A · final v2" at the top of the mocks: sand ground, seven toy colours (one per kind of content, ink text on every fill, 7:1 or more), Plus Jakarta Sans with Atkinson Hyperlegible Mono, the xylophone of sections on the home page, criterion pages with a band in the kind's colour, tabbed section cards and a pocket card. Sections 3 to 10 describe all options as they were weighed; where they differ from <code>DESIGN.md</code>, <code>DESIGN.md</code> wins.</p>
+
+<ol class="toc">
+  <li><a href="#today">The app today</a></li>
+  <li><a href="#scope">Scope</a></li>
+  <li><a href="#variants">Three variants</a></li>
+  <li><a href="#shared">Shared by every variant</a></li>
+  <li><a href="#motion">Motion</a></li>
+  <li><a href="#a11y">Accessibility</a></li>
+  <li><a href="#code">Code</a></li>
+  <li><a href="#order">Rollout order</a></li>
+  <li><a href="#commits">Branch and commits</a></li>
+  <li><a href="#decisions">Decisions</a></li>
+  <li><a href="#out">Out of scope</a></li>
+</ol>
+
+<h2 id="today">1. The app today</h2>
+<ul>
+  <li>TanStack Start, React 19, Tailwind v4. Tokens live in <code>src/styles.css</code> as hex values through <code>light-dark()</code>, mapped into <code>@theme inline</code>. Every text pair meets 7:1, control borders 3:1.</li>
+  <li>Type: Inter Variable (<code>@fontsource-variable/inter</code>) and the system monospace for criterion numbers, articles and dates.</li>
+  <li>Accent is navy <code>#2c36a8</code>. Yellow <code>--color-marker</code> has one meaning: what the user gains.</li>
+  <li>No motion library. <code>prefers-reduced-motion</code> is honoured, the app meets 2.3.3, 2.4.13 and 2.5.5 and says so on those criterion pages.</li>
+  <li>Fixed pieces: skip link, focus moves to the new <code>h1</code> after a route change, "Struktura strony", the phone navigation docked at the bottom with "Więcej", the consent card, the light and dark toggle (<code>data-theme</code> on <code>html</code>, set before paint by <code>themeInitScript</code>).</li>
+  <li>The look is quiet and editorial: off-white paper, hairline rules, square cards. It reads well and says nothing about a playground.</li>
+</ul>
+
+<h2 id="scope">2. Scope</h2>
+<ul>
+  <li>A new design system for every page: palette, type, shapes, components, motion. One system across the app, not a different look per page.</li>
+  <li>Routes, content, Notion import, search, progress store and tests of behaviour stay as they are.</li>
+  <li>The layout of the home page and of criterion pages changes with the chosen variant. Other pages take the new components without a new layout.</li>
+  <li>A new "Spokój" (calm mode) switch, see section 4.</li>
+</ul>
+
+<h2 id="variants">3. Five variants</h2>
+<p>All five are in the mocks file, each on the home page, the criterion page <code>/kryteria/1.4.3</code> and a 360 px phone, in light and dark, with calm mode working.</p>
+<table>
+  <thead><tr><th scope="col"></th><th scope="col">A · Piaskownica (sandbox)</th><th scope="col">B · Mapa placu (playground map)</th><th scope="col">C · Klocki (bricks)</th></tr></thead>
+  <tbody>
+    <tr><th scope="row">Home page</th><td>Search first, a bento of seven section tiles, then the six fixes that pay off most (one big, five in a list)</td><td>A plan of seven places joined by chalk paths, then a three-step first route</td><td>A big search box with type filters, an index of every entry point in four columns, progress towers</td></tr>
+    <tr><th scope="row">Navigation</th><td>Top bar with a search pill (<code>/</code>), five links and "Więcej"</td><td>A side rail on every page: the seven places, search, settings; "Na tej stronie" opens inside it</td><td>Top bar, heavy bottom edge, current page underlined with a yellow bar</td></tr>
+    <tr><th scope="row">Criterion page</th><td>Rounded cards per section, a table of contents that fills a dot per section read, a "Co dalej" block</td><td>A route with numbered stops: passed, current, still ahead</td><td>Building instructions: numbered brick steps and a side tower that fills as you read</td></tr>
+    <tr><th scope="row">Palette</th><td>Cream, pear yellow, sky cyan, coral, mint and lavender as tints (Hallmark theme Hum)</td><td>Mint paper, deep green ink, slide orange, sky blue (custom)</td><td>Night navy first, toy-brick red, yellow, blue and green (custom)</td></tr>
+    <tr><th scope="row">Type</th><td>Plus Jakarta Sans, JetBrains Mono</td><td>Bricolage Grotesque for headings, Atkinson Hyperlegible Next for text</td><td>Lexend, Atkinson Hyperlegible Mono</td></tr>
+    <tr><th scope="row">Shapes</th><td>22 px radius, pill buttons that press down onto a solid edge</td><td>Each place has its own outline, 2 px ink borders, dashed chalk lines</td><td>Bricks with studs and a hard bottom edge</td></tr>
+    <tr><th scope="row">Strong for</th><td>Browsing, first visits</td><td>Orientation: always the same rail, a visible length of every page</td><td>Speed: someone who knows what they want gets there in one step</td></tr>
+    <tr><th scope="row">Risk</th><td>The most familiar, the least distinct</td><td>A map is harder at 400% zoom, so it falls back to a list; the rail takes 248 px of width</td><td>Dark-first is the largest change for today's readers</td></tr>
+  </tbody>
+</table>
+<h3>The professional end</h3>
+<table>
+  <thead><tr><th scope="col"></th><th scope="col">D · Pracownia (workshop)</th><th scope="col">E · Przewodnik (guide)</th></tr></thead>
+  <tbody>
+    <tr><th scope="row">Home page</th><td>A command search, one live component with what a screen reader says, the sections as a table with counts, the top fixes and frequent searches</td><td>Start from your role, the questions people actually ask, every section with one line</td></tr>
+    <tr><th scope="row">Navigation</th><td>Top bar with a command search (<code>Ctrl K</code>) and five links; on criterion pages a tree of every criterion on the left</td><td>An ink header band with a blue stripe, current page marked with a yellow bar</td></tr>
+    <tr><th scope="row">Criterion page</th><td>Documentation layout: tree, a properties table (level, since, principle, roles), examples with "Podgląd / Kod / Symulatory" tabs, "Na tej stronie" on the right</td><td>One column: caption, summary in an inset, contents at the top, the example with "Źle / Dobrze", "Co dalej"</td></tr>
+    <tr><th scope="row">Palette</th><td>Warm grey, graphite ink, one deep coral accent (custom, Hallmark genre modern-minimal)</td><td>White, ink band, government blue, yellow focus (custom, after GOV.UK and USWDS)</td></tr>
+    <tr><th scope="row">Type</th><td>Geist, Geist Mono</td><td>Source Serif 4 for headings, Public Sans for text</td></tr>
+    <tr><th scope="row">Playground</th><td>Only in the working examples: the live component on the home page, the tabs on criterion pages</td><td>None in the look; the content does the teaching</td></tr>
+    <tr><th scope="row">Strong for</th><td>Developers and designers who know what they look for; comparing neighbouring criteria</td><td>Public bodies and first-time readers; the most predictable layout at 400% zoom</td></tr>
+    <tr><th scope="row">Risk</th><td>Can feel like any developer documentation</td><td>The least playful; the serif changes the voice the most</td></tr>
+  </tbody>
+</table>
+<h3>From your concept</h3>
+<p>Read as a study of the image: split hero with text on the left and an illustration on the right, a row of four playground cards with tags, a closing strip. Geometric heavy sans (rebuilt with Manrope), indigo as the primary colour in light, mint in dark, cyan on the second headline line, multi-colour logo shapes.</p>
+<table>
+  <thead><tr><th scope="col"></th><th scope="col">F · Plac zabaw</th><th scope="col">G · Plac wieczorem</th></tr></thead>
+  <tbody>
+    <tr><th scope="row">How close to the concept</th><td>Close: same order of sections, same hero, same cards and strip</td><td>Adapted: dark first, search before the illustration, the checklist card as a working toy, paths with progress</td></tr>
+    <tr><th scope="row">Home page</th><td>"Zepsuj coś. Sprawdź dostępność. Zbuduj lepiej.", two buttons, three true claims, SVG playground with a code card and a real contrast reading</td><td>The same headline over a big search, a checklist of five checks to tick, four playground cards, five paths</td></tr>
+    <tr><th scope="row">Criterion page</th><td>Title with tags, a "Sprawdź sam" card beside it, cards per section, "Na tej stronie" on the left</td><td>Not drawn; it would take F's page in G's colours</td></tr>
+    <tr><th scope="row">Palette</th><td colspan="2">Light: near-white, indigo primary (white text 8.2:1), cyan second line (large text, 4.6:1 or more). Dark: navy, mint primary (dark text 12.7:1), cyan 9.5:1 or more. Logo colours only on shapes, never on text</td></tr>
+    <tr><th scope="row">Type</th><td colspan="2">Manrope 800 for headings, 400 to 700 for text, JetBrains Mono for code</td></tr>
+    <tr><th scope="row">Not carried over</th><td colspan="2">The pill above the headline, gradient text (dark screen), window dots on the code card, the invented "Accessibility score 92", "Real-time feedback" (the app has none), English copy, low-contrast small text in the cards</td></tr>
+    <tr><th scope="row">Risk</th><td>The four equal cards and the split hero are the most common landing page shape; it reads as a product page more than a learning app</td><td>Dark first is the largest change for today's readers, as in C</td></tr>
+  </tbody>
+</table>
+<h3>Favicon</h3>
+<p>The six ideas from the image are in the mocks at 96, 48, 32 and 16 px on light and dark tabs. At 16 px idea 1 (the A from two strokes) and idea 3 (code and tick) stay readable; 2, 4, 5 and 6 lose their detail. F and G use idea 1. A favicon pass would add <code>favicon.svg</code>, a 32 px PNG and a 180 px Apple touch icon.</p>
+<p>Variants can be mixed where they do not fight: for example C's index and search on A's look. Section 10 lists the pick.</p>
+
+<h2 id="shared">4. Shared by every variant</h2>
+<ul>
+  <li><strong>Spokój.</strong> A switch in the header (in "Więcej" on phones). It stops every animation and transition and swaps the decorative tints for plain paper. It sets <code>data-calm</code> on <code>html</code> before paint, stored in <code>localStorage</code> like the theme. Without a stored choice it follows <code>prefers-reduced-motion</code>. The point: someone sensitive to motion or colour can turn it off in one place, without system settings.</li>
+  <li><strong>One code per kind of content.</strong> Kryteria, Praktyka, Ścieżki, Prawo, Symulatory, Słownik and WCAG 3.0 each get an icon, a name and a colour, the same in the navigation, search results, tiles and links "Co dalej". Colour never appears without the icon and the name (1.4.1).</li>
+  <li><strong>Search everywhere.</strong> In the header of every page, with <code>/</code> to focus it. The shortcut is announced next to the field and can be turned off (2.1.4).</li>
+  <li><strong>"Co dalej" at the end of criterion pages.</strong> The related example, lesson and stronger criterion that the page already links to, gathered in one block, so nobody has to scan the page for the next step.</li>
+  <li><strong>Kept as they are:</strong> skip link, landmarks, focus after a route change, "Struktura strony", the docked phone navigation and "Więcej", the consent card, the 3 px focus outline, monospace for codes, and the marker meaning "what the user gains" (pear in A, orange in B, yellow in C, a coral bar in D, yellow in E).</li>
+</ul>
+
+<h2 id="motion">5. Motion</h2>
+<p>Motion is what makes it a playground, so every variant has some. It is also what most often hurts neurodivergent readers. Rules for all five:</p>
+<ul>
+  <li>Only in response to the reader, or once when a page loads. Nothing loops, nothing moves on its own after the first second, no parallax, no scroll-jacking.</li>
+  <li>Only <code>transform</code> and <code>opacity</code>, at most 620 ms, no flashing.</li>
+  <li>Spokój and <code>prefers-reduced-motion</code> turn it all off (2.3.3). Nothing depends on motion: every state shows without it.</li>
+</ul>
+<table>
+  <thead><tr><th scope="col">Variant</th><th scope="col">On load</th><th scope="col">On hover and press</th><th scope="col">On success</th></tr></thead>
+  <tbody>
+    <tr><td>A</td><td>The 86 on the Kryteria tile counts up (1.2 s)</td><td>The ball in the wordmark hops once, tiles lift 4 px, buttons press down 3 px onto their edge, the arrow slides</td><td>Contrast toy: the sample text fades to the chosen ratio</td></tr>
+    <tr><td>B</td><td>Places on the map pop in one after another (at most 5 staggers)</td><td>A place lifts and tilts 0.6°, its shadow grows; the button presses into its shadow</td><td>The route stop turns into a tick</td></tr>
+    <tr><td>C</td><td>Progress bricks drop onto the tower</td><td>A brick rises 2 px, pressing drops it onto its edge; a pressed filter stays down</td><td>A finished lesson drops a new brick on the tower</td></tr>
+    <tr><td>D</td><td>None</td><td>Table rows highlight, the primary button turns coral, tabs move their underline</td><td>The live component changes state and its screen reader line</td></tr>
+    <tr><td>E</td><td>None</td><td>Link underlines thicken</td><td>None</td></tr>
+  </tbody>
+</table>
+
+<h2 id="a11y">6. Accessibility</h2>
+<p>Read against <code>docs/accessibility.md</code>. The new parts and what they need:</p>
+<ul>
+  <li><strong>Contrast.</strong> Every text pair in all seven variants and both modes was computed in OKLCH: text 7:1 or more (body text in A light 7.8:1, secondary text in B light 7.4:1, the lowest is 7.2:1 in A dark). Text on coloured fills: dark ink on pear 12:1, on orange 7.6:1, on the C bricks 7.7 to 12.4:1. Control borders 3.6:1 or more. D: text 7.5:1 or more (coral accent text 7.5:1, white on the coral button 8.4:1), control borders 4.2:1. E: text 7.8:1 or more, links 7.8:1 in light and 8.9:1 in dark. F and G: text 7.3:1 or more; the cyan second headline line is large text and meets 4.5:1 (1.4.6 for large text). That keeps 1.4.6, which the app claims today.</li>
+  <li><strong>Targets.</strong> 44 px or more for every control and link in navigation, 32 px for chips with spacing (2.5.5 and 2.5.8).</li>
+  <li><strong>Focus.</strong> 3 px outline with a 2 px gap, in a colour at 3:1 against both the page and the control (2.4.13): navy in light, yellow in dark. E uses the public-service style instead: a yellow fill with a thick ink bar under the focused element, the same in both modes.</li>
+  <li><strong>Literal names first.</strong> The playground is in the shapes and the motion, never in the names. Places on B's map are called "Kryteria" and "Prawo", not "Huśtawki"; the sandbox, map and bricks are decoration. Metaphors are hard for some autistic readers, so they never carry information.</li>
+  <li><strong>Predictable.</strong> Navigation, search and Spokój sit in the same place on every page (3.2.3), icons keep one meaning (3.2.4), nothing changes on focus (3.2.1).</li>
+  <li><strong>B's map.</strong> In code it is an ordered list of links laid out with CSS grid; the chalk paths are an <code>aria-hidden</code> SVG. A screen reader, keyboard order and 400% zoom (1.4.10) get the same list.</li>
+  <li><strong>C's filters.</strong> Real buttons with <code>aria-pressed</code>; the result count is announced like the criteria filters today.</li>
+  <li><strong>Type.</strong> Atkinson Hyperlegible (B, and mono in C) was designed for low vision and tells apart letters that are easy to confuse (I l 1, O 0). Lexend (C) is designed for reading fluency. Plus Jakarta Sans (A) has open shapes and a large x-height. Public Sans (E) was made for US government services. Geist (D) is a neutral grotesque with a matching mono. All of them support Polish characters (checked in latin-ext).</li>
+  <li><strong>Text spacing.</strong> No fixed heights on text containers, so 1.4.12 overrides do not clip.</li>
+</ul>
+
+<h2 id="code">7. Code</h2>
+<ul>
+  <li><code>src/styles.css</code>: new token values in the same names (<code>--paper</code>, <code>--ink</code>, <code>--accent</code> and the rest), plus per-section tokens (<code>--kind-kryteria</code> and so on), radii, shadows, easings and durations. <code>light-dark()</code> stays. Colours written in OKLCH.</li>
+  <li><code>design.md</code> at the root: the chosen system in Hallmark's format (palette, type, shapes, motion, what pages share). Every later UI change reads it first.</li>
+  <li>Fonts through <code>@fontsource</code> packages, replacing <code>@fontsource-variable/inter</code>. Package names are confirmed when installing.</li>
+  <li>New: <code>src/components/calm-toggle.tsx</code> with a <code>calmInitScript</code> next to <code>themeInitScript</code>, and a <code>@custom-variant calm</code> in CSS. A <code>kind</code> map in <code>src/lib/</code> (name, icon, token per kind of content), typed from the existing section list.</li>
+  <li>Changed: <code>site-header.tsx</code> (search, Spokój; in B the rail), <code>site-footer.tsx</code>, <code>routes/index.tsx</code>, <code>routes/kryteria/$criterionId.tsx</code>, <code>level-badge.tsx</code>, <code>fix-card.tsx</code>, <code>filters.tsx</code>, <code>paths.tsx</code>. No file is deleted.</li>
+  <li>No motion library: CSS transitions, <code>@keyframes</code> and <code>@property</code> for the counter.</li>
+</ul>
+
+<h2 id="order">8. Rollout order</h2>
+<ol>
+  <li>Pick a variant (or a mix) in the mocks.</li>
+  <li>Tokens, fonts, <code>design.md</code>. The app looks different but keeps every layout. Axe and Playwright tests pass.</li>
+  <li>Spokój and the content-kind map.</li>
+  <li>Header, footer and phone navigation.</li>
+  <li>Home page.</li>
+  <li>Criterion pages.</li>
+  <li>The remaining pages take the components: criteria list, practice, patterns, before and after, paths, law, simulators, glossary, search, contact, privacy.</li>
+  <li>Screenshots in <code>docs/screenshots/</code> refreshed, outdated ones deleted, README updated.</li>
+</ol>
+<p>Every step is a working app. Steps 2 to 7 can each be a separate pull request.</p>
+
+<h2 id="commits">9. Branch and commits</h2>
+<p>We are on <code>master</code>. These mocks and this plan go on their own branch, after your go-ahead:</p>
+<ul>
+  <li>Branch: <code>docs/app-redesign-mocks</code></li>
+  <li><code>docs(design): add app redesign mocks</code> (the mocks file)</li>
+  <li><code>docs(design): add app redesign plan</code> (both plan files)</li>
+  <li><code>docs: add DESIGN.md for the picked redesign</code></li>
+</ul>
+<p>The implementation then goes on <code>feat/redesign-&lt;variant&gt;</code>, one commit per step of section 8, tests with the code they cover, the font package swap as a separate <code>chore(deps)</code> commit.</p>
+
+<h2 id="decisions">10. Decisions</h2>
+<ol>
+  <li>Which variant: A to G, or a mix (name the parts). D and E can also take one playful piece from A to C, for example C's progress tower in E.</li>
+  <li>Which favicon: idea 1 (in F and G), 3, or another.</li>
+  <li>For F: keep the SVG illustration, or commission one like the concept's 3D scene?</li>
+  <li>Should Spokój start on for everyone, or only with <code>prefers-reduced-motion</code>? I propose: only with the system setting.</li>
+  <li>For C: dark-first as in the mock, or follow the system as today? I propose: follow the system, the mock only shows dark first.</li>
+  <li>The home page headline "Zacznij od tego, co psuje najwięcej." stays in A; B to E propose new ones. E's "Nowość" banner is an example and needs a decision on who keeps it current. Copy changes go through you with wording variants in chat.</li>
+  <li>B's "Trasa na 15 minut" needs a real figure from the lesson lengths, or loses the number.</li>
+</ol>
+
+<h2 id="out">11. Out of scope</h2>
+<ul>
+  <li>Content, routes, search logic, progress store, Notion import.</li>
+  <li>The demo pages under <code>/demo/</code> (broken and fixed examples, patterns, before and after): they show their own subject and stay as they are; only the bar above them takes the new look.</li>
+  <li>A mascot or illustrations beyond CSS shapes.</li>
+</ul>
+
+</main>
+</body>
+</html>
