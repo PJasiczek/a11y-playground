@@ -9,7 +9,7 @@ export const Route = createFileRoute("/praktyka/")({
   loader: () => getExampleCards(),
   head: ({ match }) =>
     pageHead({
-      title: "Praktyka", description:
+      title: "Dostępność w praktyce — przykłady przed i po", description:
         "Ten sam fragment interfejsu dwa razy: zepsuty i poprawny, z kodem i z tym, co usłyszy czytnik ekranu. Przykłady ułożone od najtańszej poprawki.",
       path: match.pathname,
     }),

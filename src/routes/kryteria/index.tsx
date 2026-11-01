@@ -41,7 +41,7 @@ export const Route = createFileRoute("/kryteria/")({
   loader: () => getCriteriaOverview(),
   head: ({ match }) =>
     pageHead({
-      title: "Kryteria", description:
+      title: "Kryteria WCAG 2.2 po polsku", description:
         "Wszystkie kryteria sukcesu WCAG 2.0, 2.1 i 2.2 po polsku, z filtrami według wersji, poziomu A, AA i AAA, zasady i roli w zespole.",
       path: match.pathname,
     }),

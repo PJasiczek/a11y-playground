@@ -1,6 +1,7 @@
 import { expect, test } from "vitest";
 import { absoluteUrl, clip, pageHead } from "./seo";
 import { siteUrl } from "./site";
+import { socialImageForPath } from "./social";
 
 test("clip keeps short text and cuts long text at a word boundary", () => {
   expect(clip("Krótki  opis.\n")).toBe("Krótki opis.");
@@ -33,4 +34,15 @@ test("JSON-LD cannot close its script element", () => {
   const json = scripts[0]?.children ?? "";
   expect(json).not.toContain("<");
   expect(JSON.parse(json)).toMatchObject({ name: "</script><script>alert(1)</script>" });
+});
+
+test("social cards use a criterion-specific image and a dedicated X composition", () => {
+  const { meta } = pageHead({ title: "Kontrast", description: "Opis.", path: "/kryteria/1.4.3" });
+  expect(meta).toContainEqual({ property: "og:image", content: `${siteUrl}/social/criterion-1.4.3-v1.png` });
+  expect(meta).toContainEqual({ name: "twitter:image", content: `${siteUrl}/social/criterion-1.4.3-x-v1.png` });
+  expect(meta).toContainEqual({ name: "twitter:card", content: "summary_large_image" });
+  expect(meta).toContainEqual({ property: "og:image:width", content: "1200" });
+  expect(socialImageForPath("/kryteria/1.4.3/?wersja=2.2")).toEqual(socialImageForPath("/kryteria/1.4.3"));
+  expect(socialImageForPath("/kontakt").path).toBe("/social/home-v1.png");
+  expect(socialImageForPath("/sciezki/autor-tresci").path).toBe("/social/sciezki-v1.png");
 });

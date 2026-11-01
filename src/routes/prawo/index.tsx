@@ -7,7 +7,7 @@ export const Route = createFileRoute("/prawo/")({
   loader: () => getLawIndex(),
   head: ({ match }) =>
     pageHead({
-      title: "Prawo", description:
+      title: "Prawo o dostępności cyfrowej w Polsce", description:
         "Kogo dotyczą polskie przepisy o dostępności cyfrowej, od kiedy i które kryteria WCAG z nich wynikają. Streszczenie każdej ustawy obok dosłownego brzmienia.",
       path: match.pathname,
     }),

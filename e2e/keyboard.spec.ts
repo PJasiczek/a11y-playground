@@ -19,7 +19,7 @@ test("navigating from the keyboard moves focus to the new h1 and announces the t
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL("/prawo");
   await expect(page.getByRole("heading", { level: 1, name: "Prawo" })).toBeFocused();
-  await expect(page.locator("[aria-live=polite]")).toHaveText("Prawo · a11y playground");
+  await expect(page.locator("[aria-live=polite]")).toHaveText("Prawo o dostępności cyfrowej w Polsce · a11y playground");
   await expect(link).toHaveAttribute("aria-current", "page");
 });
 

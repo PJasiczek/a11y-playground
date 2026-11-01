@@ -28,14 +28,26 @@ test("the sitemap lists exactly the indexed pages, each with its own canonical, 
 
   const titles = new Map<string, string>();
   const descriptions = new Map<string, string>();
+  const imageUrls = new Set<string>();
   for (const url of listed) {
     const path = url.slice(siteUrl.length);
-    const html = await (await request.get(path)).text();
+    const response = await request.get(path);
+    expect(response.status(), path).toBe(200);
+    const html = await response.text();
     expect(first(html, /<link rel="canonical" href="([^"]+)"/), path).toBe(url);
     expect(html, path).not.toContain('name="robots"');
     const title = first(html, /<title>([^<]+)<\/title>/) ?? "";
     const description = first(html, /<meta name="description" content="([^"]+)"/) ?? "";
     expect(description, path).not.toBe("");
+    for (const attribute of ['property="og:image"', 'name="twitter:image"']) {
+      const images = [...html.matchAll(new RegExp(`<meta ${attribute} content="([^"]+)"`, "g"))];
+      expect(images, path).toHaveLength(1);
+      const image = images[0]?.[1] ?? "";
+      expect(image, path).toMatch(new RegExp(`^${siteUrl}/social/`));
+      imageUrls.add(image);
+    }
+    expect(html, path).toContain('name="twitter:card" content="summary_large_image"');
+    expect(html, path).toContain('property="og:image:alt"');
     expect(titles.get(title), `${path} has the title of`).toBeUndefined();
     expect(descriptions.get(description), `${path} has the description of`).toBeUndefined();
     titles.set(title, path);
@@ -46,6 +58,19 @@ test("the sitemap lists exactly the indexed pages, each with its own canonical, 
       }, path).not.toThrow();
     }
   }
+  for (const url of imageUrls) {
+    const response = await request.get(url.slice(siteUrl.length));
+    expect(response.status(), url).toBe(200);
+    expect(response.headers()["content-type"], url).toContain("image/png");
+    const png = await response.body();
+    expect(png.readUInt32BE(16), url).toBe(1200);
+    expect(png.readUInt32BE(20), url).toBe(url.includes("-x-v1") ? 600 : 630);
+  }
+});
+
+test("unknown routes return HTTP 404", async ({ request }) => {
+  expect((await request.get("/nieistniejaca-strona-seo")).status()).toBe(404);
+  expect((await request.get("/kryteria/99.99.99")).status()).toBe(404);
 });
 
 test("every page left out of the sitemap stays out of search results", async ({ request }) => {

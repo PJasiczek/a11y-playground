@@ -1,6 +1,7 @@
 import type { AnyRouteMatch } from "@tanstack/react-router";
 import type { Thing, WithContext } from "schema-dts";
 import { siteName, siteUrl } from "./site";
+import { socialImageForPath, twitterImagePath, type SocialImage } from "./social";
 
 type Head = {
   meta: NonNullable<AnyRouteMatch["meta"]>;
@@ -20,6 +21,7 @@ export type PageMeta = {
   noindex?: boolean;
   /** JSON-LD blocks from structured-data.ts. */
   jsonLd?: ReadonlyArray<WithContext<Thing>>;
+  socialImage?: SocialImage;
 };
 
 /** Search engines cut longer descriptions themselves, mid-word. */
@@ -46,7 +48,7 @@ export function absoluteUrl(path: string) {
  *     head: ({ loaderData, match }) =>
  *       loaderData ? pageHead({ title: loaderData.title, description: loaderData.summary, path: match.pathname }) : {},
  */
-export function pageHead({ title, description, path, noindex = false, jsonLd = [] }: PageMeta): Head {
+export function pageHead({ title, description, path, noindex = false, jsonLd = [], socialImage = socialImageForPath(path) }: PageMeta): Head {
   const fullTitle = title ? `${title} · ${siteName}` : siteName;
   const text = clip(description);
   const url = absoluteUrl(path);
@@ -57,6 +59,16 @@ export function pageHead({ title, description, path, noindex = false, jsonLd = [
       { property: "og:title", content: title ?? siteName },
       { property: "og:description", content: text },
       { property: "og:url", content: url },
+      { property: "og:image", content: absoluteUrl(socialImage.path) },
+      { property: "og:image:width", content: String(socialImage.width) },
+      { property: "og:image:height", content: String(socialImage.height) },
+      { property: "og:image:type", content: socialImage.type },
+      { property: "og:image:alt", content: socialImage.alt },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: title ?? siteName },
+      { name: "twitter:description", content: text },
+      { name: "twitter:image", content: absoluteUrl(twitterImagePath(socialImage)) },
+      { name: "twitter:image:alt", content: socialImage.alt },
       ...(noindex ? [{ name: "robots", content: "noindex" }] : []),
     ],
     links: noindex ? [] : [{ rel: "canonical", href: url }],

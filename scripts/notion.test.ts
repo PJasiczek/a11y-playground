@@ -37,6 +37,17 @@ describe("entry titles", () => {
 });
 
 describe("toNotion and fromNotion", () => {
+  test("imports links authored on the previous domain as internal marks", () => {
+    const legacy = toNotion(file).replaceAll(siteUrl, "https://a11y-playground-tau.vercel.app");
+    expect(fromNotion("kryteria", legacy)).toBe(file);
+  });
+
+  test("legacy glossary links become relative without rewriting code or external hosts", () => {
+    const source = "---\nterm: fokus\n---\n\n[Focus](/slownik#fokus) i [Other](https://example.org/slownik#fokus).\n\n```html\n<a href=\"https://a11y-playground-tau.vercel.app/slownik#fokus\">Demo</a>\n```\n";
+    const legacy = toNotion(source).replaceAll(siteUrl, "https://a11y-playground-tau.vercel.app");
+    expect(fromNotion("slownik", legacy)).toBe(source);
+  });
+
   test("a file survives the round trip", () => {
     expect(fromNotion("kryteria", toNotion(file))).toBe(file);
   });

@@ -9,6 +9,8 @@ import { sitePages } from "./src/content/site-pages.ts";
 import { siteContentFromDisk } from "./src/content/site-pages.node.ts";
 
 export default defineConfig({
+  // Explicitly keep Vercel preview builds out of search even without platform headers.
+  define: { "import.meta.env.VITE_NOINDEX": JSON.stringify(process.env.VERCEL_ENV === "preview") },
   resolve: { tsconfigPaths: true },
   // Nitro picks the Vercel preset automatically when the build runs on Vercel.
   plugins: [
