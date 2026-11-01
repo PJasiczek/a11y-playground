@@ -1,608 +1,186 @@
 <div align="center">
 
+<img src="public/favicon.svg" width="64" height="64" alt="">
+
 # a11y playground
 
-**Learn WCAG in plain Polish: what a criterion says, what it looks like in code, and which law requires it.**
+**Learn digital accessibility in Polish, from WCAG criteria to working code and legal requirements.**
 
 [![CI](https://github.com/PJasiczek/a11y-playground/actions/workflows/ci.yml/badge.svg)](https://github.com/PJasiczek/a11y-playground/actions/workflows/ci.yml)
-![WCAG 2.2 AA+](https://img.shields.io/badge/target-WCAG%202.2%20AA%20%2B%20selected%20AAA-2c36a8)
-![TanStack Start](https://img.shields.io/badge/TanStack-Start-14171a)
+![Accessibility target: WCAG 2.2 AA plus selected AAA](https://img.shields.io/badge/target-WCAG%202.2%20AA%20%2B%20selected%20AAA-2c36a8)
+![Node.js 24+](https://img.shields.io/badge/Node.js-24%2B-417e38)
 
-[Overview](#overview) • [Getting started](#getting-started) • [Writing content](#writing-content) • [Scripts](#scripts) • [Accessibility](#accessibility-of-the-app-itself) • [Roadmap](#roadmap)
+[Try the app](https://a11y-playground-tau.vercel.app) · [Features](#features) · [Screenshots](#screenshots) · [Getting started](#getting-started) · [Content](#content) · [Development](#development)
 
 </div>
 
 ## Overview
 
-a11y playground is a learning app for people who build digital products in Poland. It connects three layers that today live in separate places: the WCAG standard, plain-language explanations with code examples, and the Polish and EU law that makes each criterion an obligation.
+a11y playground helps developers, designers, content authors and testers build more accessible digital products. It connects WCAG explanations, interactive examples and Polish and EU accessibility requirements in one place.
 
-The interface is in Polish. This README is in English.
+The application is in Polish; the project documentation is in English. Learning progress and self-check notes stay in the browser, with no account required.
+
+## Features
+
+| Area | What you can do |
+| --- | --- |
+| **WCAG criteria** | Browse 86 entries across levels A, AA and AAA, filter by version, principle or role, and read explanations, testing advice and related legal obligations. The removed criterion 4.1.1 has its own explanation. |
+| **Practice** | Compare 12 broken and fixed examples, inspect their code and explore 30 interactive ARIA patterns with keyboard exercises, live attribute values and a simulated screen reader log. |
+| **Before and after** | Audit a fictional transport operator's website with 20 accessibility problems. Take notes before revealing the fixes and numbered problem markers. |
+| **Simulators** | Explore 11 simulation options in six groups: colour vision, low vision, keyboard, screen reader, narrow screen and page structure. Each explains its limits and provides text alongside the visual effect. |
+| **Learning paths** | Follow five paths with 30 lessons, quizzes and local progress for developers, designers, content authors, testers and the legal minimum for public bodies. |
+| **Law** | Read three Polish acts and an EN 301 549 overview, compare provisions with plain-language summaries and use a timeline to explore obligations for your situation. |
+| **Search and glossary** | Search criteria, examples, patterns, provisions, lessons, WCAG 3.0 guidelines and 50 glossary terms. Search ignores Polish diacritics. |
+| **WCAG 3.0** | Explore the draft overview and our mapping of 46 guidelines to WCAG 2.2. The page identifies the draft date and clearly labels the mapping as our interpretation. |
+
+The interface uses a cream background, navy text, pastel section colours and an illustrated home page. Search is available in the home-page hero and at `/szukaj`. On wide screens, the logo, navigation and preference controls share one header row; the active link has a yellow underline. On phones, three navigation tabs and a **Więcej** sheet sit at the bottom.
+
+Light and dark themes follow the system until explicitly changed. **Spokój** (calm mode) disables motion and simplifies section colours. **Struktura strony** outlines and lists page landmarks and headings.
 
 > [!NOTE]
-> The whole app has a new look: seven colours, one per kind of content, a home page that tours every section, and Spokój to turn motion off ([`DESIGN.md`](DESIGN.md)). Phase 11 (a whole page before and after) is complete: the home page of a fictional transport operator, broken in 20 ways and fixed, with notes for checking it yourself and the answers hidden until you are done. Phase 10 added a "Struktura strony" button on every page that outlines its landmarks and headings. All 30 patterns of the Deque University list run in Praktyka with a live log of what a screen reader would say. Every criterion of WCAG 2.2, A to AAA, has a plain-language explanation, and `/wcag-3` tracks the WCAG 3.0 Working Draft with our mapping to today's criteria. Twelve common faults have a broken and a fixed example, each viewable through six kinds of simulator. Three Polish acts are in the app with the statute text and our summaries, and five learning paths walk through them lesson by lesson. Phase 5 (accounts) is postponed, so progress is kept in the browser.
+> Simulators and their screen reader logs are learning aids. They do not replace testing with assistive technology. The legal module provides educational material, not legal advice.
 
-### What works today
+## Screenshots
 
-- **Look and feel** follows the supplied pastel playground reference and [`DESIGN.md`](DESIGN.md). See the [current redesign plan](docs/design/2026-10-31-pastel-redesign.md) for coverage and historical decisions. Cream ground, navy text, softly lit pastel blocks and seven consistent content colours apply across the app. Geist is used for interface text and numbers; Atkinson Hyperlegible Mono is reserved for code. Dark mode, calm mode, keyboard focus and live content counts remain part of the design.
-- **Home page** as a tour of the app: a split hero with a real search form and six linked illustrated blocks; a mobile-specific character illustration and pastel navigation cards; four curated starter materials; an interactive contrast sample; seven section categories; five learning paths with local progress; a separate law callout; and recent materials with repository feature dates. Counts come from content. The header contains navigation and preference controls; search lives on the home page and its own route.
-- **Header** with the logo (four bars and "a11y playground" on two lines, also the favicon), search on every page, Spokój and the theme toggle, and the main navigation below as text links; the current page is underlined in its kind's colour. The footer repeats the logo and the seven sections, with contact, privacy and the cookie settings.
-- **Main navigation on phones** docks to the bottom edge, in reach of the thumb: Kryteria, Praktyka and Ścieżki as tabs, and "Więcej" for the rest (variant C of the [mobile menu mocks](docs/design/2026-10-17-mobile-menu-mocks/mobile-menu-mocks.html)). "Więcej" opens a sheet with Prawo, Symulatory, WCAG 3.0, Słownik, Spokój and the theme toggle; it is a native modal `dialog`, so Escape, "Zamknij" or a tap outside closes it and focus returns to "Więcej". The consent card and "Struktura strony" sit above the bar. On screens shorter than 480px (landscape, 400% zoom) the bar stays a row in the header instead of covering the page.
-- Light and dark mode. It follows the operating system by default, and the toggle in the header (in "Więcej" on phones) stores an explicit choice.
-- **Spokój** (calm mode), next to the theme toggle: it stops every animation and transition and flattens the kind colours to the sand band, while icons and words keep their meaning. Without a stored choice it follows the system's reduced motion setting. The interface moves only in answer to the reader (cards lift, buttons press down, the switches slide), never on its own.
-- Skip link, a stable landmark structure, and focus moved to the new `h1` with the page title announced after every client-side route change.
-- **Struktura strony**, a button in the bottom right corner of every page, after the W3C [landmarks example](https://www.w3.org/WAI/ARIA/apg/patterns/landmarks/examples/general-principles.html). Its panel has two switches, "Punkty orientacyjne" and "Nagłówki", which outline the landmarks and headings of the page you are on, each with a label naming its role or level. The panel lists the same as text, with what is wrong (no `main`, two navigations nobody can tell apart, a skipped heading level), and every row moves focus to its element, the way a screen reader jumps with D or H. The switches last for the browser tab.
-- **Criteria list** (`/kryteria`) with filters for WCAG version, level, principle and role. The filters are native radio buttons and checkboxes, their state lives in the URL, and the result count is announced to screen readers.
-- **Criterion pages** (`/kryteria/1.4.3`) with a fixed section order, a "nowe w 2.2" badge for the nine new criteria, and 4.1.1 marked as removed in 2.2. Every page is prerendered to static HTML.
-- **Explanations** for all 86 criteria of WCAG 2.2, A, AA and AAA: who it affects, how to meet it by role, typical errors, how to test it, common confusions. 4.1.1 gets a short page on why 2.2 removed it and why the 2019 act still lists it.
-- **AAA criteria** say "Poziom AAA: cel, nie obowiązek" under the summary, and each one's "Jak to spełnić" says when it pays off. Thirteen of them tighten an AA criterion, and their page compares the two side by side with the difference in one line (`/kryteria/1.4.6` against 1.4.3); the AA page links to its stronger version. Where this app meets an AAA criterion (1.4.6, 2.3.3, 2.4.13, 2.5.5), the page says so and how a test checks it.
-- **WCAG 3.0** (`/wcag-3`, in the main navigation): the status of the Working Draft of 10 September 2026 under a "wersja robocza W3C" badge, with the date we last compared it with w3.org, a table of how 3.0 differs from 2.2, and one table of all 46 guidelines in 12 groups with the 2.2 criteria that correspond to them today, or "Nowe w 3.0". The mapping is ours and the page says so. A filter (`?pokaz=nowe`) shows only what is new in 3.0, and every criterion page links to its guidelines.
-- **Normative text** in Polish from the authorized W3C translation of WCAG 2.1, collapsed on each criterion page. The criteria new in 2.2 link to their sources until a licensed Polish text is available.
-- **Glossary** (`/slownik`) of about 30 terms, alphabetical, each with a plain explanation and, where WCAG defines the term, its normative wording. The first use of a term in a criterion links to it, with a small button that opens a short definition.
-- **Content edited in Notion.** Explanations, glossary, examples, patterns, acts, lessons and the rest are pages in Notion; a change there reaches the site a few minutes later, without a commit.
-- **Search** (`/szukaj`, also on the home page) over criteria, examples, patterns, provisions, lessons, WCAG 3.0 guidelines and the glossary. It finds criteria by number, name or symptom ("modal", "placeholder"), articles by topic ("deklaracja dostępności"), and ignores Polish diacritics.
-- **Practice** (`/praktyka`): twelve examples as cards ordered by the cost of the fix, each with what the user gains. An example page (`/praktyka/ikona-jako-przycisk`) shows the broken and the fixed variant one above the other, each running in a sandboxed iframe, with its code and what a screen reader says. Examples that move start only when the reader asks. Criterion pages link to their examples.
-- **Patterns** (`/praktyka/wzorce`, the second half of Praktyka): working components built from the WAI-ARIA Authoring Practices, after the list of Deque University ARIA Examples. The catalogue shows a still of each, grouped by batch, and filters by whether HTML has the element for the job (`?natywnie=`). A pattern page (`/praktyka/wzorce/rozwin-zwin`) runs the pattern in a sandboxed iframe, logs beside it what a screen reader would say after every key (focus, state changes, live regions), shows its ARIA attributes with their current values, and turns its keyboard behaviour into an exercise that ticks itself off. Criterion pages and practice examples link to their patterns.
-- **Whole page before and after** (`/praktyka/przed-i-po`, the third part of Praktyka): the home page of a fictional transport operator, Komunikacja Miejska Wrzosów, broken in 20 ways and fixed. Both versions open in the whole window (`/demo/przed-i-po/przed`, `/demo/przed-i-po/po`) under a bar that says which one it is and leads back. The broken page moves only after "Włącz ruch".
-- **Self-check with notes.** While checking the broken page, "Notatki" in the bar opens a drawer beside the page (it takes width from the page instead of covering it) where the reader writes down what does not work, edits and deletes notes, and copies them as text. Until "Kończę sprawdzanie", nothing gives the answers away: the entry page shows steps 2 and 3 locked, the bar links only back to the app, the list and problem pages show "Najpierw sprawdź stronę sam", and the page served for checking has no hints in its source. Afterwards the notes stand above the list of problems (`/praktyka/przed-i-po/lista`), which filters by who a problem hurts (`?komu=`) and says which ones axe finds (6 of 20). Each problem has a page with the fix and the code before and after, and `/demo/przed-i-po/przed-znaczniki` puts the numbers on the broken page. "Zacznij od nowa" deletes the notes and hides the answers again. Notes live in the progress store, so "Wyczyść postęp" on `/sciezki` removes them too. Criterion, example and pattern pages link to the problems they share.
-- **Simulators** on every example page: a list beside the frames switches both variants to colour vision deficiency (four types), low vision, keyboard only, screen reader, 320 pixels wide, text at 200%, or the outlines of their landmarks or headings. The choice lives in `?symulacja=`, and none is on by default. Each one puts text next to the frames, so no simulator is the only way to get the information: what the simulation shows and what it does not, the numbered focus steps and blocked mouse clicks, a table of what a screen reader reads in both variants (computed at build time), whether the content fits in 320 pixels, measured in the frame, or the landmarks or headings each frame has and what is missing.
-- **Simulators page** (`/symulatory`): what each simulator shows, its limits, the criteria it teaches, and links into the examples with the simulation already picked.
-- **Law** (`/prawo`): the 2019 digital accessibility act in full, the parts of the 2019 special needs act and the 2024 products and services act (the Polish EAA) that create digital obligations, and a page on EN 301 549. An article page (`/prawo/ustawa-2019-848/art-5`) shows each ustęp next to our summary. Every act says which consolidated text it comes from, when it was downloaded, and whether it was amended after that text.
-- **What applies to me** (`/mapowanie`): pick a website or app of a public body, or a product or service of a company, and every deadline appears on one timeline, with the ones for your situation highlighted and the criteria behind them in a table.
-- **Law on criterion pages:** the "Prawo" section says, for each situation, whether a provision requires the criterion, which one, and since when, or why nothing does (AAA, new in 2.2, excluded for apps).
-- **Paths** (`/sciezki`): five ordered sets of lessons, for the developer, the designer, the content author, the tester, and the legal minimum for a public body. 30 lessons, each with a "Zapamiętaj" box, links to the criteria, examples and provisions it covers, and a quiz at the end. Paths are ungated: the quiz never blocks the next lesson. Criterion pages link to the lessons that teach them.
-- **Quizzes** show one question at a time. "Sprawdź" explains every option, right or wrong, and announces the verdict to screen readers without moving focus; "Następne pytanie" moves focus to the next question. The score shows at the end.
-- **Visit statistics only with consent.** Google Analytics 4 is not even downloaded until the reader picks "Zgadzam się" on a card in the bottom left corner, above the navigation bar on phones (variant B of the [cookie consent mocks](docs/design/2026-10-14-cookie-consent-mocks/cookie-consent-mocks.html)). "Odrzuć" looks the same as "Zgadzam się", the card is not a modal and traps no focus, and while it shows, focus scrolled into view stops above it (2.4.11). The choice lives in `localStorage`; "Ustawienia cookies" in the footer of every page shows the card again, and refusing deletes the GA cookies.
-- **Privacy policy** (`/prywatnosc`, linked from the footer and the card), edited in Notion like the rest of the content.
-- **Contact** (`/kontakt`, linked from the footer), edited in Notion. The address is shown large above the text, with "Kopiuj adres" for readers whose browser has no mail program set up; "Skopiowano adres" is announced to screen readers and stays on screen (variant B of the [contact mocks](docs/design/2026-10-17-contact-mocks/contact-mocks.html)).
-- **Progress** (lessons marked done, the last quiz score) is stored in `localStorage` under one key, in the shape planned for the Convex tables, so accounts can import it later. `/sciezki` says so and offers "Wyczyść postęp". With storage blocked, progress lasts until the tab closes.
+These home-page captures show the current redesign in light, dark and mobile layouts.
 
-| Light | Dark | Mobile | Mobile, "Więcej" open |
-| --- | --- | --- | --- |
-| ![Home, light mode, with the split illustrated hero, pastel categories and spacious learning sections](docs/screenshots/home-light.png) | ![Home, dark mode](docs/screenshots/home-dark.png) | ![Home on a 390px wide screen with the Kryteria, Praktyka, Ścieżki and Więcej bar at the bottom](docs/screenshots/home-mobile.png) | ![The Więcej sheet over the Prawo page, with Prawo filled in its plum colour and marked tu jesteś, and Spokój and the theme toggle below the links](docs/screenshots/phone-nav-more.png) |
-
-| Criteria list | Criterion page |
-| --- | --- |
-| ![Criteria list with version, level, principle and role filters](docs/screenshots/criteria-list.png) | ![Criterion page for 1.4.3 Kontrast (minimum)](docs/screenshots/criterion-page.png) |
-
-| Practice | Example page |
-| --- | --- |
-| ![Practice catalogue with cards ordered by the cost of the fix](docs/screenshots/practice.png) | ![Example page with the simulator list beside the broken and the fixed variant](docs/screenshots/example-page.png) |
-
-| Patterns | Pattern page |
-| --- | --- |
-| ![Pattern catalogue with a still of each pattern and the native element filter](docs/screenshots/patterns.png) | ![The expand and collapse pattern with its keyboard exercise, the ARIA table and the screen reader log beside it](docs/screenshots/pattern-page.png) |
-
-| Before and after: entry | Checking, with notes |
-| --- | --- |
-| ![The before and after entry page with step 1 open and steps 2 and 3 locked until the check ends](docs/screenshots/before-after-entry.png) | ![The broken KMW page with the notes drawer open beside it and three notes](docs/screenshots/before-after-check.png) |
-
-| After the check: the list | Markers on the broken page |
-| --- | --- |
-| ![The list of problems with the reader's three notes above it and the filter by who a problem hurts](docs/screenshots/before-after-list.png) | ![The broken KMW page with numbered markers on its problems and the whole-page problems listed in the bar](docs/screenshots/before-after-markers.png) |
-
-| Struktura strony | Headings simulation |
-| --- | --- |
-| ![Landmarks of a criterion page outlined, with the panel listing them as a tree](docs/screenshots/structure.png) | ![The broken municipal page with its headings outlined and the skipped levels H2 to H3 flagged under the frame](docs/screenshots/simulation-structure.png) |
-
-| Colour vision | Screen reader | Simulators |
+| Light | Dark | Mobile |
 | --- | --- | --- |
-| ![The form example with the deuteranopia simulation picked in the list beside the broken and the fixed variant](docs/screenshots/simulation-colour.png) | ![Table of what a screen reader reads in both variants, differing rows marked](docs/screenshots/simulation-reader.png) | ![The simulators page with a card per simulator](docs/screenshots/simulators.png) |
+| [![Home page with an illustrated hero, search and pastel learning sections](docs/screenshots/home-light.png)](docs/screenshots/home-light.png) | [![Home page in dark mode](docs/screenshots/home-dark.png)](docs/screenshots/home-dark.png) | [![Home page with mobile section cards and bottom navigation](docs/screenshots/home-mobile.png)](docs/screenshots/home-mobile.png) |
 
-| Article page | What applies to me | Law on a criterion page |
-| --- | --- | --- |
-| ![Article 5 of the digital accessibility act, each ustęp next to its summary](docs/screenshots/law-article.png) | ![Deadlines on one timeline with the app of a public body picked](docs/screenshots/obligations.png) | ![The Prawo section of 1.4.3 as a table by situation](docs/screenshots/criterion-law.png) |
-
-| Paths | Path page | Lesson quiz |
-| --- | --- | --- |
-| ![Five paths with progress on the developer and designer paths](docs/screenshots/paths.png) | ![Developer path syllabus with three lessons done and quiz scores](docs/screenshots/path.png) | ![A checked quiz question with an explanation under every option](docs/screenshots/lesson-quiz.png) |
-
-| AAA criterion | WCAG 3.0 | New in WCAG 3.0 |
-| --- | --- | --- |
-| ![Criterion 1.4.6 compared with 1.4.3, with the AAA note and the difference in one line](docs/screenshots/criterion-aaa.png) | ![The WCAG 3.0 page with the working draft badge, the dates and the comparison with 2.2](docs/screenshots/wcag3.png) | ![The WCAG 3.0 mapping filtered to guidelines new in 3.0](docs/screenshots/wcag3-mapping.png) |
-
-| Consent card | Consent card, mobile | Privacy policy | Contact |
-| --- | --- | --- | --- |
-| ![The statistics consent card in the bottom left corner of the home page, with Odrzuć and Zgadzam się](docs/screenshots/consent-banner.png) | ![The consent card across the full width of a 390px screen in dark mode, above the navigation bar](docs/screenshots/consent-banner-mobile.png) | ![The privacy policy page with the footer links Kontakt, Polityka prywatności and Ustawienia cookies](docs/screenshots/privacy.png) | ![The contact page with the address in large type, Kopiuj adres and the message Skopiowano adres](docs/screenshots/contact.png) |
-
-| Glossary preview | Glossary | Search |
-| --- | --- | --- |
-| ![Definition preview opened next to a term on a criterion page](docs/screenshots/glossary-preview.png) | ![Glossary page with the letter index](docs/screenshots/glossary.png) | ![Search results for kontrast](docs/screenshots/search.png) |
+Other files in `docs/screenshots/` include earlier designs and intermediate captures; they are not a gallery of the current interface.
 
 ## Getting started
 
-You need [Node.js](https://nodejs.org) 24 or newer and [pnpm](https://pnpm.io) 11.
+### Prerequisites
 
-The texts live in Notion (see [Editing content in Notion](#editing-content-in-notion)), so you also need a `.env.local` with access to it. The file is git-ignored:
+- [Node.js](https://nodejs.org) 24 or newer.
+- [pnpm](https://pnpm.io) 11; the exact version is pinned in `package.json`.
+- A Notion integration with access to the project's content root page.
+
+Clone the repository and install dependencies:
 
 ```bash
-NOTION_TOKEN=ntn_...           # the secret of the Notion integration
-NOTION_ROOT_PAGE_ID=...        # the page that holds the content, shared with the integration
+git clone https://github.com/PJasiczek/a11y-playground.git
+cd a11y-playground
+pnpm install
 ```
 
+Create a git-ignored `.env.local` file in the project root:
+
+```dotenv
+NOTION_TOKEN=<your-notion-integration-token>
+NOTION_ROOT_PAGE_ID=<content-root-page-id>
+```
+
+Import the content and start the development server:
+
 ```bash
-pnpm install
 pnpm import:notion
 pnpm dev
 ```
 
-`pnpm import:notion` writes the Markdown files into `content/`. Run it again to pick up changes made in Notion; `pnpm build` runs it on its own. The dev server prints its local URL. To run the end-to-end tests locally, install the browser once:
+Open the local URL printed by Vite. Run `pnpm import:notion` again when you want to fetch content changes.
+
+> [!IMPORTANT]
+> A fresh clone needs Notion access: content Markdown is generated and excluded from Git. Quizzes and the HTML for examples, patterns and the before-and-after demo are versioned in the repository.
+
+To serve a production build locally:
+
+```bash
+pnpm build
+pnpm preview
+```
+
+On Windows, if PowerShell blocks `pnpm.ps1`, use `pnpm.cmd` for the same commands.
+
+## Content
+
+Notion is the source for explanations, glossary entries, legal summaries, lessons and other Markdown content. The importer writes these pages to `content/`; every production build imports them again. Edit the source in Notion, because the next import replaces local Markdown changes.
+
+The [content authoring guide](docs/content-authoring.md) covers Notion layout, frontmatter, required sections, quizzes, example HTML, cross-links and source imports.
+
+- `pnpm import:wcag` regenerates WCAG metadata and normative text.
+- `pnpm import:legal` regenerates statute data from the Sejm ELI API.
+- `pnpm seed:notion` is a one-time migration utility for an empty Notion root.
+
+Generated source updates should be reviewed before shipping. Polish normative WCAG text comes from the authorized WCAG 2.1 translation; criteria introduced in 2.2 link to their sources.
+
+## Development
+
+### Commands
+
+| Command | Purpose |
+| --- | --- |
+| `pnpm dev` | Start the Vite development server. |
+| `pnpm build` | Import Notion content and build the production app into `.output/`. |
+| `pnpm preview` | Serve the production build locally. |
+| `pnpm lint` | Run ESLint, including accessibility rules, and TypeScript checks. |
+| `pnpm test` | Run Vitest, then Playwright against a production build. |
+| `pnpm import:notion` | Refresh local content from Notion. |
+| `pnpm import:wcag` | Regenerate WCAG metadata and text. |
+| `pnpm import:legal` | Regenerate legal source data. |
+| `pnpm seed:notion` | Seed an empty Notion root; refuses to overwrite an existing one. |
+
+### Validation
+
+Install Chromium once before running the end-to-end suite:
 
 ```bash
 pnpm exec playwright install chromium
+pnpm lint
+pnpm test
 ```
 
-## Writing content
+Vitest checks content schemas, cross-references, search and application logic. Playwright checks accessibility with axe, keyboard flows, target sizes, motion, consent and interactive learning features. Its server setup builds the app, imports Notion content and serves it on port 4173; it can reuse an existing server outside CI.
 
-### Editing content in Notion
+GitHub Actions runs lint, build and tests on pull requests and pushes to `master`. CI needs `NOTION_TOKEN` and `NOTION_ROOT_PAGE_ID` as repository secrets.
 
-All Markdown files of `content/` come from Notion and are not in git. Quizzes (`*.quiz.yaml`) and the HTML of examples, patterns and the before and after page stay in the repository.
+### Accessibility
 
-- **Layout:** under the root page, one page per folder of `content/` (`kryteria`, `slownik`, `praktyka`…), and under it one page per file. The page title is the file name without `.md`: `1.4.3`, `problemy/01-jezyk`, and for folders `ikona-jako-przycisk` (its `index.md`) or `programista/nazwy-dostepne`.
-- **Page content:** a YAML code block at the top with the frontmatter, then the text. Everything below describes the files as the import writes them.
-- **Links:** glossary and law links are links to the live site in Notion, `https://a11y-playground-tau.vercel.app/slownik#fokus` and `…/prawo/ustawa-2019-848/art-5`, which the import turns back into `slownik:` and `prawo:` marks. The code blocks of a before and after problem are `html` blocks whose first line is `<!-- przed -->` or `<!-- po -->`.
-- **Publishing:** saving in Notion sends a webhook to `/api/notion-webhook`, which starts a Vercel deploy; the build imports the content and the change is live a few minutes later. A page that breaks a rule below fails the build, and the site keeps the last version that built. The reason is in the Vercel build log.
+The target is WCAG 2.2 AA, with additional AAA checks for enhanced contrast, animation from interactions, focus appearance and target size. The app includes keyboard navigation, a skip link, route announcements, visible focus and reduced-motion support.
 
-> [!NOTE]
-> A new page must follow the title rule above, or the import stops with the title it could not read. `pnpm seed:notion` copied the original files into an empty root page once and refuses to run again.
+See the [accessibility checklist](docs/accessibility.md) and [design system](DESIGN.md). Automated checks cover only part of accessibility; releases also need manual screen reader testing.
 
-To set up publishing on a new deploy:
+### Architecture
 
-1. In Vercel, add `NOTION_TOKEN` and `NOTION_ROOT_PAGE_ID` to the environment variables, create a deploy hook for `master` (Settings → Git → Deploy Hooks) and add its URL as `VERCEL_DEPLOY_HOOK_URL`. Redeploy.
-2. In the Notion integration settings, add a webhook subscription to `https://<domain>/api/notion-webhook` for page events. Notion sends a verification token; the endpoint writes it to the Vercel function log.
-3. Paste the token into Notion to verify the subscription, add it to Vercel as `NOTION_WEBHOOK_SECRET` and redeploy. From then on the endpoint accepts only requests signed with it.
-4. In GitHub, add `NOTION_TOKEN` and `NOTION_ROOT_PAGE_ID` as Actions secrets, for CI.
-
-### Standalone pages
-
-`content/strony/<slug>.md`, the `strony` page in Notion: `prywatnosc`, the privacy policy at `/prywatnosc`, and `kontakt`, the contact page at `/kontakt`. The build fails without either. Each page has its own frontmatter schema in `src/content/pages.ts`, which rejects keys it does not list.
-
-```markdown
----
-title: Polityka prywatności
-description: Jakie dane zbiera a11y playground, po co, i jak wycofać zgodę na statystyki odwiedzin.
-updated: 2026-10-17   # shown as "Ostatnia zmiana"; change it with the text
----
-
-## Kto odpowiada za dane
-
-...
-```
-
-The contact page has one more key, and shows no date. Its `description` is also the lead under the heading:
-
-```markdown
----
-title: Kontakt
-description: Masz pytanie o dostępność, widzisz błąd w treści albo przykład, który nie działa? Napisz do mnie.
-updated: 2026-10-17
-email: kontakt@przyklad.pl   # shown above the text; an invalid address fails the build
----
-
-Odpowiadam zwykle w ciągu tygodnia.
-```
-
-A link whose text is its own address, like `[github.com/x](https://github.com/x)`, comes back from Notion as plain text, because Notion links anything that looks like a domain. Give links descriptive text.
-
-### Criteria
-
-Criterion names, levels, versions and normative text are generated. The explanations are written by hand in Markdown, one file per criterion in `content/kryteria/<id>.md`:
-
-```markdown
----
-summary: Tekst musi odcinać się od tła w stosunku co najmniej 4,5 do 1.
-roles: [projektant, programista]
-related: ["1.4.6", "1.4.11"]
-keywords: [szary tekst, placeholder]
----
-
-## Kogo to dotyczy
-
-Osoby po czterdziestce, którym spada wrażliwość na kontrast. Kryterium mierzy [współczynnik kontrastu](slownik:wspolczynnik-kontrastu).
-
-## Jak to spełnić
-
-### Projektant
-
-- Sprawdź kontrast na etapie palety, nie po wdrożeniu.
-```
-
-- **Frontmatter:**
-  - `summary`: one sentence, up to 200 characters.
-  - `roles`: any of `programista`, `projektant`, `autor treści`, `tester`.
-  - `related`: other criterion numbers.
-  - `keywords`: optional words people search with, not shown on the page.
-  - `enhances` and `difference`: for an AAA criterion that tightens a lower-level one in the same guideline, its number and one line, up to 160 characters, on what changes. Always both or neither.
-- **Sections** must use these `##` titles, in this order: Kogo to dotyczy, Jak to spełnić, Typowe błędy, Jak sprawdzić, Częste pomyłki. Use `###` inside a section, for example to split it by role. Every criterion needs the first four, except 4.1.1, which WCAG 2.2 removed.
-- **Glossary terms:** mark a term as `[nazwę](slownik:nazwa)`. The first use on a page becomes a link with a definition preview, later uses stay plain text. Terms are marked by hand because Polish inflection makes automatic matching unreliable.
-- **Checks:** a file with a typo in a section title, an unknown key or glossary term, a summary that is too long, or a reference to a criterion that does not exist fails `pnpm test` and the build, with the file name and the reason. So does a missing explanation, and an `enhances` that points at the same or a higher level or another guideline.
-
-### Glossary entries
-
-One file per term in `content/slownik/<slug>.md`. The slug is the anchor on `/slownik`.
-
-```markdown
----
-term: nazwa
-also: [dostępna nazwa]
-normative: nazwa
----
-To, co czytnik ekranu powie o kontrolce, zanim powie, czym ona jest.
-```
-
-`also` lists everyday names, shown under the term and matched by search. `normative` names the term in the WCAG 2.1 glossary; its definition is imported, not typed.
-
-> [!NOTE]
-> Later the content will be edited in Notion. A sync script will write these same files, so this format stays the contract between editors and the app.
-
-### Examples
-
-One folder per example in `content/praktyka/<slug>/`:
+- **TanStack Start, React and TypeScript** provide file-based routes and server functions.
+- **Vite and Nitro** build the app and prerender its pages; Nitro selects the Vercel preset when built on Vercel.
+- **Tailwind CSS v4** and CSS tokens handle themes and section colours. Geist is used for interface text; Atkinson Hyperlegible Mono is used for code.
+- **ArkType, marked and YAML** validate and render content.
+- **MiniSearch** powers search with a prerendered index loaded on the search route.
+- **Vitest, Playwright and axe-core** validate data, behaviour and accessibility.
 
 ```text
-content/praktyka/ikona-jako-przycisk/
-  index.md    frontmatter and introduction
-  bad.html    the broken fragment
-  good.html   the fixed fragment
-```
-
-```markdown
----
-title: Ikona jako przycisk
-summary: Znak × bez nazwy zamyka komunikat. Daj przyciskowi nazwę.
-criteria: ["4.1.2", "2.1.1", "1.1.1"]
-effort: 1 linia
-gain: Czytnik mówi „Zamknij komunikat, przycisk” zamiast milczeć.
-preview: <span class="p-x">×</span>
-bad:
-  why: Znak × w elemencie div z obsługą kliknięcia.
-  announces: Nic sensownego.
-  axe: []
-good:
-  why: Prawdziwy element button z nazwą w aria-label.
-  announces: „Zamknij komunikat, przycisk”.
----
-Komunikat „Zapisano zmiany” z przyciskiem zamykania w rogu.
-```
-
-- `effort` is one of `1 linia`, `1 token`, `2 minuty`, `15 minut`, `refaktor`. The catalogue and the home page sort by it.
-- `preview` is a small static picture of the fault for the card, built from the `p-*` classes in `src/styles.css`. It is decorative and hidden from screen readers, so `summary` and `gain` must carry the meaning.
-- `motion: true` makes both variants load only after "Uruchom przykład".
-- `simulations` optionally maps a simulation id (`deuteranopia`, `klawiatura`, `320px`...) to a note on what it shows on this example. Without a note the page shows the simulator's general description.
-- `bad.axe` lists the axe rules the broken fragment must trigger. Leave it empty when axe cannot see the fault. The tests fail if the fragment does not trigger them.
-- The HTML files are fragments with optional `<style>` and `<script>`. The page shows them as the code, and `/demo/<slug>/bad` and `/demo/<slug>/good` serve them as documents for the sandboxed iframes.
-
-A broken example is broken on purpose, but it runs inside our page. It must never:
-
-- trap keyboard focus with no way out,
-- play sound, move or flash before the reader starts it, or flash more than three times a second,
-- load anything from the network or navigate away.
-
-The tests check that every fixed fragment passes axe, that every page passes axe with the broken iframe excluded, and that nothing from a broken fragment reaches the page's own document.
-
-### Simulators
-
-The simulation ids are code, in `src/content/simulations.ts`. What each kind of simulator shows is content, one file per kind in `content/symulatory/<kind>.md` (`barwy`, `slabe-widzenie`, `klawiatura`, `czytnik`, `waski-ekran`, `struktura`):
-
-```markdown
----
-title: Widzenie barw
-summary: Kiedy kolor jest jedyną informacją, część osób tej informacji nie dostaje.
-criteria: ["1.4.1", "1.4.11"]
-examples: [formularz-z-bledami, kontrast-stanow]
-limits: Nie pokazuje słabszych odmian zaburzeń.
----
-Opis ogólny, pokazywany przy przykładach bez własnej notatki.
-```
-
-- `examples` become the "Wypróbuj na" links on `/symulatory`.
-- `limits` is shown as "Czego to nie pokazuje" next to every simulation of that kind.
-- The screen reader list is computed by a Vite plugin (`src/content/reading-order.vite.ts`) with jsdom and `dom-accessibility-api`, for each fragment after its script has run. A role without a Polish name fails `pnpm test`.
-- The structure simulations run `src/content/structure.ts` inside the frame: it finds landmarks and headings the way HTML-AAM defines them (a `header` inside `main` is not a banner, a `section` needs a name), draws the outlines and posts the list to the page. The same module powers "Struktura strony" on the app's own pages, loaded on the first press.
-
-### ARIA patterns
-
-One folder per pattern in `content/wzorce/<slug>/`: `index.md` and `wzorzec.html`, the fragment the frame renders (markup, style and script, written by us, not copied from Deque).
-
-```markdown
----
-title: Rozwiń i zwiń
-en: Expand/Collapse
-batch: html
-native: html-i-aria
-summary: Przycisk, który pokazuje i chowa panel pod sobą.
-criteria: ["4.1.2"]
-preview: <span class="p-disclosure">Szczegóły zamówienia <b>+</b></span>
-steps:
-  - do: Przejdź do przycisku.
-    keys: [Tab]
-    hear: Szczegóły zamówienia, przycisk, zwinięte
-aria:
-  - attr: aria-expanded
-    on: przycisk
-    selector: "#szczegoly-przycisk"
-    meaning: Czy panel jest otwarty.
-sources:
-  apg: https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/
-  deque: https://dequeuniversity.com/library/aria/expand-collapse
----
-## Kiedy używać
-## Typowe błędy
-## Jak sprawdzić
-```
-
-- `batch` and `native` come from `src/content/pattern-labels.ts`: the batch it belongs to, and whether HTML is enough (`html`), needs a little ARIA (`html-i-aria`) or has nothing (`tylko-aria`).
-- `steps` is the exercise. `hear` must be exactly what the live log says after one of `keys`, and the first step starts with Tab, which enters the frame. `pnpm test` presses the keys of every step in a real browser and fails if a step does not tick off.
-- `aria` rows are the ARIA table; `selector` says which element the frame reads for the current value. `attr` must be one the frame can report.
-- `examples` (optional) names practice examples that show the same thing broken.
-- The live log is `src/content/pattern-log.ts`: it reads focus with the name, role, states and description, state changes of the focused element (attributes, native checkboxes, popovers) and live regions. It is bundled with `dom-accessibility-api` by a Vite plugin and inlined into every pattern document.
-
-### Whole page before and after
-
-`content/przed-i-po/` holds the two pages as complete HTML documents, `przed.html` and `po.html`, and one file per problem in `problemy/NN-slug.md`, numbered in page order.
-
-```markdown
----
-title: Podmenu otwiera się tylko pod myszą
-criteria: ["2.1.1", "4.1.2"]
-marker: podmenu
-who: [klawiatura, czytnik, telefon]
-axe: []
-pattern: nawigacja-wielopoziomowa
----
-## Problem
-## Rozwiązanie
-```
-
-- `marker` names the element the problem sits on: `przed.html` carries it in a `data-problem` attribute (several, space-separated, on `<body>` for problems of the whole page). Every marker appears exactly once, and every `data-problem` belongs to a problem, or the build fails. The page served for checking has the attributes and comments stripped, so its source gives nothing away.
-- `who` comes from `src/content/before-after-labels.ts`. `example` and `pattern` (optional) name the practice example and the ARIA pattern that show the same thing alone.
-- `axe` lists the axe-core rules that report the problem. The e2e test fails unless the broken page reports exactly the rules all problems list together.
-- The body ends with one ` ```przed ` and one ` ```po ` code block, shown side by side.
-
-### WCAG 3.0
-
-The tracking page reads `content/wcag3/`: `index.md` for the draft and the comparison, and one file per guideline group.
-
-```markdown
----
-draft: 2026-09-10
-draftUrl: https://www.w3.org/TR/2026/WD-wcag-3.0-20260910/
-checked: 2026-10-01
-compare:
-  - topic: Poziomy
-    wcag2: A, AA, AAA
-    wcag3: Wymagania podstawowe (core) i uzupełniające (supplemental), bez liter
----
-Status of the draft, in plain words.
-```
-
-```yaml
-# content/wcag3/obrazy-i-multimedia.md (frontmatter only)
-num: "2.1"
-title: Obrazy i multimedia
-en: Images and media
-guidelines:
-  - num: "2.1.1"
-    en: Image alternatives
-    title: Alternatywy dla obrazów
-    criteria: ["1.1.1"]
-  - num: "2.1.9"
-    en: Accessible media player
-    title: Dostępny odtwarzacz
-    criteria: []
-    note: Twierdzenie o wyborze dostępnego odtwarzacza, a nie wymaganie wobec samej treści.
-```
-
-- `draft` is the date of the Working Draft the content describes, `checked` the day we last compared the content with the draft current on w3.org. When `checked` is more than six months old, `pnpm test` fails: read the latest draft, update the files, and move the date.
-- A guideline with empty `criteria` shows as "Nowe w 3.0"; `note` says in one line what it asks. Guideline numbers must sit inside their group, criteria must exist, and a group file has no text after the frontmatter.
-
-> [!WARNING]
-> The mapping is our judgement, not a W3C equivalence. Write "corresponds today", never "replaces".
-
-### Acts
-
-The statute text is generated; the summaries are written by hand, one file per act in `content/prawo/<act>.md`:
-
-```markdown
----
-short: Ustawa o dostępności cyfrowej
-summary: Strony i aplikacje podmiotów publicznych muszą spełniać kryteria z załącznika.
-binds: Podmioty publiczne, ich strony internetowe i aplikacje mobilne.
-deadlines:
-  - date: 2021-06-23
-    what: Aplikacje mobilne muszą spełniać wymagania.
-    unit: art-27
-    situations: [aplikacja-publiczna]
-    start: true
----
-Wprowadzenie do ustawy.
-
-## Art. 5. Wymagania
-
-### ust. 1
-
-Strona i aplikacja muszą spełniać **wymagania z załącznika**.
-```
-
-- `deadlines` feed the timeline. `unit` is the article the date comes from, `situations` are any of `strona-publiczna`, `aplikacja-publiczna`, `produkt-ue`, `start: true` marks the date shown as "od" on criterion pages, and `yearly: true` a date that repeats every year.
-- Each `## Art. N. Title` section summarises one article; the title is ours and optional. `### ust. N` sections pair a summary with one ustęp in the parallel view. `## Załącznik` covers the annex.
-- Bold in a summary gets the sun-coloured marker: use it for the one phrase that matters to the reader.
-- Link a provision as `[art. 5](prawo:ustawa-2019-848/art-5)`, optionally with `#ust-3`. Unknown acts, articles and ustępy fail the build.
-
-Which provision requires which criterion lives in `src/content/legal-map.ts`, typed against both the criterion and the article ids. A test checks that no act requires an AAA criterion or one new in 2.2.
-
-### Paths and quizzes
-
-One folder per path in `content/sciezki/<path>/`:
-
-```text
-content/sciezki/programista/
-  index.md                       the path: frontmatter and introduction
-  klawiatura-i-fokus.md          a lesson
-  klawiatura-i-fokus.quiz.yaml   its quiz
-```
-
-```markdown
----
-title: Programista
-role: programista
-summary: Jak pisać kod, który działa z klawiaturą i czytnikiem ekranu.
-lessons: [semantyka-najpierw, nazwy-dostepne, klawiatura-i-fokus]
----
-Wstęp do ścieżki.
-```
-
-- `lessons` sets the reading order and must name every lesson file in the folder exactly once. `role` is one of the four roles and is left out on the legal minimum path.
-- A lesson has `title`, `summary`, `keep` (two to four lines for the "Zapamiętaj" box), and optional `criteria`, `examples` and `law` (article ids such as `ustawa-2019-848/art-10`). The body is Markdown with `##` headings and the same `slownik:` and `prawo:` links as elsewhere.
-
-```yaml
-- id: div-jako-przycisk
-  prompt: Które kryterium łamie ten kod?
-  code: |
-    <div class="btn" onclick="zapisz()">Zapisz</div>
-  options:
-    - criterion: "2.1.1"
-      correct: true
-      why: Div nie dostaje fokusu i nie reaguje na Enter ani spację.
-    - text: Żadne, to tylko styl
-      why: Bez myszy nie da się zapisać.
-```
-
-- A quiz has three to five questions. An option is either `text` or a `criterion`, whose number and Polish name come from the registry. Every option needs `why`, shown after checking.
-- One correct option makes a single-choice question with radio buttons, more than one makes a "select all that apply" question with checkboxes. There is no type field to keep in sync.
-- Quote option text that YAML would read as a number or contains `: `, for example `text: "42"`.
-
-Unknown criteria, examples or articles, a lesson missing from `lessons`, a missing quiz, or a question without a correct answer fail `pnpm test` and the build.
-
-### Where the statute text comes from
-
-`pnpm import:legal` regenerates `src/content/legal.gen.ts` (acts and the article index) and `src/content/legal-text.gen.ts` (the text, server only) from the [Sejm ELI API](https://api.sejm.gov.pl/eli), the data behind ISAP. `scripts/import-legal.ts` pins the consolidated text each act is read from. When an act was amended after that text, the import warns and the act page says so. The annex to the 2019 act exists only as a PDF table, so it is transcribed by hand in `src/content/annex-2019-848.ts` and pinned by a test.
-
-> [!CAUTION]
-> The legal module is educational material, not legal advice. Every legal page says so and shows the date the text was downloaded.
-
-### Where the criterion names come from
-
-`pnpm import:wcag` regenerates `src/content/wcag.gen.ts` and `src/content/wcag-text.gen.ts`. It takes numbers, levels and versions from the W3C WCAG 2.2 data. Polish names come from two sources:
-
-- the [authorized W3C translation of WCAG 2.1](https://www.w3.org/Translations/WCAG21-pl/),
-- for the nine criteria new in 2.2, the [unofficial IRDPL translation](https://wcag.irdpl.pl/guidelines/22/), because there is no authorized Polish translation of 2.2 yet. Each criterion page says which source its name comes from.
-
-The normative text of criteria and the glossary definitions come only from the authorized 2.1 translation. Text from IRDPL will be quoted once IRDPL confirms the licence.
-
-Run the import by hand and review the diff of the generated files in a PR.
-
-## Analytics
-
-Google Analytics runs only on the production deploy and only after consent (see `src/lib/consent.ts`). Its measurement ID comes from `VITE_GA_MEASUREMENT_ID`, read at build time. Without it, as in local development and preview deploys, there is no banner, no "Ustawienia cookies" and no script.
-
-To turn it on, add `VITE_GA_MEASUREMENT_ID=G-2DGTWE359W` to the Vercel environment variables for Production only, and redeploy. Page views of client-side navigation come from GA4's enhanced measurement ("Page changes based on browser history events", on by default in the data stream settings).
-
-The e2e suite builds with a made-up ID: every test starts with statistics refused, except `e2e/consent.spec.ts`, which stubs `gtag.js`.
-
-## Scripts
-
-| Command | What it does |
-| --- | --- |
-| `pnpm dev` | Starts the Vite dev server. |
-| `pnpm build` | Imports the content from Notion, then builds the production app into `.output/`. |
-| `pnpm preview` | Serves the production build locally. |
-| `pnpm lint` | Runs ESLint (with `jsx-a11y` in strict mode) and the TypeScript compiler. |
-| `pnpm test` | Runs the Vitest content and data tests, then builds the app and runs the Playwright suite: axe in light and dark mode, 44px target checks, no running animations, and keyboard flows. |
-| `pnpm import:wcag` | Regenerates the WCAG structure with Polish names. See [Where the criterion names come from](#where-the-criterion-names-come-from). |
-| `pnpm import:legal` | Regenerates the statute text of the acts. See [Where the statute text comes from](#where-the-statute-text-comes-from). |
-| `pnpm import:notion` | Writes the Markdown files of `content/` from Notion. See [Editing content in Notion](#editing-content-in-notion). |
-| `pnpm seed:notion` | Copied the content files into an empty Notion page once; refuses to run when the page has content. |
-
-CI runs `lint`, `build` and `test` on every pull request and on pushes to `master`.
-
-## Tech stack
-
-- [TanStack Start](https://tanstack.com/start) with file-based routes, on Vite and pnpm.
-- [Tailwind CSS](https://tailwindcss.com) v4. Colour tokens live in `src/styles.css` as CSS variables using `light-dark()`, so themes and forced colours mode are handled in one place.
-- Geist and Atkinson Hyperlegible Mono, self-hosted through `@fontsource-variable`. Geist sets all text; the mono, made for low vision, sets code only.
-- The design system is written down in [`DESIGN.md`](DESIGN.md): colours with their contrast ratios, type, shapes, components and motion. UI changes read it first.
-- [Nitro](https://nitro.build) for the server build. It picks the Vercel preset automatically when the build runs on Vercel.
-- [ArkType](https://arktype.io) to validate content files and URL filters, [marked](https://marked.js.org) to render Markdown on the server.
-- [MiniSearch](https://lucaong.github.io/minisearch/) for search. The index is built at prerender time into a static `/search-index.json`, loaded only on `/szukaj`.
-- [Vitest](https://vitest.dev) for content tests, [Playwright](https://playwright.dev) with [axe-core](https://github.com/dequelabs/axe-core) for end-to-end accessibility tests.
-
-## Accessibility of the app itself
-
-The baseline is WCAG 2.2 Level AA, plus 2.3.3 and 2.5.5 at AAA. See [`docs/accessibility.md`](docs/accessibility.md). Because this is an app about accessibility, it also goes further in a few places, and the pages of these AAA criteria say so ("Ta aplikacja to spełnia", from `src/content/app-meets.ts`):
-
-- **1.4.6 Contrast (Enhanced), AAA.** Body text reaches at least 7:1 and large text at least 4.5:1 in both themes; axe runs with the AAA rule set.
-- **2.3.3 Animation from Interactions, AAA.** The interface moves only in answer to the reader, and Spokój (or, without a choice, the system's reduced motion setting) turns all of it off. Tests check that no page runs an animation at rest and that Spokój stops the motion of a pressed switch. Examples that move start only on request.
-- **2.4.13 Focus Appearance, AAA.** A 3px solid outline on every focusable element, switched to the system `Highlight` colour in forced colours mode. A keyboard test checks the outline at every Tab stop of a criterion page.
-- **2.5.5 Target Size (Enhanced), AAA.** Interactive elements are at least 44 by 44 pixels, and a test checks this on every route.
-- Zoom is never blocked, and no information is carried by colour alone.
-
-> [!IMPORTANT]
-> Automated checks catch only part of the problems. Before a release, walk through the app with NVDA and Firefox and with VoiceOver and Safari.
-
-## Search engines and link previews
-
-Every page is prerendered, so crawlers read the full text without JavaScript. On top of that:
-
-- Each route sets its `head` through `pageHead` from `src/lib/seo.ts`: the title, a `description`, a canonical link without the query string, and the Open Graph tags. Descriptions come from the `summary` of the content file where there is one, cut to 160 characters at a word boundary.
-- The production address lives in one place, `siteUrl` in `src/lib/site.ts`. Change it there when the site gets its own domain.
-- `src/content/site-pages.ts` lists every page and whether it is indexed. The prerender renders that list and `/sitemap.xml` publishes the indexed part; `/robots.txt` points at the sitemap. Every route without parameters has to be in the list, or `tsc` fails, so a new page cannot slip out of the sitemap.
-- `/szukaj` and the answers of the whole-page demo (`/praktyka/przed-i-po/lista` and the problem pages) carry `noindex`: the first is a results page, and the rest show only "Najpierw sprawdź stronę sam" until the reader finishes checking.
-- JSON-LD from `src/lib/structured-data.ts`, typed with `schema-dts`: `WebSite` on the home page, `BreadcrumbList` on every page that shows "Okruszki", `DefinedTermSet` on `/slownik`, `Course` on a path, `LearningResource` with its `Quiz` on a lesson, `Legislation` on an act and an article.
-- Every document under `/demo/` carries `<meta name="robots" content="noindex">` in its own `head`, so a broken variant never shows up in results as something to copy. It is a meta tag, not a header, because prerendered files are served without the handler's headers.
-
-The plan behind this is in [`docs/design/2026-10-10-seo-indexing`](docs/design/2026-10-10-seo-indexing/seo-indexing.en.html).
-
-## Project structure
-
-```text
-content/         Markdown files written from Notion (git-ignored), quizzes and HTML in git
-  kryteria/      one Markdown file per criterion
-  slownik/       one Markdown file per glossary term
-  praktyka/      one folder per example: index.md, bad.html, good.html
-  wzorce/        one folder per ARIA pattern: index.md, wzorzec.html
-  przed-i-po/    the KMW page broken and fixed, and one Markdown file per problem
-  prawo/         one Markdown file per act: summaries and deadlines
-  sciezki/       one folder per learning path: lessons and their quizzes
-  symulatory/    one Markdown file per kind of simulator
-  wcag3/         the WCAG 3.0 draft overview and one file per guideline group
-  strony/        standalone pages: the privacy policy and the contact page
-scripts/
-  import-wcag.ts   generates src/content/wcag.gen.ts and wcag-text.gen.ts
-  import-legal.ts  generates src/content/legal.gen.ts and legal-text.gen.ts
-  notion.ts        the Notion layout and the Markdown translation, shared by:
-  import-notion.ts   writes content/ from Notion, before every build
-  seed-notion.ts     copied content/ into Notion once
+content/             Imported Markdown, versioned quizzes and demo HTML
+scripts/             Notion, WCAG and legal import utilities
 src/
-  routes/api/    the Notion webhook that starts a deploy
-  content/       WCAG structure, the WCAG 3.0 mapping, acts and the legal mapping, Markdown parsing and validation, the live log of pattern frames, server functions
-  search/        search options, index builder and relevance tests
-  progress/      reading progress and quiz scores in localStorage
-  lib/           the site address, page head tags, Polish plural forms, quiz scoring, statistics consent and Google Analytics
-  routes/        file-based routes (__root.tsx holds the layout)
-  components/    header, footer, the logo, the kinds of content and their icons, consent card, theme toggle, Spokój, the contrast toy, route announcer, badges, filter chips, the AAA comparison, glossary previews, example and pattern frames and cards, the screen reader log, the simulator list, the quiz
-  styles.css     Tailwind setup, colour tokens from DESIGN.md, kind classes, buttons, Spokój, styles for rendered Markdown
-e2e/             Playwright tests: axe, target size, animations, keyboard, statistics consent, example isolation, simulators, a whole path from the keyboard, WCAG 3.0, every pattern exercise, the before and after page, the sitemap and noindex
-public/          favicon.svg, the logo's four bars
-DESIGN.md          the design system: colours, type, shapes, components, motion
-docs/
-  accessibility.md   the accessibility checklist
-  design/            dated plans and mocks
-  screenshots/       images used in this README
+  components/        Shared UI, learning tools and sandboxed frames
+  content/           Parsers, validation, generated data and server functions
+  lib/               SEO, consent, quiz scoring and shared utilities
+  progress/          Browser-local learning progress and notes
+  routes/            App pages, demo endpoints and the Notion webhook
+  search/            Search index generation and relevance tests
+  styles.css         Shared design tokens and styles
+  home.css           Home-page layout and illustration styles
+  header.css         Brand and responsive navigation styles
+e2e/                 Browser tests
+public/              Favicon and illustration assets
+docs/                Guides, design history and screenshots
 ```
 
-## Roadmap
+## Deployment
 
-The full plan, with content scope, architecture and risks, is in [`docs/design/2026-09-27-wcag-learning-app`](docs/design/2026-09-27-wcag-learning-app/wcag-learning-app.en.html) ([Polish version](docs/design/2026-09-27-wcag-learning-app/wcag-learning-app.pl.html)). Each phase ships on its own branch.
+Deploy using `pnpm build` with `NOTION_TOKEN` and `NOTION_ROOT_PAGE_ID` configured in the hosting environment. The production address used by canonical URLs and the sitemap is defined in [src/lib/site.ts](src/lib/site.ts).
 
-- [x] **0. Foundation.** App shell, navigation, themes, lint, tests, CI.
-- [x] **1. Content skeleton.** WCAG structure with Polish names, Markdown content format, criteria list with filters, prerendered criterion pages.
-- [x] **2. Explanations.** Plain-language drafts for every A and AA criterion, normative text, glossary, search, role filter. Detailed plan: [`docs/design/2026-09-27-phase-2-content`](docs/design/2026-09-27-phase-2-content/phase-2-content.en.html).
-- [x] **3. Examples.** Ten bad and good examples in sandboxed iframes, the practice catalogue, and the home page built from it. Detailed plan: [`docs/design/2026-09-27-phase-3-examples`](docs/design/2026-09-27-phase-3-examples/phase-3-examples.en.html).
-- [x] **4. Legal module.** Three Polish acts with the statute text and summaries, EN 301 549, the law-to-criterion mapping, the obligations timeline. Detailed plan: [`docs/design/2026-09-28-phase-4-legal`](docs/design/2026-09-28-phase-4-legal/phase-4-legal.en.html).
-- [ ] **5. Accounts.** Optional progress, notes and bookmarks with Convex. Postponed; phase 6 went first with progress in the browser.
-- [x] **6. Paths and quizzes.** Five learning paths, 29 lessons with quizzes, progress in `localStorage`. Detailed plan: [`docs/design/2026-09-29-phase-6-paths`](docs/design/2026-09-29-phase-6-paths/phase-6-paths.en.html).
-- [x] **7. Impairment simulators.** Colour vision, low vision, keyboard only, screen reader and narrow screen on every example, each with a text alternative, and `/symulatory`. Detailed plan: [`docs/design/2026-09-29-phase-7-simulators`](docs/design/2026-09-29-phase-7-simulators/phase-7-simulators.en.html).
-- [x] **8. AAA criteria and WCAG 3.0 tracking.** Explanations for the 31 AAA criteria and 4.1.1, the comparison with the AA criterion each one tightens, and `/wcag-3` with the guideline mapping. Detailed plan: [`docs/design/2026-10-01-phase-8-aaa-wcag3`](docs/design/2026-10-01-phase-8-aaa-wcag3/phase-8-aaa-wcag3.en.html).
-- [x] **9. ARIA widget patterns.** The 30 patterns of Deque University ARIA Examples, our own code, each with a live screen reader log, an ARIA table and a keyboard exercise, in four batches: native first, showing and hiding, composite widgets, content that changes. Detailed plan: [`docs/design/2026-10-02-phase-9-aria-patterns`](docs/design/2026-10-02-phase-9-aria-patterns/phase-9-aria-patterns.en.html).
-- [x] **10. Landmarks and headings.** "Struktura strony" on every page, the landmark and heading simulations, an example and a lesson on page structure. Detailed plan: [`docs/design/2026-10-03-phase-10-landmarks`](docs/design/2026-10-03-phase-10-landmarks/phase-10-landmarks.en.html).
-- [x] **11. A whole page before and after.** The KMW home page broken in 20 ways and fixed, notes for a self-check with the answers hidden until it ends, the list of problems, markers on the broken page. Detailed plan: [`docs/design/2026-10-04-phase-11-before-after`](docs/design/2026-10-04-phase-11-before-after/phase-11-before-after.en.html).
+To publish content changes automatically, configure a Notion webhook at `/api/notion-webhook`, a `NOTION_WEBHOOK_SECRET` and a `VERCEL_DEPLOY_HOOK_URL`. See the [publishing setup](docs/content-authoring.md#editing-content-in-notion) for the verification steps.
+
+### Optional analytics
+
+Set `VITE_GA_MEASUREMENT_ID` for production builds to enable Google Analytics 4. Without it, the consent card, cookie settings and analytics script are absent. With it, the script loads only after consent; readers can reopen cookie settings from the footer and withdraw consent.
+
+## Project status
+
+The learning modules, legal mapping, simulators, ARIA patterns, page-structure tool and whole-page audit are implemented. Accounts and cloud-synced progress are postponed; progress currently stays in the browser.
+
+See the [original roadmap](docs/design/2026-09-27-wcag-learning-app/wcag-learning-app.en.html) and [redesign plan](docs/design/2026-10-31-pastel-redesign.md) for scope and design history.
