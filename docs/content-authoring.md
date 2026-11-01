@@ -8,7 +8,7 @@ All Markdown files of `content/` come from Notion and are not in git. Quizzes (`
 
 - **Layout:** under the root page, one page per folder of `content/` (`kryteria`, `slownik`, `praktyka`…), and under it one page per file. The page title is the file name without `.md`: `1.4.3`, `problemy/01-jezyk`, and for folders `ikona-jako-przycisk` (its `index.md`) or `programista/nazwy-dostepne`.
 - **Page content:** a YAML code block at the top with the frontmatter, then the text. Everything below describes the files as the import writes them.
-- **Links:** glossary and law links are links to the live site in Notion, `https://a11y-playground-tau.vercel.app/slownik#fokus` and `…/prawo/ustawa-2019-848/art-5`, which the import turns back into `slownik:` and `prawo:` marks. The code blocks of a before and after problem are `html` blocks whose first line is `<!-- przed -->` or `<!-- po -->`.
+- **Links:** glossary and law links are links to the live site in Notion, `https://www.a11y-playgrounds.site/slownik#fokus` and `…/prawo/ustawa-2019-848/art-5`, which the import turns back into `slownik:` and `prawo:` marks. Links authored on the former `https://a11y-playground-tau.vercel.app` host are also recognized during import. The code blocks of a before and after problem are `html` blocks whose first line is `<!-- przed -->` or `<!-- po -->`.
 - **Publishing:** saving in Notion sends a webhook to `/api/notion-webhook`, which starts a Vercel deploy; the build imports the content and the change is live a few minutes later. A page that breaks a rule below fails the build, and the site keeps the last version that built. The reason is in the Vercel build log.
 
 > [!NOTE]

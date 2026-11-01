@@ -7,6 +7,7 @@
     "dev": "vite dev",
     "build": "pnpm import:notion && vite build",
     "preview": "vite preview",
+    "generate:social": "node scripts/generate-social.ts",
     "lint": "eslint . && tsc",
     "test": "vitest run && playwright test",
     "import:wcag": "node scripts/import-wcag.ts",

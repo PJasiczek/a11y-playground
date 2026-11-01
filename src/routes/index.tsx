@@ -14,6 +14,7 @@ export const Route = createFileRoute("/")({
   loader: () => getHomePage(),
   head: ({ match }) =>
     pageHead({
+      title: "WCAG po polsku — nauka dostępności cyfrowej",
       description:
         "WCAG 2.2 po polsku: kryteria z przykładami kodu przed i po poprawce, wzorce ARIA, symulatory, ścieżki nauki i polskie prawo o dostępności cyfrowej.",
       path: match.pathname,

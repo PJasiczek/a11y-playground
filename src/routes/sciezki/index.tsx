@@ -9,7 +9,7 @@ export const Route = createFileRoute("/sciezki/")({
   loader: () => getPathList(),
   head: ({ match }) =>
     pageHead({
-      title: "Ścieżki", description:
+      title: "Ścieżki nauki dostępności cyfrowej", description:
         "Lekcje dostępności ułożone po kolei dla programisty, projektanta, autora treści, testera i podmiotu publicznego, z quizem na końcu każdej lekcji.",
       path: match.pathname,
     }),

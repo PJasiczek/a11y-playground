@@ -10,7 +10,7 @@
 ![Accessibility target: WCAG 2.2 AA plus selected AAA](https://img.shields.io/badge/target-WCAG%202.2%20AA%20%2B%20selected%20AAA-2c36a8)
 ![Node.js 24+](https://img.shields.io/badge/Node.js-24%2B-417e38)
 
-[Try the app](https://a11y-playground-tau.vercel.app) · [Features](#features) · [Screenshots](#screenshots) · [Getting started](#getting-started) · [Content](#content) · [Development](#development)
+[Try the app](https://www.a11y-playgrounds.site) · [Features](#features) · [Screenshots](#screenshots) · [Getting started](#getting-started) · [Content](#content) · [Development](#development)
 
 </div>
 
@@ -115,6 +115,7 @@ Generated source updates should be reviewed before shipping. Polish normative WC
 | `pnpm dev` | Start the Vite development server. |
 | `pnpm build` | Import Notion content and build the production app into `.output/`. |
 | `pnpm preview` | Serve the production build locally. |
+| `pnpm generate:social` | Export versioned Open Graph, X and square PNG artwork using installed Chromium. |
 | `pnpm lint` | Run ESLint, including accessibility rules, and TypeScript checks. |
 | `pnpm test` | Run Vitest, then Playwright against a production build. |
 | `pnpm import:notion` | Refresh local content from Notion. |
@@ -170,6 +171,22 @@ docs/                Guides, design history and screenshots
 ```
 
 ## Deployment
+
+### SEO and shared links
+
+Every indexed page has a prerendered title, description, canonical URL and social metadata in its initial HTML. The sitemap and robots.txt are generated from the shared route catalogue; hidden demos, answers and search results are excluded. XML values are escaped and duplicate canonical URLs are removed. `lastmod` is intentionally omitted until reliable page-level modification dates are available.
+
+`src/lib/social.ts` selects a brand fallback, a section card, or an individual WCAG criterion card. The versioned PNGs in `public/social/` are committed assets: ordinary builds do not need a browser to export them. After changing card copy, criteria or artwork, install Chromium and run `pnpm generate:social`. The offline exporter uses the existing Geist font and playground illustration, checks title overflow, and emits 1200×630 Open Graph cards, dedicated 1200×600 X cards, and a 1080×1080 image for manual posts. It reads no external services. Bump the filename version in both metadata and exporter when replacing published images to avoid stale social caches.
+
+![Default social link artwork](docs/screenshots/social-preview.png)
+
+The implementation follows the [SEO plan and artwork proposals](docs/design/2026-11-01-seo/plan-seo.html): brand card A is the fallback and content template B provides criterion-specific titles, using the existing illustration for visual consistency. Section pages use descriptive search titles; individual content titles remain tied to their content. Social tags include absolute image URLs, MIME type, dimensions and alt text, with `summary_large_image` for X. Playwright checks the initial HTML, unique titles/descriptions, image responses and dimensions, sitemap coverage and real HTTP 404s.
+
+The Notion importer accepts links authored on the original Vercel domain as internal links too, preserving glossary previews and legal references during the domain migration. New exports use the current canonical host.
+
+Vercel builds with `VERCEL_ENV=preview` include a root `noindex` directive. Keep preview deployments protected at the platform level too; reuse of a production build will retain its production indexing policy.
+
+After deployment, submit `/sitemap.xml` in Google Search Console and inspect representative URLs. Check real link previews using Facebook Sharing Debugger, LinkedIn Post Inspector and target messaging apps, then compare Search Console indexing, queries and CTR after 2–4 weeks. These account-dependent checks are manual; local tests cannot establish production indexing or clear platform caches. See the [release checklist](docs/seo-release.md).
 
 Deploy using `pnpm build` with `NOTION_TOKEN` and `NOTION_ROOT_PAGE_ID` configured in the hosting environment. The production address used by canonical URLs and the sitemap is defined in [src/lib/site.ts](src/lib/site.ts).
 

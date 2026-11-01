@@ -11,7 +11,7 @@ export const Route = createFileRoute("/slownik")({
   loader: () => getGlossary(),
   head: ({ loaderData, match }) =>
     pageHead({
-      title: "Słownik", description:
+      title: "Słownik dostępności cyfrowej", description:
         "Pojęcia, na których najczęściej potyka się ktoś, kto czyta WCAG pierwszy raz. Najpierw wyjaśnienie prostym językiem, potem brzmienie z normy.",
       path: match.pathname,
       jsonLd: loaderData ? [glossaryLd(loaderData)] : [],

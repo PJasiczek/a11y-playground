@@ -65,6 +65,8 @@ export function fromNotion(section: string, markdown: string) {
   const marks = section !== "slownik";
   const fileBody = outsideCode(body, (text) =>
     text
+      // Existing Notion pages still link to the original host after the domain migration.
+      .replaceAll("](https://a11y-playground-tau.vercel.app/", `](${siteUrl}/`)
       .replace(/<code>(.*?)<\/code>/g, (_, code: string) => (code.includes("`") ? `\`\` ${code} \`\`` : `\`${code}\``))
       .replace(/<b>(.*?)<\/b>/g, "**$1**")
       .replace(/\\([[\]])/g, "$1")

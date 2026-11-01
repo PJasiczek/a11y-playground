@@ -9,7 +9,7 @@ export const Route = createFileRoute("/symulatory")({
   loader: () => getSimulators(),
   head: ({ match }) =>
     pageHead({
-      title: "Symulatory", description:
+      title: "Symulatory dostępności — poznaj ograniczenia", description:
         "Daltonizm, słabe widzenie, sama klawiatura, czytnik ekranu, wąski ekran i powiększony tekst: co pokazuje każdy symulator, czego nie pokazuje i których kryteriów uczy.",
       path: match.pathname,
     }),

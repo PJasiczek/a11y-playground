@@ -21,7 +21,7 @@ export const Route = createRootRoute({
       { property: "og:site_name", content: siteName },
       { property: "og:locale", content: "pl_PL" },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
+      ...(import.meta.env.VITE_NOINDEX ? [{ name: "robots", content: "noindex" }] : []),
     ],
     links: [
       { rel: "stylesheet", href: stylesUrl },
