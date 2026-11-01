@@ -38,7 +38,7 @@ export function SiteHeader() {
         Przejdź do treści
       </a>
       <div className="mx-auto flex max-w-280 flex-wrap items-center gap-x-4 gap-y-2 px-4 pt-2 sm:px-7 sm:pt-3">
-        <Link to="/" className="site-brand group mr-auto inline-flex min-h-11 items-center gap-2.5 text-[1.0625rem] font-extrabold tracking-tight">
+        <Link to="/" preload="viewport" className="site-brand group mr-auto inline-flex min-h-11 items-center gap-2.5 text-[1.0625rem] font-extrabold tracking-tight">
           <Wordmark />
         </Link>
         <div className="header-controls flex gap-2 max-sm:hidden">
@@ -52,6 +52,7 @@ export function SiteHeader() {
               <li key={to}>
                 <Link
                   to={to}
+                  preload="viewport"
                   activeOptions={{ exact: to === "/" }}
                   className={`header-nav-link ${kind ? kinds[kind].className : ""} relative inline-flex min-h-11 items-center px-3 text-[0.9375rem] font-semibold after:absolute after:inset-x-3 after:bottom-1 after:h-1 after:rounded-full hover:after:bg-control aria-[current=page]:font-extrabold aria-[current=page]:after:bg-kind-d`}
                 >
@@ -96,6 +97,7 @@ function PhoneNav() {
           <li key={to}>
             <Link
               to={to}
+              preload="viewport"
               className={`${kinds[kind].className} ${tab} aria-[current=page]:border-kind-d aria-[current=page]:bg-kind aria-[current=page]:font-extrabold`}
             >
               <KindIcon kind={kind} className="size-5 text-kind-d" />
@@ -148,6 +150,7 @@ function PhoneNav() {
             <li key={to} className="border-b border-rule">
               <Link
                 to={to}
+                preload="viewport"
                 onClick={close}
                 className={`${kinds[kind].className} group flex min-h-12 items-center gap-3 border-l-4 border-transparent px-4 font-semibold hover:bg-paper-2 aria-[current=page]:border-kind-d aria-[current=page]:bg-kind aria-[current=page]:font-extrabold`}
               >
